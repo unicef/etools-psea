@@ -70,7 +70,7 @@ export const navigate: ActionCreator<ThunkResult> = (path: string) => (dispatch)
   }
 
   // some routes need redirect to subRoute list
-  const redirectPath: string | undefined =  getRedirectToListPath(path);
+  const redirectPath: string | undefined = getRedirectToListPath(path);
   if (redirectPath) {
     updateAppLocation(redirectPath, true);
     return;
