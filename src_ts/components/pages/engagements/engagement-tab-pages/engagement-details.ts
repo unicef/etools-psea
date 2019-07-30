@@ -1,4 +1,7 @@
 import {PolymerElement, html} from '@polymer/polymer/polymer-element';
+import '@unicef-polymer/etools-content-panel/etools-content-panel';
+import '@polymer/paper-icon-button/paper-icon-button.js';
+import '@polymer/iron-icons/iron-icons.js';
 
 /**
  * @customElement
@@ -13,7 +16,15 @@ class EngagementDetails extends PolymerElement {
         /* CSS rules for your element */
       </style>
 
-      PSEA engagement details here
+      <etools-content-panel panel-title="Assessment Information">
+        <div slot="panel-btns">
+          <paper-icon-button
+                on-tap="_allowEdit"
+                icon="create">
+          </paper-icon-button>
+        </div>
+
+      </etools-content-panel>
     `;
   }
 
