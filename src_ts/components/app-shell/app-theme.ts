@@ -29,7 +29,7 @@ documentContainer.innerHTML = `
         --success-color: #72c300;
 
         --epc-header: {
-          background-color: white;
+          background-color: var( --primary-background-color);
           border-bottom: 1px groove var(--dark-divider-color);
           @apply --layout-start-justified;
         }
@@ -37,6 +37,9 @@ documentContainer.innerHTML = `
         --epc-header-color: var(--primary-text-color);
         --ecp-header-title: {
           padding: 0 0;
+        }
+        --paper-input-container-label: {
+          font-weight: 600;
         }
       }
     </style>

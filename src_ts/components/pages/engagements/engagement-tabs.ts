@@ -48,11 +48,14 @@ class EngagementTabs extends connect(store)(PolymerElement) {
 
       <section class="paper-material page-content" elevation="1">
         <template is="dom-if" if="[[isActiveTab(activeTab, 'details')]]">
-          <engagement-details></engagement-details>
+          <engagement-details-page></engagement-details-page>
         </template>
 
         <template is="dom-if" if="[[isActiveTab(activeTab, 'questionnaire')]]">
-          <engagement-questionnaire></engagement-questionnaire>
+          <engagement-questionnaire-page></engagement-questionnaire-page>
+        </template>
+        <template is="dom-if" if="[[isActiveTab(activeTab, 'followup')]]">
+          <engagement-follow-up></engagement-follow-up>
         </template>
       </section>
     `;
@@ -68,6 +71,11 @@ class EngagementTabs extends connect(store)(PolymerElement) {
     {
       tab: 'questionnaire',
       tabLabel: 'Questionnaire',
+      hidden: false
+    },
+    {
+      tab: 'followup',
+      tabLabel: 'Follow-Up',
       hidden: false
     }
   ];

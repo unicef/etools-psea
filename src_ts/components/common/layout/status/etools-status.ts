@@ -47,7 +47,7 @@ class EtoolsStatus extends PolymerElement {
           display: inline-block;
           vertical-align: middle;
           width: 40px;
-          height: 0;
+          height: 1px;
           margin: 0 24px;
           border-top: 1px solid var(--secondary-text-color);
         }
