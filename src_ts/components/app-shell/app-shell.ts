@@ -44,8 +44,8 @@ import {ToastNotificationHelper} from '../common/toast-notifications/toast-notif
 import user from '../../redux/reducers/user';
 import {ROOT_PATH} from '../../config/config';
 import {getCurrentUserData} from '../user/user-actions';
-import {EtoolsRouter} from "../../routing/routes";
-import {TRouteDetails} from "../../routing/router";
+import {EtoolsRouter} from '../../routing/routes';
+import {RouteDetails} from '../../routing/router';
 
 setRootPath(ROOT_PATH);
 
@@ -104,7 +104,7 @@ class AppShell extends connect(store)(PolymerElement) {
   _drawerOpened: boolean = false;
 
   @property({type: Object})
-  _routeDetails: TRouteDetails = {} as TRouteDetails;
+  _routeDetails!: RouteDetails;
 
   @property({type: String})
   _mainPage: string = ''; // routeName
@@ -115,8 +115,8 @@ class AppShell extends connect(store)(PolymerElement) {
   @property({type: Boolean})
   smallMenu: boolean = false;
 
-  private appMenuHelper = {} as AppMenuHelper;
-  private appToastsNotificationsHelper = {} as ToastNotificationHelper;
+  private appMenuHelper!: AppMenuHelper;
+  private appToastsNotificationsHelper!: ToastNotificationHelper;
 
   constructor() {
     super();
@@ -136,7 +136,7 @@ class AppShell extends connect(store)(PolymerElement) {
     this.appMenuHelper.initMenuSize();
 
     installRouter(location => store.dispatch(
-        navigate(decodeURIComponent(location.pathname + location.search))));
+      navigate(decodeURIComponent(location.pathname + location.search))));
     installMediaQueryWatcher(`(min-width: 460px)`,
       () => store.dispatch(updateDrawerState(false)));
 
@@ -179,7 +179,7 @@ class AppShell extends connect(store)(PolymerElement) {
   }
 
   protected _isActivePage(pageName: string, expectedPageName: string,
-                          currentSubPageName: string, expectedSubPageNames?: string): boolean {
+    currentSubPageName: string, expectedSubPageNames?: string): boolean {
     if (!this._isActiveMainPage(pageName, expectedPageName)) {
       return false;
     }

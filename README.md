@@ -4,6 +4,7 @@ TBD
 
 ## Install
 * Part of `etools-infra`
+    * `http://localhost:8082/psea/`
     * `docker-compose.dev.yml`:
         ```
             proxy:
@@ -41,7 +42,7 @@ TBD
 * `npm install`
 
 #### TODO: 
-* Update page header element to use etools-app-selector, countries dropdown, profile menu and refresh data button
+* Update page header element to use countries dropdown, profile menu and refresh data button
 * Improve documentation
 * Update tests
 * Test build
