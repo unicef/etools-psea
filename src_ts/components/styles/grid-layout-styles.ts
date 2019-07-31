@@ -29,10 +29,7 @@ export const gridLayoutStyles = html`
       padding-top: 8px;
       padding-bottom: 8px;
     }
-    .row-padding-v-8 {
-      padding-top: 8px;
-      padding-bottom: 8px;
-    }
+
     .row-h {
       @apply --layout-horizontal;
     }
