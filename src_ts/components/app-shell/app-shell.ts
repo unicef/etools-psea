@@ -64,11 +64,11 @@ class AppShell extends connect(store)(PolymerElement) {
     // language=HTML
     return html`
     ${AppShellStyles}
-   
+
     <app-drawer-layout id="layout" responsive-width="850px"
                        fullbleed narrow="{{narrow}}" small-menu$="[[smallMenu]]">
       <!-- Drawer content -->
-      <app-drawer id="drawer" slot="drawer" transition-duration="350" 
+      <app-drawer id="drawer" slot="drawer" transition-duration="350"
                   opened="[[_drawerOpened]]"
                   swipe-open="[[narrow]]" small-menu$="[[smallMenu]]">
         <!-- App main menu(left sidebar) -->
@@ -85,10 +85,10 @@ class AppShell extends connect(store)(PolymerElement) {
 
         <!-- Main content -->
         <main role="main" class="main-content">
-          <engagements-list class="page" 
+          <engagements-list class="page"
               active$="[[_isActivePage(_mainPage, 'engagements', _subPage, 'list')]]"></engagements-list>
-          <engagement-tabs class="page" 
-              active$="[[_isActivePage(_mainPage, 'engagements', _subPage, 'details|questionnaires')]]"></engagement-tabs>
+          <engagement-tabs class="page"
+              active$="[[_isActivePage(_mainPage, 'engagements', _subPage, 'details|questionnaire')]]"></engagement-tabs>
           <page-two class="page" active$="[[_isActivePage(_mainPage, 'page-two')]]"></page-two>
           <page-not-found class="page" active$="[[_isActivePage(_mainPage, 'page-not-found')]]"></page-not-found>
         </main>

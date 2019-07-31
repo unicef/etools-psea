@@ -32,7 +32,7 @@ class EngagementTabs extends connect(store)(PolymerElement) {
       <etools-status></etools-status>
 
       <page-content-header with-tabs-visible>
-      
+
         <h1 slot="page-title">[[engagement.title]]</h1>
 
         <div slot="title-row-actions" class="content-header-actions">
@@ -44,14 +44,14 @@ class EngagementTabs extends connect(store)(PolymerElement) {
                      tabs="[[pageTabs]]"
                      active-tab="{{activeTab}}"></etools-tabs>
       </page-content-header>
-      
+
       <section class="paper-material page-content" elevation="1">
         <template is="dom-if" if="[[isActiveTab(activeTab, 'details')]]">
           <engagement-details></engagement-details>
         </template>
-        
-        <template is="dom-if" if="[[isActiveTab(activeTab, 'questionnaires')]]">
-          <engagement-questionnaires></engagement-questionnaires>
+
+        <template is="dom-if" if="[[isActiveTab(activeTab, 'questionnaire')]]">
+          <engagement-questionnaire></engagement-questionnaire>
         </template>
       </section>
     `;
@@ -65,8 +65,8 @@ class EngagementTabs extends connect(store)(PolymerElement) {
       hidden: false
     },
     {
-      tab: 'questionnaires',
-      tabLabel: 'Questionnaires‎',
+      tab: 'questionnaire',
+      tabLabel: 'Questionnaire',
       hidden: false
     }
   ];

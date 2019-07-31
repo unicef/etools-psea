@@ -4,6 +4,9 @@ import '@polymer/iron-flex-layout/iron-flex-layout.js';
 // language=HTML
 export const gridLayoutStyles = html`
   <style>
+    .w100 {
+      width: 100%;
+    }
     .layout-horizontal,
     .layout-vertical {
       box-sizing: border-box;
@@ -26,8 +29,8 @@ export const gridLayoutStyles = html`
       padding-right: 24px;
     }
     .row-padding-v {
-      padding-top: 8px;
-      padding-bottom: 8px;
+      padding-top: 4px;
+      padding-bottom: 4px;
     }
 
     .row-h {
@@ -45,22 +48,22 @@ export const gridLayoutStyles = html`
     }
 
     .row-v.t-border, .row-h.t-border {
-      border-top: 1px solid var(--dark-divider-color);
+      border-top: 1px solid var(--light-divider-color);
     }
     .row-v.b-border, .row-h.b-border {
-      border-bottom: 1px solid var(--dark-divider-color);
+      border-bottom: 1px solid var(--light-divider-color);
     }
 
     .row-v.header-row, .row-h.header-row {
       color: var(--secondary-text-color);
-      border-bottom: 1px solid var(--dark-divider-color);
+      border-bottom: 1px solid var(--light-divider-color);
       font-weight: 600;
     }
     .row-v.header-row > .col, .row-h.header-row > .col {
       line-height: 24px;
     }
     .table .row-h:not(.header-row) {
-      border-top: 1px solid var(--dark-divider-color);
+      border-top: 1px solid var(--light-divider-color);
     }
     .table.form-fields .row-h:not(.header-row) {
       padding: 8px 24px;

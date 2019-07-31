@@ -15,7 +15,7 @@ export const componentsLazyLoadConfig: TRoutesLazyLoadComponentsPath = {
   ],
   engagements_questionnaires: [
     'components/pages/engagements/engagement-tabs.js',
-    'components/pages/engagements/engagement-tab-pages/engagement-questionnaires.js'
+    'components/pages/engagements/engagement-tab-pages/engagement-questionnaire.js'
   ],
   'page-not-found': [
     'components/pages/page-not-found.js'

@@ -1,7 +1,7 @@
 {
-  "name": "Etools Frontend Template",
-  "short_name": "Etools Frontend Template",
-  "description": "Etools Frontend Template description",
+  "name": "PSEA Assessment",
+  "short_name": "PSEA Assessment",
+  "description": "PSEA Assessment",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#3f51b5",

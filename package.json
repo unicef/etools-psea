@@ -33,6 +33,8 @@
     "@polymer/paper-ripple": "^3.0.1",
     "@polymer/paper-toast": "^3.0.1",
     "@polymer/paper-tooltip": "^3.0.1",
+    "@polymer/paper-radio-group": "^3.0.1",
+    "@polymer/paper-radio-button": "^3.0.1",
     "@polymer/polymer": "^3.1.0",
     "@types/lodash-es": "^4.17.3",
     "@unicef-polymer/etools-ajax": "^4.0.0-rc.1",

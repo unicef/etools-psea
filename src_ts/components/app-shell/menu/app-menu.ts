@@ -26,8 +26,8 @@ class AppMenu extends GestureEventListeners(PolymerElement) {
 
       <div class="menu-header">
       <span id="app-name">
-        Frontend <br>
-        Template
+        PSEA <br>
+        ASSESSMENTS
       </span>
 
         <span class="ripple-wrapper main">
@@ -38,7 +38,7 @@ class AppMenu extends GestureEventListeners(PolymerElement) {
       </span>
 
         <paper-tooltip for="menu-header-top-icon" position="right">
-          Frontend Template
+          PSEA Assessments
         </paper-tooltip>
 
         <span class="ripple-wrapper">
@@ -57,19 +57,12 @@ class AppMenu extends GestureEventListeners(PolymerElement) {
           <a class="nav-menu-item" menu-name="engagements" href$="[[rootPath]]engagements">
             <iron-icon id="page1-icon" icon="accessibility"></iron-icon>
             <paper-tooltip for="page1-icon" position="right">
-              Engagements
+             PSEA Assessments
             </paper-tooltip>
-            <div class="name">Engagements</div>
+            <div class="name"> PSEA Assessments</div>
           </a>
 
-          <a class="nav-menu-item" menu-name="page-two" href$="[[rootPath]]page-two">
-            <iron-icon id="page2-icon" icon="extension"></iron-icon>
-            <paper-tooltip for="page2-icon" position="right">
-              Page Two
-            </paper-tooltip>
-            <div class="name">Page Two</div>
-          </a>
-          
+
         </iron-selector>
 
         <div class="nav-menu-item section-title">
