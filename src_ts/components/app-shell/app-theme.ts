@@ -18,6 +18,7 @@ documentContainer.innerHTML = `
         --nonprod-header-color: #233944;
         --nonprod-text-warn-color: #e6e600;
 
+        --light-divider-color: rgba(0, 0, 0, 0.45);
         --dark-divider-color: rgba(0, 0, 0, 0.12);
         --darker-divider-color: #9D9D9D;
 
@@ -30,9 +31,10 @@ documentContainer.innerHTML = `
 
         --epc-header: {
           background-color: white;
-          border-bottom: 1px solid var(--darker-divider-color);
+          border-bottom: 1px groove var(--light-divider-color);
           @apply --layout-start-justified;
         }
+        --epc-header_-_border-bottom-style: groove;
         --epc-header-color: var(--primary-text-color);
         --ecp-header-title: {
           padding: 0 0;

@@ -26,8 +26,12 @@ export const gridLayoutStyles = html`
       padding-right: 24px;
     }
     .row-padding-v {
-      padding-top: 16px;
-      padding-bottom: 16px;
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+    .row-padding-v-8 {
+      padding-top: 8px;
+      padding-bottom: 8px;
     }
     .row-h {
       @apply --layout-horizontal;
