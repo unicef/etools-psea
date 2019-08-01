@@ -39,12 +39,14 @@ class AssessorInfo extends PolymerElement {
           </paper-icon-button>
         </div>
 
-        <label class="paper-label">Assessor is:</label>
-        <paper-radio-group selected="{{engagement.assessor_type}}">
-          <paper-radio-button name="staff">Unicef Staff</paper-radio-button>
-          <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
-          <paper-radio-button name="external">External Individual</paper-radio-button>
-        </paper-radio-group>
+        <div class="row-padding-v">
+          <label class="paper-label">Assessor is:</label>
+          <paper-radio-group selected="{{engagement.assessor_type}}">
+            <paper-radio-button name="staff">Unicef Staff</paper-radio-button>
+            <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
+            <paper-radio-button name="external">External Individual</paper-radio-button>
+          </paper-radio-group>
+        </div>
 
         <template is="dom-if" if="[[_isActive(engagement.assessor_type, 'staff')]]">
           <unicef-staff-assessor></unicef-staff-assessor>

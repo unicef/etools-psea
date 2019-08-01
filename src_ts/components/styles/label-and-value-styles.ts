@@ -8,13 +8,13 @@ export const labelAndvalueStyles = html`
       font-size: 12px;
       font-weight: 600;
       color: var(--secondary-text-color);
-      padding-top: 8px;
+      padding-top: 4px;
     }
 
     .input-label {
       min-height: 24px;
       padding-top: 4px;
-      padding-bottom: 8px;
+      padding-bottom: 4px;
       min-width: 0;
     }
 

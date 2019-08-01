@@ -12,6 +12,9 @@ export interface EtoolsEndpoints {
 export const etoolsEndpoints: EtoolsEndpoints = {
   userProfile: {
     url: 'http://localhost:8082/api/v3/users/profile/'
+  },
+  partners: {
+    url: ''
   }
   // agreements: {
   //   template: '/api/v2/agreements/',

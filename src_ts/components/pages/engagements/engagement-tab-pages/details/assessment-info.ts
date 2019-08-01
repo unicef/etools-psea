@@ -10,6 +10,9 @@ import {buttonsStyles} from '../../../../styles/button-styles';
 import {property} from '@polymer/decorators';
 import {GenericObject} from '../../../../../types/globals';
 import './partner-details';
+import {SharedStyles} from '../../../../styles/shared-styles';
+import EtoolsAjaxRequestMixin from '@unicef-polymer/etools-ajax/etools-ajax-request-mixin';
+import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 
 /**
  * @customElement
@@ -26,7 +29,7 @@ class AssessmentInfo extends PolymerElement {
           margin-bottom: 24px;
         }
       </style>
-      ${gridLayoutStyles} ${buttonsStyles}
+      ${SharedStyles}${gridLayoutStyles} ${buttonsStyles}
       <etools-content-panel panel-title="Assessment Information">
         <div slot="panel-btns">
           <paper-icon-button
@@ -41,8 +44,12 @@ class AssessmentInfo extends PolymerElement {
           on-etools-selected-item-changed="_showPartnerDetails">
         </etools-dropdown>
 
-        <partner-details partner="[[selectedPartner]]">
+        <partner-details hidden$="[[!selectedPartner]]" partner="[[selectedPartner]]">
         </partner-details>
+
+        <etools-dropdown label="UNICEF Focal Point"
+          class="row-padding-v">
+        </etools-dropdown>
 
         <datepicker-lite label="Assessment Date"
           class="row-padding-v"
@@ -66,7 +73,21 @@ class AssessmentInfo extends PolymerElement {
   engagement!: GenericObject;
 
   @property({type: Object})
-  selectedPartner!: GenericObject;
+  partners!: GenericObject;
+
+  @property({type: Object})
+  selectedPartner: GenericObject | null = null;
+
+  connectedCallback() {
+    super.connectedCallback();
+    this._getPartnerOrganizations();
+  }
+
+  _getPartnerOrganizations() {
+    // this.sendRequest({endpoint: etoolsEndpoints.partners})
+    //   .then((resp) => this.partners = resp)
+    //   .catch((err) => console.log(err));
+  }
 
   _allowEdit() {
 

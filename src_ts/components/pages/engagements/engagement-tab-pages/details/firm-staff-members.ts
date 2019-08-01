@@ -17,7 +17,7 @@ class FirmStaffMembers extends PolymerElement {
           display: block;
         }
       </style>
-      <etools-content-panel panel-title="Firm Staff Member with Access">
+      <etools-content-panel panel-title="Firm Staff Members with Access">
         <div slot="panel-btns">
           <paper-icon-button
                 on-tap="_allowAdd"
