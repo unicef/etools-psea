@@ -6,6 +6,7 @@ import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../redux/store';
 import {getEndpoint} from '../../endpoints/endpoints';
 import {GenericObject} from '../../types/globals';
+import {updateUserData} from "../../redux/actions/user";
 
 const PROFILE_ENDPOINT = 'userProfile';
 
@@ -28,9 +29,10 @@ export class EtoolsUser extends connect(store)(EtoolsAjaxRequestMixin(PolymerEle
 
   public getUserData() {
     this.sendRequest({endpoint: this.profileEndpoint}).then((response: GenericObject) => {
-      console.log(response);
+      // console.log('response', response);
+      store.dispatch(updateUserData(response));
     }).catch((error: GenericObject) => {
-      console.log(error);
+      console.error('error', error);
     });
   }
 

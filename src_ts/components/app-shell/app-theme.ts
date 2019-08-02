@@ -27,6 +27,11 @@ documentContainer.innerHTML = `
         --side-bar-scrolling: visible;
         
         --success-color: #72c300;
+        
+        --esmm-external-wrapper: {
+          width: 100%;
+          margin: 0;
+        };
       }
     </style>
   </custom-style>`;
