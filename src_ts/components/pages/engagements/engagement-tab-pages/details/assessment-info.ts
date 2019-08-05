@@ -1,16 +1,15 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element';
+import { LitElement, html, property } from 'lit-element';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/iron-icons/iron-icons.js';
 import '@unicef-polymer/etools-dropdown/etools-dropdown';
 import '@unicef-polymer/etools-date-time/datepicker-lite';
-import {gridLayoutStyles} from '../../../../styles/grid-layout-styles';
-import {buttonsStyles} from '../../../../styles/button-styles';
-import {property} from '@polymer/decorators';
+import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
+import {buttonsStylesLit} from '../../../../styles/button-styles-lit';
 import {GenericObject} from '../../../../../types/globals';
 import './partner-details';
-import {SharedStyles} from '../../../../styles/shared-styles';
+import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import EtoolsAjaxRequestMixin from '@unicef-polymer/etools-ajax/etools-ajax-request-mixin';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 
@@ -18,9 +17,9 @@ import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
  * @customElement
  * @polymer
  */
-class AssessmentInfo extends PolymerElement {
+class AssessmentInfo extends LitElement {
 
-  static get template() {
+  render() {
     // language=HTML
     return html`
       <style>
@@ -29,7 +28,7 @@ class AssessmentInfo extends PolymerElement {
           margin-bottom: 24px;
         }
       </style>
-      ${SharedStyles}${gridLayoutStyles} ${buttonsStyles}
+      ${SharedStylesLit}${gridLayoutStylesLit} ${buttonsStylesLit}
       <etools-content-panel panel-title="Assessment Information">
         <div slot="panel-btns">
           <paper-icon-button
@@ -40,12 +39,17 @@ class AssessmentInfo extends PolymerElement {
 
         <etools-dropdown label="Partner Organization to Assess"
           class="row-padding-v col-6 w100"
+          ?readonly="${this.readonly}"
+          .options="${this.partners}"
+          .optionValue="${'id'}"
+          .optionLabel="${'name'}"
           trigger-value-change-event
-          on-etools-selected-item-changed="_showPartnerDetails">
+          readonly
+          @etools-selected-item-changed="${this._setSelectedPartner}">
         </etools-dropdown>
 
-        <partner-details hidden$="[[!selectedPartner]]" partner="[[selectedPartner]]">
-        </partner-details>
+        ${this._showPartnerDetails(this.selectedPartner)}
+
 
         <etools-dropdown label="UNICEF Focal Point"
           class="row-padding-v">
@@ -73,10 +77,16 @@ class AssessmentInfo extends PolymerElement {
   engagement!: GenericObject;
 
   @property({type: Object})
-  partners!: GenericObject;
+  partners: GenericObject = [{id:1, name: 'Zamboni',
+  authorized_officers:['Ala Bala', 'Poto Cala'],
+  adress: 'Strulibili 23', phone: 12345678, email: 'email@email.com'}];
 
   @property({type: Object})
-  selectedPartner: GenericObject | null = null;
+  selectedPartner!: GenericObject;
+
+  @property({type: Boolean})
+  readonly: boolean = false;
+
 
   connectedCallback() {
     super.connectedCallback();
@@ -93,8 +103,14 @@ class AssessmentInfo extends PolymerElement {
 
   }
 
-  _showPartnerDetails() {
+  _showPartnerDetails(selectedPartner) {
+    return selectedPartner?
+      html`<partner-details .partner="${this.selectedPartner}">
+      </partner-details>`: '';
+  }
 
+  _setSelectedPartner(event) {
+    this.selectedPartner = event.detail.selectedItem;
   }
 
 }
