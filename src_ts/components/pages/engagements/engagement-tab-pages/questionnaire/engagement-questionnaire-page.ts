@@ -1,4 +1,5 @@
 import {PolymerElement, html} from '@polymer/polymer/polymer-element.js';
+import './questionnaire-item';
 
 /**
  * @customElement
@@ -13,7 +14,7 @@ class EngagementQuestionnairePage extends PolymerElement {
         /* CSS rules for your element */
       </style>
 
-      Questionnaire tab content...
+      <questionnaire-item></questionnaire-item>
     `;
   }
 

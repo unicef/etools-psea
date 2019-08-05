@@ -41,6 +41,11 @@ documentContainer.innerHTML = `
         --paper-input-container-label: {
           font-weight: 600;
         }
+
+        --paper-checkbox-checked-color: var(--primary-color);
+        --paper-checkbox-unchecked-color: var(--secondary-text-color);
+        --paper-radio-button-checked-color: var(--primary-color);
+        --paper-radio-button-unchecked-color: var(--secondary-text-color);
       }
     </style>
   </custom-style>`;

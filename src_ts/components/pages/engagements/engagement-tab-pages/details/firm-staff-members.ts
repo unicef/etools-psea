@@ -21,7 +21,7 @@ class FirmStaffMembers extends PolymerElement {
         <div slot="panel-btns">
           <paper-icon-button
                 on-tap="_allowAdd"
-                icon="create">
+                icon="add">
           </paper-icon-button>
         </div>
       </etools-content-panel>
