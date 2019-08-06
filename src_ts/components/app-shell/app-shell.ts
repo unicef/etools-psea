@@ -127,7 +127,6 @@ class AppShell extends connect(store)(PolymerElement) {
     // init toasts notifications queue
     this.appToastsNotificationsHelper = new ToastNotificationHelper(this as PolymerElement);
     this.appToastsNotificationsHelper.addToastNotificationListeners();
-    // TODO: just testing...
     getCurrentUserData();
   }
 
@@ -161,9 +160,9 @@ class AppShell extends connect(store)(PolymerElement) {
   }
 
   // TODO: just for testing...
-  // public getState() {
-  //   console.log(store.getState());
-  // }
+  public getState() {
+    console.log(store.getState());
+  }
 
   // Testing router (from console)
   public getRouter() {

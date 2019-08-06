@@ -3,79 +3,27 @@ import {connect} from 'pwa-helpers/connect-mixin.js';
 import {store, RootState} from '../../../redux/store';
 import '@unicef-polymer/etools-dropdown/etools-dropdown.js';
 
-import EtoolsPageRefreshMixin from '@unicef-polymer/etools-behaviors/etools-page-refresh-mixin.js';
 // import EndpointsMixin from '../../endpoints/endpoints-mixin.js';
 import {fireEvent} from '../../utils/fire-custom-event.js';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {property} from '@polymer/decorators';
 import {GenericObject} from '../../../types/globals';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown.js';
-import {EtoolsUserModel} from "../../user/user-model";
+import {EtoolsUserModel} from '../../user/user-model';
+
+import {CountriesDropdownStyles} from './countries-dropdown-styles';
 
 /**
  * @polymer
  * @customElement
- * @mixinFunction
- * @appliesMixin EndpointsMixin
- * @appliesMixin EtoolsPageRefreshMixin
  */
-class CountriesDropdown extends connect(store)(EtoolsPageRefreshMixin(PolymerElement)) {
+class CountriesDropdown extends connect(store)(PolymerElement) {
 
     public static get template() {
         // main template
         // language=HTML
         return html`
-      <style>
-
-        *[hidden] {
-          display: none !important;
-        }
-
-        :host {
-          display: block;
-        }
-
-        :host(:hover) {
-          cursor: pointer;
-        }
-
-        etools-dropdown {
-          width: 160px;
-
-          --paper-listbox: {
-            max-height: 600px;
-          };
-
-          --esmm-icons: {
-            color: var(--header-color);
-            cursor: pointer;
-          };
-
-          --paper-input-container-underline: {
-            display: none;
-          };
-
-          --paper-input-container-underline-focus: {
-            display: none;
-          };
-
-          --paper-input-container-underline-disabled: {
-            display: none;
-          };
-
-          --paper-input-container-input: {
-            color: var(--header-color);
-            cursor: pointer;
-            min-height: 24px;
-            text-align: right;
-            line-height: 21px; /* for IE */
-          };
-
-          --paper-menu-button-dropdown: {
-            max-height: 380px;
-          };
-        }
-      </style>
+            ${CountriesDropdownStyles}
       <!-- shown options limit set to 250 as there are currently 195 countries in the UN council and about 230 total -->
       <etools-dropdown id="countrySelector"
                        selected="[[currentCountry.id]]"
@@ -88,6 +36,7 @@ class CountriesDropdown extends connect(store)(EtoolsPageRefreshMixin(PolymerEle
                        trigger-value-change-event
                        on-etools-selected-item-changed="_countrySelected"
                        shown-options-limit="250"
+                       hidden$="[[!countrySelectorVisible]]"
                        hide-search></etools-dropdown>
 
     `;
@@ -96,7 +45,7 @@ class CountriesDropdown extends connect(store)(EtoolsPageRefreshMixin(PolymerEle
     @property({type: Object})
     currentCountry: GenericObject = {};
 
-    @property({type: Array, observer: '_countrySelectorUpdate'})
+    @property({type: Array, observer: '_showCountrySelector'})
     countries: any[] = [];
 
     @property({type: Boolean})
@@ -116,10 +65,6 @@ class CountriesDropdown extends connect(store)(EtoolsPageRefreshMixin(PolymerEle
     }
 
     public stateChanged(state: RootState) {
-        // TODO: polymer 3 do what?
-        if (!state) {
-            return;
-        }
         this.userData = state.user!.data;
     }
 
@@ -173,7 +118,7 @@ class CountriesDropdown extends connect(store)(EtoolsPageRefreshMixin(PolymerEle
     //     this.refresh();
     // }
 
-    protected _countrySelectorUpdate(countries: any) {
+    protected _showCountrySelector(countries: any) {
         if (Array.isArray(countries) && (countries.length > 1)) {
             this.countrySelectorVisible = true;
         }
