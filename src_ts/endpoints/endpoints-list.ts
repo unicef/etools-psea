@@ -12,6 +12,9 @@ export interface EtoolsEndpoints {
 export const etoolsEndpoints: EtoolsEndpoints = {
   userProfile: {
     url: '/api/v3/users/profile/'
+  },
+  changeCountry: {
+    url: '/api/v3/users/changecountry/'
   }
   // agreements: {
   //   template: '/api/v2/agreements/',
