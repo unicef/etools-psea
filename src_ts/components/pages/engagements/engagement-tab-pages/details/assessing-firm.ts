@@ -1,19 +1,18 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element';
+import {LitElement, html, property} from 'lit-element';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-spinner/paper-spinner';
-import {property} from '@polymer/decorators';
-import {labelAndvalueStyles} from '../../../../styles/label-and-value-styles';
 import EtoolsAjaxRequestMixin from '@unicef-polymer/etools-ajax/etools-ajax-request-mixin';
 import {GenericObject} from '../../../../../types/globals';
-import {gridLayoutStyles} from '../../../../styles/grid-layout-styles';
-import {PaperInputElement} from '@polymer/paper-input/paper-input';
+import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
+import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
+
 
 /**
  * @customElement
  * @polymer
  */
-class AssessingFirm extends EtoolsAjaxRequestMixin(PolymerElement) {
-  static get template() {
+class AssessingFirm extends EtoolsAjaxRequestMixin(LitElement) {
+  render() {
     // language=HTML
     return html`
       <style>
@@ -21,19 +20,24 @@ class AssessingFirm extends EtoolsAjaxRequestMixin(PolymerElement) {
           max-width: 230px;
         }
       </style>
-      ${labelAndvalueStyles}${gridLayoutStyles}
-      <paper-input id="poNumber" label="Enter PO Number" always-float-label
-        class="input-width row-padding-v"
-        value="{{engagement.po_number}}"
-        allowed-pattern="[0-9]"
-        max-length=10
-        on-blur="_getFirmName">
-      </paper-input>
-      <div class="layout-vertical row-padding-v" hidden$="[[_hideFirmName(originalEngagement.firm_name, requestInProgress)]]">
+      ${labelAndvalueStylesLit}${gridLayoutStylesLit}
+      <div class="row-padding-v">
+        <paper-input id="poNumber" label="Enter PO Number" always-float-label
+          class="input-width"
+          .value="${this.engagement.po_number}"
+          @value-changed=${e => this._updateEngagementPoNumber(e.target.value)}
+          allowed-pattern="[0-9]"
+          max-length=10
+          ?invalid="${this.invalidPoNumber}"
+          error-message="PO number is incorrect"
+          @blur="${this._getFirmName}">
+        </paper-input>
+      </div>
+      <div class="layout-vertical row-padding-v" ?hidden="${this._hideFirmName(this.originalEngagement.firm_name, this.requestInProgress)}">
         <label class="paper-label">Firm Name</label>
-        <label class="input-label">
-        [[engagement.firm_name]]
-        <paper-spinner hidden$="[[!requestInProgress]]" active="[[requestInProgress]]"></paper-spinner>
+        <label class="input-label row-padding-v">
+          ${this.engagement.firm_name}
+          <paper-spinner ?hidden="${!this.requestInProgress}" ?active="${this.requestInProgress}"></paper-spinner>
         </label>
 
       </div>
@@ -50,8 +54,12 @@ class AssessingFirm extends EtoolsAjaxRequestMixin(PolymerElement) {
   @property({type: Boolean})
   requestInProgress: boolean = false;
 
+  @property({type: Boolean})
+  invalidPoNumber: boolean = false;
+
 
   _getFirmName() {
+
     if (!this._validatePONumber()) {
       return;
     }
@@ -67,13 +75,15 @@ class AssessingFirm extends EtoolsAjaxRequestMixin(PolymerElement) {
   _validatePONumber() {
     let poNumber = this.engagement.po_number;
     let valid = poNumber && poNumber.length === 10;
-    let poNumberElem = this.shadowRoot!.querySelector('#poNumber') as PaperInputElement;
-   // poNumberElem!.invalid = valid;
+    this.invalidPoNumber = !valid;
 
     return valid;
   }
+  _updateEngagementPoNumber(newVal: string) {
+    this.engagement.po_number = newVal;
+  }
 
-  _hideFirmName(firmName ,requestInProgress) {
+  _hideFirmName(firmName: string ,requestInProgress: boolean) {
     return !(firmName || requestInProgress);
   }
 
