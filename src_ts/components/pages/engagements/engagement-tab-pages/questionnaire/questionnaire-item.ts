@@ -3,10 +3,12 @@ import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import {GenericObject} from '../../../../../types/globals';
 import './question-editable-details';
+import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 
 class QuestionnaireItem extends LitElement {
   render() {
     return html`
+      ${gridLayoutStylesLit}
       <style>
         .description {
           margin-left: -24px;
@@ -19,6 +21,9 @@ class QuestionnaireItem extends LitElement {
       </style>
       <etools-content-panel panel-title="${this.item.title}" show-expand-btn>
         <div slot="panel-btns">
+          <paper-radio-button>
+            Positive
+          </paper-radio-button>
           <paper-icon-button
                 on-tap="_allowEdit"
                 icon="create">
@@ -27,8 +32,10 @@ class QuestionnaireItem extends LitElement {
         <div class="description">
           ${this.item.description}
         </div>
-        <question-editable-details>
-        </question-editable-details>
+        <div class="row-padding-v">
+          <question-editable-details>
+          </question-editable-details>
+        </div>
 
       </etools-content-panel>
     `;

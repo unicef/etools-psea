@@ -7,6 +7,7 @@ import '@polymer/paper-radio-group';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import {buttonsStylesLit} from '../../../../styles/button-styles-lit';
+import './question-attachments';
 
 class QuestionEditableDetails extends LitElement {
   render() {
@@ -22,13 +23,25 @@ class QuestionEditableDetails extends LitElement {
         paper-checkbox {
           padding-top: 6px;
         }
+        paper-radio-button.red {
+          --paper-radio-button-checked-color: red;
+          --paper-radio-button-unchecked-color: red;
+        }
+        paper-radio-button.orange {
+          --paper-radio-button-checked-color: orange;
+          --paper-radio-button-unchecked-color: orange;
+        }
+        paper-radio-button.green {
+          --paper-radio-button-checked-color: green;
+          --paper-radio-button-unchecked-color: green;
+        }
       </style>
       <div class="layout-vertical row-padding-v">
         <label class="paper-label">Rating</label>
         <paper-radio-group selected="{{item.rating}}">
-          <paper-radio-button class="move-left" name="negative">Negative</paper-radio-button>
-          <paper-radio-button name="firm">Neutral</paper-radio-button>
-          <paper-radio-button name="external">Positive</paper-radio-button>
+          <paper-radio-button class="move-left red" name="negative">Negative</paper-radio-button>
+          <paper-radio-button class="orange" name="firm">Neutral</paper-radio-button>
+          <paper-radio-button class="green" name="external">Positive</paper-radio-button>
         </paper-radio-group>
       </div>
       <paper-textarea label="Comments" always-float-label class="row-padding-v">
@@ -36,12 +49,15 @@ class QuestionEditableDetails extends LitElement {
       <div class="layout-vertical row-padding-v">
         <label class="paper-label">Proof of Evidence</label>
         <div class="layout-horizontal row-padding-v">
-          ${this.item.proof_of_evidence.map(m => html`
-            <paper-checkbox class="padd-right" ?checked="${m.checked}">${m.name}</paper-checkbox>
-            ${m.name.includes('Other') ? html`<paper-input label="Please specify other" always-float-label></paper-input>`:''}
-          `)}
+          ${this._getProofOfEvidenceTemplate(this.item.proof_of_evidence)}
         </div>
       </div>
+
+      <div class="row-padding-v">
+        <question-attachments>
+        </question-attachments>
+      </div>
+
       <div class="layout-horizontal right-align row-padding-v">
       <paper-button class="grey">
         Cancel
@@ -54,6 +70,19 @@ class QuestionEditableDetails extends LitElement {
   }
 
   @property({type: Object})
-  item: GenericObject ={proof_of_evidence:[{name: 'Code of conduct', checked: false}, {name:'Other', checked: false}]};
+  item: GenericObject ={proof_of_evidence:[{name: 'Code of conduct', checked: false}, {name: 'Actions ', checked: false}, {name:'Other', checked: false}]};
+
+  _getProofOfEvidenceTemplate(proofOfEvidence: []) {
+    return  proofOfEvidence.map((m, index) => {
+      if (m.name.toLowerCase().includes('other') && index+1 === proofOfEvidence.length) {
+        return html`<div class="layout-vertical">
+                      <paper-checkbox class="padd-right" ?checked="${m.checked}">${m.name}</paper-checkbox>
+                      <paper-input label="Please specify other" always-float-label></paper-input>
+                    </div>`;
+      } else {
+        return html`<paper-checkbox class="padd-right" ?checked="${m.checked}">${m.name}</paper-checkbox>`;
+      }
+    });
+ }
 }
 window.customElements.define('question-editable-details', QuestionEditableDetails);

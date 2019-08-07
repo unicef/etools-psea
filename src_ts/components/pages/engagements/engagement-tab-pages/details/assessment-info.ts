@@ -50,7 +50,6 @@ class AssessmentInfo extends LitElement {
 
         ${this._showPartnerDetails(this.selectedPartner)}
 
-
         <etools-dropdown label="UNICEF Focal Point"
           class="row-padding-v">
         </etools-dropdown>

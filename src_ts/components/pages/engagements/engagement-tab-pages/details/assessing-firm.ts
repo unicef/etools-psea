@@ -68,7 +68,7 @@ class AssessingFirm extends EtoolsAjaxRequestMixin(PolymerElement) {
     let poNumber = this.engagement.po_number;
     let valid = poNumber && poNumber.length === 10;
     let poNumberElem = this.shadowRoot!.querySelector('#poNumber') as PaperInputElement;
-    poNumberElem!.invalid = valid;
+   // poNumberElem!.invalid = valid;
 
     return valid;
   }
