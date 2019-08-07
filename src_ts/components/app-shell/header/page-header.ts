@@ -125,7 +125,7 @@ export class PageHeader extends connect(store)(LitElement) {
     }).catch(() => {
       this.showSaveNotification('Profile data not saved. Save profile error!');
     }).then(() => {
-      this.profileSaveLoadingMsgDisplay(false)
+      this.profileSaveLoadingMsgDisplay(false);
     });
   }
 

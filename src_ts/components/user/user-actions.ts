@@ -1,5 +1,5 @@
 import './etools-user';
-import {EtoolsUser} from "./etools-user";
+import {EtoolsUser} from './etools-user';
 
 const userEl = document.createElement('etools-user') as EtoolsUser;
 
@@ -14,4 +14,8 @@ export const updateCurrentUserData = (profile: any) => {
 
 export const changeCurrentUserCountry = (countryId: number) => {
   return userEl.changeCountry(countryId);
+  // .then(() => {
+  //   // refresh user data (no other way, country change req returns 204)
+  //   getCurrentUserData();
+  // });
 };

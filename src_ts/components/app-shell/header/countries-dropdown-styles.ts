@@ -1,7 +1,7 @@
 import {html} from 'lit-element';
 
 // language=HTML
-export const CountriesDropdownStyles = html`
+export const countriesDropdownStyles = html`
   <style>
 
     *[hidden] {

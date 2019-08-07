@@ -6,10 +6,10 @@ import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../redux/store';
 import {getEndpoint} from '../../endpoints/endpoints';
 import {GenericObject} from '../../types/globals';
-import {updateUserData} from "../../redux/actions/user";
-import {fireEvent} from '../utils/fire-custom-event';
+import {updateUserData} from '../../redux/actions/user';
 
 const PROFILE_ENDPOINT = 'userProfile';
+const CHANGE_COUNTRY_ENDPOINT = 'changeCountry';
 
 /**
  * @customElement
@@ -22,6 +22,7 @@ export class EtoolsUser extends connect(store)(EtoolsAjaxRequestMixin(PolymerEle
   userData: EtoolsUserModel | null = null;
 
   private profileEndpoint = getEndpoint(PROFILE_ENDPOINT);
+  private changeCountryEndpoint = getEndpoint(CHANGE_COUNTRY_ENDPOINT);
 
   public stateChanged(state: RootState) {
     this.userData = state.user!.data;
@@ -39,7 +40,11 @@ export class EtoolsUser extends connect(store)(EtoolsAjaxRequestMixin(PolymerEle
   }
 
   public updateUserData(profile: GenericObject) {
-    return this.sendRequest({endpoint: this.profileEndpoint, data: profile}).then((response: GenericObject) => {
+    return this.sendRequest({
+      method: 'PATCH',
+      endpoint: this.profileEndpoint,
+      body: profile
+    }).then((response: GenericObject) => {
       store.dispatch(updateUserData(response));
     }).catch((error: GenericObject) => {
       console.error('[EtoolsUser]: updateUserData req error ', error);
@@ -47,8 +52,15 @@ export class EtoolsUser extends connect(store)(EtoolsAjaxRequestMixin(PolymerEle
     });
   }
 
-  public changeCountry(countryId): number {
-
+  public changeCountry(countryId: number) {
+    return this.sendRequest({
+      method: 'POST',
+      endpoint: this.changeCountryEndpoint,
+      body: {country: countryId}
+    }).catch((error: GenericObject) => {
+      console.error('[EtoolsUser]: updateUserData req error ', error);
+      throw error;
+    });
   }
 
 }
