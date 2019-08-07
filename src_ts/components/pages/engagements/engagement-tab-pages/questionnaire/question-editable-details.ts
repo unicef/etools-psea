@@ -15,7 +15,7 @@ class QuestionEditableDetails extends LitElement {
       ${gridLayoutStylesLit}${labelAndvalueStylesLit}${buttonsStylesLit}
       <style>
         .padd-right {
-          padding-right: 16px;
+          padding-right: 24px;
         }
         .move-left {
           margin-left: -12px;
@@ -24,16 +24,16 @@ class QuestionEditableDetails extends LitElement {
           padding-top: 6px;
         }
         paper-radio-button.red {
-          --paper-radio-button-checked-color: red;
-          --paper-radio-button-unchecked-color: red;
+          --paper-radio-button-checked-color: var(--primary-shade-of-red);
+          --paper-radio-button-unchecked-color: var(--primary-shade-of-red);
         }
         paper-radio-button.orange {
           --paper-radio-button-checked-color: orange;
           --paper-radio-button-unchecked-color: orange;
         }
         paper-radio-button.green {
-          --paper-radio-button-checked-color: green;
-          --paper-radio-button-unchecked-color: green;
+          --paper-radio-button-checked-color: var(--primary-shade-of-green);
+          --paper-radio-button-unchecked-color: var(--primary-shade-of-green);
         }
       </style>
       <div class="layout-vertical row-padding-v">
@@ -77,7 +77,9 @@ class QuestionEditableDetails extends LitElement {
       if (m.name.toLowerCase().includes('other') && index+1 === proofOfEvidence.length) {
         return html`<div class="layout-vertical">
                       <paper-checkbox class="padd-right" ?checked="${m.checked}">${m.name}</paper-checkbox>
-                      <paper-input label="Please specify other" always-float-label></paper-input>
+                      <div class="row-padding-v">
+                        <paper-input label="Please specify other" always-float-label></paper-input>
+                      </div>
                     </div>`;
       } else {
         return html`<paper-checkbox class="padd-right" ?checked="${m.checked}">${m.name}</paper-checkbox>`;

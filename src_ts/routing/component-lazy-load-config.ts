@@ -17,6 +17,10 @@ export const componentsLazyLoadConfig: RoutesLazyLoadComponentsPath = {
     'components/pages/engagements/engagement-tabs.js',
     'components/pages/engagements/engagement-tab-pages/questionnaire/engagement-questionnaire-page.js'
   ],
+  'engagements_followup': [
+    'components/pages/engagements/engagement-tabs.js',
+    'components/pages/engagements/engagement-tab-pages/follow-up/follow-up-page'
+  ],
   'page-not-found': [
     'components/pages/page-not-found.js'
   ],

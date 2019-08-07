@@ -55,7 +55,7 @@ class EngagementTabs extends connect(store)(PolymerElement) {
           <engagement-questionnaire-page></engagement-questionnaire-page>
         </template>
         <template is="dom-if" if="[[isActiveTab(activeTab, 'followup')]]">
-          <engagement-follow-up></engagement-follow-up>
+          <follow-up-page></follow-up-page>
         </template>
       </section>
     `;

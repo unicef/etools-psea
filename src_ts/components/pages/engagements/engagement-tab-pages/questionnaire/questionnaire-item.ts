@@ -16,6 +16,7 @@ class QuestionnaireItem extends LitElement {
           margin-top: -8px;
           margin-bottom: 8px;
           padding: 16px 24px;
+          font-size: 16px;
           background-color: var(--secondary-background-color);
         }
       </style>

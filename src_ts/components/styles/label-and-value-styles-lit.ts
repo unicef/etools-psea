@@ -16,6 +16,7 @@ export const labelAndvalueStylesLit = html`
       padding-top: 4px;
       padding-bottom: 4px;
       min-width: 0;
+      font-size: 16px;
     }
 
     .input-label[empty]::after {

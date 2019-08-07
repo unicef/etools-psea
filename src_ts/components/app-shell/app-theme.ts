@@ -27,6 +27,8 @@ documentContainer.innerHTML = `
         --side-bar-scrolling: visible;
 
         --success-color: #72c300;
+        --primary-shade-of-green: #1A9251;
+        --primary-shade-of-red: #E32526;
 
         --epc-header: {
           background-color: var( --primary-background-color);

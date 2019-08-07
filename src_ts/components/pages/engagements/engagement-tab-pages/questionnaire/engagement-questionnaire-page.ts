@@ -1,43 +1,45 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element.js';
+import {LitElement, html} from 'lit-element';
 import './questionnaire-item';
+import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 
 /**
  * @customElement
- * @polymer
  */
-class EngagementQuestionnairePage extends PolymerElement {
+class EngagementQuestionnairePage extends LitElement {
 
-  static get template() {
+  render() {
     // language=HTML
     return html`
+      ${gridLayoutStylesLit}
       <style>
         :host {
           display: block;
           background-color: var(--secondary-background-color);
         }
         .overall {
-          padding: 24px 0;
+          padding: 16px 0;
           margin-bottom: 32px;
-          font-size: 22px;
-          font-weight: 600;
+          font-size: 24px;
           color: white;
-          text-align: center;
-          background-color: green;
+          background-color: var(--primary-shade-of-green);
           box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
                     0 1px 5px 0 rgba(0, 0, 0, 0.12),
                     0 3px 1px -2px rgba(0, 0, 0, 0.2);
         }
+        .r-align {
+          text-align: right;
+        }
+        .l-align {
+          text-align: left;
+        }
       </style>
 
-      <div class="overall" elevation="1">
-        Overall Assessment: Positive
+      <div class="overall layout-horizontal">
+        <div class="col-5 r-align">Overall Assessment:</div><div class="col-1"></div>
+        <div class="col-6 l-align"> Positive</div>
       </div>
       <questionnaire-item></questionnaire-item>
     `;
-  }
-
-  static get properties() {
-    return {};
   }
 
   constructor() {
