@@ -127,11 +127,6 @@ export class CountriesDropdown extends connect(store)(LitElement) {
     });
   }
 
-  // protected _handleResponse() {
-  //     fireEvent(this, 'update-main-path', {path: 'partners'});
-  //     this.refresh();
-  // }
-
   protected handleCountryChangeError(error: any) {
     logError('Country change failed!', 'countries-dropdown', error);
     this.countryDropdown.set('selected', this.currentCountry.id);
