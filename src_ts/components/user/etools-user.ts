@@ -21,52 +21,34 @@ export class EtoolsUser extends connect(store)(EtoolsAjaxRequestMixin(PolymerEle
   @property({type: Object, notify: true})
   userData: EtoolsUserModel | null = null;
 
-  @property({type: Boolean})
-  _saveActionInProgress: boolean = false;
-
-  @property({type: String})
-  profileSaveLoadingMsgSource: string = 'profile-modal';
-
   private profileEndpoint = getEndpoint(PROFILE_ENDPOINT);
 
   public stateChanged(state: RootState) {
     this.userData = state.user!.data;
-    console.log('[EtoolsUser]: store user data', state.user!.data);
+    console.log('[EtoolsUser]: store user data received', state.user!.data);
   }
 
   public getUserData() {
-    this.sendRequest({endpoint: this.profileEndpoint}).then((response: GenericObject) => {
+    return this.sendRequest({endpoint: this.profileEndpoint}).then((response: GenericObject) => {
       // console.log('response', response);
       store.dispatch(updateUserData(response));
     }).catch((error: GenericObject) => {
-      console.error('error', error);
+      console.error('[EtoolsUser]: getUserData req error...', error);
+      throw error;
     });
   }
 
   public updateUserData(profile: GenericObject) {
-
-    this.sendRequest({endpoint: this.profileEndpoint, data: profile}).then((response: GenericObject) => {
-      // console.log('response', response);
-      this._handleResponse(response);
-
+    return this.sendRequest({endpoint: this.profileEndpoint, data: profile}).then((response: GenericObject) => {
+      store.dispatch(updateUserData(response));
     }).catch((error: GenericObject) => {
-      console.error('error', error);
+      console.error('[EtoolsUser]: updateUserData req error ', error);
+      throw error;
     });
   }
 
-  protected _handleResponse(response: any) {
-    store.dispatch(updateUserData(response));
-    this._hideProfileSaveLoadingMsg();
-  }
+  public changeCountry(countryId): number {
 
-  protected _hideProfileSaveLoadingMsg() {
-    if (this._saveActionInProgress) {
-      fireEvent(this, 'global-loading', {
-        active: false,
-        loadingSource: this.profileSaveLoadingMsgSource
-      });
-      this.set('_saveActionInProgress', false);
-    }
   }
 
 }

@@ -116,13 +116,31 @@ export class PageHeader extends connect(store)(LitElement) {
     const modifiedFields = this._getModifiedFields(this.profile, e.detail.profile);
     if (isEmptyObject(modifiedFields)) {
       // empty profile means no changes found
-      fireEvent(this, 'toast', {
-        text: 'All changes are saved.',
-        showCloseBtn: false
-      });
+      this.showSaveNotification();
       return;
     }
-    updateCurrentUserData(modifiedFields);
+    this.profileSaveLoadingMsgDisplay();
+    updateCurrentUserData(modifiedFields).then(() => {
+      this.showSaveNotification();
+    }).catch(() => {
+      this.showSaveNotification('Profile data not saved. Save profile error!');
+    }).then(() => {
+      this.profileSaveLoadingMsgDisplay(false)
+    });
+  }
+
+  protected profileSaveLoadingMsgDisplay(show: boolean = true) {
+    fireEvent(this, 'global-loading', {
+      active: show,
+      loadingSource: 'profile-save'
+    });
+  }
+
+  protected showSaveNotification(msg?: string) {
+    fireEvent(this, 'toast', {
+      text: msg ? msg : 'All changes are saved.',
+      showCloseBtn: false
+    });
   }
 
   protected _getModifiedFields(originalData: any, newData: any) {

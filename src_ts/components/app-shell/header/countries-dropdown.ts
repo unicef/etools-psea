@@ -16,6 +16,7 @@ import {CountriesDropdownStyles} from './countries-dropdown-styles';
  * @LitElement
  * @customElement
  */
+@customElement('countries-dropdown')
 class CountriesDropdown extends connect(store)(LitElement) {
 
   public render() {
@@ -33,7 +34,7 @@ class CountriesDropdown extends connect(store)(LitElement) {
                        .optionLabel="name"
                        .optionValue="id"
                        trigger-value-change-event
-                       @etools-selected-item-changed="${this._countrySelected}"
+                       @etools-selected-item-changed="${this.countrySelected}"
                        shown-options-limit="250"
                        ?hidden="${!this.countrySelectorVisible}"
                        hide-search></etools-dropdown>
@@ -44,17 +45,16 @@ class CountriesDropdown extends connect(store)(LitElement) {
   @property({type: Object})
   currentCountry: GenericObject = {};
 
-  @property({type: Array, observer: '_showCountrySelector'})
+  @property({type: Array})
   countries: any[] = [];
 
   @property({type: Boolean})
   countrySelectorVisible: boolean = false;
 
-  @property({type: Object, observer: 'userDataChanged'})
+  @property({type: Object})
   userData!: EtoolsUserModel;
 
   public connectedCallback() {
-
     super.connectedCallback();
 
     setTimeout(() => {
@@ -64,42 +64,49 @@ class CountriesDropdown extends connect(store)(LitElement) {
   }
 
   public stateChanged(state: RootState) {
-    this.userData = state.user!.data;
+    if (!state.user || !state.user.data || JSON.stringify(this.userData) === JSON.stringify(state.user.data)) {
+      return;
+    }
+    this.userData = state.user.data;
+    this.userDataChanged(this.userData);
   }
 
   userDataChanged(userData) {
     if (userData) {
       this.countries = userData.countries_available;
       this.currentCountry = userData.country;
+
+      this.showCountrySelector(this.countries);
     }
 
   }
 
-  protected _countrySelected(e: any) {
+  protected showCountrySelector(countries: any) {
+    if (Array.isArray(countries) && (countries.length > 1)) {
+      this.countrySelectorVisible = true;
+    }
+  }
+
+  protected countrySelected(e: CustomEvent) {
     if (!e.detail.selectedItem) {
       return;
     }
 
     const selectedCountryId = parseInt(e.detail.selectedItem.id, 10);
-    const selectedCountry = e.detail.selectedItem;
-
 
     if (selectedCountryId !== this.currentCountry.id) {
-      // send post request to change_coutry endpoint
-      // this._triggerCountryChangeRequest(selectedCountryId);
-      this._triggerCountryChangeRequest(selectedCountry);
+      // send post request to change_country endpoint
+      this.triggerCountryChangeRequest(selectedCountryId);
     }
   }
 
-  protected _triggerCountryChangeRequest(selectedCountry: any) {
-    const self = this;
+  protected triggerCountryChangeRequest(selectedCountryId: any) {
     fireEvent(this, 'global-loading', {
       message: 'Please wait while country data is changing...',
       active: true,
       loadingSource: 'country-change'
     });
 
-    this.currentCountry = selectedCountry;
 
     // this.sendRequest({
     //     endpoint: this.getEndpoint('changeCountry'),
@@ -117,12 +124,6 @@ class CountriesDropdown extends connect(store)(LitElement) {
   //     this.refresh();
   // }
 
-  protected _showCountrySelector(countries: any) {
-    if (Array.isArray(countries) && (countries.length > 1)) {
-      this.countrySelectorVisible = true;
-    }
-  }
-
   protected _handleError(error: any) {
     logError('Country change failed!', 'countries-dropdown', error);
     (this.$.countrySelector as EtoolsDropdownEl).set('selected', this.currentCountry.id);
@@ -131,5 +132,3 @@ class CountriesDropdown extends connect(store)(LitElement) {
   }
 
 }
-
-window.customElements.define('countries-dropdown', CountriesDropdown);
