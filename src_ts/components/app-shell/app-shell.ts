@@ -138,6 +138,8 @@ export class AppShell extends connect(store)(LitElement) {
     } else {
       this.smallMenu = !!parseInt(menuTypeStoredVal, 10);
     }
+
+    getCurrentUserData();
   }
 
   public connectedCallback() {
@@ -147,9 +149,6 @@ export class AppShell extends connect(store)(LitElement) {
       navigate(decodeURIComponent(location.pathname + location.search))));
     installMediaQueryWatcher(`(min-width: 460px)`,
       () => store.dispatch(updateDrawerState(false)));
-
-    // TODO: just testing...
-    getCurrentUserData();
   }
 
   public disconnectedCallback() {
