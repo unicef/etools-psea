@@ -6,7 +6,7 @@ import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-
 
 /**
  * @customElement
- * @polymer
+ * @LitElement
  */
 class PartnerDetails extends LitElement {
   render() {

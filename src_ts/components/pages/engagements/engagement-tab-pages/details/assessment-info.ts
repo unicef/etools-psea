@@ -15,7 +15,7 @@ import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 
 /**
  * @customElement
- * @polymer
+ * @LitElement
  */
 class AssessmentInfo extends LitElement {
 

@@ -10,7 +10,7 @@ import {PaperInputElement} from '@polymer/paper-input/paper-input';
 
 /**
  * @customElement
- * @polymer
+ * @LitElement
  */
 class AssessingFirm extends EtoolsAjaxRequestMixin(LitElement) {
   render() {

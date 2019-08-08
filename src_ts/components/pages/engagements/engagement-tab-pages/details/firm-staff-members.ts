@@ -1,20 +1,25 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element';
-import {property} from '@polymer/decorators';
 import {GenericObject} from '../../../../../types/globals';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
+import {LitElement, html, property} from 'lit-element';
+import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 
 /**
  * @customElement
- * @polymer
+ * @LitElement
  */
-class FirmStaffMembers extends PolymerElement {
+class FirmStaffMembers extends LitElement {
 
-  static get template() {
+  render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="../../../../../../node_modules/@material/data-table/dist/mdc.data-table.css">
+      ${gridLayoutStylesLit}
       <style>
         :host {
           display: block;
+          --ecp-content: {
+            padding: 0 0;
+          }
         }
       </style>
       <etools-content-panel panel-title="Firm Staff Members with Access">
@@ -24,6 +29,39 @@ class FirmStaffMembers extends PolymerElement {
                 icon="add">
           </paper-icon-button>
         </div>
+
+        <div class="mdc-data-table w100">
+  <table class="mdc-data-table__table" aria-label="Dessert calories">
+    <thead>
+      <tr class="mdc-data-table__header-row">
+        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Dessert</th>
+        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Carbs (g)</th>
+        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Protein (g)</th>
+        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Comments</th>
+      </tr>
+    </thead>
+    <tbody class="mdc-data-table__content">
+      <tr class="mdc-data-table__row">
+        <td class="mdc-data-table__cell">Frozen yogurt</td>
+        <td class="mdc-data-table__cell mdc-data-table__cell--numeric">24</td>
+        <td class="mdc-data-table__cell mdc-data-table__cell--numeric">4.0</td>
+        <td class="mdc-data-table__cell">Super tasty</td>
+      </tr>
+      <tr class="mdc-data-table__row">
+        <td class="mdc-data-table__cell">Ice cream sandwich</td>
+        <td class="mdc-data-table__cell mdc-data-table__cell--numeric">37</td>
+        <td class="mdc-data-table__cell mdc-data-table__cell--numeric">4.3</td>
+        <td class="mdc-data-table__cell">I like ice cream more</td>
+      </tr>
+      <tr class="mdc-data-table__row">
+        <td class="mdc-data-table__cell">Eclair</td>
+        <td class="mdc-data-table__cell mdc-data-table__cell--numeric">24</td>
+        <td class="mdc-data-table__cell mdc-data-table__cell--numeric">6.0</td>
+        <td class="mdc-data-table__cell">New filing flavor</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
       </etools-content-panel>
     `;
   }

@@ -35,6 +35,9 @@ class QuestionEditableDetails extends LitElement {
           --paper-radio-button-checked-color: var(--primary-shade-of-green);
           --paper-radio-button-unchecked-color: var(--primary-shade-of-green);
         }
+        .extra-padd {
+          padding-top: 24px;
+        }
       </style>
       <div class="layout-vertical row-padding-v">
         <label class="paper-label">Rating</label>
@@ -53,7 +56,7 @@ class QuestionEditableDetails extends LitElement {
         </div>
       </div>
 
-      <div class="row-padding-v">
+      <div class="row-padding-v extra-padd">
         <question-attachments>
         </question-attachments>
       </div>
