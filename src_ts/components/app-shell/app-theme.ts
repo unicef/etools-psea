@@ -9,10 +9,10 @@ documentContainer.innerHTML = `
         --primary-color: #0099ff;
         --primary-background-color: #FFFFFF;
         --secondary-background-color: #eeeeee;
-
+  
         --primary-text-color: rgba(0, 0, 0, 0.87);
         --secondary-text-color: rgba(0, 0, 0, 0.54);
-
+        
         --header-color: #ffffff;
         --header-bg-color: var(--primary-color);
         --nonprod-header-color: #233944;
@@ -23,9 +23,9 @@ documentContainer.innerHTML = `
 
         --dark-icon-color: rgba(0, 0, 0, 0.65);
         --light-icon-color: rgba(255, 255, 255, 1);
-
+        
         --side-bar-scrolling: visible;
-
+        
         --success-color: #72c300;
         --primary-shade-of-green: #1A9251;
         --primary-shade-of-red: #E32526;
@@ -48,6 +48,10 @@ documentContainer.innerHTML = `
         --paper-radio-button-checked-color: var(--primary-color);
         --paper-radio-button-unchecked-color: var(--secondary-text-color);
 
+        --esmm-external-wrapper: {
+          width: 100%;
+          margin: 0;
+        };
       }
     </style>
   </custom-style>`;
