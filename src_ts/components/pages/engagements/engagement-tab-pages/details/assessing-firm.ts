@@ -5,6 +5,7 @@ import EtoolsAjaxRequestMixin from '@unicef-polymer/etools-ajax/etools-ajax-requ
 import {GenericObject} from '../../../../../types/globals';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
+import {PaperInputElement} from '@polymer/paper-input/paper-input';
 
 
 /**
@@ -28,7 +29,6 @@ class AssessingFirm extends EtoolsAjaxRequestMixin(LitElement) {
           @value-changed=${e => this._updateEngagementPoNumber(e.target.value)}
           allowed-pattern="[0-9]"
           max-length=10
-          ?invalid="${this.invalidPoNumber}"
           error-message="PO number is incorrect"
           @blur="${this._getFirmName}">
         </paper-input>
@@ -54,9 +54,6 @@ class AssessingFirm extends EtoolsAjaxRequestMixin(LitElement) {
   @property({type: Boolean})
   requestInProgress: boolean = false;
 
-  @property({type: Boolean})
-  invalidPoNumber: boolean = false;
-
 
   _getFirmName() {
 
@@ -75,7 +72,10 @@ class AssessingFirm extends EtoolsAjaxRequestMixin(LitElement) {
   _validatePONumber() {
     let poNumber = this.engagement.po_number;
     let valid = poNumber && poNumber.length === 10;
-    this.invalidPoNumber = !valid;
+    let poNumberElem = this.shadowRoot!.querySelector('#poNumber') as PaperInputElement;
+    if (poNumberElem) {
+      poNumberElem.invalid = !valid;
+    }
 
     return valid;
   }
