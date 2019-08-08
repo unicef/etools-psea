@@ -49,14 +49,14 @@ export class EngagementTabs extends connect(store)(LitElement) {
                      @iron-select="${this.handleTabChange}"></etools-tabs>
       </page-content-header>
       
-      <section class="elevation page-content" elevation="1">
+      <div class="page-content">
         ${this.isActiveTab(this.activeTab, 
         'details') ? html`<engagement-details-page></engagement-details-page>` : ''}
         ${this.isActiveTab(this.activeTab,
         'questionnaire') ? html`<engagement-questionnaire-page></engagement-questionnaire-page>` : ''}
         ${this.isActiveTab(this.activeTab,
       'followup') ? html`<follow-up-page></follow-up-page>` : ''}
-      </section>
+      </div>
     `;
   }
 
