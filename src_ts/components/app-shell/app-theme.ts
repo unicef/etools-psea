@@ -33,12 +33,11 @@ documentContainer.innerHTML = `
         --epc-header: {
           background-color: var( --primary-background-color);
           border-bottom: 1px groove var(--dark-divider-color);
-          @apply --layout-start-justified;
         }
-        --epc-header_-_border-bottom-style: groove;
         --epc-header-color: var(--primary-text-color);
         --ecp-header-title: {
           padding: 0 0;
+          text-align: left;
         }
         --paper-input-container-label: {
           font-weight: 600;
@@ -48,6 +47,7 @@ documentContainer.innerHTML = `
         --paper-checkbox-unchecked-color: var(--secondary-text-color);
         --paper-radio-button-checked-color: var(--primary-color);
         --paper-radio-button-unchecked-color: var(--secondary-text-color);
+
       }
     </style>
   </custom-style>`;
