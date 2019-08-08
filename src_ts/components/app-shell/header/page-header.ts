@@ -2,11 +2,12 @@ import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/app-layout/app-toolbar/app-toolbar';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@unicef-polymer/etools-app-selector/etools-app-selector';
-import '@unicef-polymer/etools-profile-dropdown/etools-profile-dropdown';
+
 import {customElement, LitElement, html, property} from 'lit-element';
 
 import '../../common/layout/support-btn';
 import './countries-dropdown';
+import '@unicef-polymer/etools-profile-dropdown/etools-profile-dropdown';
 
 import {connect} from 'pwa-helpers/connect-mixin.js';
 import {RootState, store} from '../../../redux/store';
@@ -31,14 +32,14 @@ export class PageHeader extends connect(store)(LitElement) {
   public render() {
     // main template
     // language=HTML
-    return html`  
-      ${pageHeaderStyles}      
+    return html`
+      ${pageHeaderStyles}
       <style>
         app-toolbar {
           background-color: ${this.headerColor};
         }
       </style>
-      
+
       <app-toolbar sticky class="content-align">
         <paper-icon-button id="menuButton" icon="menu" @tap="${() => this.menuBtnClicked()}"></paper-icon-button>
         <div class="titlebar content-align">
@@ -49,7 +50,7 @@ export class PageHeader extends connect(store)(LitElement) {
         <div class="content-align">
           <countries-dropdown></countries-dropdown>
 
-          <support-btn></support-btn> 
+          <support-btn></support-btn>
 
           <etools-profile-dropdown
               .sections="${this.profileDrSections}"

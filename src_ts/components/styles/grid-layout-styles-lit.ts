@@ -33,6 +33,13 @@ export const gridLayoutStylesLit = html`
       padding-bottom: 6px;
     }
 
+    .space-between {
+      justify-content: space-between;
+    }
+    .align-items-center {
+      align-items: center;
+    }
+
     .row-h {
       @apply --layout-horizontal;
     }
