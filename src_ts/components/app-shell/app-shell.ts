@@ -60,11 +60,11 @@ export class AppShell extends connect(store)(LitElement) {
     // language=HTML
     return html`
     ${AppShellStyles}
-   
+
     <app-drawer-layout id="layout" responsive-width="850px"
                        fullbleed ?narrow="${this.narrow}" ?small-menu="${this.smallMenu}">
       <!-- Drawer content -->
-      <app-drawer id="drawer" slot="drawer" transition-duration="350" 
+      <app-drawer id="drawer" slot="drawer" transition-duration="350"
                   @app-drawer-transitioned="${this.onDrawerToggle}"
                   ?opened="${this.drawerOpened}"
                   ?swipe-open="${this.narrow}" ?small-menu="${this.smallMenu}">
@@ -83,10 +83,10 @@ export class AppShell extends connect(store)(LitElement) {
 
         <!-- Main content -->
         <main role="main" class="main-content">
-          <engagements-list class="page" 
+          <engagements-list class="page"
               ?active="${this.isActivePage(this.mainPage, 'engagements', this.subPage, 'list')}"></engagements-list>
-          <engagement-tabs class="page" 
-              ?active="${this.isActivePage(this.mainPage, 'engagements', this.subPage, 'details|questionnaire')}">
+          <engagement-tabs class="page"
+              ?active="${this.isActivePage(this.mainPage, 'engagements', this.subPage, 'details|questionnaire|followup')}">
           </engagement-tabs>
           <page-two class="page" ?active="${this.isActivePage(this.mainPage, 'page-two')}"></page-two>
           <page-not-found class="page" ?active="${this.isActivePage(this.mainPage, 'page-not-found')}"></page-not-found>
