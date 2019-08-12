@@ -13,5 +13,9 @@ export const pageLayoutStyles = html`
     .page-content.filters {
       padding: 8px 24px;
     }
+
+    .page-content.no-padding {
+      padding: 0;
+    }
   </style>
 `;
