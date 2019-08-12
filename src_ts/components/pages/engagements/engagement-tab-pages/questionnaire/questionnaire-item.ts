@@ -5,11 +5,12 @@ import {GenericObject} from '../../../../../types/globals';
 import './question-editable-details';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
+import {radioButtonStyles} from '../../../../styles/radio-button-styles';
 
 class QuestionnaireItem extends LitElement {
   render() {
     return html`
-      ${SharedStylesLit}${gridLayoutStylesLit}
+      ${SharedStylesLit}${gridLayoutStylesLit}${radioButtonStyles}
       <style>
         .description {
           margin-left: -24px;
@@ -23,7 +24,7 @@ class QuestionnaireItem extends LitElement {
       </style>
       <etools-content-panel panel-title="${this.item.title}" show-expand-btn>
         <div slot="panel-btns">
-          <paper-radio-button>
+          <paper-radio-button class="${this._getRadioBtnClass()}">
             Positive
           </paper-radio-button>
           <paper-icon-button
@@ -56,5 +57,9 @@ class QuestionnaireItem extends LitElement {
     organizational policies related to PSEA (e.g. code of
     conduct)?`};
 
+    _getRadioBtnClass() {
+      //TODO
+      return 'green';
+    }
 }
 window.customElements.define('questionnaire-item', QuestionnaireItem);

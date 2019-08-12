@@ -9,11 +9,13 @@ import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-
 import {buttonsStylesLit} from '../../../../styles/button-styles-lit';
 import './question-attachments';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
+import {radioButtonStyles} from '../../../../styles/radio-button-styles';
 
 class QuestionEditableDetails extends LitElement {
   render() {
     return html`
       ${SharedStylesLit}${gridLayoutStylesLit}${labelAndvalueStylesLit}${buttonsStylesLit}
+      ${radioButtonStyles}
       <style>
         .padd-right {
           padding-right: 24px;
@@ -23,18 +25,6 @@ class QuestionEditableDetails extends LitElement {
         }
         paper-checkbox {
           padding-top: 6px;
-        }
-        paper-radio-button.red {
-          --paper-radio-button-checked-color: var(--primary-shade-of-red);
-          --paper-radio-button-unchecked-color: var(--primary-shade-of-red);
-        }
-        paper-radio-button.orange {
-          --paper-radio-button-checked-color: orange;
-          --paper-radio-button-unchecked-color: orange;
-        }
-        paper-radio-button.green {
-          --paper-radio-button-checked-color: var(--primary-shade-of-green);
-          --paper-radio-button-unchecked-color: var(--primary-shade-of-green);
         }
         .extra-padd {
           padding-top: 24px;
