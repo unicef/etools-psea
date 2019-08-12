@@ -25,6 +25,7 @@ class AssessorInfo extends LitElement {
         :host {
           display: block;
           margin-bottom: 24px;
+          font-size: 16px;
         }
 
       </style>
@@ -68,7 +69,7 @@ class AssessorInfo extends LitElement {
     switch(assessorType) {
       case 'staff':
         return html`
-         <unicef-staff-assessor></unicef-staff-assessor>
+          <unicef-staff-assessor></unicef-staff-assessor>
         `;
       case 'firm':
         return html`

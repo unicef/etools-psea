@@ -8,11 +8,12 @@ import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import {buttonsStylesLit} from '../../../../styles/button-styles-lit';
 import './question-attachments';
+import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 
 class QuestionEditableDetails extends LitElement {
   render() {
     return html`
-      ${gridLayoutStylesLit}${labelAndvalueStylesLit}${buttonsStylesLit}
+      ${SharedStylesLit}${gridLayoutStylesLit}${labelAndvalueStylesLit}${buttonsStylesLit}
       <style>
         .padd-right {
           padding-right: 24px;
