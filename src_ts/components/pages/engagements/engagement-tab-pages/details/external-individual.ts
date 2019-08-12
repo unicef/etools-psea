@@ -1,20 +1,19 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element';
-import {property} from '@polymer/decorators';
 import '@unicef-polymer/etools-dropdown/etools-dropdown';
-import {labelAndvalueStyles} from '../../../../styles/label-and-value-styles';
-import {SharedStyles} from '../../../../styles/shared-styles';
-import {gridLayoutStyles} from '../../../../styles/grid-layout-styles';
+import {LitElement, html} from 'lit-element';
+import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
+import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
+import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 
 /**
  * @customElement
  * @polymer
  */
-class ExternalIndividual extends PolymerElement {
-  static get template() {
+class ExternalIndividual extends LitElement {
+  render() {
     // language=HTML
     return html`
       <style></style>
-      ${labelAndvalueStyles}${SharedStyles}${gridLayoutStyles}
+      ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
       <div class="row-padding-v">
         <etools-dropdown label="Select External Individual">
         </etools-dropdown>
