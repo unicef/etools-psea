@@ -1,5 +1,4 @@
 import {PolymerElement, html} from '@polymer/polymer/polymer-element';
-import {property} from '@polymer/decorators';
 import '@unicef-polymer/etools-dropdown/etools-dropdown';
 import {gridLayoutStyles} from '../../../../styles/grid-layout-styles';
 
@@ -22,5 +21,5 @@ class UnicefStaffAssessor extends PolymerElement {
 
 }
 
-window.customElements.define('unicef-staff-assessor', UnicefStaffAssessor)
+window.customElements.define('unicef-staff-assessor', UnicefStaffAssessor);
 

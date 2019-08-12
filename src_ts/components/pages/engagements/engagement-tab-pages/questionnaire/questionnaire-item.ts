@@ -43,9 +43,9 @@ class QuestionnaireItem extends LitElement {
   }
 
   @property({type: Object})
-  item: GenericObject = {title:'An organizational policy exists (as part of code of conduct'+
+  item: GenericObject = {title: 'An organizational policy exists (as part of code of conduct'+
     'and/or a comprehensive SEA policy) and is signed by all'+
-    'personnel.', description:'Do organizational policies include: A) a clear'+
+    'personnel.', description: 'Do organizational policies include: A) a clear'+
     'definition of SEA; B) a clear description of behaviour'+
     'expected of personnel (incorporating the IASC’s Six'+
     'Core Principles Relating to SEA) and; C) an explicit'+

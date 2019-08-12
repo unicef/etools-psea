@@ -33,7 +33,8 @@ class AssessingFirm extends EtoolsAjaxRequestMixin(LitElement) {
           @blur="${this._getFirmName}">
         </paper-input>
       </div>
-      <div class="layout-vertical row-padding-v" ?hidden="${this._hideFirmName(this.originalEngagement.firm_name, this.requestInProgress)}">
+      <div class="layout-vertical row-padding-v" 
+          ?hidden="${this._hideFirmName(this.originalEngagement.firm_name, this.requestInProgress)}">
         <label class="paper-label">Firm Name</label>
         <label class="input-label row-padding-v">
           ${this.engagement.firm_name}
@@ -70,9 +71,9 @@ class AssessingFirm extends EtoolsAjaxRequestMixin(LitElement) {
   }
 
   _validatePONumber() {
-    let poNumber = this.engagement.po_number;
-    let valid = poNumber && poNumber.length === 10;
-    let poNumberElem = this.shadowRoot!.querySelector('#poNumber') as PaperInputElement;
+    const poNumber = this.engagement.po_number;
+    const valid = poNumber && poNumber.length === 10;
+    const poNumberElem = this.shadowRoot!.querySelector('#poNumber') as PaperInputElement;
     if (poNumberElem) {
       poNumberElem.invalid = !valid;
     }
@@ -83,7 +84,7 @@ class AssessingFirm extends EtoolsAjaxRequestMixin(LitElement) {
     this.engagement.po_number = newVal;
   }
 
-  _hideFirmName(firmName: string ,requestInProgress: boolean) {
+  _hideFirmName(firmName: string, requestInProgress: boolean) {
     return !(firmName || requestInProgress);
   }
 

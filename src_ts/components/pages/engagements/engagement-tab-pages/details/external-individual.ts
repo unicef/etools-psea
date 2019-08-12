@@ -1,5 +1,4 @@
 import {PolymerElement, html} from '@polymer/polymer/polymer-element';
-import {property} from '@polymer/decorators';
 import '@unicef-polymer/etools-dropdown/etools-dropdown';
 import {labelAndvalueStyles} from '../../../../styles/label-and-value-styles';
 import {SharedStyles} from '../../../../styles/shared-styles';
@@ -29,5 +28,5 @@ class ExternalIndividual extends PolymerElement {
   }
 }
 
-window.customElements.define('external-individual', ExternalIndividual)
+window.customElements.define('external-individual', ExternalIndividual);
 
