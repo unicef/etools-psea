@@ -18,6 +18,11 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   },
   partners: {
     url: ''
+  },
+  unicefUsers: {
+    url: '/api/v3/users/?verbosity=minimal',
+    exp: 60 * 60 * 1000, // 1h
+    cachingKey: 'unicefUsers'
   }
   // agreements: {
   //   template: '/api/v2/agreements/',

@@ -39,13 +39,16 @@ import './footer/page-footer.js';
 import './app-theme.js';
 import {ToastNotificationHelper} from '../common/toast-notifications/toast-notification-helper';
 import user from '../../redux/reducers/user';
+import commonData from '../../redux/reducers/common-data';
 import {SMALL_MENU_ACTIVE_LOCALSTORAGE_KEY} from '../../config/config';
 import {getCurrentUserData} from '../user/user-actions';
 import {EtoolsRouter} from '../../routing/routes';
 import {RouteDetails} from '../../routing/router';
+import {getUnicefUsersData} from '../common-data/common-data-actions';
 
 store.addReducers({
-  user
+  user,
+  commonData
 });
 
 /**
@@ -142,6 +145,7 @@ export class AppShell extends connect(store)(LitElement) {
     }
 
     getCurrentUserData();
+    getUnicefUsersData();
   }
 
   public connectedCallback() {
