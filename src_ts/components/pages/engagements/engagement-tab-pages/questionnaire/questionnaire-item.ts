@@ -4,11 +4,13 @@ import '@polymer/paper-icon-button/paper-icon-button.js';
 import {GenericObject} from '../../../../../types/globals';
 import './question-editable-details';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
+import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
+import {radioButtonStyles} from '../../../../styles/radio-button-styles';
 
 class QuestionnaireItem extends LitElement {
   render() {
     return html`
-      ${gridLayoutStylesLit}
+      ${SharedStylesLit}${gridLayoutStylesLit}${radioButtonStyles}
       <style>
         .description {
           margin-left: -24px;
@@ -22,7 +24,7 @@ class QuestionnaireItem extends LitElement {
       </style>
       <etools-content-panel panel-title="${this.item.title}" show-expand-btn>
         <div slot="panel-btns">
-          <paper-radio-button>
+          <paper-radio-button class="${this._getRadioBtnClass()}">
             Positive
           </paper-radio-button>
           <paper-icon-button
@@ -31,7 +33,7 @@ class QuestionnaireItem extends LitElement {
           </paper-icon-button>
         </div>
         <div class="description">
-          ${this.item.description}
+          ${ this.item.description}
         </div>
         <div class="row-padding-v">
           <question-editable-details>
@@ -43,15 +45,21 @@ class QuestionnaireItem extends LitElement {
   }
 
   @property({type: Object})
-  item: GenericObject = {title: 'An organizational policy exists (as part of code of conduct'+
+  item: GenericObject = {title:'An organizational policy exists (as part of code of conduct'+
     'and/or a comprehensive SEA policy) and is signed by all'+
-    'personnel.', description: 'Do organizational policies include: A) a clear'+
-    'definition of SEA; B) a clear description of behaviour'+
-    'expected of personnel (incorporating the IASC’s Six'+
-    'Core Principles Relating to SEA) and; C) an explicit'+
-    'statement of zero tolerance for SEA?'+
-     'Are all personnel required to receive and sign'+
-    'organizational policies related to PSEA (e.g. code of'+
-    'conduct)?'};
+    'personnel.',
+    description:`Do organizational policies include:<br> A) a clear
+    definition of SEA;<br/> B) a clear description of behaviour
+    expected of personnel (incorporating the IASC’s Six
+    Core Principles Relating to SEA) and;<br> C) an explicit
+    statement of zero tolerance for SEA?
+    Are all personnel required to receive and sign
+    organizational policies related to PSEA (e.g. code of
+    conduct)?`};
+
+    _getRadioBtnClass() {
+      //TODO
+      return 'green';
+    }
 }
 window.customElements.define('questionnaire-item', QuestionnaireItem);

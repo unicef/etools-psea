@@ -6,6 +6,7 @@ import {GenericObject} from '../../../../../types/globals';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {PaperInputElement} from '@polymer/paper-input/paper-input';
+import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 
 
 /**
@@ -20,8 +21,9 @@ class AssessingFirm extends EtoolsAjaxRequestMixin(LitElement) {
         .input-width {
           max-width: 230px;
         }
+
       </style>
-      ${labelAndvalueStylesLit}${gridLayoutStylesLit}
+      ${SharedStylesLit}${labelAndvalueStylesLit}${gridLayoutStylesLit}
       <div class="row-padding-v">
         <paper-input id="poNumber" label="Enter PO Number" always-float-label
           class="input-width"
@@ -47,7 +49,7 @@ class AssessingFirm extends EtoolsAjaxRequestMixin(LitElement) {
 
 
   @property({type: Object})
-  originalEngagement: GenericObject = {};
+  originalEngagement: GenericObject = {firm_name: ''};
 
   @property({type: Object})
   engagement: GenericObject = {};

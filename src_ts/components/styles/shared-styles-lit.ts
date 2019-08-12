@@ -5,6 +5,7 @@ export const SharedStylesLit = html`
   :host {
     display: block;
     box-sizing: border-box;
+    font-size: 16px;
   }
 
   *[hidden] {
