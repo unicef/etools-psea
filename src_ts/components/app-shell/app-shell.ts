@@ -84,9 +84,11 @@ export class AppShell extends connect(store)(LitElement) {
         <!-- Main content -->
         <main role="main" class="main-content">
           <engagements-list class="page"
-              ?active="${this.isActivePage(this.mainPage, 'engagements', this.subPage, 'list')}"></engagements-list>
+            ?active="${this.isActivePage(this.mainPage, 'engagements', this.subPage, 'list')}">
+          </engagements-list>
           <engagement-tabs class="page"
-              ?active="${this.isActivePage(this.mainPage, 'engagements', this.subPage, 'details|questionnaire|followup')}">
+            ?active="${this.isActivePage(this.mainPage,
+    'engagements', this.subPage, 'details|questionnaire|followup')}">
           </engagement-tabs>
           <page-two class="page" ?active="${this.isActivePage(this.mainPage, 'page-two')}"></page-two>
           <page-not-found class="page" ?active="${this.isActivePage(this.mainPage, 'page-not-found')}"></page-not-found>

@@ -1,4 +1,4 @@
-import { LitElement, html, property } from 'lit-element';
+import {LitElement, html, property} from 'lit-element';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-button/paper-button.js';
@@ -10,8 +10,6 @@ import {buttonsStylesLit} from '../../../../styles/button-styles-lit';
 import {GenericObject} from '../../../../../types/globals';
 import './partner-details';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
-import EtoolsAjaxRequestMixin from '@unicef-polymer/etools-ajax/etools-ajax-request-mixin';
-import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 
 /**
  * @customElement
@@ -76,9 +74,9 @@ class AssessmentInfo extends LitElement {
   engagement!: GenericObject;
 
   @property({type: Object})
-  partners: GenericObject = [{id:1, name: 'Zamboni',
-  authorized_officers:['Ala Bala', 'Poto Cala'],
-  adress: 'Strulibili 23', phone: 12345678, email: 'email@email.com'}];
+  partners: GenericObject = [{id: 1, name: 'Zamboni',
+    authorized_officers: ['Ala Bala', 'Poto Cala'],
+    adress: 'Strulibili 23', phone: 12345678, email: 'email@email.com'}];
 
   @property({type: Object})
   selectedPartner!: GenericObject;
@@ -114,4 +112,4 @@ class AssessmentInfo extends LitElement {
 
 }
 
-window.customElements.define('assessment-info', AssessmentInfo)
+window.customElements.define('assessment-info', AssessmentInfo);

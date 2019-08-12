@@ -64,28 +64,38 @@ class QuestionEditableDetails extends LitElement {
   }
 
   @property({type: Object})
-  item: GenericObject ={proof_of_evidence:[{name: 'Code of conduct', checked: false}, {name: 'Actions ', checked: false}, {name:'Other', checked: false}]};
+  item: GenericObject = {
+    proof_of_evidence: [{name: 'Code of conduct', checked: false}, {
+      name: 'Actions ',
+      checked: false
+    }, {name: 'Other', checked: false}]
+  };
 
   @property({type: Boolean})
   showOtherInput: boolean = false;
 
   _getProofOfEvidenceTemplate(proofOfEvidence: []) {
-    return  proofOfEvidence.map((m: GenericObject, index) => {
-      if (m.name.toLowerCase().includes('other') && index+1 === proofOfEvidence.length) {
-        return html`<div class="layout-vertical">
-                      <paper-checkbox class="padd-right" ?checked="${m.checked}" @change="${event => this._showOtherInput(event.target.checked)}">${m.name}</paper-checkbox>
-                      <div class="row-padding-v" ?hidden=${!this.showOtherInput}>
-                        <paper-input label="Please specify other" always-float-label></paper-input>
-                      </div>
-                    </div>`;
+    return proofOfEvidence.map((m: GenericObject, index) => {
+      if (m.name.toLowerCase().includes('other') && index + 1 === proofOfEvidence.length) {
+        return html`
+          <div class="layout-vertical">
+            <paper-checkbox class="padd-right" ?checked="${m.checked}" 
+              @change="${event => this._showOtherInput(event.target.checked)}">
+                ${m.name}
+            </paper-checkbox>
+            <div class="row-padding-v" ?hidden=${!this.showOtherInput}>
+              <paper-input label="Please specify other" always-float-label></paper-input>
+            </div>
+          </div>`;
       } else {
         return html`<paper-checkbox class="padd-right" ?checked="${m.checked}">${m.name}</paper-checkbox>`;
       }
     });
- }
+  }
 
- _showOtherInput(checked: boolean) {
-   this.showOtherInput = checked;
- }
+  _showOtherInput(checked: boolean) {
+    this.showOtherInput = checked;
+  }
 }
+
 window.customElements.define('question-editable-details', QuestionEditableDetails);

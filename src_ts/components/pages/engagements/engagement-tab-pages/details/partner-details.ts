@@ -1,5 +1,5 @@
 import {GenericObject} from '../../../../../types/globals';
-import { LitElement, html, property } from 'lit-element';
+import {LitElement, html, property} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 
@@ -27,7 +27,9 @@ class PartnerDetails extends LitElement {
       <div class="layout-horizontal row-padding-v">
         <div class="layout-vertical col-4">
           <label class="paper-label">Authorizes Officers</label>
-          <label class="input-label" ?empty="${!this.partner.authorized_officers}">${this.partner.authorized_officers}</label>
+          <label class="input-label" ?empty="${!this.partner.authorized_officers}">
+            ${this.partner.authorized_officers}
+          </label>
         </div>
         <div class="layout-vertical col-4">
           <label class="paper-label">Email Address</label>
@@ -42,4 +44,4 @@ class PartnerDetails extends LitElement {
 
 }
 
-window.customElements.define('partner-details', PartnerDetails)
+window.customElements.define('partner-details', PartnerDetails);

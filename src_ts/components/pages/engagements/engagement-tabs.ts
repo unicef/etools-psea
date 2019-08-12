@@ -50,12 +50,12 @@ export class EngagementTabs extends connect(store)(LitElement) {
       </page-content-header>
       
       <div class="page-content">
-        ${this.isActiveTab(this.activeTab, 
-        'details') ? html`<engagement-details-page></engagement-details-page>` : ''}
         ${this.isActiveTab(this.activeTab,
-        'questionnaire') ? html`<engagement-questionnaire-page></engagement-questionnaire-page>` : ''}
+    'details') ? html`<engagement-details-page></engagement-details-page>` : ''}
         ${this.isActiveTab(this.activeTab,
-      'followup') ? html`<follow-up-page></follow-up-page>` : ''}
+    'questionnaire') ? html`<engagement-questionnaire-page></engagement-questionnaire-page>` : ''}
+        ${this.isActiveTab(this.activeTab,
+    'followup') ? html`<follow-up-page></follow-up-page>` : ''}
       </div>
     `;
   }

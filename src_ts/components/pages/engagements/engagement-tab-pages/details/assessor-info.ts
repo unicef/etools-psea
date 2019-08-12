@@ -41,7 +41,8 @@ class AssessorInfo extends LitElement {
 
         <div class="row-padding-v">
           <label class="paper-label">Assessor is:</label>
-          <paper-radio-group .selected="${this.engagement.assessor_type}" @selected-changed="${e => this._assessorTypeChanged(e.target.selected)}">
+          <paper-radio-group .selected="${this.engagement.assessor_type}" 
+              @selected-changed="${(e: CustomEvent) => this._assessorTypeChanged(e.target.selected)}">
             <paper-radio-button name="staff">Unicef Staff</paper-radio-button>
             <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
             <paper-radio-button name="external">External Individual</paper-radio-button>
@@ -66,7 +67,7 @@ class AssessorInfo extends LitElement {
   engagement: GenericObject = {assessor_type: 'staff'};
 
   _getTemplateByAssessorType(assessorType: string) {
-    switch(assessorType) {
+    switch (assessorType) {
       case 'staff':
         return html`
           <unicef-staff-assessor></unicef-staff-assessor>
@@ -88,7 +89,6 @@ class AssessorInfo extends LitElement {
     this.engagement.assessor_type = selected;
     this.requestUpdate();
   }
-
 
 
 }
