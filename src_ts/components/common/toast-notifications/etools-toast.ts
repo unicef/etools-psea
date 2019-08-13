@@ -71,7 +71,7 @@ export class EtoolsToast extends LitElement {
 
   private toast: PaperToastElement | null = null;
   public toastLabelEl: HTMLSpanElement | null = null;
-  private _confirmBtn: PaperButtonElement | null = null;
+  private confirmBtn: PaperButtonElement | null = null;
 
   public fitInto: object | null = null;
 
@@ -82,7 +82,7 @@ export class EtoolsToast extends LitElement {
       if (this.toast) {
         this.toastLabelEl = this.toast!.shadowRoot!.querySelector('#label');
       }
-      this._confirmBtn = this.shadowRoot!.querySelector('#confirmBtn');
+      this.confirmBtn = this.shadowRoot!.querySelector('#confirmBtn');
     }, 200);
   }
 
@@ -114,7 +114,7 @@ export class EtoolsToast extends LitElement {
     }));
   }
 
-  protected _isMultiLine(message: string) {
+  protected isMultiLine(message: string) {
     return !message ? false : (message.toString().length > 80);
   }
 
@@ -124,9 +124,9 @@ export class EtoolsToast extends LitElement {
       this.toast.classList.add('toast-multi-line');
     }
 
-    if (this._confirmBtn) {
-      this._confirmBtn.classList.remove('toast-dismiss-btn');
-      this._confirmBtn.classList.add('toast-dismiss-btn-multi-line');
+    if (this.confirmBtn) {
+      this.confirmBtn.classList.remove('toast-dismiss-btn');
+      this.confirmBtn.classList.add('toast-dismiss-btn-multi-line');
     }
   }
 
@@ -136,20 +136,20 @@ export class EtoolsToast extends LitElement {
       this.toast.classList.add('toast');
     }
 
-    if (this._confirmBtn) {
-      this._confirmBtn.classList.remove('toast-dismiss-btn-multi-line');
-      this._confirmBtn.classList.add('toast-dismiss-btn');
+    if (this.confirmBtn) {
+      this.confirmBtn.classList.remove('toast-dismiss-btn-multi-line');
+      this.confirmBtn.classList.add('toast-dismiss-btn');
     }
   }
 
   public prepareToastAndGetShowProperties(detail: GenericObject) {
-    if (this._isMultiLine(detail.text)) {
+    if (this.isMultiLine(detail.text)) {
       this.applyMultilineStyle();
     } else {
       this.removeMultilineStyle();
     }
-    if (this._confirmBtn) {
-      this._confirmBtn.updateStyles();
+    if (this.confirmBtn) {
+      this.confirmBtn.updateStyles();
     }
 
     // clone detail obj
@@ -158,12 +158,12 @@ export class EtoolsToast extends LitElement {
     toastProperties.duration = 0;
     if (typeof detail === 'object' && typeof detail.showCloseBtn !== 'undefined') {
       if (detail.showCloseBtn === true) {
-        if (this._confirmBtn) {
-          this._confirmBtn.removeAttribute('hidden');
+        if (this.confirmBtn) {
+          this.confirmBtn.removeAttribute('hidden');
         }
       } else {
-        if (this._confirmBtn) {
-          this._confirmBtn.setAttribute('hidden', '');
+        if (this.confirmBtn) {
+          this.confirmBtn.setAttribute('hidden', '');
         }
         if (!detail.duration) {
           toastProperties.duration = 5000;
@@ -171,8 +171,8 @@ export class EtoolsToast extends LitElement {
       }
       delete toastProperties.showCloseBtn;
     } else {
-      if (this._confirmBtn) {
-        this._confirmBtn.setAttribute('hidden', '');
+      if (this.confirmBtn) {
+        this.confirmBtn.setAttribute('hidden', '');
       }
     }
 

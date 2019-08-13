@@ -2,7 +2,6 @@ import {LitElement, html, property, customElement} from 'lit-element';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/paper-tabs/paper-tabs';
 import '@polymer/paper-tabs/paper-tab';
-import {PaperTabsElement} from '@polymer/paper-tabs';
 import {GenericObject} from '../../../types/globals';
 
 
@@ -69,22 +68,12 @@ export class EtoolsTabs extends LitElement {
   }
 
   @property({type: String})
-  activeTab: string | null = null;
+  activeTab: string = '';
 
   @property({type: Array})
   tabs!: GenericObject[];
 
-  _handleTabSelection() {
-    this.notifyTabsResize();
-  }
-
-  notifyTabsResize(tabsChange?: any) {
-    if (!tabsChange) {
-      return;
-    }
-    setTimeout(() => {
-      (this.shadowRoot!.querySelector('#tabs') as PaperTabsElement).notifyResize();
-    }, 50);
+  protected handleTabSelection() {
   }
 
   getTabHtml(item: any) {
