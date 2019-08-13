@@ -60,8 +60,7 @@ export class EtoolsTabs extends LitElement {
       <paper-tabs id="tabs"
                   selected="${this.activeTab}"
                   attr-for-selected="name"
-                  noink
-                  on-iron-select="_handleTabSelection">
+                  noink>
       ${this.tabs.map(item => this.getTabHtml(item))}
       </paper-tabs>
     `;
@@ -73,13 +72,10 @@ export class EtoolsTabs extends LitElement {
   @property({type: Array})
   tabs!: GenericObject[];
 
-  protected handleTabSelection() {
-  }
-
   getTabHtml(item: any) {
     return html`
-    <paper-tab name="${item.tab}" link ?hidden=${item.hidden}>
-    <span class='tab-content'>
+    <paper-tab name="${item.tab}" link ?hidden="${item.hidden}">
+    <span class="tab-content">
         ${item.tabLabel} ${item.showTabCounter ? html`(item.counter)` : ''}
     </span>
     </paper-tab>
