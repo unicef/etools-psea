@@ -7,6 +7,9 @@ documentContainer.innerHTML = `
     <style>
       html {
         --primary-color: #0099ff;
+        --default-color: #DEE2E6;
+        --error-color: #DC3545;
+        --success-color: #72c300;
         --primary-background-color: #FFFFFF;
         --secondary-background-color: #eeeeee;
   
@@ -25,8 +28,6 @@ documentContainer.innerHTML = `
         --light-icon-color: rgba(255, 255, 255, 1);
         
         --side-bar-scrolling: visible;
-        
-        --success-color: #72c300;
         
         --esmm-external-wrapper: {
           width: 100%;
