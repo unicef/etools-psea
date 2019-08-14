@@ -1,10 +1,11 @@
 import {html} from 'lit-element';
 
-export const SharedStyles = html`
+export const SharedStylesLit = html`
 <style>
   :host {
     display: block;
     box-sizing: border-box;
+    font-size: 16px;
   }
 
   *[hidden] {
@@ -28,7 +29,7 @@ export const SharedStyles = html`
 
   a {
     color: var(--primary-color);
-    text-decoration: none;
+    text-underline: none;
   }
 
   section {

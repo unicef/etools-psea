@@ -16,6 +16,9 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   changeCountry: {
     url: '/api/v3/users/changecountry/'
   },
+  partners: {
+    url: ''
+  },
   unicefUsers: {
     url: '/api/v3/users/?verbosity=minimal',
     exp: 60 * 60 * 1000, // 1h

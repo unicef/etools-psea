@@ -49,11 +49,14 @@ export class EngagementTabs extends connect(store)(LitElement) {
                      @iron-select="${this.handleTabChange}"></etools-tabs>
       </page-content-header>
       
-      <section class="elevation page-content" elevation="1">
-        ${this.isActiveTab(this.activeTab, 'details') ? html`<engagement-details></engagement-details>` : ''}
+      <div class="page-content">
         ${this.isActiveTab(this.activeTab,
-    'questionnaire') ? html`<engagement-questionnaire></engagement-questionnaire>` : ''}
-      </section>
+    'details') ? html`<engagement-details-page></engagement-details-page>` : ''}
+        ${this.isActiveTab(this.activeTab,
+    'questionnaire') ? html`<engagement-questionnaire-page></engagement-questionnaire-page>` : ''}
+        ${this.isActiveTab(this.activeTab,
+    'followup') ? html`<follow-up-page></follow-up-page>` : ''}
+      </div>
     `;
   }
 
@@ -70,6 +73,11 @@ export class EngagementTabs extends connect(store)(LitElement) {
     {
       tab: 'questionnaire',
       tabLabel: 'Questionnaire‎',
+      hidden: false
+    },
+    {
+      tab: 'followup',
+      tabLabel: 'Follow-Up',
       hidden: false
     }
   ];

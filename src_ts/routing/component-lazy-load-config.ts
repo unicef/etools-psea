@@ -11,11 +11,15 @@ export const componentsLazyLoadConfig: RoutesLazyLoadComponentsPath = {
   ],
   'engagements_details': [
     'components/pages/engagements/engagement-tabs.js',
-    'components/pages/engagements/engagement-tab-pages/engagement-details.js'
+    'components/pages/engagements/engagement-tab-pages/details/engagement-details-page.js'
   ],
   'engagements_questionnaire': [
     'components/pages/engagements/engagement-tabs.js',
-    'components/pages/engagements/engagement-tab-pages/engagement-questionnaire.js'
+    'components/pages/engagements/engagement-tab-pages/questionnaire/engagement-questionnaire-page.js'
+  ],
+  'engagements_followup': [
+    'components/pages/engagements/engagement-tabs.js',
+    'components/pages/engagements/engagement-tab-pages/follow-up/follow-up-page.js'
   ],
   'page-not-found': [
     'components/pages/page-not-found.js'
