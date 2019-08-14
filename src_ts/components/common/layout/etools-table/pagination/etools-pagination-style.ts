@@ -18,6 +18,7 @@ export const etoolsPaginationStyles = html`
     }
 
     paper-item {
+      cursor: pointer;
       height: 24px; /* for IE */
     }
 
@@ -81,4 +82,5 @@ export const etoolsPaginationStyles = html`
     :host([low-resolution-layout]) .pagination-btns {
       margin-left: -12px;
     }
+    
   </style>`;

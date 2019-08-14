@@ -85,7 +85,7 @@ export class EtoolsPagination extends LitElement {
     }
     const newPageSize = Number(e.detail.value);
     if (newPageSize !== this.paginator.page_size) {
-      this.firePaginatorChangeEvent({page_size: newPageSize});
+      this.firePaginatorChangeEvent({page: 1, page_size: newPageSize});
     }
   }
 
