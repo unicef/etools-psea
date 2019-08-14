@@ -156,7 +156,7 @@ export class EtoolsToast extends LitElement {
     const toastProperties: GenericObject = JSON.parse(JSON.stringify(detail));
 
     toastProperties.duration = 0;
-    if (typeof detail === 'object') {
+    if (detail) {
       if (detail.showCloseBtn === true) {
         if (this.confirmBtn) {
           this.confirmBtn.removeAttribute('hidden');
