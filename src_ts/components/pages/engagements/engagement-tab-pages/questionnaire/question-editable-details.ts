@@ -6,7 +6,7 @@ import '@polymer/paper-input/paper-input';
 import '@polymer/paper-radio-group';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
-import {buttonsStylesLit} from '../../../../styles/button-styles-lit';
+import {buttonsStyles} from '../../../../styles/button-styles';
 import './question-attachments';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {radioButtonStyles} from '../../../../styles/radio-button-styles';
@@ -14,7 +14,7 @@ import {radioButtonStyles} from '../../../../styles/radio-button-styles';
 class QuestionEditableDetails extends LitElement {
   render() {
     return html`
-      ${SharedStylesLit}${gridLayoutStylesLit}${labelAndvalueStylesLit}${buttonsStylesLit}
+      ${SharedStylesLit}${gridLayoutStylesLit}${labelAndvalueStylesLit}${buttonsStyles}
       ${radioButtonStyles}
       <style>
         .padd-right {
@@ -53,7 +53,7 @@ class QuestionEditableDetails extends LitElement {
       </div>
 
       <div class="layout-horizontal right-align row-padding-v">
-      <paper-button class="grey">
+      <paper-button class="default">
         Cancel
       </paper-button>
       <paper-button class="primary">
