@@ -59,7 +59,7 @@ export class EtoolsToast extends LitElement {
       </style>
       <paper-toast id="toast"
                    class="toast-general-style"
-                   on-iron-overlay-closed="toastClosed">
+                   @iron-overlay-closed="${() => this.toastClosed()}">
         <paper-button id="confirmBtn"
                       @tap="${() => this.confirmToast()}"
                       class="toast-dismiss-btn-general-style">
