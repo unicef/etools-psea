@@ -59,7 +59,7 @@ export class EngagementsList extends connect(store)(LitElement) {
         <h1 slot="page-title">Engagements list</h1>
 
         <div slot="title-row-actions" class="content-header-actions">
-          <paper-button raised>Export</paper-button>
+          <paper-button raised><iron-icon icon="file-download"></iron-icon> Export</paper-button>
         </div>
       </page-content-header>
       
