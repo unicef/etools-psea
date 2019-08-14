@@ -6,7 +6,7 @@ import '@polymer/iron-icons/iron-icons.js';
 import '@unicef-polymer/etools-dropdown/etools-dropdown';
 import '@unicef-polymer/etools-date-time/datepicker-lite';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
-import {buttonsStylesLit} from '../../../../styles/button-styles-lit';
+import {buttonsStyles} from '../../../../styles/button-styles';
 import {GenericObject} from '../../../../../types/globals';
 import './partner-details';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
@@ -26,7 +26,7 @@ class AssessmentInfo extends LitElement {
           margin-bottom: 24px;
         }
       </style>
-      ${SharedStylesLit}${gridLayoutStylesLit} ${buttonsStylesLit}
+      ${SharedStylesLit}${gridLayoutStylesLit} ${buttonsStyles}
       <etools-content-panel panel-title="Assessment Information">
         <div slot="panel-btns">
           <paper-icon-button
@@ -58,7 +58,7 @@ class AssessmentInfo extends LitElement {
         </datepicker-lite>
 
         <div class="layout-horizontal right-align row-padding-v">
-          <paper-button class="grey">
+          <paper-button class="default">
             Cancel
           </paper-button>
           <paper-button class="primary">

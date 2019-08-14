@@ -8,7 +8,7 @@ import './external-individual';
 import {GenericObject} from '../../../../../types/globals';
 import {LitElement, html, property} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
-import {buttonsStylesLit} from '../../../../styles/button-styles-lit';
+import {buttonsStyles} from '../../../../styles/button-styles';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 
 
@@ -29,7 +29,7 @@ class AssessorInfo extends LitElement {
         }
 
       </style>
-      ${gridLayoutStylesLit}${buttonsStylesLit}${labelAndvalueStylesLit}
+      ${gridLayoutStylesLit}${buttonsStyles}${labelAndvalueStylesLit}
 
       <etools-content-panel panel-title="Primary Assessor">
         <div slot="panel-btns">
@@ -52,7 +52,7 @@ class AssessorInfo extends LitElement {
         ${this._getTemplateByAssessorType(this.engagement.assessor_type)}
 
         <div class="layout-horizontal right-align row-padding-v">
-          <paper-button class="grey">
+          <paper-button class="default">
             Cancel
           </paper-button>
           <paper-button class="primary">

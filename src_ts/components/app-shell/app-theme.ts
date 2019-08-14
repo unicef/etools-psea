@@ -27,6 +27,8 @@ documentContainer.innerHTML = `
         --side-bar-scrolling: visible;
         
         --success-color: #72c300;
+        --error-color: #ea4022;
+        
         --primary-shade-of-green: #1A9251;
         --primary-shade-of-red: #E32526;
 
