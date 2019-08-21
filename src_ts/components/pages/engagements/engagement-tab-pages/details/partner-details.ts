@@ -15,25 +15,25 @@ class PartnerDetails extends LitElement {
       ${gridLayoutStylesLit} ${labelAndvalueStylesLit}
       <div class="layout-horizontal row-padding-v">
         <div class="layout-vertical col-4">
-          <label class="paper-label">Partner Organization Address</label>
-          <label class="input-label" ?empty="${!this.partner.name}">${this.partner.name}</label>
+          <span class="paper-label">Partner Organization Address</span>
+          <span class="input-span" ?empty="${!this.partner.name}">${this.partner.name}</span>
         </div>
         <div class="layout-vertical col-4">
-          <label class="paper-label">Phone Number</label>
-          <label class="input-label" ?empty="${!this.partner.phone}">${this.partner.phone}</label>
+          <span class="paper-label">Phone Number</span>
+          <span class="input-label" ?empty="${!this.partner.phone}">${this.partner.phone}</span>
         </div>
       </div>
 
       <div class="layout-horizontal row-padding-v">
         <div class="layout-vertical col-4">
-          <label class="paper-label">Authorizes Officers</label>
-          <label class="input-label" ?empty="${!this.partner.authorized_officers}">
+          <span class="paper-label">Authorizes Officers</span>
+          <span class="input-label" ?empty="${!this.partner.authorized_officers}">
             ${this.partner.authorized_officers}
-          </label>
+          </span>
         </div>
         <div class="layout-vertical col-4">
-          <label class="paper-label">Email Address</label>
-          <label class="input-label" ?empty="${!this.partner.email}">${this.partner.email}</label>
+          <span class="paper-label">Email Address</span>
+          <span class="input-label" ?empty="${!this.partner.email}">${this.partner.email}</span>
         </div>
       </div>
     `;
