@@ -100,13 +100,13 @@ class AssessmentInfo extends LitElement {
 
   }
 
-  _showPartnerDetails(selectedPartner) {
+  _showPartnerDetails(selectedPartner: GenericObject) {
     return selectedPartner?
       html`<partner-details .partner="${this.selectedPartner}">
       </partner-details>`: '';
   }
 
-  _setSelectedPartner(event) {
+  _setSelectedPartner(event: CustomEvent) {
     this.selectedPartner = event.detail.selectedItem;
   }
 

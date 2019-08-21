@@ -2,7 +2,7 @@ import {LitElement, html, property} from 'lit-element';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-spinner/paper-spinner';
 import EtoolsAjaxRequestMixin from '@unicef-polymer/etools-ajax/etools-ajax-request-mixin';
-import {GenericObject} from '../../../../../types/globals';
+import {GenericObject, Constructor} from '../../../../../types/globals';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {PaperInputElement} from '@polymer/paper-input/paper-input';
@@ -13,7 +13,7 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
  * @customElement
  * @LitElement
  */
-class AssessingFirm extends EtoolsAjaxRequestMixin(LitElement) {
+class AssessingFirm extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<LitElement>) {
   render() {
     // language=HTML
     return html`
@@ -28,14 +28,14 @@ class AssessingFirm extends EtoolsAjaxRequestMixin(LitElement) {
         <paper-input id="poNumber" label="Enter PO Number" always-float-label
           class="input-width"
           .value="${this.engagement.po_number}"
-          @value-changed=${e => this._updateEngagementPoNumber(e.target.value)}
+          @value-changed=${(e: CustomEvent) => this._updateEngagementPoNumber((e.target! as PaperInputElement).value!)}
           allowed-pattern="[0-9]"
           max-length=10
           error-message="PO number is incorrect"
           @blur="${this._getFirmName}">
         </paper-input>
       </div>
-      <div class="layout-vertical row-padding-v" 
+      <div class="layout-vertical row-padding-v"
           ?hidden="${this._hideFirmName(this.originalEngagement.firm_name, this.requestInProgress)}">
         <label class="paper-label">Firm Name</label>
         <label class="input-label row-padding-v">
@@ -70,6 +70,12 @@ class AssessingFirm extends EtoolsAjaxRequestMixin(LitElement) {
     this.requestInProgress = true;
 
     // make call to endpoint to get Firm name
+    let firmId = 2;
+    this.dispatchEvent(new CustomEvent('firm-changed', {
+      detail: firmId,
+      bubbles: true,
+      composed: true
+    }));
   }
 
   _validatePONumber() {

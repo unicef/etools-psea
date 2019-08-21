@@ -1,5 +1,6 @@
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/paper-icon-button/paper-icon-button';
+import '@polymer/paper-checkbox/paper-checkbox';
 import {customElement, LitElement, html, property} from 'lit-element';
 
 import {etoolsTableStyles} from './etools-table-styles';
@@ -13,7 +14,8 @@ export enum EtoolsTableColumnType {
   Text,
   Date,
   Link,
-  Number
+  Number,
+  Checkbox
 }
 
 export enum EtoolsTableColumnSort {
@@ -66,6 +68,27 @@ export class EtoolsTable extends LitElement {
     `;
   }
 
+  @property({type: String})
+  dateFormat: string = 'D MMM YYYY';
+
+  @property({type: Boolean, reflect: true})
+  showEdit!: boolean;
+
+  @property({type: Boolean, reflect: true})
+  showDelete!: boolean;
+
+  @property({type: String})
+  caption: string = '';
+
+  @property({type: Array})
+  columns: EtoolsTableColumn[] = [];
+
+  @property({type: Array})
+  items: GenericObject[] = [];
+
+  @property({type: Object})
+  paginator!: EtoolsPaginator;
+
   getColumnHtml(column: EtoolsTableColumn) {
     if (!this.columnHasSort(column.sort)) {
       return html`
@@ -110,6 +133,7 @@ export class EtoolsTable extends LitElement {
       <tr>
         ${columnsKeys.map((k: string) => html`<td class="${this.getRowDataColumnClassList(k)}">
           ${this.getItemValue(item, k)}</td>`)}
+
         ${this.showRowActions() ? html`<td class="row-actions">${this.getRowActionsTmpl(item)}` : ''}
       </tr>
     `;
@@ -127,30 +151,13 @@ export class EtoolsTable extends LitElement {
   }
 
   get paginationHtml() {
-    return html`<tr><td class="pagination" colspan="${this.columns.length + (this.showRowActions() ? 1 : 0)}">
-      <etools-pagination .paginator="${this.paginator}"></etools-pagination></td></tr>`;
+    return html`
+    <tr>
+      <td class="pagination" colspan="${this.columns.length + (this.showRowActions() ? 1 : 0)}">
+        <etools-pagination .paginator="${this.paginator}"></etools-pagination>
+      </td>
+    </tr>`;
   }
-
-  @property({type: String})
-  dateFormat: string = 'D MMM YYYY';
-
-  @property({type: Boolean, reflect: true})
-  showEdit!: boolean;
-
-  @property({type: Boolean, reflect: true})
-  showDelete!: boolean;
-
-  @property({type: String})
-  caption: string = '';
-
-  @property({type: Array})
-  columns: EtoolsTableColumn[] = [];
-
-  @property({type: Array})
-  items: GenericObject[] = [];
-
-  @property({type: Object})
-  paginator!: EtoolsPaginator;
 
   showCaption(caption: string): boolean {
     return !caption;
@@ -211,9 +218,32 @@ export class EtoolsTable extends LitElement {
       case EtoolsTableColumnType.Link:
         return this.getLinkTmpl(column.link_tmpl, item, key);
       case EtoolsTableColumnType.Number:
+      case EtoolsTableColumnType.Checkbox:
+        return this._getCheckbox(item, key);
       default:
-        return item[key];
+        return this._getValueByKey(item, key);
 
+    }
+  }
+
+  _getCheckbox(item: any, key: string) {
+    return html`
+      <paper-checkbox ?checked="${this._getValueByKey(item, key)}"></paper-checkbox>
+    `;
+
+  }
+
+  _getValueByKey(item: any, key: string) {
+    if (key.includes('.')) {
+      let propertyNames = key.split('.');
+
+      let value = item[propertyNames.shift()!];
+      while (propertyNames.length) {
+        value = value[propertyNames.shift()!];
+      }
+      return value;
+    } else {
+      return item[key];
     }
   }
 
