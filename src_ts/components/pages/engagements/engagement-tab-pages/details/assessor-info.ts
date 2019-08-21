@@ -10,6 +10,7 @@ import {LitElement, html, property} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {buttonsStyles} from '../../../../styles/button-styles';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
+import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 
 
 /**
@@ -41,8 +42,8 @@ class AssessorInfo extends LitElement {
 
         <div class="row-padding-v">
           <label class="paper-label">Assessor is:</label>
-          <paper-radio-group .selected="${this.engagement.assessor_type}" 
-              @selected-changed="${(e: CustomEvent) => this._assessorTypeChanged(e.target.selected)}">
+          <paper-radio-group .selected="${this.engagement.assessor_type}"
+              @selected-changed="${(e: CustomEvent) => this._assessorTypeChanged((e.target as PaperRadioGroupElement)!.selected!)}">
             <paper-radio-button name="staff">Unicef Staff</paper-radio-button>
             <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
             <paper-radio-button name="external">External Individual</paper-radio-button>
@@ -85,7 +86,7 @@ class AssessorInfo extends LitElement {
     }
   }
 
-  _assessorTypeChanged(selected: string) {
+  _assessorTypeChanged(selected: any) {
     this.engagement.assessor_type = selected;
     this.requestUpdate();
   }

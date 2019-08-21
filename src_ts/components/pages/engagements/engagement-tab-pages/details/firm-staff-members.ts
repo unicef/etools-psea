@@ -1,19 +1,21 @@
-import {GenericObject} from '../../../../../types/globals';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@polymer/paper-icon-button/paper-icon-button';
-import {LitElement, html, property} from 'lit-element';
+import {LitElement, html, property, customElement} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
+import {EtoolsTableColumn, EtoolsTableColumnType} from '../../../../common/layout/etools-table/etools-table';
+import {defaultPaginator, EtoolsPaginator, getPaginator} from '../../../../common/layout/etools-table/pagination/paginator';
+import '../../../../common/layout/etools-table/etools-table';
 
 /**
  * @customElement
  * @LitElement
  */
+@customElement('firm-staff-members')
 class FirmStaffMembers extends LitElement {
 
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="../../../../../../node_modules/@material/data-table/dist/mdc.data-table.css">
       ${gridLayoutStylesLit}
       <style>
         :host {
@@ -49,40 +51,19 @@ class FirmStaffMembers extends LitElement {
         </div>
 
         <div class="mdc-data-table w100">
-          <table class="mdc-data-table__table" aria-label="Firm Staff Members">
-            <thead>
-              <tr class="mdc-data-table__header-row header">
-                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Has Access</th>
-                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Position</th>
-                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">First Name</th>
-                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Last Name</th>
-                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Phone Number</th>
-                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">E-mail Address</th>
-              </tr>
-            </thead>
-            <tbody class="mdc-data-table__content">
-            ${this.staffMembers.map(staff => html`
-                <tr class="mdc-data-table__row row">
-                  <td class="mdc-data-table__cell"></td>
-                  <td class="mdc-data-table__cell">${staff.user.profile.job_title}</td>
-                  <td class="mdc-data-table__cell">${staff.user.first_name}</td>
-                  <td class="mdc-data-table__cell">${staff.user.last_name}</td>
-                  <td class="mdc-data-table__cell">${staff.user.profile.phone_number}</td>
-                  <td class="mdc-data-table__cell layout-horizontal space-between align-items-center">${staff.user.email} <paper-icon-button id="editrow"
-                  icon="create">
-            </paper-icon-button></td>
-
-                </tr>
-            `)}
-            </tbody>
-          </table>
+          <etools-table .columns="${this.listColumns}"
+            .items="${this.staffMembers}"
+            .paginator="${this.paginator}"
+            showEdit
+            showDelete>
+          </etools-table>
         </div>
       </etools-content-panel>
     `;
   }
 
-  @property({type: Object})
-  staffMembers: GenericObject = [
+  @property({type: Array})
+  staffMembers = [
     {
       "id": 431,
       "user": {
@@ -118,21 +99,68 @@ class FirmStaffMembers extends LitElement {
     {
       "id": 424,
       "user": {
-        "first_name": "Adriana",
-        "last_name": "Trif",
-        "email": "adriana.trif@nordlogic.com",
+        "first_name": "Ariana",
+        "last_name": "Grande",
+        "email": "ariana@nordlogic.com",
         "is_active": true,
         "profile": {
-          "job_title": "Grand Duchess",
+          "job_title": "Duchess",
           "phone_number": "12345671"
         },
-        "full_name": "Adriana Trif"
+        "full_name": "Ariana Grande"
       },
       "hidden": false,
       "hasAccess": true
     }
-
   ];
+
+  @property({type: Object})
+  paginator: EtoolsPaginator = {...defaultPaginator};
+
+  @property({type: Array})
+  listColumns: EtoolsTableColumn[] = [
+    {
+      label: 'Has Access',
+      name: 'hasAccess',
+      type: EtoolsTableColumnType.Checkbox
+    },
+    {
+      label: 'Position',
+      name: 'user.profile.job_title',
+      type: EtoolsTableColumnType.Text
+    },
+    {
+      label: 'First Name',
+      name: 'user.first_name',
+      type: EtoolsTableColumnType.Text
+    },
+    {
+      label: 'Last Name',
+      name: 'user.last_name',
+      type: EtoolsTableColumnType.Text
+    },
+    {
+      label: 'Phone Number',
+      name: 'user.profile.phone_number',
+      type: EtoolsTableColumnType.Text
+    },
+    {
+      label: 'E-mail Address',
+      name: 'user.email',
+      type: EtoolsTableColumnType.Text
+    }
+  ];
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.populateStaffMembersList('2');// TODO remove
+  }
+
+  populateStaffMembersList(firmId: string) {
+    // call to get staff members by firmId
+    this.paginator = getPaginator(this.paginator, {count: this.staffMembers.length, data:this.staffMembers});//TODO getP by response
+  }
+
 
 
   _allowAdd() {
@@ -140,4 +168,4 @@ class FirmStaffMembers extends LitElement {
   }
 }
 
-window.customElements.define('firm-staff-members', FirmStaffMembers);
+export {FirmStaffMembers as FirmStaffMembersEl}

@@ -1,17 +1,18 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element';
-import {property} from '@polymer/decorators';
 import {GenericObject} from '../../../../../types/globals';
 import './assessment-info';
 import './assessor-info';
 import './firm-staff-members';
+import {LitElement, html, property, customElement} from 'lit-element';
+import {FirmStaffMembersEl} from './firm-staff-members';
 
 /**
  * @customElement
- * @polymer
+ * @LitElement
  */
-class EngagementDetailsPage extends PolymerElement {
+@customElement('engagement-details-page')
+class EngagementDetailsPage extends LitElement {
 
-  static get template() {
+  render() {
     // language=HTML
     return html`
       <style>
@@ -21,15 +22,19 @@ class EngagementDetailsPage extends PolymerElement {
         }
       </style>
 
-      <assessment-info engagement="{{engagement}}"></assessment-info>
-      <assessor-info></assessor-info>
-      <firm-staff-members></firm-staff-members>
+      <assessment-info .engagement="${this.engagement}"></assessment-info>
+      <assessor-info @firm-changed="${this.firmChanged}"></assessor-info>
+      <firm-staff-members id="firmStaffMembers"></firm-staff-members>
     `;
   }
 
   @property({type: Object})
   engagement!: GenericObject;
 
+  firmChanged(e: CustomEvent) {
+    let firmStaffMembersEl = this.shadowRoot!.querySelector('#firmStaffMembers') as FirmStaffMembersEl;
+    firmStaffMembersEl.populateStaffMembersList(e.detail.firmId);
+
+  }
 }
 
-window.customElements.define('engagement-details-page', EngagementDetailsPage);
