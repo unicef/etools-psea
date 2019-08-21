@@ -53,14 +53,17 @@ EtoolsRouter
 /**
  * Utility used to update location based on routes and dispatch navigate action (optional)
  */
+// TODO this method calls app.ts/navigate and app.ts/navigate calls this method ?!
 export const updateAppLocation = (newLocation: string, dispatchNavigation: boolean = true): void => {
   const _newLocation = EtoolsRouter.prepareLocationPath(newLocation);
   let navigationCallback = null;
+
   if (dispatchNavigation) {
     navigationCallback = () => {
       store.dispatch(navigate(decodeURIComponent(_newLocation)));
     };
   }
+
   EtoolsRouter.navigate(_newLocation, navigationCallback);
 };
 
