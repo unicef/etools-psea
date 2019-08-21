@@ -55,8 +55,7 @@ class FirmStaffMembers extends LitElement {
             .items="${this.staffMembers}"
             .paginator="${this.paginator}"
             showEdit
-            showDelete
-            @paginator-change="${this.paginatorChange}">
+            showDelete>
           </etools-table>
         </div>
       </etools-content-panel>
@@ -155,12 +154,6 @@ class FirmStaffMembers extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.populateStaffMembersList('2');// TODO remove
-  }
-
-  paginatorChange(e: CustomEvent) {
-    const newPaginator = {...e.detail};
-    console.log('paginator change: ', newPaginator);
-    this.paginator = newPaginator;
   }
 
   populateStaffMembersList(firmId: string) {
