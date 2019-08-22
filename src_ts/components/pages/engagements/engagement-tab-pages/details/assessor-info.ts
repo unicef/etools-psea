@@ -73,7 +73,7 @@ class AssessorInfo extends connect(store)(LitElement) {
   unicefUsers!: UnicefUser[];
 
   stateChanged(state: RootState) {
-    if (state.commonData && isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
+    if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
     }
 
@@ -85,8 +85,8 @@ class AssessorInfo extends connect(store)(LitElement) {
         return html`
           <etools-dropdown label="Unicef Staff" class="row-padding-v"
             .options="${this.unicefUsers}"
-            optionLabel="name"
-            optionValus="id">
+            option-label="name"
+            option-valus="id">
           </<etools-dropdown>
         `;
       case 'firm':

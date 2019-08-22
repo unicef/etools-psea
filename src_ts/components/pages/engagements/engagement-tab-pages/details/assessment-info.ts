@@ -12,6 +12,9 @@ import './partner-details';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store} from '../../../../../redux/store';
+import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
+import {makeRequest} from '../../../../utils/request-helper';
+
 
 /**
  * @customElement
@@ -89,13 +92,13 @@ class AssessmentInfo extends connect(store)(LitElement) {
 
   connectedCallback() {
     super.connectedCallback();
-    this._getPartnerOrganizations();
+    this._getPartners();
   }
 
-  _getPartnerOrganizations() {
-    // this.sendRequest({endpoint: etoolsEndpoints.partners})
-    //   .then((resp) => this.partners = resp)
-    //   .catch((err) => console.log(err));
+  _getPartners() {
+    makeRequest(etoolsEndpoints.partners)
+       .then((resp:any) => this.partners = resp)
+       .catch((err:any) => console.log(err));
   }
 
   _allowEdit() {

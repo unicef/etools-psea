@@ -27,5 +27,5 @@ export const setPartners = (partners: []) => {
 
 export const loadPartners = () => (dispatch) => {
 
-  dispatch(setPartners(response));
+  //dispatch(setPartners(response));
 }
