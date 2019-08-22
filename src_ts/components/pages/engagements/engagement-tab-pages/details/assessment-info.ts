@@ -10,12 +10,14 @@ import {buttonsStyles} from '../../../../styles/button-styles';
 import {GenericObject} from '../../../../../types/globals';
 import './partner-details';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
+import {connect} from 'pwa-helpers/connect-mixin';
+import {store} from '../../../../../redux/store';
 
 /**
  * @customElement
  * @LitElement
  */
-class AssessmentInfo extends LitElement {
+class AssessmentInfo extends connect(store)(LitElement) {
 
   render() {
     // language=HTML
