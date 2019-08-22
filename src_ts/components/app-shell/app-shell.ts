@@ -45,6 +45,7 @@ import {getCurrentUserData} from '../user/user-actions';
 import {EtoolsRouter} from '../../routing/routes';
 import {RouteDetails} from '../../routing/router';
 import {getUnicefUsersData} from '../common-data/common-data-actions';
+import {loadPartners} from '../../redux/actions/common-data';
 
 store.addReducers({
   user,
@@ -146,6 +147,7 @@ export class AppShell extends connect(store)(LitElement) {
 
     getCurrentUserData();
     getUnicefUsersData();
+    store.dispatch(loadPartners());
   }
 
   public connectedCallback() {
