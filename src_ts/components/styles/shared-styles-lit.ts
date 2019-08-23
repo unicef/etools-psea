@@ -36,6 +36,45 @@ export const SharedStylesLit = html`
     background-color: var(--primary-background-color);
   }
 
+  paper-input-container {
+      margin: 0 12px;
+      --paper-input-container-focus-color: var(--module-primary);
+      --paper-input-container: {
+        color: var(--gray-50) !important;
+        font-size: 13px;
+        opacity: 1 !important;
+      };
+      --paper-input-container-underline: {
+        display: none !important;
+      };
+      --paper-input-container-underline-focus: {
+        display: none;
+      };
+      --paper-input-container-underline-disabled: {
+        display: block !important;
+        border-bottom: 1px dashed var(--gray-20) !important;
+      };
+  }
+
+  .repeatable-item-container{
+    position: relative;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .repeatable-item-container[without-line]{
+    padding: 0 12px !important;
+  }
+
+  .repeatable-item-container .repeatable-item-content{
+    border-left: none;
+    margin-left: 0;
+    padding-left: 0;
+    width:100%;
+    padding-bottom:8px;
+  }
+
   etools-dropdown[readonly] {
     --paper-input-container-underline: {
       display: none;

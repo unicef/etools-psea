@@ -5,6 +5,8 @@ import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {EtoolsTableColumn, EtoolsTableColumnType} from '../../../../common/layout/etools-table/etools-table';
 import {defaultPaginator, EtoolsPaginator, getPaginator} from '../../../../common/layout/etools-table/pagination/paginator';
 import '../../../../common/layout/etools-table/etools-table';
+import './staff-member';
+import {StaffMemberEl} from './staff-member';
 
 /**
  * @customElement
@@ -45,7 +47,7 @@ class FirmStaffMembers extends LitElement {
       <etools-content-panel panel-title="Firm Staff Members with Access">
         <div slot="panel-btns">
           <paper-icon-button
-                on-tap="_allowAdd"
+                @tap="${() => this.addStaffMember()}"
                 icon="add">
           </paper-icon-button>
         </div>
@@ -150,22 +152,29 @@ class FirmStaffMembers extends LitElement {
       type: EtoolsTableColumnType.Text
     }
   ];
+  private dialogStaffMember!: StaffMemberEl;
 
   connectedCallback() {
     super.connectedCallback();
     this.populateStaffMembersList('2');// TODO remove
+    this.createAddStaffMemberDialog();
+  }
+
+  createAddStaffMemberDialog() {
+    this.dialogStaffMember = document.createElement('staff-member') as StaffMemberEl;
+    this.dialogStaffMember.setAttribute('id', 'dialogStaffMember');
+    document.querySelector('body')!.appendChild(this.dialogStaffMember);
+  }
+
+  addStaffMember() {
+    this.dialogStaffMember.openDialog();
   }
 
   populateStaffMembersList(firmId: string) {
     // call to get staff members by firmId
-    this.paginator = getPaginator(this.paginator, {count: this.staffMembers.length, data:this.staffMembers});//TODO getP by response
+    this.paginator = getPaginator(this.paginator, {count: this.staffMembers.length, data: this.staffMembers});//TODO getP by response
   }
 
-
-
-  _allowAdd() {
-
-  }
 }
 
 export {FirmStaffMembers as FirmStaffMembersEl}

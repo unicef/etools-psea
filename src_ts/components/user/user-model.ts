@@ -22,3 +22,15 @@ export interface EtoolsUserModel {
   vendor_number: string | null;
   [key: string]: any;
 }
+export interface EtoolsStaffMemberModel {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  profile: EtoolsStaffMemberProfileModel;
+  guid: string;
+}
+export interface EtoolsStaffMemberProfileModel {
+  job_title: string;
+  phone_number: string;
+}
