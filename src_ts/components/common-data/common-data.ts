@@ -25,7 +25,7 @@ export class EtoolsCommonData extends connect(store)(EtoolsAjaxRequestMixin(Poly
   private unicefUsersEndpoint = getEndpoint(UNICEF_USERS);
 
   public stateChanged(state: RootState) {
-    this.unicefUsers = state.commonData!.unicefUsers;// TODO: Is this needed?
+    this.unicefUsers = state.commonData!.unicefUsers;
     console.log('[EtoolsUsersData]: store unicef user data received', state.commonData!.unicefUsers);
   }
 
