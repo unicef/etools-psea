@@ -24,11 +24,14 @@ export interface EtoolsUserModel {
 }
 export interface EtoolsStaffMemberModel {
   id: string;
+  hasAccess: boolean;
+  user: EtoolsStaffUserModel;
+}
+export interface EtoolsStaffUserModel {
   email: string;
   first_name: string;
   last_name: string;
   profile: EtoolsStaffMemberProfileModel;
-  guid: string;
 }
 export interface EtoolsStaffMemberProfileModel {
   job_title: string;

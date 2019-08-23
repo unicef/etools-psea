@@ -51,7 +51,7 @@ class StaffMember extends LitElement {
                           <paper-input
                                   id="emailInput"
                                   class$="validate-input required email"
-                                  value="${this.editedItem.email}"
+                                  value="${this.editedItem.user.email}"
                                   label="E-mail"
                                   placeholder="Enter E-mail"
                                   required
@@ -71,7 +71,7 @@ class StaffMember extends LitElement {
                           <paper-input
                                   id="firstNameInput"
                                   class$="validate-input required"
-                                  value="${this.editedItem.first_name}"
+                                  value="${this.editedItem.user.first_name}"
                                   label="First Name"
                                   placeholder="Enter First Name"
                                   required
@@ -89,7 +89,7 @@ class StaffMember extends LitElement {
                           <paper-input
                                   id="lastNameInput"
                                   class$="validate-input required"
-                                  value="${this.editedItem.last_name}"
+                                  value="${this.editedItem.user.last_name}"
                                   label="Last Name"
                                   placeholder="Enter Last Name"
                                   required
@@ -106,8 +106,9 @@ class StaffMember extends LitElement {
                       <div class="input-container">
                           <!-- Position -->
                           <paper-input
+                                  id="positionInput"
                                   class$="validate-input"
-                                  value="${this.editedItem.profile.job_title}"
+                                  value="${this.editedItem.user.profile.job_title}"
                                   label="Position"
                                   placeholder="Enter Position"
                                   ?disabled="${this.requestInProcess}"
@@ -120,8 +121,9 @@ class StaffMember extends LitElement {
                       <div class="input-container">
                           <!-- Phone number -->
                           <paper-input
+                                  id="phoneInput"
                                   class$="validate-input"
-                                  value="${this.editedItem.profile.phone_number}"
+                                  value="${this.editedItem.user.profile.phone_number}"
                                   allowed-pattern="[0-9\\ \\.\\+\\-\\(\\)]"
                                   label="Phone number"
                                   placeholder="Enter Phone"
@@ -138,10 +140,10 @@ class StaffMember extends LitElement {
                   <div class="row-h group">
                       <!--receive notification-->
                       <div class="input-container">
-                          <paper-checkbox>
-                                  <!-- checked="{{editedItem.hasAccess}}"
-                                  disabled="{{_isCheckboxReadonly(editedItem.hasAccess, engagementStaffs, saveWithButton)}}"
-                                  readonly="{{_isCheckboxReadonly(editedItem.hasAccess, engagementStaffs, saveWithButton)}}"> -->
+                          <paper-checkbox
+                                  ?checked="${this.editedItem.hasAccess}"
+                                  ?disabled="${this.requestInProcess}"
+                                  ?readonly="${this.requestInProcess}">
                               Has Access
                           </paper-checkbox>
                       </div>
@@ -168,7 +170,7 @@ class StaffMember extends LitElement {
   requiredMessage: string = 'This field is required';
 
   @property({type: Object})
-  editedItem: EtoolsStaffMemberModel = {email: '', first_name: '', last_name: '', profile: {phone_number: '', job_title: ''}} as EtoolsStaffMemberModel;
+  editedItem: EtoolsStaffMemberModel = {user: {email: '', first_name: '', last_name: '', profile: {phone_number: '', job_title: ''}}, hasAccess: false, id: ''}
 
   private _validationSelectors: string[] = ['#emailInput', '#firstNameInput', '#lastNameInput'];
 
@@ -186,20 +188,23 @@ class StaffMember extends LitElement {
 
   private handleDialogClosed() {
     this.dialogOpened = false;
-    this.resetValidations();
+    this.resetControls();
   }
 
   private onSaveClick() {
     this.validate();
   }
 
-  private resetValidations() {
+  private resetControls() {
     this._validationSelectors.forEach((selector: string) => {
       const el = this.shadowRoot!.querySelector(selector) as PolymerElement;
       if (el) {
         el.set('invalid', false);
+        el.set('value', '');
       }
     });
+    (this.shadowRoot!.querySelector('#positionInput') as PolymerElement).set('value', '');
+    (this.shadowRoot!.querySelector('#phoneInput') as PolymerElement).set('value', '');
   }
 
   private validate() {

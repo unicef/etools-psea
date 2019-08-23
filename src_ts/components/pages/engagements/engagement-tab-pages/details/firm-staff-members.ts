@@ -47,7 +47,7 @@ class FirmStaffMembers extends LitElement {
       <etools-content-panel panel-title="Firm Staff Members with Access">
         <div slot="panel-btns">
           <paper-icon-button
-                @tap="${() => this.addStaffMember()}"
+                @tap="${() => this.openStaffMemberDialog()}"
                 icon="add">
           </paper-icon-button>
         </div>
@@ -157,7 +157,13 @@ class FirmStaffMembers extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.populateStaffMembersList('2');// TODO remove
+    this.addEventListener('edit-item', this.openStaffMemberDialog);
     this.createAddStaffMemberDialog();
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('edit-item', this.openStaffMemberDialog);
   }
 
   createAddStaffMemberDialog() {
@@ -166,7 +172,10 @@ class FirmStaffMembers extends LitElement {
     document.querySelector('body')!.appendChild(this.dialogStaffMember);
   }
 
-  addStaffMember() {
+  openStaffMemberDialog(item?: any) {
+    if(item && item.detail){
+      this.dialogStaffMember.editedItem = item.detail;
+    }
     this.dialogStaffMember.openDialog();
   }
 
