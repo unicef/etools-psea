@@ -86,7 +86,7 @@ class AssessorInfo extends connect(store)(LitElement) {
           <etools-dropdown label="Unicef Staff" class="row-padding-v"
             .options="${this.unicefUsers}"
             option-label="name"
-            option-valus="id">
+            option-value="id">
           </<etools-dropdown>
         `;
       case 'firm':

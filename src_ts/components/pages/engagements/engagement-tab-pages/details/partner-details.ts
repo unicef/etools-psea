@@ -16,11 +16,11 @@ class PartnerDetails extends LitElement {
       <div class="layout-horizontal row-padding-v">
         <div class="layout-vertical col-4">
           <span class="paper-label">Partner Organization Address</span>
-          <span class="input-span" ?empty="${!this.partner.name}">${this.partner.name}</span>
+          <span class="input-span" ?empty="${!this.partner.address}">${this.partner.address}</span>
         </div>
         <div class="layout-vertical col-4">
           <span class="paper-label">Phone Number</span>
-          <span class="input-label" ?empty="${!this.partner.phone}">${this.partner.phone}</span>
+          <span class="input-label" ?empty="${!this.partner.phone_number}">${this.partner.phone_number}</span>
         </div>
       </div>
 
@@ -48,9 +48,8 @@ class PartnerDetails extends LitElement {
 
   _getStaffMembers(partnerId) {
     this.thereAreStaffMembers = true;
-    return 'TODO- get staff members'
-    // TODO - call to GET partner staff members
-    this.requestUpdate();
+    return 'TODO- get staff members';
+    // TODO - call to GET partner staff members & how to trigger re-render
   }
 
 

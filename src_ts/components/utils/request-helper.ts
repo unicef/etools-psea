@@ -64,8 +64,8 @@ const _getCSRFCookie = () => {
   return csrfToken;
 };
 
-const _getCsrfHeader = (csrfCheck) => {
-  let csrfHeaders = {};
+const _getCsrfHeader = (csrfCheck: any) => {
+  let csrfHeaders: any = {};
   if (csrfCheck !== 'disabled') {
     let csrfToken = _getCSRFCookie();
 
@@ -77,8 +77,8 @@ const _getCsrfHeader = (csrfCheck) => {
 };
 
 
-const _getRequestHeaders = (reqConfig) => {
-  let headers = {};
+const _getRequestHeaders = (reqConfig: any) => {
+  let headers: any = {};
 
   headers['content-type'] = 'application/json';
 
@@ -91,17 +91,12 @@ const _getRequestHeaders = (reqConfig) => {
 
   headers = Object.assign({}, headers, clientConfiguredHeaders, csrfHeaders);
 
-  if (reqConfig.multiPart) {
-    // content type will be automatically set in this case
-    delete headers['content-type'];
-  }
-
   return headers;
 };
 
-const _getClientConfiguredHeaders = (additionalHeaders) => {
+const _getClientConfiguredHeaders = (additionalHeaders: any) => {
   let header;
-  let clientHeaders = {};
+  let clientHeaders: any = {};
   if (additionalHeaders && additionalHeaders instanceof Object) {
     /* eslint-disable guard-for-in */
     for (header in additionalHeaders) {
