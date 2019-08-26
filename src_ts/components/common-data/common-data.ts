@@ -15,7 +15,9 @@ const UNICEF_USERS = 'unicefUsers';
  * @polymer
  * @appliesMixin EtoolsAjaxRequestMixin
  */
+//TODO - this component most likely is not needed
 export class EtoolsCommonData extends connect(store)(EtoolsAjaxRequestMixin(PolymerElement)) {
+  //TODO This components most likely doesn't need to be connected to the store
 
   @property({type: Object, notify: true})
   unicefUsers!: UnicefUser[];

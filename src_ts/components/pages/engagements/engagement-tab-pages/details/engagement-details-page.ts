@@ -28,6 +28,9 @@ class EngagementDetailsPage extends LitElement {
     `;
   }
 
+  @property({type: Boolean})
+  isNew: boolean = false;
+
   @property({type: Object})
   engagement!: GenericObject;
 

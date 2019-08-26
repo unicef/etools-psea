@@ -16,19 +16,19 @@ class PartnerDetails extends LitElement {
       <div class="layout-horizontal row-padding-v">
         <div class="layout-vertical col-4">
           <span class="paper-label">Partner Organization Address</span>
-          <span class="input-span" ?empty="${!this.partner.name}">${this.partner.name}</span>
+          <span class="input-span" ?empty="${!this.partner.address}">${this.partner.address}</span>
         </div>
         <div class="layout-vertical col-4">
           <span class="paper-label">Phone Number</span>
-          <span class="input-label" ?empty="${!this.partner.phone}">${this.partner.phone}</span>
+          <span class="input-label" ?empty="${!this.partner.phone_number}">${this.partner.phone_number}</span>
         </div>
       </div>
 
       <div class="layout-horizontal row-padding-v">
         <div class="layout-vertical col-4">
           <span class="paper-label">Authorizes Officers</span>
-          <span class="input-label" ?empty="${!this.partner.authorized_officers}">
-            ${this.partner.authorized_officers}
+          <span class="input-label" ?empty="${!this.thereAreStaffMembers}">
+            ${this._getStaffMembers(this.partner.id)}
           </span>
         </div>
         <div class="layout-vertical col-4">
@@ -41,6 +41,17 @@ class PartnerDetails extends LitElement {
 
   @property({type: Object, reflect: true, attribute: true})
   partner: GenericObject = {};
+
+  @property({type: Boolean})
+  thereAreStaffMembers: boolean = false;
+
+
+  _getStaffMembers(partnerId) {
+    this.thereAreStaffMembers = true;
+    return 'TODO- get staff members';
+    // TODO - call to GET partner staff members & how to trigger re-render
+  }
+
 
 }
 

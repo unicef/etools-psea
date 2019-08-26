@@ -7,15 +7,21 @@ import '@unicef-polymer/etools-dropdown/etools-dropdown';
 import '@unicef-polymer/etools-date-time/datepicker-lite';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {buttonsStyles} from '../../../../styles/button-styles';
-import {GenericObject} from '../../../../../types/globals';
+import {GenericObject, UnicefUser} from '../../../../../types/globals';
 import './partner-details';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
+import {connect} from 'pwa-helpers/connect-mixin';
+import {store, RootState} from '../../../../../redux/store';
+import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
+import {makeRequest} from '../../../../utils/request-helper';
+import {isJsonStrMatch} from '../../../../utils/utils';
+
 
 /**
  * @customElement
  * @LitElement
  */
-class AssessmentInfo extends LitElement {
+class AssessmentInfo extends connect(store)(LitElement) {
 
   render() {
     // language=HTML
@@ -39,17 +45,20 @@ class AssessmentInfo extends LitElement {
           class="row-padding-v col-6 w100"
           ?readonly="${this.readonly}"
           .options="${this.partners}"
-          .optionValue="${'id'}"
-          .optionLabel="${'name'}"
+          option-value="id"
+          option-label="name"
           trigger-value-change-event
-          readonly
           @etools-selected-item-changed="${this._setSelectedPartner}">
         </etools-dropdown>
 
         ${this._showPartnerDetails(this.selectedPartner)}
 
         <etools-dropdown label="UNICEF Focal Point"
-          class="row-padding-v">
+          class="row-padding-v"
+          .options="${this.unicefUsers}"
+          option-label="name"
+          option-value="id"
+          enable-none-option>
         </etools-dropdown>
 
         <datepicker-lite label="Assessment Date"
@@ -74,9 +83,7 @@ class AssessmentInfo extends LitElement {
   engagement!: GenericObject;
 
   @property({type: Object})
-  partners: GenericObject = [{id: 1, name: 'Zamboni',
-    authorized_officers: ['Ala Bala', 'Poto Cala'],
-    adress: 'Strulibili 23', phone: 12345678, email: 'email@email.com'}];
+  partners!: GenericObject;
 
   @property({type: Object})
   selectedPartner!: GenericObject;
@@ -84,16 +91,25 @@ class AssessmentInfo extends LitElement {
   @property({type: Boolean})
   readonly: boolean = false;
 
+  @property({type: Array})
+  unicefUsers!: UnicefUser[];
+
+  stateChanged(state: RootState) {
+    if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
+      this.unicefUsers = [...state.commonData!.unicefUsers];
+    }
+
+  }
 
   connectedCallback() {
     super.connectedCallback();
-    this._getPartnerOrganizations();
+    this._getPartners();
   }
 
-  _getPartnerOrganizations() {
-    // this.sendRequest({endpoint: etoolsEndpoints.partners})
-    //   .then((resp) => this.partners = resp)
-    //   .catch((err) => console.log(err));
+  _getPartners() {
+    makeRequest(etoolsEndpoints.partners)
+       .then((resp:any) => this.partners = resp)
+       .catch((err:any) => console.log(err));
   }
 
   _allowEdit() {
