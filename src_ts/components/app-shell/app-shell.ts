@@ -93,8 +93,6 @@ export class AppShell extends connect(store)(LitElement) {
             ?active="${this.isActivePage(this.mainPage,
     'engagements', this.subPage, 'details|questionnaire|followup')}">
           </engagement-tabs>
-          <page-two class="page" ?active="${this.isActivePage(this.mainPage, 'page-two')}"></page-two>
-          <page-not-found class="page" ?active="${this.isActivePage(this.mainPage, 'page-not-found')}"></page-not-found>
         </main>
 
         <page-footer></page-footer>

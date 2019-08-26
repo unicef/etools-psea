@@ -35,7 +35,7 @@ export class EngagementTabs extends connect(store)(LitElement) {
       <etools-status></etools-status>
 
       <page-content-header with-tabs-visible>
-      
+
         <h1 slot="page-title">${this.engagement.title}</h1>
 
         <div slot="title-row-actions" class="content-header-actions">
@@ -48,7 +48,7 @@ export class EngagementTabs extends connect(store)(LitElement) {
                      .activeTab="${this.activeTab}"
                      @iron-select="${this.handleTabChange}"></etools-tabs>
       </page-content-header>
-      
+
       <div class="page-content">
         ${this.isActiveTab(this.activeTab,
     'details') ? html`<engagement-details-page></engagement-details-page>` : ''}
@@ -104,7 +104,7 @@ export class EngagementTabs extends connect(store)(LitElement) {
       if (stateActiveTab !== this.activeTab) {
         const oldActiveTabValue = this.activeTab;
         this.activeTab = state.app!.routeDetails.subRouteName as string;
-        this.tabChanged(this.activeTab, oldActiveTabValue);
+        this.tabChanged(this.activeTab, oldActiveTabValue);// Is this needed here
       }
       const engagementId = state.app!.routeDetails.params!.engagementId;
       if (engagementId) {

@@ -33,7 +33,7 @@ const generateRequestConfigOptions = (endpoint, data) => {
   return config;
 };
 
-export const makeRequest = (endpoint, data = {}) => {
+export const makeRequest = (endpoint: {url: string}, data = {}) => {
 
   let reqConfig = generateRequestConfigOptions(endpoint, data);
   let requestElem = createIronRequestElement();
@@ -42,7 +42,8 @@ export const makeRequest = (endpoint, data = {}) => {
   return requestElem!.completes!.then((result) => {
     return result.response;
   }).catch((error) => {
-    throw new RequestError(error, requestElem.xhr.status, requestElem.xhr.statusText, requestElem.xhr.response);
+    throw new RequestError(error, requestElem!.xhr!.status, requestElem!.xhr!.statusText,
+       requestElem!.xhr!.response);
   });
 };
 

@@ -23,6 +23,15 @@ export const etoolsEndpoints: EtoolsEndpoints = {
     url: '/api/v3/users/?verbosity=minimal',
     exp: 60 * 60 * 1000, // 1h
     cachingKey: 'unicefUsers'
+  },
+  assessment: {
+    url: '/api/psea/assessment/'
+  },
+  assessor: {
+    url: '/api/psea/assessor/'
+  },
+  questionnaire: {
+    url: '/api/psea/indicator/'
   }
   // agreements: {
   //   template: '/api/v2/agreements/',
