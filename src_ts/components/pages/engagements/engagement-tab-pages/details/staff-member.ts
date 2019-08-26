@@ -6,34 +6,28 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import {EtoolsStaffMemberModel} from '../../../../user/user-model';
 import {PaperInputElement} from '@polymer/paper-input/paper-input';
-import {PaperCheckboxElement} from '@polymer/paper-checkbox';
-import EtoolsAjaxRequestMixin from '@unicef-polymer/etools-ajax/etools-ajax-request-mixin';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {GenericObject, Constructor} from '../../../../../types/globals';
 import {cloneDeep} from 'lodash-es';
+import {makeRequest} from '../../../../utils/request-helper';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+import {fireEvent} from '../../../../utils/fire-custom-event';
 
 /**
  * @customElement
  *  @LitElement
  */
 @customElement('staff-member')
-class StaffMember extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<LitElement>) {
+class StaffMember extends LitElement {
   render() {
     // language=HTML
     return html`
       <style>
-        .input-container {
-          position: relative;
-          float: left;
-          margin: 0 12px 0 0;
-          width: 33.33%;
-        }
-        .input-container:last-of-type {
-          margin-right: 0;
-        }
         .row-h {
           margin-bottom: 8px;
           padding: 0px !important;
+        }
+        paper-input, paper-checkbox{
+          padding:5px 10px;
         }
       </style>
       ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
@@ -41,6 +35,7 @@ class StaffMember extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<Lit
                       ?opened="${this.dialogOpened}"
                       dialog-title="${this.dialogTitle}"
                       size="md"
+                      ?show-spinner="${this.requestInProcess}"
                       @close="${this.handleDialogClosed}"
                       ok-btn-text="${this.confirmBtnText}"
                       ?disable-confirm-btn="${this.requestInProcess}"
@@ -49,27 +44,27 @@ class StaffMember extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<Lit
 
           <div class="row-h repeatable-item-container" without-line>
               <div class="repeatable-item-content">
-                  <div class="row-h group">
-                      <div class="input-container">
+                  <div class="layout-horizontal">
+                      <div class="input-container col-4">
                           <!-- Email address -->
                           <paper-input
                                   id="emailInput"
                                   class$="validate-input required email"
                                   value="${this.editedItem.user.email}"
                                   label="E-mail"
+                                  type="email"
                                   placeholder="Enter E-mail"
                                   ?required = "${this.isNewRecord}"
                                   ?disabled="${!this.isNewRecord || this.requestInProcess}"
                                   maxlength="45"
                                   error-message="Email is required"
                                   @focus="${this.resetFieldError}"
-                                  @tap="${this.resetFieldError}"
-                                  @on-blur="${this.checkEmail}">
+                                  @tap="${this.resetFieldError}">
                               <iron-icon slot="prefix" icon="communication:email"></iron-icon>
                           </paper-input>
                       </div>
 
-                      <div class="input-container">
+                      <div class="input-container  col-4">
                           <!-- First Name -->
                           <paper-input
                                   id="firstNameInput"
@@ -87,7 +82,7 @@ class StaffMember extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<Lit
                           </paper-input>
                       </div>
 
-                      <div class="input-container">
+                      <div class="input-container  col-4">
                           <!-- Last Name -->
                           <paper-input
                                   id="lastNameInput"
@@ -105,8 +100,8 @@ class StaffMember extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<Lit
                           </paper-input>
                       </div>
                   </div>
-                  <div class="row-h group">
-                      <div class="input-container">
+                  <div class="layout-horizontal">
+                      <div class="input-container  col-4" ?hidden="${!this.isStaffMember}">
                           <!-- Position -->
                           <paper-input
                                   id="positionInput"
@@ -121,7 +116,7 @@ class StaffMember extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<Lit
                           </paper-input>
                       </div>
 
-                      <div class="input-container">
+                      <div class="input-container  col-4">
                           <!-- Phone number -->
                           <paper-input
                                   id="phoneInput"
@@ -137,12 +132,11 @@ class StaffMember extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<Lit
                               <iron-icon slot="prefix" icon="communication:phone"></iron-icon>
                           </paper-input>
                       </div>
-                      <div class="input-container"></div>
                   </div>
 
-                  <div class="row-h group">
+                  <div class="layout-horizontal">
                       <!--receive notification-->
-                      <div class="input-container">
+                      <div class="input-container  col-4">
                           <paper-checkbox
                                   id="hasAccessInput"
                                   ?checked="${this.editedItem.hasAccess}"
@@ -168,10 +162,10 @@ class StaffMember extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<Lit
   requestInProcess: boolean = false;
 
   @property({type: String})
-  dialogTitle: string = 'Add New Firm Staff Member';
+  dialogTitle!: string;
 
   @property({type: String})
-  confirmBtnText: string = 'Add';
+  confirmBtnText!: string;
 
   @property({type: String})
   requiredMessage: string = 'This field is required';
@@ -182,20 +176,17 @@ class StaffMember extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<Lit
   @property({type: Boolean})
   isNewRecord!: boolean;
 
+  @property({type: Boolean})
+  isStaffMember: boolean = true;
+
   @property({type: Number})
-  organisationId: number = 10;
-
-  // connectedCallback() {
-  //   super.connectedCallback();
-  // }
-
-  // disconnectedCallback() {
-  //   super.disconnectedCallback();
-  // }
+  organisationId!: number;
 
   public openDialog() {
+    this.isNewRecord = !(parseInt(this.editedItem.id) > 0);
+    this.dialogTitle = this.isNewRecord ? (this.isStaffMember ? 'Add New Firm Staff Member' : 'Add New External Individual') : 'Edit Firm Staff Member';
+    this.confirmBtnText = this.isNewRecord ? 'Add' : 'Save';
     this.dialogOpened = true;
-    this.isNewRecord  = !(parseInt(this.editedItem.id) > 0);
   }
 
   private handleDialogClosed() {
@@ -212,13 +203,14 @@ class StaffMember extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<Lit
   private resetControls() {
     this.validationSelectors.forEach((selector: string) => {
       const el = this.shadowRoot!.querySelector(selector) as PaperInputElement;
-        el.invalid = false;
-        el.value = '';
+      el.invalid = false;
+      el.value = '';
     });
-    (this.shadowRoot!.querySelector('#positionInput') as PaperInputElement).value ='';
-    (this.shadowRoot!.querySelector('#phoneInput') as PaperInputElement).value = '';
-    (this.shadowRoot!.querySelector('#hasAccessInput') as PaperCheckboxElement).checked = false;
+    this.getEl('#positionInput').value = '';
+    this.getEl('#phoneInput').value = '';
+    this.getEl('#hasAccessInput').checked = false;
     this.editedItem = cloneDeep(this.defaultItem);
+    this.isStaffMember = true;
   }
 
   private validate() {
@@ -239,48 +231,50 @@ class StaffMember extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<Lit
     (e.target as PaperInputElement).invalid = false;
   }
 
-  private checkEmail(e) {
-
+  private getControlsData() {
+    if (this.isNewRecord) {
+      this.editedItem.user.email = this.getEl('#emailInput').value;
+    }
+    this.editedItem.user.first_name = this.getEl('#firstNameInput').value;
+    this.editedItem.user.last_name = this.getEl('#lastNameInput').value;
+    this.editedItem.user.profile.phone_number = this.getEl('#phoneInput').value;
+    this.editedItem.hasAccess = this.getEl('#hasAccessInput').checked;
+    if (this.isStaffMember) {
+      this.editedItem.user.profile.job_title = this.getEl('#positionInput').value;
+    }
   }
 
   private saveDialogData() {
-    this.editedItem.hasAccess = this.shadowRoot!.querySelector('#hasAccessInput').checked;
-    this.editedItem.user.first_name = this.shadowRoot!.querySelector('#firstNameInput').value;
-    this.editedItem.user.last_name = this.shadowRoot!.querySelector('#lastNameInput').value;
-    // this.editedItem.hasAccess = this.shadowRoot!.querySelector('hasAccess').value;
-
+    this.getControlsData();
+    this.requestInProcess = true;
 
     const options = {
-      method: parseInt(this.editedItem.id) > 0 ? 'PATCH' : 'POST',
-      endpoint: {
-        url: getEndpoint('staffMembers', {id: this.organisationId}).url + this.editedItem.id + '/'
-      },
-      body: this.editedItem
+      method: this.isNewRecord ? 'POST' : 'PATCH',
+      url: getEndpoint('staffMembers', {id: this.organisationId}).url + this.editedItem.id + '/'
     };
-    this.sendRequest(options)
-      .then(resp => this._handleResponse(resp))
-      .catch(err => this._handleError(err));
+
+    makeRequest(options, this.editedItem)
+      .then((resp: any) => this._handleResponse(resp))
+      .catch((err: any) => this._handleError(err))
   }
 
-  _handleResponse(data) {
-    // if (!this.requestsCompleted.data || !this.requestsCompleted.options) {return;}
-
-    // this.dataItems = data.results;
-    // if (this.queries && !this.queries.search) {
-    //   this.datalength = data.count;
-    // }
-    // this.listLoading = false;
-    // this.url = null;
-    // this.staffsBase = `staff_members_${this.organisationId}`;
+  _handleResponse(resp: any) {
+    this.requestInProcess = false;
+    // update data
+    // fireEvent(this, 'member-updated', resp);
+    this.handleDialogClosed();
   }
 
-  _handleError(error) {
-    let responseData = error && error.request && error.request.detail &&
-      error.request.detail.request && error.request.detail.request.xhr;
-    console.error(responseData);
-    // this.listLoading = false;
-    // this.url = null;
+  _handleError(err: any) {
+    this.requestInProcess = false;
+    const msg =  'Failed to save/update new '+  this.isStaffMember ? 'Firm Staff Member' : 'External Individual' + '!';
+    logError(msg, 'staff-member', err);
+    fireEvent(this, 'toast', {text: msg});
   }
+
+  getEl(elName: string): HTMLInputElement {
+    return this.shadowRoot!.querySelector(elName)! as HTMLInputElement;
+  };
 
 }
 

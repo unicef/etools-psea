@@ -191,6 +191,7 @@ class FirmStaffMembers extends LitElement {
     if(item && item.detail){
       this.dialogStaffMember.editedItem = item.detail;
     }
+    this.dialogStaffMember.organisationId = 10;
     this.dialogStaffMember.openDialog();
   }
 
