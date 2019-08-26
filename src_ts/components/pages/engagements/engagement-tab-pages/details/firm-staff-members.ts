@@ -8,6 +8,7 @@ import '../../../../common/layout/etools-table/etools-table';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest} from '../../../../utils/request-helper';
 import {buildUrlQueryString} from '../../../../common/layout/etools-table/etools-table-utility';
+import {GenericObject} from '../../../../../types/globals';
 
 /**
  * @customElement
@@ -66,56 +67,7 @@ class FirmStaffMembers extends LitElement {
   }
 
   @property({type: Array})
-  staffMembers = [
-    {
-      "id": 431,
-      "user": {
-        "first_name": "Alv",
-        "last_name": "Aro",
-        "email": "alvaro@gmail.org",
-        "is_active": true,
-        "profile": {
-          "job_title": "",
-          "phone_number": ""
-        },
-        "full_name": "Alv Aro"
-      },
-      "hidden": false,
-      "hasAccess": false
-    },
-    {
-      "id": 426,
-      "user": {
-        "first_name": "Suciu",
-        "last_name": "Alina",
-        "email": "alinaaa.testing1@gmail.com",
-        "is_active": true,
-        "profile": {
-          "job_title": "",
-          "phone_number": "0748618743"
-        },
-        "full_name": "Suciu Alina"
-      },
-      "hidden": false,
-      "hasAccess": true
-    },
-    {
-      "id": 424,
-      "user": {
-        "first_name": "Ariana",
-        "last_name": "Grande",
-        "email": "ariana@nordlogic.com",
-        "is_active": true,
-        "profile": {
-          "job_title": "Duchess",
-          "phone_number": "12345671"
-        },
-        "full_name": "Ariana Grande"
-      },
-      "hidden": false,
-      "hasAccess": true
-    }
-  ];
+  staffMembers: GenericObject[] = [];
 
   @property({type: Object})
   paginator: EtoolsPaginator = {...defaultPaginator};
