@@ -53,7 +53,8 @@ class AssessmentInfo extends connect(store)(LitElement) {
           option-value="id"
           option-label="name"
           trigger-value-change-event
-          @etools-selected-item-changed="${this._setSelectedPartner}">
+          @etools-selected-item-changed="${this._setSelectedPartner}"
+          ?readonly=${!this.editMode}>
         </etools-dropdown>
 
         ${this._showPartnerDetails(this.selectedPartner)}
@@ -65,7 +66,8 @@ class AssessmentInfo extends connect(store)(LitElement) {
           option-value="id"
           enable-none-option
           trigger-value-change-event
-          @etools-selected-items-changed="${this._setSelectedFocalPoints}">
+          @etools-selected-items-changed="${this._setSelectedFocalPoints}"
+          ?readonly=${!this.editMode}>
         </etools-dropdown-multi>
 
         <datepicker-lite label="Assessment Date"
@@ -73,12 +75,13 @@ class AssessmentInfo extends connect(store)(LitElement) {
           value="${this.assessment.assessment_date}"
           selected-date-display-format="D MMM YYYY"
           fire-date-has-changed
-          @date-has-changed="${(e: CustomEvent) => this._setSelectedDate(e.detail.date)}">
+          @date-has-changed="${(e: CustomEvent) => this._setSelectedDate(e.detail.date)}"
+          ?readonly=${!this.editMode}>
         </datepicker-lite>
 
         <div class="layout-horizontal right-align row-padding-v"
           ?hidden="${this.hideActionButtons(this.isNew, this.editMode)}">
-          <paper-button class="default">
+          <paper-button class="default" @tap="${this.cancelAssessment}">
             Cancel
           </paper-button>
           <paper-button class="primary" @tap="${this.saveAssessment}">
@@ -112,6 +115,9 @@ class AssessmentInfo extends connect(store)(LitElement) {
     if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
     }
+    if (state.commonData && !isJsonStrMatch(this.partners, state.commonData!.partners)) {
+      this.partners = [...state.commonData!.partners];
+    }
     if (state.app!.routeDetails.params) {
       let engagementId = state.app!.routeDetails!.params!.engagementId;
       this.isNew = (engagementId === 'new');
@@ -121,7 +127,6 @@ class AssessmentInfo extends connect(store)(LitElement) {
 
   connectedCallback() {
     super.connectedCallback();
-    this._getPartners();
   }
 
   _getAssessmentInfo(engagementId: string|number) {
@@ -141,19 +146,14 @@ class AssessmentInfo extends connect(store)(LitElement) {
       .catch(err => console.error('handle this error' , err));
   }
 
-  _getPartners() {
-    makeRequest(etoolsEndpoints.partners)
-       .then((resp:any) => this.partners = resp)
-       .catch((err:any) => console.log(err));
-  }
-
   _allowEdit() {
     this.editMode = true;
   }
 
   _showPartnerDetails(selectedPartner: GenericObject) {
+    console.log(selectedPartner);
     return selectedPartner?
-      html`<partner-details .partner="${this.selectedPartner}">
+      html`<partner-details .partner="${selectedPartner}">
       </partner-details>`: '';
   }
 
@@ -170,6 +170,14 @@ class AssessmentInfo extends connect(store)(LitElement) {
 
   _setSelectedFocalPoints(e: CustomEvent) {
     this.assessment.focal_points = e .detail.selectedItems.map((i:any) => i.id);
+  }
+
+  cancelAssessment() {
+    if (this.isNew) {
+      this.assessment = new Assessment();
+      return;
+    }
+    this.editMode = false;
   }
 
   saveAssessment() {

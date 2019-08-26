@@ -10,7 +10,6 @@ export interface CommonDataState {
 
 const INITIAL_COMMON_DATA: CommonDataState = {
   unicefUsers: [],
-//  TODO: add more commondata subproperties
   partners: []
 };
 

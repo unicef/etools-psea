@@ -33,7 +33,7 @@ const generateRequestConfigOptions = (endpoint, data) => {
   return config;
 };
 
-export const makeRequest = (endpoint: {url: string}, data = {}) => {
+export const makeRequest = (endpoint: {url: string, method?: string}, data = {}) => {
 
   let reqConfig = generateRequestConfigOptions(endpoint, data);
   let requestElem = createIronRequestElement();
