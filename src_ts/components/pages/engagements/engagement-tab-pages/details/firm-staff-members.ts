@@ -172,8 +172,8 @@ class FirmStaffMembers extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.populateStaffMembersList('2');// TODO remove
-    this.addEventListener('edit-item', this.openStaffMemberDialog);
     this.createAddStaffMemberDialog();
+    this.addEventListener('edit-item', this.openStaffMemberDialog);
   }
 
   disconnectedCallback() {
