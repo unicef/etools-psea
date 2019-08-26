@@ -198,7 +198,6 @@ class FirmStaffMembers extends LitElement {
     // call to get staff members by firmId
     this.paginator = getPaginator(this.paginator, {count: this.staffMembers.length, data: this.staffMembers});//TODO getP by response
   }
-
 }
 
 export {FirmStaffMembers as FirmStaffMembersEl}
