@@ -1,19 +1,19 @@
 import {LitElement, html, property} from 'lit-element';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-spinner/paper-spinner';
-import EtoolsAjaxRequestMixin from '@unicef-polymer/etools-ajax/etools-ajax-request-mixin';
-import {GenericObject, Constructor} from '../../../../../types/globals';
+import {GenericObject} from '../../../../../types/globals';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {PaperInputElement} from '@polymer/paper-input/paper-input';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
-
+import {getEndpoint} from '../../../../../endpoints/endpoints';
+import {makeRequest} from '../../../../utils/request-helper';
 
 /**
  * @customElement
  * @LitElement
  */
-class AssessingFirm extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<LitElement>) {
+class AssessingFirm extends LitElement {
   render() {
     // language=HTML
     return html`
@@ -36,10 +36,10 @@ class AssessingFirm extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<L
         </paper-input>
       </div>
       <div class="layout-vertical row-padding-v"
-          ?hidden="${this._hideFirmName(this.originalEngagement.firm_name, this.requestInProgress)}">
+          ?hidden="${this._hideFirmName(this.originalEngagement.name, this.requestInProgress)}">
         <label class="paper-label">Firm Name</label>
         <label class="input-label row-padding-v">
-          ${this.engagement.firm_name}
+          ${this.engagement.name}
           <paper-spinner ?hidden="${!this.requestInProgress}" ?active="${this.requestInProgress}"></paper-spinner>
         </label>
 
@@ -49,7 +49,7 @@ class AssessingFirm extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<L
 
 
   @property({type: Object})
-  originalEngagement: GenericObject = {firm_name: ''};
+  originalEngagement: GenericObject = {name: ''};
 
   @property({type: Object})
   engagement: GenericObject = {};
@@ -69,13 +69,18 @@ class AssessingFirm extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<L
     }
     this.requestInProgress = true;
 
-    // make call to endpoint to get Firm name
-    let firmId = 2;
-    this.dispatchEvent(new CustomEvent('firm-changed', {
-      detail: firmId,
-      bubbles: true,
-      composed: true
-    }));
+    makeRequest(getEndpoint('agreementData', {id: this.engagement.po_number}))
+      .then((resp: any) => {
+        this.engagement = resp.auditor_firm;
+        this.requestInProgress = false;
+        this.originalEngagement.name = this.engagement.name;
+        this.dispatchEvent(new CustomEvent('firm-changed', {
+          detail: resp.auditor_firm,
+          bubbles: true,
+          composed: true
+        }));
+      })
+      .catch((err: any) => {this.requestInProgress = false; console.log(err)});
   }
 
   _validatePONumber() {
@@ -99,4 +104,3 @@ class AssessingFirm extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<L
 }
 
 window.customElements.define('assessing-firm', AssessingFirm);
-

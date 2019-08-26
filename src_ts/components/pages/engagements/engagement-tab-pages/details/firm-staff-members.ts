@@ -5,6 +5,9 @@ import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {EtoolsTableColumn, EtoolsTableColumnType} from '../../../../common/layout/etools-table/etools-table';
 import {defaultPaginator, EtoolsPaginator, getPaginator} from '../../../../common/layout/etools-table/pagination/paginator';
 import '../../../../common/layout/etools-table/etools-table';
+import {getEndpoint} from '../../../../../endpoints/endpoints';
+import {makeRequest} from '../../../../utils/request-helper';
+import {buildUrlQueryString} from '../../../../common/layout/etools-table/etools-table-utility';
 
 /**
  * @customElement
@@ -151,14 +154,23 @@ class FirmStaffMembers extends LitElement {
     }
   ];
 
+  @property({type: String})
+  firmId!: string;
+
   connectedCallback() {
     super.connectedCallback();
-    this.populateStaffMembersList('2');// TODO remove
   }
 
   populateStaffMembersList(firmId: string) {
-    // call to get staff members by firmId
-    this.paginator = getPaginator(this.paginator, {count: this.staffMembers.length, data:this.staffMembers});//TODO getP by response
+    this.firmId = firmId;
+    let endpoint = getEndpoint('staffMembers', {id: firmId});
+    endpoint.url += '?' + buildUrlQueryString({...defaultPaginator});
+    makeRequest(endpoint)
+      .then((resp: any) => {
+        this.staffMembers = resp.results;
+        this.paginator = getPaginator(this.paginator, {count: resp.count, data: this.staffMembers});
+      })
+      .catch((err: any) => console.log(err));
   }
 
   _allowAdd() {
