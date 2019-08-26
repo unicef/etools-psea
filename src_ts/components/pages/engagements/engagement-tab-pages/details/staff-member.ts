@@ -1,19 +1,23 @@
-import '@unicef-polymer/etools-dropdown/etools-dropdown';
-import '@unicef-polymer/etools-dialog/etools-dialog.js';
 import {LitElement, html, property, customElement} from 'lit-element';
+import '@unicef-polymer/etools-dialog/etools-dialog.js';
 import {PolymerElement} from '@polymer/polymer';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import {EtoolsStaffMemberModel} from '../../../../user/user-model';
 import {PaperInputElement} from '@polymer/paper-input/paper-input';
+import {PaperCheckboxElement} from '@polymer/paper-checkbox';
+import EtoolsAjaxRequestMixin from '@unicef-polymer/etools-ajax/etools-ajax-request-mixin';
+import {getEndpoint} from '../../../../../endpoints/endpoints';
+import {GenericObject, Constructor} from '../../../../../types/globals';
+import {cloneDeep} from 'lodash-es';
 
 /**
  * @customElement
  *  @LitElement
  */
 @customElement('staff-member')
-class StaffMember extends LitElement {
+class StaffMember extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<LitElement>) {
   render() {
     // language=HTML
     return html`
@@ -54,9 +58,8 @@ class StaffMember extends LitElement {
                                   value="${this.editedItem.user.email}"
                                   label="E-mail"
                                   placeholder="Enter E-mail"
-                                  required
-                                  ?disabled="${this.requestInProcess}"
-                                  ?readonly="${this.requestInProcess}"
+                                  ?required = "${this.isNewRecord}"
+                                  ?disabled="${!this.isNewRecord || this.requestInProcess}"
                                   maxlength="45"
                                   error-message="Email is required"
                                   @focus="${this.resetFieldError}"
@@ -141,6 +144,7 @@ class StaffMember extends LitElement {
                       <!--receive notification-->
                       <div class="input-container">
                           <paper-checkbox
+                                  id="hasAccessInput"
                                   ?checked="${this.editedItem.hasAccess}"
                                   ?disabled="${this.requestInProcess}"
                                   ?readonly="${this.requestInProcess}">
@@ -153,6 +157,9 @@ class StaffMember extends LitElement {
       </etools-dialog>
     `;
   }
+
+  private defaultItem: EtoolsStaffMemberModel = {user: {email: '', first_name: '', last_name: '', profile: {phone_number: '', job_title: ''}}, hasAccess: false, id: ''};
+  private validationSelectors: string[] = ['#emailInput', '#firstNameInput', '#lastNameInput'];
 
   @property({type: Boolean, reflect: true})
   dialogOpened: boolean = false;
@@ -170,9 +177,13 @@ class StaffMember extends LitElement {
   requiredMessage: string = 'This field is required';
 
   @property({type: Object})
-  editedItem: EtoolsStaffMemberModel = {user: {email: '', first_name: '', last_name: '', profile: {phone_number: '', job_title: ''}}, hasAccess: false, id: ''}
+  editedItem: EtoolsStaffMemberModel = cloneDeep(this.defaultItem);
 
-  private _validationSelectors: string[] = ['#emailInput', '#firstNameInput', '#lastNameInput'];
+  @property({type: Boolean})
+  isNewRecord!: boolean;
+
+  @property({type: Number})
+  organisationId: number = 10;
 
   // connectedCallback() {
   //   super.connectedCallback();
@@ -184,6 +195,7 @@ class StaffMember extends LitElement {
 
   public openDialog() {
     this.dialogOpened = true;
+    this.isNewRecord  = !(parseInt(this.editedItem.id) > 0);
   }
 
   private handleDialogClosed() {
@@ -192,24 +204,26 @@ class StaffMember extends LitElement {
   }
 
   private onSaveClick() {
-    this.validate();
+    if (this.validate()) {
+      this.saveDialogData();
+    }
   }
 
   private resetControls() {
-    this._validationSelectors.forEach((selector: string) => {
-      const el = this.shadowRoot!.querySelector(selector) as PolymerElement;
-      if (el) {
-        el.set('invalid', false);
-        el.set('value', '');
-      }
+    this.validationSelectors.forEach((selector: string) => {
+      const el = this.shadowRoot!.querySelector(selector) as PaperInputElement;
+        el.invalid = false;
+        el.value = '';
     });
-    (this.shadowRoot!.querySelector('#positionInput') as PolymerElement).set('value', '');
-    (this.shadowRoot!.querySelector('#phoneInput') as PolymerElement).set('value', '');
+    (this.shadowRoot!.querySelector('#positionInput') as PaperInputElement).value ='';
+    (this.shadowRoot!.querySelector('#phoneInput') as PaperInputElement).value = '';
+    (this.shadowRoot!.querySelector('#hasAccessInput') as PaperCheckboxElement).checked = false;
+    this.editedItem = cloneDeep(this.defaultItem);
   }
 
   private validate() {
     let isValid = true;
-    this._validationSelectors.forEach((selector: string) => {
+    this.validationSelectors.forEach((selector: string) => {
       const el = this.shadowRoot!.querySelector(selector) as PolymerElement & {validate(): boolean};
       if (el && !el.validate()) {
         isValid = false;
@@ -228,6 +242,46 @@ class StaffMember extends LitElement {
   private checkEmail(e) {
 
   }
+
+  private saveDialogData() {
+    this.editedItem.hasAccess = this.shadowRoot!.querySelector('#hasAccessInput').checked;
+    this.editedItem.user.first_name = this.shadowRoot!.querySelector('#firstNameInput').value;
+    this.editedItem.user.last_name = this.shadowRoot!.querySelector('#lastNameInput').value;
+    // this.editedItem.hasAccess = this.shadowRoot!.querySelector('hasAccess').value;
+
+
+    const options = {
+      method: parseInt(this.editedItem.id) > 0 ? 'PATCH' : 'POST',
+      endpoint: {
+        url: getEndpoint('staffMembers', {id: this.organisationId}).url + this.editedItem.id + '/'
+      },
+      body: this.editedItem
+    };
+    this.sendRequest(options)
+      .then(resp => this._handleResponse(resp))
+      .catch(err => this._handleError(err));
+  }
+
+  _handleResponse(data) {
+    // if (!this.requestsCompleted.data || !this.requestsCompleted.options) {return;}
+
+    // this.dataItems = data.results;
+    // if (this.queries && !this.queries.search) {
+    //   this.datalength = data.count;
+    // }
+    // this.listLoading = false;
+    // this.url = null;
+    // this.staffsBase = `staff_members_${this.organisationId}`;
+  }
+
+  _handleError(error) {
+    let responseData = error && error.request && error.request.detail &&
+      error.request.detail.request && error.request.detail.request.xhr;
+    console.error(responseData);
+    // this.listLoading = false;
+    // this.url = null;
+  }
+
 }
 
 export {StaffMember as StaffMemberEl}

@@ -23,11 +23,13 @@ export const etoolsEndpoints: EtoolsEndpoints = {
     url: '/api/v3/users/?verbosity=minimal',
     exp: 60 * 60 * 1000, // 1h
     cachingKey: 'unicefUsers'
-  }
+  },
+  staffMembers: {
+    template: '/api/audit/audit-firms/<%=id%>/staff-members/'
+  },
   // agreements: {
   //   template: '/api/v2/agreements/',
   //   exp: 30 * 60 * 1000, // 30min
   //   cacheTableName: 'agreements'
   // },
 };
-

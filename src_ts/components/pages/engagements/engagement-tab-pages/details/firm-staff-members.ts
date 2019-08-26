@@ -113,6 +113,21 @@ class FirmStaffMembers extends LitElement {
       },
       "hidden": false,
       "hasAccess": true
+    },
+    {
+      "id": 131,
+      "user": {
+        "first_name": "Caroline2",
+        "last_name": "Mutegi22",
+        "email": "cmutegi@deloitte.co.ke",
+        "is_active": true,
+        "profile": {
+          "job_title": "Audit Senior",
+          "phone_number": ""
+        },
+      },
+      "hidden": false,
+      "hasAccess": true
     }
   ];
 
