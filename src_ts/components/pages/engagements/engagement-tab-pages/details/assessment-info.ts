@@ -20,6 +20,7 @@ import {Assessment} from '../../../../../types/engagement';
 import {updateAppLocation} from '../../../../../routing/routes';
 import {formatDate} from '../../../../utils/date-utility';
 import {fireEvent} from '../../../../utils/fire-custom-event';
+import {cloneDeep} from 'lodash-es';
 
 
 /**
@@ -99,13 +100,16 @@ class AssessmentInfo extends connect(store)(LitElement) {
   assessment = new Assessment();
 
   @property({type: Object})
+  originalAssessment!: Assessment;
+
+  @property({type: Object})
   partners!: GenericObject;
 
   @property({type: Object})
   selectedPartner!: GenericObject;
 
   @property({type: Boolean})
-  editMode: boolean = true;
+  editMode: boolean = false;
 
   @property({type: Array})
   unicefUsers!: UnicefUser[];
@@ -123,6 +127,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
     if (state.app!.routeDetails.params) {
       let engagementId = state.app!.routeDetails!.params!.engagementId;
       this.isNew = (engagementId === 'new');
+      this.editMode = this.isNew;
       this._getAssessmentInfo(engagementId);
     }
   }
@@ -144,9 +149,18 @@ class AssessmentInfo extends connect(store)(LitElement) {
     let url = etoolsEndpoints.assessment.url! + engagementId;
 
     makeRequest({url: url})
-      .then((response) => this.assessment = response);
+      .then((response) => {
+        this.assessment = response;
+        this.originalAssessment = cloneDeep(this.assessment);
+      })
+      .catch(err => this.handleGetAssessmentError(err));
   }
 
+  handleGetAssessmentError(err: any) {
+    if (err.status == 404) {
+      updateAppLocation('/page-not-found', true);
+    }
+  }
   _allowEdit() {
     this.editMode = true;
   }
@@ -178,6 +192,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
       this.assessment = new Assessment();
       return;
     }
+    this.assessment = cloneDeep(this.originalAssessment);
     this.editMode = false;
   }
 
@@ -206,7 +221,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
     if (this.isNew) {
       return url;
     }
-    return url! + this.assessment.id;
+    return url! + this.assessment.id + '/';
   }
 
   hideEditIcon(isNew: boolean, editMode: boolean) {
