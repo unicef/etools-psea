@@ -9,6 +9,8 @@ import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest} from '../../../../utils/request-helper';
 import {buildUrlQueryString} from '../../../../common/layout/etools-table/etools-table-utility';
 import {GenericObject} from '../../../../../types/globals';
+import {updateAppLocation} from '../../../../../routing/routes';
+import {EtoolsEndpoint} from '../../../../../endpoints/endpoints-list';
 
 /**
  * @customElement
@@ -58,6 +60,7 @@ class FirmStaffMembers extends LitElement {
           <etools-table .columns="${this.listColumns}"
             .items="${this.staffMembers}"
             .paginator="${this.paginator}"
+            @paginator-change="${this.paginatorChange}"
             showEdit
             showDelete>
           </etools-table>
@@ -115,8 +118,18 @@ class FirmStaffMembers extends LitElement {
 
   populateStaffMembersList(firmId: string) {
     this.firmId = firmId;
-    let endpoint = getEndpoint('staffMembers', {id: firmId});
-    endpoint.url += '?' + buildUrlQueryString({...defaultPaginator});
+    this.paginator.page = 1;
+    this.loadStaffMembers();
+  }
+
+  paginatorChange(e: CustomEvent) {
+    this.paginator = {...e.detail};
+    this.loadStaffMembers();
+  }
+
+  loadStaffMembers() {
+    let endpoint = getEndpoint('staffMembers', {id: this.firmId});
+    endpoint.url += `?${buildUrlQueryString(this.paginator)}`;
     makeRequest(endpoint)
       .then((resp: any) => {
         this.staffMembers = resp.results;
@@ -128,6 +141,8 @@ class FirmStaffMembers extends LitElement {
   _allowAdd() {
 
   }
+
+
 }
 
 export {FirmStaffMembers as FirmStaffMembersEl}
