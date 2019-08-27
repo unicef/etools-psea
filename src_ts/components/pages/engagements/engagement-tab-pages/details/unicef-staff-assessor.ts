@@ -14,7 +14,7 @@ class UnicefStaffAssessor extends PolymerElement {
       <style></style>
       ${gridLayoutStyles}
       <etools-dropdown label="Unicef Staff" class="row-padding-v">
-      </<etools-dropdown>
+      </etools-dropdown>
     `;
   }
 
@@ -22,4 +22,3 @@ class UnicefStaffAssessor extends PolymerElement {
 }
 
 window.customElements.define('unicef-staff-assessor', UnicefStaffAssessor);
-
