@@ -5,6 +5,9 @@ import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {EtoolsTableColumn, EtoolsTableColumnType} from '../../../../common/layout/etools-table/etools-table';
 import {defaultPaginator, EtoolsPaginator, getPaginator} from '../../../../common/layout/etools-table/pagination/paginator';
 import '../../../../common/layout/etools-table/etools-table';
+import './staff-member-dialog';
+import {StaffMemberDialogEl} from './staff-member-dialog';
+import {cloneDeep} from 'lodash-es';
 
 /**
  * @customElement
@@ -45,7 +48,7 @@ class FirmStaffMembers extends LitElement {
       <etools-content-panel panel-title="Firm Staff Members with Access">
         <div slot="panel-btns">
           <paper-icon-button
-                on-tap="_allowAdd"
+                @tap="${() => this.openStaffMemberDialog()}"
                 icon="add">
           </paper-icon-button>
         </div>
@@ -111,6 +114,21 @@ class FirmStaffMembers extends LitElement {
       },
       "hidden": false,
       "hasAccess": true
+    },
+    {
+      "id": 131,
+      "user": {
+        "first_name": "Caroline2",
+        "last_name": "Mutegi22",
+        "email": "cmutegi@deloitte.co.ke",
+        "is_active": true,
+        "profile": {
+          "job_title": "Audit Senior",
+          "phone_number": ""
+        },
+      },
+      "hidden": false,
+      "hasAccess": true
     }
   ];
 
@@ -150,19 +168,37 @@ class FirmStaffMembers extends LitElement {
       type: EtoolsTableColumnType.Text
     }
   ];
+  private dialogStaffMember!: StaffMemberDialogEl;
 
   connectedCallback() {
     super.connectedCallback();
     this.populateStaffMembersList('2');// TODO remove
+    this.createAddStaffMemberDialog();
+    this.addEventListener('edit-item', this.openStaffMemberDialog);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('edit-item', this.openStaffMemberDialog);
+  }
+
+  createAddStaffMemberDialog() {
+    this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialogEl;
+    this.dialogStaffMember.setAttribute('id', 'dialogStaffMember');
+    document.querySelector('body')!.appendChild(this.dialogStaffMember);
+  }
+
+  openStaffMemberDialog(item?: any) {
+    if(item && item.detail){
+      this.dialogStaffMember.editedItem = cloneDeep(item.detail);
+    }
+    this.dialogStaffMember.organisationId = 10;
+    this.dialogStaffMember.openDialog();
   }
 
   populateStaffMembersList(firmId: string) {
     // call to get staff members by firmId
-    this.paginator = getPaginator(this.paginator, {count: this.staffMembers.length, data:this.staffMembers});//TODO getP by response
-  }
-
-  _allowAdd() {
-
+    this.paginator = getPaginator(this.paginator, {count: this.staffMembers.length, data: this.staffMembers});//TODO getP by response
   }
 }
 

@@ -32,11 +32,14 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   },
   questionnaire: {
     url: '/api/psea/indicator/'
+  },
+  staffMembers: {
+    template: '/api/audit/audit-firms/<%=id%>/staff-members/'
   }
+
   // agreements: {
   //   template: '/api/v2/agreements/',
   //   exp: 30 * 60 * 1000, // 30min
   //   cacheTableName: 'agreements'
   // },
 };
-
