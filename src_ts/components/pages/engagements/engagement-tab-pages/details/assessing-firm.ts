@@ -37,10 +37,10 @@ class AssessingFirm extends LitElement {
         </paper-input>
       </div>
       <div class="layout-vertical row-padding-v"
-          ?hidden="${this._hideFirmName(this.originalEngagement.auditor_firm.name, this.requestInProgress)}">
+          ?hidden="${this._hideFirmName(this.originalEngagement.name, this.requestInProgress)}">
         <label class="paper-label">Firm Name</label>
         <label class="input-label row-padding-v">
-          ${this.assessor.auditor_firm.name}
+          ${this.assessor.name}
           <paper-spinner ?hidden="${!this.requestInProgress}" ?active="${this.requestInProgress}"></paper-spinner>
         </label>
 
@@ -48,12 +48,11 @@ class AssessingFirm extends LitElement {
     `;
   }
 
+  @property({type: Object})
+  originalEngagement: GenericObject = {name: ''};
 
   @property({type: Object})
-  originalEngagement: GenericObject = {auditor_firm: {name: ''}};
-
-  @property({type: Object})
-  assessor: GenericObject = {auditor_firm: {name: ''}};
+  assessor: GenericObject = {name: ''};
 
   @property({type: Boolean})
   requestInProgress: boolean = false;
@@ -72,8 +71,8 @@ class AssessingFirm extends LitElement {
 
     makeRequest(getEndpoint('auditorFirm', {id: this.assessor.order_number}))
       .then((resp: any) => {
-        this.assessor = resp;
-        this.originalEngagement = cloneDeep(resp);
+        this.assessor = {id: resp.auditor_firm.id, name: resp.auditor_firm.name, order_number: resp.order_number};
+        this.originalEngagement = cloneDeep(this.assessor);
         this.requestInProgress = false;
         this.dispatchEvent(new CustomEvent('firm-changed', {
           detail: resp.auditor_firm,
