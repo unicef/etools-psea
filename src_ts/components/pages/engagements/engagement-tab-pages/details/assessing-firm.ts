@@ -70,7 +70,7 @@ class AssessingFirm extends LitElement {
     }
     this.requestInProgress = true;
 
-    makeRequest(getEndpoint('agreementData', {id: this.assessor.order_number}))
+    makeRequest(getEndpoint('auditorFirm', {id: this.assessor.order_number}))
       .then((resp: any) => {
         this.assessor = resp;
         this.originalEngagement = cloneDeep(resp);
