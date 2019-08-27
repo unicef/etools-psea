@@ -22,6 +22,9 @@ class StaffMemberDialog extends LitElement {
     // language=HTML
     return html`
       <style>
+        .layout-horizontal{
+          margin: 0px 10px;
+        }
         paper-input, paper-checkbox{
           padding:5px 10px;
         }
@@ -44,13 +47,12 @@ class StaffMemberDialog extends LitElement {
                           <!-- Email address -->
                           <paper-input
                                   id="emailInput"
-                                  class$="validate-input required email"
                                   value="${this.editedItem.user.email}"
                                   label="E-mail"
                                   type="email"
                                   placeholder="Enter E-mail"
                                   ?required = "${this.isNewRecord}"
-                                  ?disabled="${!this.isNewRecord || this.requestInProcess}"
+                                  ?disabled="${!this.isNewRecord}"
                                   maxlength="45"
                                   error-message="Email is required"
                                   @focus="${this.resetFieldError}"
@@ -63,13 +65,10 @@ class StaffMemberDialog extends LitElement {
                           <!-- First Name -->
                           <paper-input
                                   id="firstNameInput"
-                                  class$="validate-input required"
                                   value="${this.editedItem.user.first_name}"
                                   label="First Name"
                                   placeholder="Enter First Name"
                                   required
-                                  ?disabled="${this.requestInProcess}"
-                                  ?readonly="${this.requestInProcess}"
                                   maxlength="30"
                                   error-message="${this.requiredMessage}"
                                   @focus="${this.resetFieldError}"
@@ -81,13 +80,10 @@ class StaffMemberDialog extends LitElement {
                           <!-- Last Name -->
                           <paper-input
                                   id="lastNameInput"
-                                  class$="validate-input required"
                                   value="${this.editedItem.user.last_name}"
                                   label="Last Name"
                                   placeholder="Enter Last Name"
                                   required
-                                  ?disabled="${this.requestInProcess}"
-                                  ?readonly$="${this.requestInProcess}"
                                   maxlength="30"
                                   error-message="${this.requiredMessage}"
                                   @focus="${this.resetFieldError}"
@@ -100,12 +96,9 @@ class StaffMemberDialog extends LitElement {
                           <!-- Position -->
                           <paper-input
                                   id="positionInput"
-                                  class$="validate-input"
                                   value="${this.editedItem.user.profile.job_title}"
                                   label="Position"
                                   placeholder="Enter Position"
-                                  ?disabled="${this.requestInProcess}"
-                                  ?readonly="${this.requestInProcess}"
                                   maxlength="45"
                                   error-message="{{errors.profile.job_title}}">
                           </paper-input>
@@ -115,13 +108,10 @@ class StaffMemberDialog extends LitElement {
                           <!-- Phone number -->
                           <paper-input
                                   id="phoneInput"
-                                  class$="validate-input"
                                   value="${this.editedItem.user.profile.phone_number}"
                                   allowed-pattern="[0-9\\ \\.\\+\\-\\(\\)]"
                                   label="Phone number"
                                   placeholder="Enter Phone"
-                                  ?disabled="${this.requestInProcess}"
-                                  ?readonly="${this.requestInProcess}"
                                   maxlength="20"
                                   error-message="{{errors.user.profile.phone_number}}">
                               <iron-icon slot="prefix" icon="communication:phone"></iron-icon>
@@ -134,9 +124,7 @@ class StaffMemberDialog extends LitElement {
                       <div class="input-container col-4">
                           <paper-checkbox
                                   id="hasAccessInput"
-                                  ?checked="${this.editedItem.hasAccess}"
-                                  ?disabled="${this.requestInProcess}"
-                                  ?readonly="${this.requestInProcess}">
+                                  ?checked="${this.editedItem.hasAccess}">
                               Has Access
                           </paper-checkbox>
                       </div>

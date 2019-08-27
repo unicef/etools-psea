@@ -91,6 +91,21 @@ export const SharedStylesLit = html`
       };
     }
 
+    paper-input,
+    paper-input-container,
+    datepicker-lite,
+    etools-dropdown,
+    etools-dropdown-multi,
+    etools-upload,
+    etools-currency-amount-input {
+      --paper-input-container-label: {
+        color: var(--secondary-text-color, #737373)
+      };
+      --paper-input-container-label-floating: {
+        color: var(--secondary-text-color, #737373);
+      }
+    }
+
     paper-input[required][label],
     paper-input-container[required],
     datepicker-lite[required],

@@ -7,6 +7,7 @@ import {defaultPaginator, EtoolsPaginator, getPaginator} from '../../../../commo
 import '../../../../common/layout/etools-table/etools-table';
 import './staff-member-dialog';
 import {StaffMemberDialogEl} from './staff-member-dialog';
+import {cloneDeep} from 'lodash-es';
 
 /**
  * @customElement
@@ -189,7 +190,7 @@ class FirmStaffMembers extends LitElement {
 
   openStaffMemberDialog(item?: any) {
     if(item && item.detail){
-      this.dialogStaffMember.editedItem = item.detail;
+      this.dialogStaffMember.editedItem = cloneDeep(item.detail);
     }
     this.dialogStaffMember.organisationId = 10;
     this.dialogStaffMember.openDialog();
