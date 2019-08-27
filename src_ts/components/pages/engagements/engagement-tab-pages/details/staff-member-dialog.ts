@@ -16,16 +16,12 @@ import {fireEvent} from '../../../../utils/fire-custom-event';
  * @customElement
  *  @LitElement
  */
-@customElement('staff-member')
-class StaffMember extends LitElement {
+@customElement('staff-member-dialog')
+class StaffMemberDialog extends LitElement {
   render() {
     // language=HTML
     return html`
       <style>
-        .row-h {
-          margin-bottom: 8px;
-          padding: 0px !important;
-        }
         paper-input, paper-checkbox{
           padding:5px 10px;
         }
@@ -42,8 +38,7 @@ class StaffMember extends LitElement {
                       keep-dialog-open
                       @confirm-btn-clicked="${this.onSaveClick}">
 
-          <div class="row-h repeatable-item-container" without-line>
-              <div class="repeatable-item-content">
+
                   <div class="layout-horizontal">
                       <div class="input-container col-4">
                           <!-- Email address -->
@@ -64,7 +59,7 @@ class StaffMember extends LitElement {
                           </paper-input>
                       </div>
 
-                      <div class="input-container  col-4">
+                      <div class="input-container col-4">
                           <!-- First Name -->
                           <paper-input
                                   id="firstNameInput"
@@ -82,7 +77,7 @@ class StaffMember extends LitElement {
                           </paper-input>
                       </div>
 
-                      <div class="input-container  col-4">
+                      <div class="input-container col-4">
                           <!-- Last Name -->
                           <paper-input
                                   id="lastNameInput"
@@ -101,7 +96,7 @@ class StaffMember extends LitElement {
                       </div>
                   </div>
                   <div class="layout-horizontal">
-                      <div class="input-container  col-4" ?hidden="${!this.isStaffMember}">
+                      <div class="input-container col-4" ?hidden="${!this.isStaffMember}">
                           <!-- Position -->
                           <paper-input
                                   id="positionInput"
@@ -116,7 +111,7 @@ class StaffMember extends LitElement {
                           </paper-input>
                       </div>
 
-                      <div class="input-container  col-4">
+                      <div class="input-container col-4">
                           <!-- Phone number -->
                           <paper-input
                                   id="phoneInput"
@@ -136,7 +131,7 @@ class StaffMember extends LitElement {
 
                   <div class="layout-horizontal">
                       <!--receive notification-->
-                      <div class="input-container  col-4">
+                      <div class="input-container col-4">
                           <paper-checkbox
                                   id="hasAccessInput"
                                   ?checked="${this.editedItem.hasAccess}"
@@ -146,8 +141,7 @@ class StaffMember extends LitElement {
                           </paper-checkbox>
                       </div>
                   </div>
-              </div>
-          </div>
+
       </etools-dialog>
     `;
   }
@@ -278,4 +272,4 @@ class StaffMember extends LitElement {
 
 }
 
-export {StaffMember as StaffMemberEl}
+export {StaffMemberDialog as StaffMemberDialogEl}

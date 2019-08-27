@@ -3,8 +3,8 @@ import {LitElement, html} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
-import './staff-member';
-import {StaffMemberEl} from './staff-member';
+import './staff-member-dialog';
+import {StaffMemberDialogEl} from './staff-member-dialog';
 
 /**
  * @customElement
@@ -23,16 +23,11 @@ class ExternalIndividual extends LitElement {
       </div>
     `;
   }
-  private dialogExternalMember: StaffMemberEl | null = null;
+  private dialogExternalMember!: StaffMemberDialogEl;
 
   private openAddDialog() {
     if (!this.dialogExternalMember) {
-      this.dialogExternalMember = document.querySelector('body')!.querySelector('#dialogStaffMember');
-      if (!this.dialogExternalMember) {
-        this.dialogExternalMember = document.createElement('staff-member') as StaffMemberEl;
-        this.dialogExternalMember.setAttribute('id', 'dialogStaffMember');
-        document.querySelector('body')!.appendChild(this.dialogExternalMember);
-      }
+      this.dialogExternalMember = document.querySelector('body')!.querySelector('#dialogStaffMember') as StaffMemberDialogEl;
     }
     this.dialogExternalMember.isStaffMember = false;
     this.dialogExternalMember.openDialog();

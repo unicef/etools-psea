@@ -5,8 +5,8 @@ import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {EtoolsTableColumn, EtoolsTableColumnType} from '../../../../common/layout/etools-table/etools-table';
 import {defaultPaginator, EtoolsPaginator, getPaginator} from '../../../../common/layout/etools-table/pagination/paginator';
 import '../../../../common/layout/etools-table/etools-table';
-import './staff-member';
-import {StaffMemberEl} from './staff-member';
+import './staff-member-dialog';
+import {StaffMemberDialogEl} from './staff-member-dialog';
 
 /**
  * @customElement
@@ -167,7 +167,7 @@ class FirmStaffMembers extends LitElement {
       type: EtoolsTableColumnType.Text
     }
   ];
-  private dialogStaffMember!: StaffMemberEl;
+  private dialogStaffMember!: StaffMemberDialogEl;
 
   connectedCallback() {
     super.connectedCallback();
@@ -182,7 +182,7 @@ class FirmStaffMembers extends LitElement {
   }
 
   createAddStaffMemberDialog() {
-    this.dialogStaffMember = document.createElement('staff-member') as StaffMemberEl;
+    this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialogEl;
     this.dialogStaffMember.setAttribute('id', 'dialogStaffMember');
     document.querySelector('body')!.appendChild(this.dialogStaffMember);
   }
