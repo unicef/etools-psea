@@ -9,8 +9,9 @@ import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest} from '../../../../utils/request-helper';
 import {buildUrlQueryString} from '../../../../common/layout/etools-table/etools-table-utility';
 import {GenericObject} from '../../../../../types/globals';
-import {updateAppLocation} from '../../../../../routing/routes';
-import {EtoolsEndpoint} from '../../../../../endpoints/endpoints-list';
+import './staff-member-dialog';
+import {StaffMemberDialogEl} from './staff-member-dialog';
+import {cloneDeep} from 'lodash-es';
 
 /**
  * @customElement
@@ -51,7 +52,7 @@ class FirmStaffMembers extends LitElement {
       <etools-content-panel panel-title="Firm Staff Members with Access">
         <div slot="panel-btns">
           <paper-icon-button
-                on-tap="_allowAdd"
+                @tap="${() => this.openStaffMemberDialog()}"
                 icon="add">
           </paper-icon-button>
         </div>
@@ -108,12 +109,32 @@ class FirmStaffMembers extends LitElement {
       type: EtoolsTableColumnType.Text
     }
   ];
+  private dialogStaffMember!: StaffMemberDialogEl;
 
   @property({type: String})
   firmId!: string;
 
   connectedCallback() {
     super.connectedCallback();
+    this.createAddStaffMemberDialog();
+    this.initListeners();
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeListeners();
+  }
+
+  initListeners() {
+    this.addEventListener('edit-item', this.openStaffMemberDialog);
+  }
+
+  removeListeners() {
+    this.removeEventListener('edit-item', this.openStaffMemberDialog);
+    if (this.dialogStaffMember) {
+      this.dialogStaffMember.removeEventListener('member-updated', this.onStaffMemberSaved);
+      document.querySelector('body')!.removeChild(this.dialogStaffMember);
+    }
   }
 
   populateStaffMembersList(firmId: string) {
@@ -138,10 +159,36 @@ class FirmStaffMembers extends LitElement {
       .catch((err: any) => console.log(err));
   }
 
-  _allowAdd() {
-
+  createAddStaffMemberDialog() {
+    this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialogEl;
+    this.dialogStaffMember.setAttribute('id', 'dialogStaffMember');
+    this.onStaffMemberSaved = this.onStaffMemberSaved.bind(this);
+    this.dialogStaffMember.addEventListener('member-updated', this.onStaffMemberSaved);
+    document.querySelector('body')!.appendChild(this.dialogStaffMember);
   }
 
+  openStaffMemberDialog(item?: any) {
+    if (item && item.detail) {
+      this.dialogStaffMember.editedItem = cloneDeep(item.detail);
+    }
+    this.dialogStaffMember.organisationId = this.firmId;
+    this.dialogStaffMember.openDialog();
+  }
+
+  onStaffMemberSaved(e: any) {
+    const savedItem = e.detail;
+    const index = this.staffMembers.findIndex((r: any) => r.id === savedItem.id);
+    if (index > -1) { // edit
+      this.staffMembers.splice(index, 1, savedItem);
+    } else {
+      this.staffMembers.push(savedItem);
+    }
+    this.requestUpdate();
+  }
+
+  getIndexById(id: number) {
+    return this.staffMembers.findIndex((r: any) => r.id === id);
+  }
 
 }
 
