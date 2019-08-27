@@ -61,6 +61,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
 
         <etools-dropdown-multi label="UNICEF Focal Point"
           class="row-padding-v"
+          .selectedValues="${this.assessment.focal_points}"
           .options="${this.unicefUsers}"
           option-label="name"
           option-value="id"
@@ -72,7 +73,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
 
         <datepicker-lite label="Assessment Date"
           class="row-padding-v"
-          value="${this.assessment.assessment_date}"
+          .value="${this.assessment.assessment_date}"
           selected-date-display-format="D MMM YYYY"
           fire-date-has-changed
           @date-has-changed="${(e: CustomEvent) => this._setSelectedDate(e.detail.date)}"
@@ -103,7 +104,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
   selectedPartner!: GenericObject;
 
   @property({type: Boolean})
-  editMode: boolean = false;
+  editMode: boolean = true;
 
   @property({type: Array})
   unicefUsers!: UnicefUser[];
@@ -184,7 +185,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
     console.log('save');
 
     let options = {
-      url: this._getUrl(),
+      url: this._getUrl()!,
       method: this.isNew ?  'POST' : 'PATCH'
     };
 
@@ -209,14 +210,14 @@ class AssessmentInfo extends connect(store)(LitElement) {
   }
 
   hideEditIcon(isNew: boolean, editMode: boolean) {
-    if (this.isNew || this.editMode) {
+    if (isNew || editMode) {
       return true;
     }
     return false;
   }
 
   hideActionButtons(isNew: boolean, editMode: boolean) {
-    if (this.isNew || this.editMode) {
+    if (isNew || editMode) {
       return false;
     }
     return true;

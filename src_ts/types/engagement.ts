@@ -4,8 +4,8 @@ export class PSEAEngagement {
 
 export class Assessment {
   id?: number;
-  assessment_date: string = '';
+  assessment_date: string | null = null;
   status: string = '';
-  partner: string = '';
-  focal_points?: string[];
+  partner: string | null = null;
+  focal_points?: string[] =[];
 }
