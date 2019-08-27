@@ -19,6 +19,7 @@ import {isJsonStrMatch} from '../../../../utils/utils';
 import {Assessment} from '../../../../../types/engagement';
 import {updateAppLocation} from '../../../../../routing/routes';
 import {formatDate} from '../../../../utils/date-utility';
+import {fireEvent} from '../../../../utils/fire-custom-event';
 
 
 /**
@@ -41,7 +42,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
         <div slot="panel-btns">
           <paper-icon-button
                 ?hidden="${this.hideEditIcon(this.isNew, this.editMode)}"
-                @tap="${() => this._allowEdit()}"
+                @tap="${this._allowEdit}"
                 icon="create">
           </paper-icon-button>
         </div>
@@ -143,8 +144,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
     let url = etoolsEndpoints.assessment.url! + engagementId;
 
     makeRequest({url: url})
-      .then((response) => this.assessment = response)
-      .catch(err => console.error('handle this error' , err));
+      .then((response) => this.assessment = response);
   }
 
   _allowEdit() {
@@ -195,10 +195,10 @@ class AssessmentInfo extends connect(store)(LitElement) {
     let  body = this.assessment;
 
     makeRequest(options, body)
-    .then((response) =>
-      updateAppLocation(`/engagements/${response.id}/details`, true)
-     )
-    .catch(err => console.log(err));
+      .then((response) =>
+        updateAppLocation(`/engagements/${response.id}/details`, true)
+      )
+      .catch(_err => fireEvent(this, 'toast', {text: 'Error saving Assessment Info.'}));
   }
 
   _getUrl() {
