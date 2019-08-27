@@ -16,7 +16,7 @@ import {store, RootState} from '../../../../../redux/store';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {makeRequest} from '../../../../utils/request-helper';
 import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
-import {Assessment} from '../../../../../types/engagement';
+import {Assessment, AssessmentInvalidator} from '../../../../../types/engagement';
 import {updateAppLocation} from '../../../../../routing/routes';
 import {formatDate} from '../../../../utils/date-utility';
 import {fireEvent} from '../../../../utils/fire-custom-event';
@@ -55,7 +55,10 @@ class AssessmentInfo extends connect(store)(LitElement) {
           option-label="name"
           trigger-value-change-event
           @etools-selected-item-changed="${this._setSelectedPartner}"
-          ?readonly=${!this.editMode}>
+          ?readonly="${!this.editMode}"
+          required
+          ?invalid="${this.invalid.partner}"
+          auto-validate>
         </etools-dropdown>
 
         ${this._showPartnerDetails(this.selectedPartner)}
@@ -69,7 +72,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
           enable-none-option
           trigger-value-change-event
           @etools-selected-items-changed="${this._setSelectedFocalPoints}"
-          ?readonly=${!this.editMode}>
+          ?readonly="${!this.editMode}">
         </etools-dropdown-multi>
 
         <datepicker-lite label="Assessment Date"
@@ -78,7 +81,10 @@ class AssessmentInfo extends connect(store)(LitElement) {
           selected-date-display-format="D MMM YYYY"
           fire-date-has-changed
           @date-has-changed="${(e: CustomEvent) => this._setSelectedDate(e.detail.date)}"
-          ?readonly=${!this.editMode}>
+          ?readonly="${!this.editMode}"
+          required
+          ?invalid="${this.invalid.assessment_date}"
+          auto-validate>
         </datepicker-lite>
 
         <div class="layout-horizontal right-align row-padding-v"
@@ -116,6 +122,9 @@ class AssessmentInfo extends connect(store)(LitElement) {
   @property({type: Boolean})
   isNew!: boolean;
 
+  @property({type: Object})
+  invalid = new AssessmentInvalidator();
+
   stateChanged(state: RootState) {
     if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
@@ -123,12 +132,18 @@ class AssessmentInfo extends connect(store)(LitElement) {
     if (state.commonData && !isJsonStrMatch(this.partners, state.commonData!.partners)) {
       this.partners = [...state.commonData!.partners];
     }
-    if (state.app!.routeDetails.params) {
-      let engagementId = state.app!.routeDetails!.params!.engagementId;
-      this.isNew = (engagementId === 'new');
-      this.editMode = this.isNew;
-      this._getAssessmentInfo(engagementId);
+    if (state.app!.routeDetails!.params) {
+      let engagementId = state.app!.routeDetails.params.engagementId;
+      this.setPageData(engagementId);
     }
+  }
+
+  setPageData(assessmnetId: string | number) {
+    this.isNew = (assessmnetId === 'new');
+    this.editMode = this.isNew;
+    this._getAssessmentInfo(assessmnetId)
+        .then(() => setTimeout(() => this.resetValidations(), 100));
+
   }
 
   connectedCallback() {
@@ -139,15 +154,15 @@ class AssessmentInfo extends connect(store)(LitElement) {
 
     if (!engagementId || engagementId === 'new' ) {
       this.assessment = new Assessment();
-      return;
+      return Promise.resolve();
     }
     if (this.assessment && this.assessment.id == engagementId) {
-      return;
+      return Promise.resolve();
     }
 
     let url = etoolsEndpoints.assessment.url! + engagementId + '/';
 
-    makeRequest({url: url})
+    return makeRequest({url: url})
       .then((response) => {
         this.assessment = response;
         this.originalAssessment = cloneDeep(this.assessment);
@@ -196,7 +211,9 @@ class AssessmentInfo extends connect(store)(LitElement) {
   }
 
   saveAssessment() {
-    console.log('save');
+    if (!this.validate()) {
+      return;
+    }
 
     let options = {
       url: this._getUrl()!,
@@ -213,6 +230,27 @@ class AssessmentInfo extends connect(store)(LitElement) {
         updateAppLocation(`/engagements/${response.id}/details`, true)
       )
       .catch(_err => fireEvent(this, 'toast', {text: 'Error saving Assessment Info.'}));
+  }
+
+  resetValidations() {
+    this.invalid = new AssessmentInvalidator();
+  }
+
+  validate() {
+    let valid = true;
+    let invalid = new AssessmentInvalidator();
+
+    if (!this.assessment.partner) {
+      valid = false;
+      invalid.partner = true;
+    }
+    if(!this.assessment.assessment_date) {
+      valid = false;
+      invalid.assessment_date = true
+    }
+
+    this.invalid = cloneDeep(invalid);
+    return valid;
   }
 
   _getUrl() {

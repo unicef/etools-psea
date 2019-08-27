@@ -9,3 +9,8 @@ export class Assessment {
   partner: string | null = null;
   focal_points?: string[] =[];
 }
+
+export class AssessmentInvalidator {
+  partner = false;
+  assessment_date = false;
+}
