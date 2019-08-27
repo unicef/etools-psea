@@ -28,7 +28,7 @@ class AssessingFirm extends LitElement {
       <div class="row-padding-v">
         <paper-input id="poNumber" label="Enter PO Number" always-float-label
           class="input-width"
-          .value="${this.assessor.order_number}"
+          .value="${this.engagement.order_number}"
           @value-changed=${(e: CustomEvent) => this._updateEngagementPoNumber((e.target! as PaperInputElement).value!)}
           allowed-pattern="[0-9]"
           max-length=10
@@ -37,10 +37,10 @@ class AssessingFirm extends LitElement {
         </paper-input>
       </div>
       <div class="layout-vertical row-padding-v"
-          ?hidden="${this._hideFirmName(this.originalEngagement.name, this.requestInProgress)}">
+          ?hidden="${this._hideFirmName(this.engagement.name, this.requestInProgress)}">
         <label class="paper-label">Firm Name</label>
         <label class="input-label row-padding-v">
-          ${this.assessor.name}
+          ${this.engagement.name}
           <paper-spinner ?hidden="${!this.requestInProgress}" ?active="${this.requestInProgress}"></paper-spinner>
         </label>
 
@@ -48,11 +48,14 @@ class AssessingFirm extends LitElement {
     `;
   }
 
-  @property({type: Object})
-  originalEngagement: GenericObject = {name: ''};
+  @property({type: String})
+  prevOrderNumber: string = '';
 
   @property({type: Object})
-  assessor: GenericObject = {name: ''};
+  engagement: GenericObject = {name: ''};
+
+  @property({type: Object})
+  assessor!: GenericObject;
 
   @property({type: Boolean})
   requestInProgress: boolean = false;
@@ -64,15 +67,16 @@ class AssessingFirm extends LitElement {
       return;
     }
 
-    if (Number(this.assessor.order_number) === Number(this.originalEngagement.order_number)) {
+    if (Number(this.engagement.order_number) === Number(this.prevOrderNumber)) {
       return;
     }
     this.requestInProgress = true;
 
-    makeRequest(getEndpoint('auditorFirm', {id: this.assessor.order_number}))
+    makeRequest(getEndpoint('auditorFirm', {id: this.engagement.order_number}))
       .then((resp: any) => {
-        this.assessor = {id: resp.auditor_firm.id, name: resp.auditor_firm.name, order_number: resp.order_number};
-        this.originalEngagement = cloneDeep(this.assessor);
+        this.assessor = {auditor_firm: resp.auditor_firm.id, order_number:  resp.order_number};
+        this.engagement = {name: resp.auditor_firm.name, order_number: resp.order_number};
+        this.prevOrderNumber = resp.order_number;
         this.requestInProgress = false;
         this.dispatchEvent(new CustomEvent('firm-changed', {
           detail: resp.auditor_firm,
@@ -84,7 +88,7 @@ class AssessingFirm extends LitElement {
   }
 
   _validatePONumber() {
-    const poNumber = this.assessor.order_number;
+    const poNumber = this.engagement.order_number;
     const valid = poNumber && poNumber.length === 10;
     const poNumberElem = this.shadowRoot!.querySelector('#poNumber') as PaperInputElement;
     if (poNumberElem) {
@@ -94,7 +98,7 @@ class AssessingFirm extends LitElement {
     return valid;
   }
   _updateEngagementPoNumber(newVal: string) {
-    this.assessor.order_number = newVal;
+    this.engagement.order_number = newVal;
   }
 
   _hideFirmName(firmName: string, requestInProgress: boolean) {
