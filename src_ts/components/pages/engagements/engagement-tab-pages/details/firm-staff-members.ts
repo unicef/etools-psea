@@ -181,9 +181,10 @@ class FirmStaffMembers extends LitElement {
     if (index > -1) { // edit
       this.staffMembers.splice(index, 1, savedItem);
     } else {
+      this.paginator.count++;
       this.staffMembers.push(savedItem);
     }
-    this.requestUpdate();
+    this.paginator = getPaginator(this.paginator, {count: this.paginator.count, data: this.staffMembers});
   }
 
   getIndexById(id: number) {
