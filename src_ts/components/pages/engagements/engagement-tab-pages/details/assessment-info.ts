@@ -15,12 +15,11 @@ import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {makeRequest} from '../../../../utils/request-helper';
-import {isJsonStrMatch} from '../../../../utils/utils';
+import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
 import {Assessment} from '../../../../../types/engagement';
 import {updateAppLocation} from '../../../../../routing/routes';
 import {formatDate} from '../../../../utils/date-utility';
 import {fireEvent} from '../../../../utils/fire-custom-event';
-import {cloneDeep} from 'lodash-es';
 
 
 /**
@@ -146,7 +145,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
       return;
     }
 
-    let url = etoolsEndpoints.assessment.url! + engagementId;
+    let url = etoolsEndpoints.assessment.url! + engagementId + '/';
 
     makeRequest({url: url})
       .then((response) => {

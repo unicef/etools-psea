@@ -7,7 +7,7 @@ import {defaultPaginator, EtoolsPaginator, getPaginator} from '../../../../commo
 import '../../../../common/layout/etools-table/etools-table';
 import './staff-member-dialog';
 import {StaffMemberDialogEl} from './staff-member-dialog';
-import {cloneDeep} from 'lodash-es';
+import {cloneDeep} from '../../../../utils/utils';
 
 /**
  * @customElement

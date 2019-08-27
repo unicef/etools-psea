@@ -7,10 +7,10 @@ import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-
 import {EtoolsStaffMemberModel} from '../../../../user/user-model';
 import {PaperInputElement} from '@polymer/paper-input/paper-input';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {cloneDeep} from 'lodash-es';
 import {makeRequest} from '../../../../utils/request-helper';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {fireEvent} from '../../../../utils/fire-custom-event';
+import {cloneDeep} from '../../../../utils/utils';
 
 /**
  * @customElement
