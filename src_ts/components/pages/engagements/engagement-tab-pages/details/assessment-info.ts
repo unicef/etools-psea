@@ -190,6 +190,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
     this.selectedPartner = event.detail.selectedItem;
     if (this.selectedPartner) {
       this.assessment.partner = this.selectedPartner.id;
+      this.requestUpdate();
     }
   }
 
