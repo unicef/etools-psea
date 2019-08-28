@@ -8,6 +8,7 @@ import {PaperInputElement} from '@polymer/paper-input/paper-input';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest} from '../../../../utils/request-helper';
+import {fireEvent} from '../../../../utils/fire-custom-event';
 
 /**
  * @customElement
@@ -75,11 +76,7 @@ class AssessingFirm extends LitElement {
         this.assessor = {auditor_firm: resp.auditor_firm.id, order_number: resp.order_number, auditor_firm_name: resp.auditor_firm.name};
         this.prevOrderNumber = resp.order_number;
         this.requestInProgress = false;
-        this.dispatchEvent(new CustomEvent('firm-changed', {
-          detail: resp.auditor_firm,
-          bubbles: true,
-          composed: true
-        }));
+        fireEvent(this,'firm-changed', resp.auditor_firm);
       })
       .catch((err: any) => {this.requestInProgress = false; console.log(err)});
   }
