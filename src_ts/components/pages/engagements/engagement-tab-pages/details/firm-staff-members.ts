@@ -167,11 +167,11 @@ class FirmStaffMembers extends LitElement {
     document.querySelector('body')!.appendChild(this.dialogStaffMember);
   }
 
-  openStaffMemberDialog(item?: any) {
-    if (item && item.detail) {
-      this.dialogStaffMember.editedItem = cloneDeep(item.detail);
+  openStaffMemberDialog(event?: any) {
+    if (event && event.detail) {
+      this.dialogStaffMember.editedItem = cloneDeep(event.detail);
     }
-    this.dialogStaffMember.organisationId = this.firmId;
+    this.dialogStaffMember.firmId = this.firmId;
     this.dialogStaffMember.openDialog();
   }
 

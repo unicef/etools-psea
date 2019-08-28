@@ -162,7 +162,7 @@ class StaffMemberDialog extends LitElement {
   isStaffMember: boolean = true;
 
   @property({type: String})
-  organisationId!: string;
+  firmId!: string;
 
   public openDialog() {
     this.isNewRecord = !(parseInt(this.editedItem.id) > 0);
@@ -232,7 +232,7 @@ class StaffMemberDialog extends LitElement {
 
     const options = {
       method: this.isNewRecord ? 'POST' : 'PATCH',
-      url: getEndpoint('staffMembers', {id: this.organisationId}).url + this.editedItem.id + '/'
+      url: getEndpoint('staffMembers', {id: this.firmId}).url + this.editedItem.id + '/'
     };
 
     makeRequest(options, this.editedItem)
