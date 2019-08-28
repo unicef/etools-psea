@@ -33,13 +33,10 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   questionnaire: {
     url: '/api/psea/indicator/'
   },
+  auditorFirm: {
+    template: '/api/audit/purchase-orders/sync/<%=id%>/?auditor_firm__unicef_users_allowed=False'
+  },
   staffMembers: {
     template: '/api/audit/audit-firms/<%=id%>/staff-members/'
   }
-
-  // agreements: {
-  //   template: '/api/v2/agreements/',
-  //   exp: 30 * 60 * 1000, // 30min
-  //   cacheTableName: 'agreements'
-  // },
 };

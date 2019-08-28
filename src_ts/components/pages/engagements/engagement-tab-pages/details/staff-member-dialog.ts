@@ -161,8 +161,8 @@ class StaffMemberDialog extends LitElement {
   @property({type: Boolean})
   isStaffMember: boolean = true;
 
-  @property({type: Number})
-  organisationId!: number;
+  @property({type: String})
+  firmId!: string;
 
   public openDialog() {
     this.isNewRecord = !(parseInt(this.editedItem.id) > 0);
@@ -232,7 +232,7 @@ class StaffMemberDialog extends LitElement {
 
     const options = {
       method: this.isNewRecord ? 'POST' : 'PATCH',
-      url: getEndpoint('staffMembers', {id: this.organisationId}).url + this.editedItem.id + '/'
+      url: getEndpoint('staffMembers', {id: this.firmId}).url + this.editedItem.id + '/'
     };
 
     makeRequest(options, this.editedItem)
@@ -242,8 +242,7 @@ class StaffMemberDialog extends LitElement {
 
   _handleResponse(resp: any) {
     this.requestInProcess = false;
-    // update data
-    // fireEvent(this, 'member-updated', resp);
+    fireEvent(this, 'member-updated', resp);
     this.handleDialogClosed();
   }
 

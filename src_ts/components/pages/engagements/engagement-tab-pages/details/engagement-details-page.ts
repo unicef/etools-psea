@@ -47,10 +47,8 @@ class EngagementDetailsPage extends connect(store)(LitElement) {
   firmChanged(e: CustomEvent) {
     let firmStaffMembersEl = this.shadowRoot!.querySelector('#firmStaffMembers') as FirmStaffMembersEl;
     firmStaffMembersEl.hidden = false;
-    firmStaffMembersEl.populateStaffMembersList(e.detail.firmId);
-
+    firmStaffMembersEl.populateStaffMembersList(e.detail.id);
   }
 
 
 }
-
