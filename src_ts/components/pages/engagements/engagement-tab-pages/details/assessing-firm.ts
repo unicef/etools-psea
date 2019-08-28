@@ -76,9 +76,16 @@ class AssessingFirm extends LitElement {
         this.assessor = {auditor_firm: resp.auditor_firm.id, order_number: resp.order_number, auditor_firm_name: resp.auditor_firm.name};
         this.prevOrderNumber = resp.order_number;
         this.requestInProgress = false;
-        fireEvent(this,'firm-changed', resp.auditor_firm);
+        fireEvent(this, 'firm-changed', resp.auditor_firm);
       })
-      .catch((err: any) => {this.requestInProgress = false; console.log(err)});
+      .catch((err: any) => {
+        this.requestInProgress = false;
+        console.log(err);
+        this.assessor = {auditor_firm_name: ''};
+        fireEvent(this, 'firm-changed', {});
+        this.prevOrderNumber = '';
+        (this.shadowRoot!.querySelector('#poNumber') as PaperInputElement).invalid = true;
+      });
   }
 
   _validatePONumber() {
