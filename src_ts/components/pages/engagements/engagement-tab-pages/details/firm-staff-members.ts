@@ -5,6 +5,10 @@ import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {EtoolsTableColumn, EtoolsTableColumnType} from '../../../../common/layout/etools-table/etools-table';
 import {defaultPaginator, EtoolsPaginator, getPaginator} from '../../../../common/layout/etools-table/pagination/paginator';
 import '../../../../common/layout/etools-table/etools-table';
+import {getEndpoint} from '../../../../../endpoints/endpoints';
+import {makeRequest} from '../../../../utils/request-helper';
+import {buildUrlQueryString} from '../../../../common/layout/etools-table/etools-table-utility';
+import {GenericObject} from '../../../../../types/globals';
 import './staff-member-dialog';
 import {StaffMemberDialogEl} from './staff-member-dialog';
 import {cloneDeep} from 'lodash-es';
@@ -57,6 +61,7 @@ class FirmStaffMembers extends LitElement {
           <etools-table .columns="${this.listColumns}"
             .items="${this.staffMembers}"
             .paginator="${this.paginator}"
+            @paginator-change="${this.paginatorChange}"
             showEdit
             showDelete>
           </etools-table>
@@ -66,71 +71,7 @@ class FirmStaffMembers extends LitElement {
   }
 
   @property({type: Array})
-  staffMembers = [
-    {
-      "id": 431,
-      "user": {
-        "first_name": "Alv",
-        "last_name": "Aro",
-        "email": "alvaro@gmail.org",
-        "is_active": true,
-        "profile": {
-          "job_title": "",
-          "phone_number": ""
-        },
-        "full_name": "Alv Aro"
-      },
-      "hidden": false,
-      "hasAccess": false
-    },
-    {
-      "id": 426,
-      "user": {
-        "first_name": "Suciu",
-        "last_name": "Alina",
-        "email": "alinaaa.testing1@gmail.com",
-        "is_active": true,
-        "profile": {
-          "job_title": "",
-          "phone_number": "0748618743"
-        },
-        "full_name": "Suciu Alina"
-      },
-      "hidden": false,
-      "hasAccess": true
-    },
-    {
-      "id": 424,
-      "user": {
-        "first_name": "Ariana",
-        "last_name": "Grande",
-        "email": "ariana@nordlogic.com",
-        "is_active": true,
-        "profile": {
-          "job_title": "Duchess",
-          "phone_number": "12345671"
-        },
-        "full_name": "Ariana Grande"
-      },
-      "hidden": false,
-      "hasAccess": true
-    },
-    {
-      "id": 131,
-      "user": {
-        "first_name": "Caroline2",
-        "last_name": "Mutegi22",
-        "email": "cmutegi@deloitte.co.ke",
-        "is_active": true,
-        "profile": {
-          "job_title": "Audit Senior",
-          "phone_number": ""
-        },
-      },
-      "hidden": false,
-      "hasAccess": true
-    }
-  ];
+  staffMembers: GenericObject[] = [];
 
   @property({type: Object})
   paginator: EtoolsPaginator = {...defaultPaginator};
@@ -170,36 +111,86 @@ class FirmStaffMembers extends LitElement {
   ];
   private dialogStaffMember!: StaffMemberDialogEl;
 
+  @property({type: String})
+  firmId!: string;
+
   connectedCallback() {
     super.connectedCallback();
-    this.populateStaffMembersList('2');// TODO remove
     this.createAddStaffMemberDialog();
-    this.addEventListener('edit-item', this.openStaffMemberDialog);
+    this.initListeners();
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
+    this.removeListeners();
+  }
+
+  initListeners() {
+    this.addEventListener('edit-item', this.openStaffMemberDialog);
+  }
+
+  removeListeners() {
     this.removeEventListener('edit-item', this.openStaffMemberDialog);
+    if (this.dialogStaffMember) {
+      this.dialogStaffMember.removeEventListener('member-updated', this.onStaffMemberSaved);
+      document.querySelector('body')!.removeChild(this.dialogStaffMember);
+    }
+  }
+
+  populateStaffMembersList(firmId: string) {
+    this.firmId = firmId;
+    this.paginator.page = 1;
+    this.loadStaffMembers();
+  }
+
+  paginatorChange(e: CustomEvent) {
+    this.paginator = {...e.detail};
+    this.loadStaffMembers();
+  }
+
+  loadStaffMembers() {
+    let endpoint = getEndpoint('staffMembers', {id: this.firmId});
+    endpoint.url += `?${buildUrlQueryString(this.paginator)}`;
+    makeRequest(endpoint)
+      .then((resp: any) => {
+        this.staffMembers = resp.results;
+        this.paginator = getPaginator(this.paginator, {count: resp.count, data: this.staffMembers});
+      })
+      .catch((err: any) => console.log(err));
   }
 
   createAddStaffMemberDialog() {
     this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialogEl;
     this.dialogStaffMember.setAttribute('id', 'dialogStaffMember');
+    this.onStaffMemberSaved = this.onStaffMemberSaved.bind(this);
+    this.dialogStaffMember.addEventListener('member-updated', this.onStaffMemberSaved);
     document.querySelector('body')!.appendChild(this.dialogStaffMember);
   }
 
-  openStaffMemberDialog(item?: any) {
-    if(item && item.detail){
-      this.dialogStaffMember.editedItem = cloneDeep(item.detail);
+  openStaffMemberDialog(event?: any) {
+    if (event && event.detail) {
+      this.dialogStaffMember.editedItem = cloneDeep(event.detail);
     }
-    this.dialogStaffMember.organisationId = 10;
+    this.dialogStaffMember.firmId = this.firmId;
     this.dialogStaffMember.openDialog();
   }
 
-  populateStaffMembersList(firmId: string) {
-    // call to get staff members by firmId
-    this.paginator = getPaginator(this.paginator, {count: this.staffMembers.length, data: this.staffMembers});//TODO getP by response
+  onStaffMemberSaved(e: any) {
+    const savedItem = e.detail;
+    const index = this.staffMembers.findIndex((r: any) => r.id === savedItem.id);
+    if (index > -1) { // edit
+      this.staffMembers.splice(index, 1, savedItem);
+    } else {
+      this.paginator.count++;
+      this.staffMembers.push(savedItem);
+    }
+    this.paginator = getPaginator(this.paginator, {count: this.paginator.count, data: this.staffMembers});
   }
+
+  getIndexById(id: number) {
+    return this.staffMembers.findIndex((r: any) => r.id === id);
+  }
+
 }
 
 export {FirmStaffMembers as FirmStaffMembersEl}

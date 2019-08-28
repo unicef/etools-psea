@@ -24,6 +24,9 @@ export const etoolsEndpoints: EtoolsEndpoints = {
     exp: 60 * 60 * 1000, // 1h
     cachingKey: 'unicefUsers'
   },
+  auditorFirm: {
+    template: '/api/audit/purchase-orders/sync/<%=id%>/?auditor_firm__unicef_users_allowed=False'
+  },
   staffMembers: {
     template: '/api/audit/audit-firms/<%=id%>/staff-members/'
   },

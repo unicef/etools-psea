@@ -87,7 +87,7 @@ class AssessorInfo extends connect(store)(LitElement) {
             .options="${this.unicefUsers}"
             option-label="name"
             option-value="id">
-          </<etools-dropdown>
+          </etools-dropdown>
         `;
       case 'firm':
         return html`
