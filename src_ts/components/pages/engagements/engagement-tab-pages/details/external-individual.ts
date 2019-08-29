@@ -1,5 +1,5 @@
 import '@unicef-polymer/etools-dropdown/etools-dropdown';
-import {LitElement, html} from 'lit-element';
+import {LitElement, html, property} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
@@ -23,6 +23,10 @@ class ExternalIndividual extends LitElement {
       </div>
     `;
   }
+
+  @property({type: Object})
+  assessor!: {user: string| number};
+
   private dialogExternalMember!: StaffMemberDialogEl;
 
   private openAddDialog() {
@@ -33,6 +37,11 @@ class ExternalIndividual extends LitElement {
     this.dialogExternalMember.openDialog();
   }
 
+  getAssessorForSave() {
+    return this.assessor;
+  }
+
 }
+export {ExternalIndividual as ExternalIndividualElement}
 
 window.customElements.define('external-individual', ExternalIndividual)

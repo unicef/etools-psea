@@ -29,7 +29,7 @@ class AssessingFirm extends LitElement {
         <paper-input id="poNumber" label="Enter PO Number" always-float-label
           class="input-width"
           .value="${this.assessor.order_number}"
-          @value-changed=${(e: CustomEvent) => this._updateEngagementPoNumber((e.target! as PaperInputElement).value!)}
+          @value-changed=${(e: CustomEvent) => this._updatePoNumber((e.target! as PaperInputElement).value!)}
           allowed-pattern="[0-9]"
           max-length=10
           error-message="${this.errMessage}"
@@ -59,7 +59,11 @@ class AssessingFirm extends LitElement {
   currentOrderNumber: string = '';
 
   @property({type: Object})
-  assessor: GenericObject = {auditor_firm_name: ''};
+  assessor = {
+      auditor_firm: '',
+      order_number: '',
+      auditor_firm_name: ''
+    };
 
   @property({type: Boolean})
   requestInProgress: boolean = false;
@@ -70,14 +74,17 @@ class AssessingFirm extends LitElement {
       return;
     }
 
-    if (Number(this.currentOrderNumber) === Number(this.prevOrderNumber)) {
+    if (Number(this.assessor.order_number) === Number(this.prevOrderNumber)) {
       return;
     }
     this.requestInProgress = true;
 
-    makeRequest(getEndpoint('auditorFirm', {id: this.currentOrderNumber}))
+    makeRequest(getEndpoint('auditorFirm', {id: this.assessor.order_number}))
       .then((resp: any) => {
-        this.assessor = {auditor_firm: resp.auditor_firm.id, order_number: resp.order_number, auditor_firm_name: resp.auditor_firm.name};
+        this.assessor = {
+          auditor_firm: resp.auditor_firm.id,
+          order_number: resp.order_number,
+          auditor_firm_name: resp.auditor_firm.name};
         this.prevOrderNumber = resp.order_number;
         this.requestInProgress = false;
         fireEvent(this, 'firm-changed', resp.auditor_firm);
@@ -85,7 +92,7 @@ class AssessingFirm extends LitElement {
       .catch((err: any) => {
         this.requestInProgress = false;
         console.log(err);
-        this.assessor = {auditor_firm_name: ''};
+        this.assessor = Object.assign(this.assessor, {auditor_firm: null, auditor_firm_name: ''});
         fireEvent(this, 'firm-changed', {});
         this.prevOrderNumber = '';
         this.errMessage = 'PO number not found';
@@ -94,7 +101,7 @@ class AssessingFirm extends LitElement {
   }
 
   _validatePONumber() {
-    const poNumber = this.currentOrderNumber;
+    const poNumber = this.assessor.order_number;
     const valid = poNumber && poNumber.length === 10;
     const poNumberElem = this.shadowRoot!.querySelector('#poNumber') as PaperInputElement;
     if (poNumberElem) {
@@ -104,15 +111,22 @@ class AssessingFirm extends LitElement {
     return valid;
   }
 
-  _updateEngagementPoNumber(newVal: string) {
+  _updatePoNumber(newVal: string) {
     this.errMessage = '10 digits expected';
-    this.currentOrderNumber = newVal;
+    this.assessor.order_number = newVal;
+    this.requestUpdate();
   }
 
   _hideFirmName(firmName: string, requestInProgress: boolean) {
     return !(firmName || requestInProgress);
   }
 
+  getAssessorForSave() {
+    return this.assessor;
+  }
+
 }
+
+export {AssessingFirm as AssessingFirmElement};
 
 window.customElements.define('assessing-firm', AssessingFirm);
