@@ -32,7 +32,8 @@ class AssessingFirm extends LitElement {
           @value-changed=${(e: CustomEvent) => this._updateEngagementPoNumber((e.target! as PaperInputElement).value!)}
           allowed-pattern="[0-9]"
           max-length=10
-          error-message="PO number is incorrect"
+          error-message="${this.errMessage}"
+          auto-validate
           @blur="${this._getFirmName}">
         </paper-input>
       </div>
@@ -47,6 +48,9 @@ class AssessingFirm extends LitElement {
       </div>
     `;
   }
+
+  @property({type: String})
+  errMessage: string = '10 digits expected';
 
   @property({type: String})
   prevOrderNumber: string = '';
@@ -76,9 +80,17 @@ class AssessingFirm extends LitElement {
         this.assessor = {auditor_firm: resp.auditor_firm.id, order_number: resp.order_number, auditor_firm_name: resp.auditor_firm.name};
         this.prevOrderNumber = resp.order_number;
         this.requestInProgress = false;
-        fireEvent(this,'firm-changed', resp.auditor_firm);
+        fireEvent(this, 'firm-changed', resp.auditor_firm);
       })
-      .catch((err: any) => {this.requestInProgress = false; console.log(err)});
+      .catch((err: any) => {
+        this.requestInProgress = false;
+        console.log(err);
+        this.assessor = {auditor_firm_name: ''};
+        fireEvent(this, 'firm-changed', {});
+        this.prevOrderNumber = '';
+        this.errMessage = 'PO number not found';
+        (this.shadowRoot!.querySelector('#poNumber') as PaperInputElement).invalid = true;
+      });
   }
 
   _validatePONumber() {
@@ -93,6 +105,7 @@ class AssessingFirm extends LitElement {
   }
 
   _updateEngagementPoNumber(newVal: string) {
+    this.errMessage = '10 digits expected';
     this.currentOrderNumber = newVal;
   }
 
