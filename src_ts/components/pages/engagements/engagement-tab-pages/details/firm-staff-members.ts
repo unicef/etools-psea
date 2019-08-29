@@ -156,7 +156,12 @@ class FirmStaffMembers extends LitElement {
         this.staffMembers = resp.results;
         this.paginator = getPaginator(this.paginator, {count: resp.count, data: this.staffMembers});
       })
-      .catch((err: any) => console.log(err));
+      .catch((err: any) => {
+        this.staffMembers = [];
+        this.paginator = getPaginator(this.paginator, {count: 0, data: this.staffMembers})
+        console.log(err);
+      }
+      );
   }
 
   createAddStaffMemberDialog() {
