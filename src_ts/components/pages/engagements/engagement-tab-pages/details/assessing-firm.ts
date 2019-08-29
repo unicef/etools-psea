@@ -28,7 +28,7 @@ class AssessingFirm extends LitElement {
       <div class="row-padding-v">
         <paper-input id="poNumber" label="Enter PO Number" always-float-label
           class="input-width"
-          .value="${this.currentOrderNumber}"
+          .value="${this.assessor.order_number}"
           @value-changed=${(e: CustomEvent) => this._updateEngagementPoNumber((e.target! as PaperInputElement).value!)}
           allowed-pattern="[0-9]"
           max-length=10
