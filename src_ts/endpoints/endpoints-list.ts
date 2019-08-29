@@ -38,5 +38,13 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   },
   staffMembers: {
     template: '/api/audit/audit-firms/<%=id%>/staff-members/'
-  }
+  },
+  partnerStaffMembers: {
+    template: '/api/v2/partners/<%=id%>/staff-members/'
+  },
+  // agreements: {
+  //   template: '/api/v2/agreements/',
+  //   exp: 30 * 60 * 1000, // 30min
+  //   cacheTableName: 'agreements'
+  // },
 };
