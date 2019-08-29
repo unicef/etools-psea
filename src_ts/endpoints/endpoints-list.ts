@@ -42,6 +42,16 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   partnerStaffMembers: {
     template: '/api/v2/partners/<%=id%>/staff-members/'
   },
+  offices: {
+    url: '/api/offices/',
+    exp: 23 * 60 * 60 * 1000, // 23h
+    cachingKey: 'offices'
+  },
+  sections: {
+    url: '/api/reports/sectors/',
+    exp: 24 * 60 * 60 * 1000, // 24h
+    cachingKey: 'sections'
+  },
   // agreements: {
   //   template: '/api/v2/agreements/',
   //   exp: 30 * 60 * 1000, // 30min

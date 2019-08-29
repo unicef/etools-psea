@@ -1,13 +1,22 @@
 import { LitElement, html, property, customElement } from 'lit-element';
-import EtoolsAjaxRequestMixin from '@unicef-polymer/etools-ajax/etools-ajax-request-mixin.js';
+// import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
+// import EtoolsAjaxRequestMixin from '@unicef-polymer/etools-ajax/etools-ajax-request-mixin.js';
 import { GenericObject, Constructor } from '../../../../../types/globals';
 import '@unicef-polymer/etools-dialog/etools-dialog.js';
+import '@unicef-polymer/etools-dropdown/etools-dropdown.js';
 import { fireEvent } from '../../../../utils/fire-custom-event';
 import { getEndpoint } from '../../../../../endpoints/endpoints'
 import { inputsStyles } from '../../../../styles/inputs-styles';
+import { makeRequest } from '../../../../utils/request-helper';
+import {connect} from 'pwa-helpers/connect-mixin.js';
+import {store, RootState} from '../../../../../redux/store';
+// import { customElement, property } from '@polymer/decorators';
 
 import get from 'lodash-es/get';
 import omit from 'lodash-es/omit';
+// import isEmpty from 'lodash-es/isEmpty';
+// import isObject from 'lodash-es/isObject';
+// import every from 'lodash-es/every';
 
 let _permissionCollection: {
   edited_ap_options?: {allowed_actions:[]},
@@ -17,7 +26,7 @@ let _permissionCollection: {
 } = {};
 
 @customElement('follow-up-dialog')
-export class FollowUpDialog extends (EtoolsAjaxRequestMixin(LitElement) as Constructor<LitElement>) {
+class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement>) {
   render() {
     return html`
       ${inputsStyles}
@@ -27,13 +36,14 @@ export class FollowUpDialog extends (EtoolsAjaxRequestMixin(LitElement) as Const
             ok-btn-text="${this.confirmBtnText}"
             ?hide-confirm-btn="${!this.confirmBtnText}"
             ?show-spinner="${this.requestInProcess}"
-            disable-confirm-btn="${this.requestInProcess}"
-            @confirm-btn-clicked="_addActionPoint">
-        <template is="dom-if" if="${this.notTouched}">
+            ?disable-confirm-btn="${this.requestInProcess}"
+            @confirm-btn-clicked="${this._addActionPoint}"
+            @close="${this.handleDialogClosed}">
+        <!-- <template is="dom-if" if="[[this.notTouched]]">
             <div class="copy-warning">
                 It is required to change at least one of the fields below.
             </div>
-        </template>
+        </template> -->
 
         <div class="row-h repeatable-item-container" without-line>
           <div class="repeatable-item-content">
@@ -43,27 +53,28 @@ export class FollowUpDialog extends (EtoolsAjaxRequestMixin(LitElement) as Const
                     
                 <etools-dropdown
                         class="disabled-as-readonly validate-input [[_setRequired('partner', editedApBase)]] fua-person"
-                        selected="${this.selectedPartnerId}"
+                        ?selected="${this.selectedPartnerId}"
                         label="${this.getLabel('partner', this.editedApBase)}"
                         placeholder="${this.getPlaceholderText('partner', this.editedApBase, 'select')}"
                         .options="${this.partners}"
-                        .option-label="name"
-                        .option-value="id"
-                        invalid="${this.errors.partner}"
+                        option-label="name"
+                        option-value="id"
+                        ?invalid="${this.errors.partner}"
                         error-message="${this.errors.partner}"
-                        on-focus="_resetFieldError"
-                        on-tap="_resetFieldError">
+                        @focus="_resetFieldError"
+                        @tap="_resetFieldError">
                 </etools-dropdown>
               </div>
               <div class="input-container input-container-ms">
                   
                 <etools-dropdown
                         class="disabled-as-readonly validate-input [[_setRequired('intervention', editedApBase)]] fua-person"
+                        ?selected="${this.editedItem.intervention.id}"
                         label="${this.getLabel('intervention', this.editedApBase)}"
                         placeholder="${this.getPlaceholderText('intervention', this.editedApBase, 'select')}"
                         .options="${this.fullPartner.interventions}"
-                        .option-label="title"
-                        .option-value="id"
+                        option-label="title"
+                        option-value="id"
                         invalid="${this.errors.intervention}"
                         error-message="${this.errors.intervention}"
                         on-focus="_resetFieldError"
@@ -78,11 +89,12 @@ export class FollowUpDialog extends (EtoolsAjaxRequestMixin(LitElement) as Const
                         
                         <etools-dropdown
                                 class="disabled-as-readonly validate-input [[_setRequired('category', editedApBase)]] fua-person"
+                                ?selected="${this.editedItem.category}"
                                 label="${this.getLabel('category', this.editedApBase)}"
                                 placeholder="${this.getPlaceholderText('category', this.editedApBase, 'select')}"
                                 .options="${this.categories}"
-                                .option-label="display_name"
-                                .option-value="value"
+                                option-label="display_name"
+                                option-value="value"
                                 invalid="${this.errors.category}"
                                 error-message="${this.errors.category}"
                                 on-focus="_resetFieldError"
@@ -95,8 +107,9 @@ export class FollowUpDialog extends (EtoolsAjaxRequestMixin(LitElement) as Const
                     <div class="input-container input-container-l">
                         
                         <paper-textarea
-                                class="validate-input ${this._setRequired('description', this.editedApBase)}"
+                                class="validate-input [[this._setRequired('description', this.editedApBase)]]"
                                 allowed-pattern="[\d\s]"
+                                value="${this.editedItem.description}"
                                 label="${this.getLabel('description', this.editedApBase)}"
                                 placeholder="${this.getPlaceholderText('description', this.editedApBase)}"
                                 max-rows="4"
@@ -114,11 +127,12 @@ export class FollowUpDialog extends (EtoolsAjaxRequestMixin(LitElement) as Const
 
                         <etools-dropdown
                                 class="disabled-as-readonly validate-input [[_setRequired('assigned_to', this.editedApBase)]] fua-person"
+                                ?selected="${this.editedItem.assigned_to.id}"
                                 label="${this.getLabel('assigned_to', this.editedApBase)}"
                                 placeholder="${this.getPlaceholderText('assigned_to', this.editedApBase, 'select')}"
                                 .options="${this.users}"
-                                .option-label="full_name"
-                                .option-value="id"
+                                option-label="name"
+                                option-value="id"
                                 invalid="${this.errors.assigned_to}"
                                 error-message="${this.errors.assigned_to}"
                                 on-focus="_resetFieldError"
@@ -131,11 +145,12 @@ export class FollowUpDialog extends (EtoolsAjaxRequestMixin(LitElement) as Const
 
                         <etools-dropdown
                                 class="disabled-as-readonly validate-input [[_setRequired('section', this.editedApBase)]] fua-person"
+                                ?selected="${this.editedItem.section.id}"
                                 label="${this.getLabel('section', this.editedApBase)}"
                                 placeholder="${this.getPlaceholderText('section', this.editedApBase, 'select')}"
                                 .options="${this.sections}"
-                                .option-label="name"
-                                .option-value="id"
+                                option-label="name"
+                                option-value="id"
                                 invalid="${this.errors.section}"
                                 error-message="${this.errors.section}"
                                 on-focus="_resetFieldError"
@@ -150,11 +165,12 @@ export class FollowUpDialog extends (EtoolsAjaxRequestMixin(LitElement) as Const
 
                         <etools-dropdown
                                 class="disabled-as-readonly validate-input [[_setRequired('office', this.editedApBase)]] fua-person"
+                                ?selected="${this.editedItem.office.id}"
                                 label="${this.getLabel('office', this.editedApBase)}"
                                 placeholder="${this.getPlaceholderText('office', this.editedApBase, 'select')}"
                                 .options="${this.offices}"
-                                .option-label="name"
-                                .option-value="id"
+                                option-label="name"
+                                option-value="id"
                                 invalid="${this.errors.office}"
                                 error-message="${this.errors.office}"
                                 on-focus="_resetFieldError"
@@ -167,6 +183,7 @@ export class FollowUpDialog extends (EtoolsAjaxRequestMixin(LitElement) as Const
                         <datepicker-lite
                                 id="deadlineAction"
                                 class="disabled-as-readonly validate-input [[_setRequired('due_date', this.editedApBase)]]"
+                                value="${this.editedItem.due_date}"
                                 label="${this.getLabel('due_date', this.editedApBase)}"
                                 placeholder="${this.getPlaceholderText('due_date', this.editedApBase, 'select')}"
                                 invalid="${this.errors.due_date}"
@@ -182,7 +199,8 @@ export class FollowUpDialog extends (EtoolsAjaxRequestMixin(LitElement) as Const
                     
                     <div class="input-container checkbox-container input-container-l">
                         <paper-checkbox
-                                class="disabled-as-readonly">
+                                class="disabled-as-readonly"
+                                ?checked="${this.editedItem.high_priority}">
                                 This action point is high priority
                         </paper-checkbox>
                     </div>
@@ -227,7 +245,7 @@ export class FollowUpDialog extends (EtoolsAjaxRequestMixin(LitElement) as Const
   errors: any = [];
 
   @property({type: Object})
-  editedItem: any = {};
+  editedItem: any = {intervention: {id: ''}, assigned_to: {id: ''}, section: {id: ''}, office: {id: ''}};
 
   @property({type: String})
   selectedPartnerId: string = '';
@@ -238,8 +256,8 @@ export class FollowUpDialog extends (EtoolsAjaxRequestMixin(LitElement) as Const
   @property({type: Array})
   categories: GenericObject[] = [];
 
-  @property({type: Boolean, computed: '_checkNotTouched(copyDialog, editedItem.*)'})
-  notTouched: boolean = false;
+  // @property({type: Boolean, computed: '_checkNotTouched(copyDialog, editedItem.*)'})
+  // notTouched: boolean = false;
 
   @property({type: Number})
   engagementId!: number;
@@ -257,6 +275,19 @@ export class FollowUpDialog extends (EtoolsAjaxRequestMixin(LitElement) as Const
 
   @property({type: Number})
   _selectedAPIndex!: number | null;
+
+  @property({type: Object})
+  originalEditedObj: any = {};
+
+  stateChanged(state: RootState) {
+    debugger
+    if (state.commonData) {
+      this.partners = [...state.commonData.partners];
+      this.users = [...state.commonData.unicefUsers];
+      this.offices = [...state.commonData.offices];
+      this.sections = [...state.commonData.sections];
+    }
+  }
 
   _openEditDialog(event: any) {
     this.editedApBase = '';
@@ -289,6 +320,11 @@ export class FollowUpDialog extends (EtoolsAjaxRequestMixin(LitElement) as Const
       this.cancelBtnText = 'Cancel';
       // this._openDialog(itemIndex);
     }
+  }
+
+  private handleDialogClosed() {
+    this.dialogOpened = false;
+    // this.resetControls();
   }
 
   updateCollection(collectionName: string, data: string, title?: string) {
@@ -484,4 +520,41 @@ export class FollowUpDialog extends (EtoolsAjaxRequestMixin(LitElement) as Const
 
     return index;
   }
+
+  // _checkNotTouched(copyDialog: any) {
+  //   if (!copyDialog || isEmpty(this.originalEditedObj)) {return false;}
+  //   return every(this.originalEditedObj, (value, key) => {
+  //     let isObj = isObject(value);
+  //     if (isObj) {
+  //       return !value.id || +value.id === +get(this, `editedItem.${key}.id`);
+  //     } else {
+  //       return value === this.editedItem[key];
+  //     }
+  //   });
+  // }
+
+  public openDialog() {
+    // this.isNewRecord = !(parseInt(this.editedItem.id) > 0);
+    // this.dialogTitle = this.isNewRecord ? (this.isStaffMember ? 'Add New Firm Staff Member' : 'Add New External Individual') : 'Edit Firm Staff Member';
+    // this.confirmBtnText = this.isNewRecord ? 'Add' : 'Save';
+    this.dialogOpened = true;
+  }
+
+  private _addActionPoint(url: string) {
+    // this.getControlsData();
+    this.requestInProcess = true;
+
+    const requestOptions = {
+      method: 'OPTIONS',
+      endpoint: {
+        url
+      },
+    };
+
+    makeRequest(requestOptions, this.editedItem)
+      .then(this._handleOptionResponse.bind(this))
+      .catch(this._handleOptionResponse.bind(this))
+  }
 }
+
+export {FollowUpDialog as FollowUpDialogEl};

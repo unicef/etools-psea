@@ -1,7 +1,9 @@
 import {LitElement, html, property, customElement} from 'lit-element';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@polymer/paper-icon-button/paper-icon-button.js';
-import {FollowUpDialog} from './follow-up-dialog';
+// import {FollowUpDialog} from './follow-up-dialog';
+import './follow-up-dialog';
+import { FollowUpDialogEl } from './follow-up-dialog';
 
 import '@unicef-polymer/etools-date-time/datepicker-lite';
 import '@unicef-polymer/etools-dialog/etools-dialog.js';
@@ -18,23 +20,7 @@ import '@polymer/polymer/lib/elements/dom-repeat';
 import { GenericObject, Constructor } from '../../../../../types/globals';
 import { getFollowUpDummydata } from './follow-up-dummy-data';
 import { ROOT_PATH } from '../../../../../config/config';
-
-// import cloneDeep from 'lodash-es/cloneDeep';
-// import get from 'lodash-es/get';
-// import find from 'lodash-es/find';
-// import sortBy from 'lodash-es/sortBy';
-// import pickBy from 'lodash-es/pickBy';
-// import isEmpty from 'lodash-es/isEmpty';
-// import isEqual from 'lodash-es/isEqual';
-// import isObject from 'lodash-es/isObject';
-// import isArray from 'lodash-es/isArray';
-// import every from 'lodash-es/every';
-// import omit from 'lodash-es/omit';
-// import { connect } from 'pwa-helpers/connect-mixin';
-// import {store, 
-//   // RootState
-// } from '../../../../../redux/store';
-// import each from 'lodash-es/each';
+import {cloneDeep} from '../../../../utils/utils';
 
 @customElement('follow-up-page')
 export class FollowUpPage extends (LitElement as Constructor<LitElement>) {
@@ -43,7 +29,7 @@ export class FollowUpPage extends (LitElement as Constructor<LitElement>) {
       <etools-content-panel panel-title="Action Points">
         <div slot="panel-btns">
           <paper-icon-button
-                @tap="${this._openDialog}"
+                @tap="${() => this.openFollowUpDialog()}"
                 icon="add">
           </paper-icon-button>
         </div>
@@ -176,13 +162,14 @@ export class FollowUpPage extends (LitElement as Constructor<LitElement>) {
 
   connectedCallback() {
     super.connectedCallback();
+    this.createFollowUpDialog();
     this.getFollowUpData();
   }
 
   getFollowUpData() {
   /**
      * TODO:
-     *  - replace getFollowUpDummydata with the request to /engagements/list endpoint
+     *  - replace getFollowUpDummydata with the request to endpoint
      *  - include in req params filters, sort, page, page_size
      */
     // const requestParams = {
@@ -203,15 +190,19 @@ export class FollowUpPage extends (LitElement as Constructor<LitElement>) {
     });
   }
 
-  _openDialog() {
-    debugger
-    if (!this.followUpDialog) {
-      this.followUpDialog = new FollowUpDialog;
-      document.body.append(this.followUpDialog);
+  createFollowUpDialog() {
+    this.followUpDialog = document.createElement('follow-up-dialog') as FollowUpDialogEl;
+    this.followUpDialog.setAttribute('id', 'followUpDialog');
+    // this.onStaffMemberSaved = this.onStaffMemberSaved.bind(this);
+    // this.followUpDialog.addEventListener('member-updated', this.onStaffMemberSaved);
+    document.querySelector('body')!.appendChild(this.followUpDialog);
+  }
+
+  openFollowUpDialog(event?: any) {
+    if (event && event.detail) {
+      this.followUpDialog.editedItem = cloneDeep(event.detail);
     }
-    this.followUpDialog.dialogOpened = !this.followUpDialog.dialogOpened;
-    this.followUpDialog.dialogOpened = true;
-    
-    // this.dialogOpened = true;
+    // this.followUpDialog.firmId = this.firmId;
+    this.followUpDialog.openDialog();
   }
 }

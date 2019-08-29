@@ -4,13 +4,23 @@ import {etoolsEndpoints} from '../../endpoints/endpoints-list';
 
 export const UPDATE_UNICEF_USERS_DATA = 'UPDATE_UNICEF_USERS_DATA';
 export const SET_PARTNERS = 'SET_PARTNERS';
+export const SET_OFFICES = 'SET_OFFICES';
+export const SET_SECTIONS = 'SET_SECTIONS';
 
 
 export interface CommonDataActionUpdateUnicefUsersData extends Action<'UPDATE_UNICEF_USERS_DATA'> {
   unicefUsersData: object[];
 }
 
-export type CommonDataAction = CommonDataActionUpdateUnicefUsersData;
+export interface CommonDataActionSetOffices extends Action<'SET_OFFICES'> {
+  offices: object[];
+}
+
+export interface CommonDataActionSetSections extends Action<'SET_SECTIONS'> {
+  sections: object[];
+}
+
+export type CommonDataAction = CommonDataActionUpdateUnicefUsersData | CommonDataActionSetOffices | CommonDataActionSetSections;
 
 export const updateUnicefUsersData: ActionCreator<CommonDataActionUpdateUnicefUsersData> =
     (unicefUsersData: object[]) => {
@@ -25,6 +35,30 @@ export const setPartners = (partners: []) => {
     type: SET_PARTNERS,
     partners
   }
+}
+
+export const setOffices = (offices: []) => {
+  return {
+    type: SET_OFFICES,
+    offices
+  }
+}
+
+export const setSections = (sections: []) => {
+  return {
+    type: SET_SECTIONS,
+    sections
+  }
+}
+
+export const loadSections = () => (dispatch) => {
+  makeRequest(etoolsEndpoints.sections)
+       .then((resp: any) => dispatch(setSections(resp)))
+}
+
+export const loadOffices = () => (dispatch) => {
+  makeRequest(etoolsEndpoints.offices)
+       .then((resp: any) => dispatch(setOffices(resp)))
 }
 
 export const loadPartners = () => (dispatch) => {
