@@ -201,6 +201,95 @@ class AssessmentInfo extends connect(store)(LitElement) {
       .catch((err: any) => {this.staffMembers = []; logError(err)});
   }
 
+  _setSelectedDate(selDate: Date) {
+    this.assessment.assessment_date = formatDate(selDate, 'YYYY-MM-DD');
+    this.requestUpdate();
+  }
+
+  _setSelectedFocalPoints(e: CustomEvent) {
+    this.assessment.focal_points = e .detail.selectedItems.map((i:any) => i.id);
+  }
+
+  cancelAssessment() {
+    if (this.isNew) {
+      this.assessment = new Assessment();
+      return;
+    }
+    this.assessment = cloneDeep(this.originalAssessment);
+    this.editMode = false;
+  }
+
+  saveAssessment() {
+    if (!this.validate()) {
+      return;
+    }
+
+    let options = {
+      url: this._getUrl()!,
+      method: this.isNew ?  'POST' : 'PATCH'
+    };
+
+    if (this.isNew) {
+      this.assessment.status = 'draft';
+    }
+    let  body = this.assessment;
+
+    makeRequest(options, body)
+      .then((response) =>
+        updateAppLocation(`/engagements/${response.id}/details`, true)
+      )
+      .catch(_err => fireEvent(this, 'toast', {text: 'Error saving Assessment Info.'}));
+  }
+
+  resetValidations() {
+    this.invalid = new AssessmentInvalidator();
+    this._backupResetCodeBecauseLitElementDoentReRender();
+  }
+
+  _backupResetCodeBecauseLitElementDoentReRender() {
+    (this.shadowRoot!.querySelector('#assessmentDate') as DatePickerLite)!.invalid = false;
+    (this.shadowRoot!.querySelector('#partner') as EtoolsDropdownEl)!.invalid = false;
+  }
+
+  validate() {
+    let valid = true;
+    let invalid = new AssessmentInvalidator();
+
+    if (!this.assessment.partner) {
+      valid = false;
+      invalid.partner = true;
+    }
+    if(!this.assessment.assessment_date) {
+      valid = false;
+      invalid.assessment_date = true
+    }
+
+    this.invalid = cloneDeep(invalid);
+    return valid;
+  }
+
+  _getUrl() {
+    let url = etoolsEndpoints.assessment.url;
+    if (this.isNew) {
+      return url;
+    }
+    return url! + this.assessment.id + '/';
+  }
+
+  hideEditIcon(isNew: boolean, editMode: boolean) {
+    if (isNew || editMode) {
+      return true;
+    }
+    return false;
+  }
+
+  hideActionButtons(isNew: boolean, editMode: boolean) {
+    if (isNew || editMode) {
+      return false;
+    }
+    return true;
+  }
+  
 }
 
 window.customElements.define('assessment-info', AssessmentInfo);
