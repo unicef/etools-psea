@@ -4,17 +4,21 @@ import './assessor-info';
 import './firm-staff-members';
 import {LitElement, html, property, customElement} from 'lit-element';
 import {FirmStaffMembersEl} from './firm-staff-members';
+import {store, RootState} from '../../../../../redux/store';
+import {connect} from 'pwa-helpers/connect-mixin';
+import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 
 /**
  * @customElement
  * @LitElement
  */
 @customElement('engagement-details-page')
-class EngagementDetailsPage extends LitElement {
+class EngagementDetailsPage extends connect(store)(LitElement) {
 
   render() {
     // language=HTML
     return html`
+      ${SharedStylesLit}
       <style>
         :host {
           display: block;
@@ -22,20 +26,29 @@ class EngagementDetailsPage extends LitElement {
         }
       </style>
 
-      <assessment-info .engagement="${this.engagement}"></assessment-info>
-      <assessor-info @firm-changed="${this.firmChanged}"></assessor-info>
-      <firm-staff-members id="firmStaffMembers"></firm-staff-members>
+      <assessment-info></assessment-info>
+      <assessor-info ?hidden="${this.isNew}" @firm-changed="${this.firmChanged}"></assessor-info>
+      <firm-staff-members hidden id="firmStaffMembers"></firm-staff-members>
     `;
   }
 
-  @property({type: Boolean})
+  @property({type: Boolean, reflect: true})
   isNew: boolean = false;
 
   @property({type: Object})
   engagement!: GenericObject;
 
+  stateChanged(state: RootState) {
+    if (state.app!.routeDetails && state.app!.routeDetails.params) {
+      this.isNew = (state.app!.routeDetails.params.engagementId === 'new');
+    }
+  }
+
   firmChanged(e: CustomEvent) {
     let firmStaffMembersEl = this.shadowRoot!.querySelector('#firmStaffMembers') as FirmStaffMembersEl;
+    firmStaffMembersEl.hidden = false;
     firmStaffMembersEl.populateStaffMembersList(e.detail.id);
   }
+
+
 }

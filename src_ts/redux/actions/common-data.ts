@@ -1,4 +1,6 @@
 import {Action, ActionCreator} from 'redux';
+import {makeRequest} from '../../components/utils/request-helper';
+import {etoolsEndpoints} from '../../endpoints/endpoints-list';
 
 export const UPDATE_UNICEF_USERS_DATA = 'UPDATE_UNICEF_USERS_DATA';
 export const SET_PARTNERS = 'SET_PARTNERS';
@@ -26,6 +28,6 @@ export const setPartners = (partners: []) => {
 }
 
 export const loadPartners = () => (dispatch) => {
-
-  //dispatch(setPartners(response));
+  makeRequest(etoolsEndpoints.partners)
+       .then((resp:any) => dispatch(setPartners(resp)));
 }
