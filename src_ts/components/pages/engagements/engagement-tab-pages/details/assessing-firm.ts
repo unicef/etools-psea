@@ -33,6 +33,7 @@ class AssessingFirm extends LitElement {
           allowed-pattern="[0-9]"
           max-length=10
           error-message="${this.errMessage}"
+          auto-validate
           @blur="${this._getFirmName}">
         </paper-input>
       </div>
