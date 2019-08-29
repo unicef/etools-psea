@@ -153,12 +153,6 @@ class AssessmentInfo extends connect(store)(LitElement) {
 
   }
 
-  _getPartners() {
-    makeRequest(etoolsEndpoints.partners)
-      .then((resp: any) => this.partners = resp)
-      .catch((err: any) => console.log(err));
-  }
-
   _getAssessmentInfo(engagementId: string|number) {
 
     if (!engagementId || engagementId === 'new' ) {
@@ -196,9 +190,15 @@ class AssessmentInfo extends connect(store)(LitElement) {
   _setSelectedPartner(event: CustomEvent) {
     this.selectedPartner = event.detail.selectedItem;
 
-    makeRequest(getEndpoint('partnerStaffMembers', {id: this.selectedPartner.id}))
+    if (this.selectedPartner) {
+      this.assessment.partner = this.selectedPartner.id;
+      this.requestUpdate();
+
+      makeRequest(getEndpoint('partnerStaffMembers', {id: this.selectedPartner.id}))
       .then((resp: any[]) => {this.staffMembers = resp;})
       .catch((err: any) => {this.staffMembers = []; logError(err)});
+    }
+
   }
 
   _setSelectedDate(selDate: Date) {
@@ -289,7 +289,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
     }
     return true;
   }
-  
+
 }
 
 window.customElements.define('assessment-info', AssessmentInfo);
