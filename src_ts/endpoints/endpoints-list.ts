@@ -28,7 +28,7 @@ export const etoolsEndpoints: EtoolsEndpoints = {
     url: '/api/psea/assessment/'
   },
   assessor: {
-    url: '/api/psea/assessor/'
+    template: '/api/psea/assessment/<%=id%>/assessor/'
   },
   questionnaire: {
     url: '/api/psea/indicator/'

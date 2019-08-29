@@ -26,23 +26,16 @@ class EngagementDetailsPage extends connect(store)(LitElement) {
       </style>
 
       <assessment-info></assessment-info>
-      <assessor-info ?hidden="${this.isNew}" .assessmentId="${this.assessmentId}" @firm-changed="${this.firmChanged}"></assessor-info>
+      <assessor-info ?hidden="${this.isNew}"></assessor-info>
     `;
   }
 
   @property({type: Boolean, reflect: true})
   isNew: boolean = false;
 
-  @property({type: Object})
-  engagement!: GenericObject;
-
-  @property({type: Object})
-  assessmentId!: string | number;
-
   stateChanged(state: RootState) {
     if (state.app!.routeDetails && state.app!.routeDetails.params) {
-      this.assessmentId = state.app!.routeDetails.params.engagementId;
-      this.isNew = (this.assessmentId === 'new');
+      this.isNew = (state.app!.routeDetails.params.engagementId === 'new');
     }
   }
 

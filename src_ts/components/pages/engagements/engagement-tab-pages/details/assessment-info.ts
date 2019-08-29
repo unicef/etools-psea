@@ -135,8 +135,8 @@ class AssessmentInfo extends connect(store)(LitElement) {
       this.partners = [...state.commonData!.partners];
     }
     if (state.app!.routeDetails!.params) {
-      let engagementId = state.app!.routeDetails.params.engagementId;
-      this.setPageData(engagementId);
+      let assessmentId = state.app!.routeDetails.params.engagementId;
+      this.setPageData(assessmentId);
     }
   }
 
@@ -148,17 +148,17 @@ class AssessmentInfo extends connect(store)(LitElement) {
 
   }
 
-  _getAssessmentInfo(engagementId: string|number) {
+  _getAssessmentInfo(assessmentId: string|number) {
 
-    if (!engagementId || engagementId === 'new' ) {
+    if (!assessmentId || assessmentId === 'new' ) {
       this.assessment = new Assessment();
       return Promise.resolve();
     }
-    if (this.assessment && this.assessment.id == engagementId) {
+    if (this.assessment && this.assessment.id == assessmentId) {
       return Promise.resolve();
     }
 
-    let url = etoolsEndpoints.assessment.url! + engagementId + '/';
+    let url = etoolsEndpoints.assessment.url! + assessmentId + '/';
 
     return makeRequest({url: url})
       .then((response) => {

@@ -12,6 +12,7 @@ import {GenericObject} from '../../../../../types/globals';
 import './staff-member-dialog';
 import {StaffMemberDialogEl} from './staff-member-dialog';
 import {cloneDeep} from '../../../../utils/utils';
+import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 
 /**
  * @customElement
@@ -149,7 +150,7 @@ class FirmStaffMembers extends LitElement {
   }
 
   loadStaffMembers() {
-    let endpoint = getEndpoint('staffMembers', {id: this.firmId});
+    let endpoint = getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId});
     endpoint.url += `?${buildUrlQueryString(this.paginator)}`;
     makeRequest(endpoint)
       .then((resp: any) => {

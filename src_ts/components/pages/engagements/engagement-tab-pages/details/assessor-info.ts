@@ -23,6 +23,7 @@ import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {FirmStaffMembersEl} from './firm-staff-members';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
+import {getEndpoint} from '../../../../../endpoints/endpoints';
 
 
 /**
@@ -100,7 +101,33 @@ class AssessorInfo extends connect(store)(LitElement) {
     if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
     }
+    if (state.app!.routeDetails!.params) {
+      let engagementId = state.app!.routeDetails.params.engagementId;
+      if (this.assessmentId !== engagementId) {
+        this.assessmentId = engagementId;
+        this.setPageData(this.assessmentId);
+      }
+    }
 
+  }
+
+  setPageData(assessmentId: string | number) {
+    if (!assessmentId || assessmentId === 'new') {
+      this.assessor = new Assessor();
+      return;
+    }
+    let url = getEndpoint(etoolsEndpoints.assessor, {id: assessmentId}).url!;
+    makeRequest(new RequestEndpoint(url, 'GET'))
+      .then(resp => this.assessor = resp)
+      .catch((err) => this._handleErrorrOnGetAssessor(err));
+  }
+
+  _handleErrorrOnGetAssessor(err: any) {
+    if (err.status === 404) {
+      this.assessor = new Assessor();
+    } else {
+      fireEvent(this, 'toast', {text: 'Error on getting assessor data'})
+    }
   }
 
   _getTemplateByAssessorType(assessorType: string) {
@@ -118,11 +145,11 @@ class AssessorInfo extends connect(store)(LitElement) {
         `;
       case 'firm':
         return html`
-          <assessing-firm id="assessingFirm"></assessing-firm>
+          <assessing-firm id="assessingFirm" .assessor="${this.assessor}"></assessing-firm>
         `;
       case 'external':
         return html`
-          <external-individual id="externalIndividual"></external-individual>
+          <external-individual id="externalIndividual" .assessor="${this.assessor}"></external-individual>
         `;
       default:
         return '';
@@ -180,12 +207,7 @@ class AssessorInfo extends connect(store)(LitElement) {
     let endpointData = new RequestEndpoint(this._getUrl(),
        this._getMethod());
 
-    let body = {
-      assessment: this.assessmentId
-    }
-    body = Object.assign(body, this.collectAssessorData());
-
-    makeRequest(endpointData, body)
+    makeRequest(endpointData, this.collectAssessorData())
       .then((resp) => this.assessor = resp)
       .catch((err) =>  fireEvent(this, 'toast', {text: formatServerErrorAsText(err), showCloseBtn: true}));
   }
@@ -195,7 +217,7 @@ class AssessorInfo extends connect(store)(LitElement) {
   }
 
   _getUrl() {
-    let baseUrl = etoolsEndpoints.assessor.url!;
+    let baseUrl = getEndpoint(etoolsEndpoints.assessor, {id: this.assessmentId}).url!;
     return this.assessor.id ? baseUrl + this.assessor.id + '/' : baseUrl;
   }
 
@@ -204,14 +226,20 @@ class AssessorInfo extends connect(store)(LitElement) {
 
     switch (this.assessor.assessor_type) {
       case AssessorTypes.Staff:
-        return Object.assign(assessorPart1,
-           this._getDataForStaffAssessor());
+        return {
+            ...assessorPart1,
+            ...this._getDataForStaffAssessor()
+          };
       case AssessorTypes.Firm:
-        return Object.assign(assessorPart1,
-           this._getDataForFirmAssessor());
+        return {
+          ...assessorPart1,
+          ...this._getDataForFirmAssessor()
+        };
       case AssessorTypes.ExternalIndividual:
-          return Object.assign(assessorPart1,
-            this._getDataForExternalIndivAssessor());
+          return {
+            ...assessorPart1,
+            ...this._getDataForExternalIndivAssessor()
+          };
       default:
         return {};
     }

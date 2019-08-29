@@ -1,7 +1,6 @@
 import {LitElement, html, property} from 'lit-element';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-spinner/paper-spinner';
-import {GenericObject} from '../../../../../types/globals';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {PaperInputElement} from '@polymer/paper-input/paper-input';
@@ -9,6 +8,7 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest} from '../../../../utils/request-helper';
 import {fireEvent} from '../../../../utils/fire-custom-event';
+import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 
 /**
  * @customElement
@@ -79,7 +79,7 @@ class AssessingFirm extends LitElement {
     }
     this.requestInProgress = true;
 
-    makeRequest(getEndpoint('auditorFirm', {id: this.assessor.order_number}))
+    makeRequest(getEndpoint(etoolsEndpoints.auditorFirm, {id: this.assessor.order_number}))
       .then((resp: any) => {
         this.assessor = {
           auditor_firm: resp.auditor_firm.id,
