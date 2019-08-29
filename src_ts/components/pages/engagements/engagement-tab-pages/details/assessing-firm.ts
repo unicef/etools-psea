@@ -28,11 +28,11 @@ class AssessingFirm extends LitElement {
       <div class="row-padding-v">
         <paper-input id="poNumber" label="Enter PO Number" always-float-label
           class="input-width"
-          .value="${this.assessor.order_number}"
+          .value="${this.currentOrderNumber}"
           @value-changed=${(e: CustomEvent) => this._updateEngagementPoNumber((e.target! as PaperInputElement).value!)}
           allowed-pattern="[0-9]"
           max-length=10
-          error-message="PO number is incorrect"
+          error-message="${this.errMessage}"
           @blur="${this._getFirmName}">
         </paper-input>
       </div>
@@ -47,6 +47,9 @@ class AssessingFirm extends LitElement {
       </div>
     `;
   }
+
+  @property({type: String})
+  errMessage: string = '10 digits expected';
 
   @property({type: String})
   prevOrderNumber: string = '';
@@ -84,6 +87,7 @@ class AssessingFirm extends LitElement {
         this.assessor = {auditor_firm_name: ''};
         fireEvent(this, 'firm-changed', {});
         this.prevOrderNumber = '';
+        this.errMessage = 'PO number not found';
         (this.shadowRoot!.querySelector('#poNumber') as PaperInputElement).invalid = true;
       });
   }
@@ -100,6 +104,7 @@ class AssessingFirm extends LitElement {
   }
 
   _updateEngagementPoNumber(newVal: string) {
+    this.errMessage = '10 digits expected';
     this.currentOrderNumber = newVal;
   }
 
