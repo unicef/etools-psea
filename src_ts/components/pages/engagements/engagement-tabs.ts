@@ -1,6 +1,5 @@
 import '@polymer/paper-button/paper-button';
 
-import {SharedStyles} from '../../styles/shared-styles';
 import '../../common/layout/page-content-header/page-content-header';
 import '../../common/layout/etools-tabs';
 import {pageContentHeaderSlottedStyles}
@@ -15,6 +14,7 @@ import {updateAppLocation} from '../../../routing/routes';
 import {customElement, LitElement, html, property} from 'lit-element';
 import {elevationStyles} from '../../styles/lit-styles/elevation-styles';
 import {RouteDetails} from '../../../routing/router';
+import {SharedStylesLit} from '../../styles/shared-styles-lit';
 
 /**
  * @LitElement
@@ -31,11 +31,11 @@ export class EngagementTabs extends connect(store)(LitElement) {
     // main template
     // language=HTML
     return html`
-      ${SharedStyles} ${pageContentHeaderSlottedStyles} ${pageLayoutStyles}
+      ${SharedStylesLit} ${pageContentHeaderSlottedStyles} ${pageLayoutStyles}
       <etools-status></etools-status>
 
       <page-content-header with-tabs-visible>
-      
+
         <h1 slot="page-title">${this.engagement.title}</h1>
 
         <div slot="title-row-actions" class="content-header-actions">
@@ -48,7 +48,7 @@ export class EngagementTabs extends connect(store)(LitElement) {
                      .activeTab="${this.activeTab}"
                      @iron-select="${this.handleTabChange}"></etools-tabs>
       </page-content-header>
-      
+
       <div class="page-content">
         ${this.isActiveTab(this.activeTab,
     'details') ? html`<engagement-details-page></engagement-details-page>` : ''}
@@ -104,7 +104,7 @@ export class EngagementTabs extends connect(store)(LitElement) {
       if (stateActiveTab !== this.activeTab) {
         const oldActiveTabValue = this.activeTab;
         this.activeTab = state.app!.routeDetails.subRouteName as string;
-        this.tabChanged(this.activeTab, oldActiveTabValue);
+        this.tabChanged(this.activeTab, oldActiveTabValue);// Is this needed here
       }
       const engagementId = state.app!.routeDetails.params!.engagementId;
       if (engagementId) {

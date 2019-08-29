@@ -45,6 +45,7 @@ import {getCurrentUserData} from '../user/user-actions';
 import {EtoolsRouter} from '../../routing/routes';
 import {RouteDetails} from '../../routing/router';
 import {getUnicefUsersData} from '../common-data/common-data-actions';
+import {loadPartners} from '../../redux/actions/common-data';
 
 store.addReducers({
   user,
@@ -93,8 +94,6 @@ export class AppShell extends connect(store)(LitElement) {
             ?active="${this.isActivePage(this.mainPage,
     'engagements', this.subPage, 'details|questionnaire|followup')}">
           </engagement-tabs>
-          <page-two class="page" ?active="${this.isActivePage(this.mainPage, 'page-two')}"></page-two>
-          <page-not-found class="page" ?active="${this.isActivePage(this.mainPage, 'page-not-found')}"></page-not-found>
         </main>
 
         <page-footer></page-footer>
@@ -146,6 +145,7 @@ export class AppShell extends connect(store)(LitElement) {
 
     getCurrentUserData();
     getUnicefUsersData();
+    store.dispatch(loadPartners());
   }
 
   public connectedCallback() {

@@ -11,7 +11,7 @@ import {buildUrlQueryString} from '../../../../common/layout/etools-table/etools
 import {GenericObject} from '../../../../../types/globals';
 import './staff-member-dialog';
 import {StaffMemberDialogEl} from './staff-member-dialog';
-import {cloneDeep} from 'lodash-es';
+import {cloneDeep} from '../../../../utils/utils';
 
 /**
  * @customElement

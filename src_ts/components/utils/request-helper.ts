@@ -1,14 +1,14 @@
 import '@polymer/iron-ajax/iron-request.js';
 
 class RequestError {
-  constructor(error, statusCode, statusText, response) {
+  constructor(error: any, statusCode: any, statusText: any, response: any) {
     this.error = error;
     this.status = statusCode;
     this.statusText = statusText;
     this.response = this._prepareResponse(response);
   }
 
-  _prepareResponse(response) {
+  _prepareResponse(response: any) {
     try {
       return JSON.parse(response);
     } catch (e) {
@@ -17,12 +17,18 @@ class RequestError {
   }
 }
 
+class RequestEndpoint {
+  url: string = '';
+  method?: string = 'GET';
+  handleAs?: string = 'json'
+}
+
 const createIronRequestElement = () => {
   let ironRequestElem = document.createElement('iron-request');
   return ironRequestElem;
 };
 
-const generateRequestConfigOptions = (endpoint, data) => {
+const generateRequestConfigOptions = (endpoint: RequestEndpoint, data: any) => {
   let config = {
       url: endpoint.url,
       method: endpoint.method || 'GET',
@@ -33,7 +39,7 @@ const generateRequestConfigOptions = (endpoint, data) => {
   return config;
 };
 
-export const makeRequest = (endpoint, data = {}) => {
+export const makeRequest = (endpoint: RequestEndpoint, data = {}) => {
 
   let reqConfig = generateRequestConfigOptions(endpoint, data);
   let requestElem = createIronRequestElement();
@@ -42,7 +48,8 @@ export const makeRequest = (endpoint, data = {}) => {
   return requestElem!.completes!.then((result) => {
     return result.response;
   }).catch((error) => {
-    throw new RequestError(error, requestElem.xhr.status, requestElem.xhr.statusText, requestElem.xhr.response);
+    throw new RequestError(error, requestElem!.xhr!.status, requestElem!.xhr!.statusText,
+       requestElem!.xhr!.response);
   });
 };
 
@@ -108,7 +115,7 @@ const _getClientConfiguredHeaders = (additionalHeaders: any) => {
 };
 
 
-const _csrfSafeMethod = (method) => {
+const _csrfSafeMethod = (method: string) => {
   // these HTTP methods do not require CSRF protection
   return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 };

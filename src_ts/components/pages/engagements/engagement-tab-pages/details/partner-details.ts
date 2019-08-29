@@ -16,7 +16,7 @@ class PartnerDetails extends LitElement {
       <div class="layout-horizontal row-padding-v">
         <div class="layout-vertical col-4">
           <span class="paper-label">Partner Organization Address</span>
-          <span class="input-span" ?empty="${!this.partner.address}">${this.partner.address}</span>
+          <span class="input-label" ?empty="${!this.partner.address}">${this.partner.address}</span>
         </div>
         <div class="layout-vertical col-4">
           <span class="paper-label">Phone Number</span>
