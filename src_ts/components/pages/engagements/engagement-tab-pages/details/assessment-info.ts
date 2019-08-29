@@ -15,7 +15,9 @@ import {store, RootState} from '../../../../../redux/store';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {makeRequest} from '../../../../utils/request-helper';
 import {isJsonStrMatch} from '../../../../utils/utils';
-
+import {getEndpoint} from '../../../../../endpoints/endpoints';
+import {makeRequest} from '../../../../utils/request-helper';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 /**
  * @customElement
@@ -94,6 +96,9 @@ class AssessmentInfo extends connect(store)(LitElement) {
   @property({type: Array})
   unicefUsers!: UnicefUser[];
 
+  @property({type: Array})
+  staffMembers: GenericObject[] = [];
+
   stateChanged(state: RootState) {
     if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
@@ -108,8 +113,8 @@ class AssessmentInfo extends connect(store)(LitElement) {
 
   _getPartners() {
     makeRequest(etoolsEndpoints.partners)
-       .then((resp:any) => this.partners = resp)
-       .catch((err:any) => console.log(err));
+      .then((resp: any) => this.partners = resp)
+      .catch((err: any) => console.log(err));
   }
 
   _allowEdit() {
@@ -117,13 +122,17 @@ class AssessmentInfo extends connect(store)(LitElement) {
   }
 
   _showPartnerDetails(selectedPartner: GenericObject) {
-    return selectedPartner?
-      html`<partner-details .partner="${this.selectedPartner}">
+    return selectedPartner ?
+      html`<partner-details .partner="${this.selectedPartner}" .staffMembers="${this.staffMembers}">
       </partner-details>`: '';
   }
 
   _setSelectedPartner(event: CustomEvent) {
     this.selectedPartner = event.detail.selectedItem;
+
+    makeRequest(getEndpoint('partnerStaffMembers', {id: this.selectedPartner.id}))
+      .then((resp: any[]) => {this.staffMembers = resp;})
+      .catch((err: any) => {this.staffMembers = []; logError(err)});
   }
 
 }

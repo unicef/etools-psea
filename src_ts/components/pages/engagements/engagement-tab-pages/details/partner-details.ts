@@ -2,9 +2,7 @@ import {GenericObject} from '../../../../../types/globals';
 import {LitElement, html, property} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
-import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {makeRequest} from '../../../../utils/request-helper';
-import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+
 
 /**
  * @customElement
@@ -34,8 +32,7 @@ class PartnerDetails extends LitElement {
       <div class="layout-horizontal row-padding-v">
         <div class="layout-vertical col-4">
           <span class="paper-label">Authorizes Officers</span>
-          <span class="input-label" ?empty="${!this.thereAreStaffMembers}">
-            ${this._getStaffMembers(this.partner.id)}
+          <span class="input-label" ?empty="${this.staffMembers.length === 0}">
             ${this.staffMembers.map(i => html`<p>${i.first_name}, ${i.last_name}</p>`)}
           </span>
         </div>
@@ -50,18 +47,8 @@ class PartnerDetails extends LitElement {
   @property({type: Object, reflect: true, attribute: true})
   partner: GenericObject = {};
 
-  @property({type: Boolean})
-  thereAreStaffMembers: boolean = false;
-
   @property({type: Array})
   staffMembers: GenericObject[] = [];
-
-  _getStaffMembers(partnerId: number) {
-    this.thereAreStaffMembers = true;
-    makeRequest(getEndpoint('partnerStaffMembers', {id: partnerId}))
-      .then((resp: any[]) => this.staffMembers = resp)
-      .catch((err: any) => {this.staffMembers = []; logError(err)});
-  }
 
 }
 
