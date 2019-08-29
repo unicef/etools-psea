@@ -2,7 +2,9 @@ import {GenericObject} from '../../../../../types/globals';
 import {LitElement, html, property} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
-
+import {getEndpoint} from '../../../../../endpoints/endpoints';
+import {makeRequest} from '../../../../utils/request-helper';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 /**
  * @customElement
@@ -13,6 +15,11 @@ class PartnerDetails extends LitElement {
     // language=HTML
     return html`
       ${gridLayoutStylesLit} ${labelAndvalueStylesLit}
+      <style>
+        .input-label p{
+          margin: 0px;
+        }
+      </style>
       <div class="layout-horizontal row-padding-v">
         <div class="layout-vertical col-4">
           <span class="paper-label">Partner Organization Address</span>
@@ -29,6 +36,7 @@ class PartnerDetails extends LitElement {
           <span class="paper-label">Authorizes Officers</span>
           <span class="input-label" ?empty="${!this.thereAreStaffMembers}">
             ${this._getStaffMembers(this.partner.id)}
+            ${this.staffMembers.map(i => html`<p>${i.first_name}, ${i.last_name}</p>`)}
           </span>
         </div>
         <div class="layout-vertical col-4">
@@ -45,13 +53,15 @@ class PartnerDetails extends LitElement {
   @property({type: Boolean})
   thereAreStaffMembers: boolean = false;
 
+  @property({type: Array})
+  staffMembers: GenericObject[] = [];
 
-  _getStaffMembers(partnerId) {
+  _getStaffMembers(partnerId: number) {
     this.thereAreStaffMembers = true;
-    return 'TODO- get staff members';
-    // TODO - call to GET partner staff members & how to trigger re-render
+    makeRequest(getEndpoint('partnerStaffMembers', {id: partnerId}))
+      .then((resp: any[]) => this.staffMembers = resp)
+      .catch((err: any) => {this.staffMembers = []; logError(err)});
   }
-
 
 }
 
