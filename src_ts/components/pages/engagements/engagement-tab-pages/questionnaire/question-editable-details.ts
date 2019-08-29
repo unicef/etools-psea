@@ -10,6 +10,7 @@ import {buttonsStyles} from '../../../../styles/button-styles';
 import './question-attachments';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {radioButtonStyles} from '../../../../styles/radio-button-styles';
+import {PaperCheckboxElement} from '@polymer/paper-checkbox/paper-checkbox';
 
 class QuestionEditableDetails extends LitElement {
   render() {
@@ -79,8 +80,8 @@ class QuestionEditableDetails extends LitElement {
       if (m.name.toLowerCase().includes('other') && index + 1 === proofOfEvidence.length) {
         return html`
           <div class="layout-vertical">
-            <paper-checkbox class="padd-right" ?checked="${m.checked}" 
-              @change="${event => this._showOtherInput(event.target.checked)}">
+            <paper-checkbox class="padd-right" ?checked="${m.checked}"
+              @change="${(e: CustomEvent) => this._showOtherInput((e.target! as PaperCheckboxElement).checked!)}">
                 ${m.name}
             </paper-checkbox>
             <div class="row-padding-v" ?hidden=${!this.showOtherInput}>

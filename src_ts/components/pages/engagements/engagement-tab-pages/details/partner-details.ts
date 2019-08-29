@@ -13,10 +13,15 @@ class PartnerDetails extends LitElement {
     // language=HTML
     return html`
       ${gridLayoutStylesLit} ${labelAndvalueStylesLit}
+      <style>
+        .input-label p{
+          margin: 0px;
+        }
+      </style>
       <div class="layout-horizontal row-padding-v">
         <div class="layout-vertical col-4">
           <span class="paper-label">Partner Organization Address</span>
-          <span class="input-span" ?empty="${!this.partner.address}">${this.partner.address}</span>
+          <span class="input-label" ?empty="${!this.partner.address}">${this.partner.address}</span>
         </div>
         <div class="layout-vertical col-4">
           <span class="paper-label">Phone Number</span>
@@ -27,8 +32,8 @@ class PartnerDetails extends LitElement {
       <div class="layout-horizontal row-padding-v">
         <div class="layout-vertical col-4">
           <span class="paper-label">Authorizes Officers</span>
-          <span class="input-label" ?empty="${!this.thereAreStaffMembers}">
-            ${this._getStaffMembers(this.partner.id)}
+          <span class="input-label" ?empty="${this.staffMembers.length === 0}">
+            ${this.staffMembers.map(i => html`<p>${i.first_name}, ${i.last_name}</p>`)}
           </span>
         </div>
         <div class="layout-vertical col-4">
@@ -42,16 +47,8 @@ class PartnerDetails extends LitElement {
   @property({type: Object, reflect: true, attribute: true})
   partner: GenericObject = {};
 
-  @property({type: Boolean})
-  thereAreStaffMembers: boolean = false;
-
-
-  _getStaffMembers(partnerId) {
-    this.thereAreStaffMembers = true;
-    return 'TODO- get staff members';
-    // TODO - call to GET partner staff members & how to trigger re-render
-  }
-
+  @property({type: Array})
+  staffMembers: GenericObject[] = [];
 
 }
 

@@ -11,7 +11,7 @@ import {buildUrlQueryString} from '../../../../common/layout/etools-table/etools
 import {GenericObject} from '../../../../../types/globals';
 import './staff-member-dialog';
 import {StaffMemberDialogEl} from './staff-member-dialog';
-import {cloneDeep} from 'lodash-es';
+import {cloneDeep} from '../../../../utils/utils';
 
 /**
  * @customElement
@@ -156,7 +156,12 @@ class FirmStaffMembers extends LitElement {
         this.staffMembers = resp.results;
         this.paginator = getPaginator(this.paginator, {count: resp.count, data: this.staffMembers});
       })
-      .catch((err: any) => console.log(err));
+      .catch((err: any) => {
+        this.staffMembers = [];
+        this.paginator = getPaginator(this.paginator, {count: 0, data: this.staffMembers})
+        console.log(err);
+      }
+      );
   }
 
   createAddStaffMemberDialog() {

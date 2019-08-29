@@ -75,10 +75,19 @@ export const SharedStylesLit = html`
     padding-bottom:8px;
   }
 
-  etools-dropdown[readonly] {
+   etools-dropdown[readonly], etools-dropdown-multi[readonly], datepicker-lite[readonly] {
     --paper-input-container-underline: {
       display: none;
-    }
+    };
+    --paper-input-container-input-focus: {
+      pointer-events: none;
+    };
+    --paper-input-container-label-focus: {
+      pointer-events: none;
+    };
+    --paper-input-container-underline-focus: {
+      display: none;
+    };
   }
 
   :host > * {

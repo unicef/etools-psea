@@ -24,11 +24,23 @@ export const etoolsEndpoints: EtoolsEndpoints = {
     exp: 60 * 60 * 1000, // 1h
     cachingKey: 'unicefUsers'
   },
+  assessment: {
+    url: '/api/psea/assessment/'
+  },
+  assessor: {
+    url: '/api/psea/assessor/'
+  },
+  questionnaire: {
+    url: '/api/psea/indicator/'
+  },
   auditorFirm: {
     template: '/api/audit/purchase-orders/sync/<%=id%>/?auditor_firm__unicef_users_allowed=False'
   },
   staffMembers: {
     template: '/api/audit/audit-firms/<%=id%>/staff-members/'
+  },
+  partnerStaffMembers: {
+    template: '/api/v2/partners/<%=id%>/staff-members/'
   },
   // agreements: {
   //   template: '/api/v2/agreements/',

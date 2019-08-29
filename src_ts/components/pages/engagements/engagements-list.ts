@@ -3,7 +3,6 @@ import {customElement, html, LitElement, property} from 'lit-element';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../redux/store';
 
-import {SharedStyles} from '../../styles/shared-styles';
 import '../../common/layout/page-content-header/page-content-header';
 import {pageContentHeaderSlottedStyles}
   from '../../common/layout/page-content-header/page-content-header-slotted-styles';
@@ -35,6 +34,7 @@ import {updateAppLocation} from '../../../routing/routes';
 import {getListDummydata} from './list/list-dummy-data';
 import {buttonsStyles} from '../../styles/button-styles';
 import {fireEvent} from "../../utils/fire-custom-event";
+import {SharedStylesLit} from '../../styles/shared-styles-lit';
 
 /**
  * @LitElement
@@ -51,7 +51,7 @@ export class EngagementsList extends connect(store)(LitElement) {
     // main template
     // language=HTML
     return html`
-      ${SharedStyles} ${pageContentHeaderSlottedStyles} ${pageLayoutStyles} ${buttonsStyles}
+      ${SharedStylesLit} ${pageContentHeaderSlottedStyles} ${pageLayoutStyles} ${buttonsStyles}
       <style>
         etools-table {
           padding-top: 12px;
@@ -64,21 +64,21 @@ export class EngagementsList extends connect(store)(LitElement) {
           <paper-button class="default left-icon" raised @tap="${this.exportEngagements}">
             <iron-icon icon="file-download"></iron-icon>Export
           </paper-button>
-          
+
           <paper-button class="primary left-icon" raised @tap="${this.goToAddnewPage}">
             <iron-icon icon="add"></iron-icon>Add new engagement
           </paper-button>
         </div>
       </page-content-header>
-      
+
       <section class="elevation page-content filters" elevation="1">
         <etools-filters .filters="${this.filters}"
                         @filter-change="${this.filtersChange}"></etools-filters>
       </section>
-     
+
       <section class="elevation page-content no-padding" elevation="1">
         <etools-table .columns="${this.listColumns}"
-                      .items="${this.listData}" 
+                      .items="${this.listData}"
                       .paginator="${this.paginator}"
                       @paginator-change="${this.paginatorChange}"
                       @sort-change="${this.sortChange}"></etools-table>
