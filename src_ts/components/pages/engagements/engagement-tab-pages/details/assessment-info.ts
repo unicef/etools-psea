@@ -20,6 +20,8 @@ import {Assessment, AssessmentInvalidator} from '../../../../../types/engagement
 import {updateAppLocation} from '../../../../../routing/routes';
 import {formatDate} from '../../../../utils/date-utility';
 import {fireEvent} from '../../../../utils/fire-custom-event';
+import DatePickerLite from '@unicef-polymer/etools-date-time/datepicker-lite';
+import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
 
 
 /**
@@ -47,7 +49,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
           </paper-icon-button>
         </div>
 
-        <etools-dropdown label="Partner Organization to Assess"
+        <etools-dropdown id="partner" label="Partner Organization to Assess"
           class="row-padding-v col-6 w100"
           .options="${this.partners}"
           .selected="${this.assessment.partner}"
@@ -75,7 +77,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
           ?readonly="${!this.editMode}">
         </etools-dropdown-multi>
 
-        <datepicker-lite label="Assessment Date"
+        <datepicker-lite id="assessmentDate" label="Assessment Date"
           class="row-padding-v"
           .value="${this.assessment.assessment_date}"
           selected-date-display-format="D MMM YYYY"
@@ -144,10 +146,6 @@ class AssessmentInfo extends connect(store)(LitElement) {
     this._getAssessmentInfo(assessmnetId)
         .then(() => setTimeout(() => this.resetValidations(), 100));
 
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
   }
 
   _getAssessmentInfo(engagementId: string|number) {
@@ -235,6 +233,12 @@ class AssessmentInfo extends connect(store)(LitElement) {
 
   resetValidations() {
     this.invalid = new AssessmentInvalidator();
+    this._backupResetCodeBecauseLitElementDoentReRender();
+  }
+
+  _backupResetCodeBecauseLitElementDoentReRender() {
+    (this.shadowRoot!.querySelector('#assessmentDate') as DatePickerLite)!.invalid = false;
+    (this.shadowRoot!.querySelector('#partner') as EtoolsDropdownEl)!.invalid = false;
   }
 
   validate() {
