@@ -194,6 +194,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
 
   _setSelectedDate(selDate: Date) {
     this.assessment.assessment_date = formatDate(selDate, 'YYYY-MM-DD');
+    this.requestUpdate();
   }
 
   _setSelectedFocalPoints(e: CustomEvent) {
