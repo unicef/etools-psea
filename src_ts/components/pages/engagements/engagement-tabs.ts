@@ -1,6 +1,5 @@
 import '@polymer/paper-button/paper-button';
 
-import {SharedStyles} from '../../styles/shared-styles';
 import '../../common/layout/page-content-header/page-content-header';
 import '../../common/layout/etools-tabs';
 import {pageContentHeaderSlottedStyles}
@@ -15,6 +14,7 @@ import {updateAppLocation} from '../../../routing/routes';
 import {customElement, LitElement, html, property} from 'lit-element';
 import {elevationStyles} from '../../styles/lit-styles/elevation-styles';
 import {RouteDetails} from '../../../routing/router';
+import {SharedStylesLit} from '../../styles/shared-styles-lit';
 
 /**
  * @LitElement
@@ -31,7 +31,7 @@ export class EngagementTabs extends connect(store)(LitElement) {
     // main template
     // language=HTML
     return html`
-      ${SharedStyles} ${pageContentHeaderSlottedStyles} ${pageLayoutStyles}
+      ${SharedStylesLit} ${pageContentHeaderSlottedStyles} ${pageLayoutStyles}
       <etools-status></etools-status>
 
       <page-content-header with-tabs-visible>
