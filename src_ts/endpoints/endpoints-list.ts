@@ -16,6 +16,9 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   changeCountry: {
     url: '/api/v3/users/changecountry/'
   },
+  externalIndividuals: {
+    url: '/api/v3/users/external/'
+  },
   partners: {
     url: '/api/v2/partners/?hidden=false',
   },
