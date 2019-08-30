@@ -6,7 +6,6 @@ export const labelAndvalueStylesLit = html`
   <style>
     .paper-label {
       font-size: 12px;
-      font-weight: 600;
       color: var(--secondary-text-color);
       padding-top: 4px;
     }

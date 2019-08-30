@@ -56,26 +56,7 @@ export const SharedStylesLit = html`
       };
   }
 
-  .repeatable-item-container{
-    position: relative;
-    display: block;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .repeatable-item-container[without-line]{
-    padding: 0 12px !important;
-  }
-
-  .repeatable-item-container .repeatable-item-content{
-    border-left: none;
-    margin-left: 0;
-    padding-left: 0;
-    width:100%;
-    padding-bottom:8px;
-  }
-
-   etools-dropdown[readonly], etools-dropdown-multi[readonly], datepicker-lite[readonly] {
+  etools-dropdown[readonly], etools-dropdown-multi[readonly], datepicker-lite[readonly] {
     --paper-input-container-underline: {
       display: none;
     };
@@ -88,6 +69,26 @@ export const SharedStylesLit = html`
     --paper-input-container-underline-focus: {
       display: none;
     };
+    --paper-input-container: {
+      pointer-events: none;
+      cusrsor: text;
+    }
+    --paper-input-container-label: {
+      pointer-events: none;
+      color: var(--secondary-text-color, #737373);
+      cusrsor: text;
+    }
+    --esmm-select-cursor: text;
+    --esmm-external-wrapper: {
+      width: 100%;
+    }
+  }
+
+  etools-dropdown, etools-dropdown-multi {
+    --esmm-external-wrapper: {
+      width: auto;
+      max-width: 650px;
+    }
   }
 
   :host > * {
@@ -108,7 +109,7 @@ export const SharedStylesLit = html`
     etools-upload,
     etools-currency-amount-input {
       --paper-input-container-label: {
-        color: var(--secondary-text-color, #737373)
+        color: var(--secondary-text-color, #737373);
       };
       --paper-input-container-label-floating: {
         color: var(--secondary-text-color, #737373);

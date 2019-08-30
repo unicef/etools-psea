@@ -33,7 +33,7 @@ class PartnerDetails extends LitElement {
         <div class="layout-vertical col-4">
           <span class="paper-label">Authorizes Officers</span>
           <span class="input-label" ?empty="${this.staffMembers.length === 0}">
-            ${this.staffMembers.map(i => html`<p>${i.first_name}, ${i.last_name}</p>`)}
+            ${this.staffMembers.map(i => html`<p>${i.first_name} ${i.last_name}</p>`)}
           </span>
         </div>
         <div class="layout-vertical col-4">
