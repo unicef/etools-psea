@@ -14,7 +14,9 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
+import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest} from '../../../../utils/request-helper';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
 import {Assessment, AssessmentInvalidator} from '../../../../../types/engagement';
 import {updateAppLocation} from '../../../../../routing/routes';
@@ -121,6 +123,9 @@ class AssessmentInfo extends connect(store)(LitElement) {
   @property({type: Array})
   unicefUsers!: UnicefUser[];
 
+  @property({type: Array})
+  staffMembers: GenericObject[] = [];
+
   @property({type: Boolean})
   isNew!: boolean;
 
@@ -178,18 +183,22 @@ class AssessmentInfo extends connect(store)(LitElement) {
   }
 
   _showPartnerDetails(selectedPartner: GenericObject) {
-    console.log(selectedPartner);
-    return selectedPartner?
-      html`<partner-details .partner="${selectedPartner}">
-      </partner-details>`: '';
+    return selectedPartner ?
+      html`<partner-details .partner="${this.selectedPartner}" .staffMembers="${this.staffMembers}"></partner-details>`: '';
   }
 
   _setSelectedPartner(event: CustomEvent) {
     this.selectedPartner = event.detail.selectedItem;
+
     if (this.selectedPartner) {
       this.assessment.partner = this.selectedPartner.id;
       this.requestUpdate();
+
+      makeRequest(getEndpoint('partnerStaffMembers', {id: this.selectedPartner.id}))
+      .then((resp: any[]) => {this.staffMembers = resp;})
+      .catch((err: any) => {this.staffMembers = []; logError(err)});
     }
+
   }
 
   _setSelectedDate(selDate: Date) {
