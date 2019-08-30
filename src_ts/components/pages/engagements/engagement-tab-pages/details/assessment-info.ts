@@ -153,7 +153,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
 
   }
 
-  _getAssessmentInfo(assessmentId: string|number) {
+  _getAssessmentInfo(assessmentId: string | number) {
 
     if (!assessmentId || assessmentId === 'new' ) {
       this.assessment = new Assessment();
@@ -194,7 +194,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
       this.assessment.partner = this.selectedPartner.id;
       this.requestUpdate();
 
-      makeRequest(getEndpoint('partnerStaffMembers', {id: this.selectedPartner.id}))
+      makeRequest(getEndpoint(etoolsEndpoints.partnerStaffMembers, {id: this.selectedPartner.id}))
       .then((resp: any[]) => {this.staffMembers = resp;})
       .catch((err: any) => {this.staffMembers = []; logError(err)});
     }

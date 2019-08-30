@@ -13,7 +13,7 @@ import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-
 import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
-import {isJsonStrMatch} from '../../../../utils/utils';
+import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
 import {Assessor, AssessorTypes} from '../../../../../types/engagement';
 import {AssessingFirmElement} from './assessing-firm';
 import {ExternalIndividualElement} from './external-individual';
@@ -51,7 +51,8 @@ class AssessorInfo extends connect(store)(LitElement) {
       <etools-content-panel panel-title="Primary Assessor">
         <div slot="panel-btns">
           <paper-icon-button
-                on-tap="_allowEdit"
+                ?hidden="${this.hideEditIcon(this.isNew, this.editMode)}"
+                @tap="${this._allowEdit}"
                 icon="create">
           </paper-icon-button>
         </div>
@@ -68,8 +69,9 @@ class AssessorInfo extends connect(store)(LitElement) {
 
         ${this._getTemplateByAssessorType(this.assessor.assessor_type)}
 
-        <div class="layout-horizontal right-align row-padding-v">
-          <paper-button class="default">
+        <div class="layout-horizontal right-align row-padding-v"
+          ?hidden="${this.hideActionButtons(this.isNew, this.editMode)}">
+          <paper-button class="default" @tap="${this.cancelAssessor}">
             Cancel
           </paper-button>
           <paper-button class="primary" @tap="${this.saveAssessor}">
@@ -78,7 +80,7 @@ class AssessorInfo extends connect(store)(LitElement) {
         </div>
       </etools-content-panel>
 
-      <firm-staff-members  id="firmStaffMembers" ?hidden="${this.hideFirmStaffMembers(this.assessor.assessor_type)}"></firm-staff-members>
+      <firm-staff-members  id="firmStaffMembers" ?hidden="${this.hideFirmStaffMembers(this.assessor.assessor_type, this.firmSelected)}"></firm-staff-members>
     `;
   }
 
@@ -90,6 +92,18 @@ class AssessorInfo extends connect(store)(LitElement) {
 
   @property({type: Object})
   assessmentId!: string | number;
+
+  @property({type: Boolean})
+  firmSelected: boolean = false;
+
+  @property({type: Boolean})
+  isNew: boolean = false;
+
+  @property({type: Boolean})
+  editMode: boolean = true;
+
+  @property({type: Object})
+  originalAssessor!: Assessor;
 
   @query('#assessingFirm')
   assessingFirmElement!: AssessingFirmElement;
@@ -118,7 +132,10 @@ class AssessorInfo extends connect(store)(LitElement) {
     }
     let url = getEndpoint(etoolsEndpoints.assessor, {id: assessmentId}).url!;
     makeRequest(new RequestEndpoint(url, 'GET'))
-      .then(resp => this.assessor = resp)
+      .then(resp => {
+        this.assessor = resp;
+        this.originalAssessor = cloneDeep(this.assessor);
+      })
       .catch((err) => this._handleErrorrOnGetAssessor(err));
   }
 
@@ -170,10 +187,12 @@ class AssessorInfo extends connect(store)(LitElement) {
   firmChanged(e: CustomEvent) {
     let firmStaffMembersEl = this.shadowRoot!.querySelector('#firmStaffMembers') as FirmStaffMembersEl;
     firmStaffMembersEl.hidden = false;
+    this.firmSelected = e.detail.id ? true : false;
     firmStaffMembersEl.populateStaffMembersList(e.detail.id);
+    this.requestUpdate();
   }
 
-  hideFirmStaffMembers(assessorType: AssessorTypes) {
+  hideFirmStaffMembers(assessorType: AssessorTypes, firmSelected: boolean) {
     if (!assessorType) {
       return true;
     }
@@ -181,7 +200,10 @@ class AssessorInfo extends connect(store)(LitElement) {
       return true;
     }
 
-    return false;
+    if (assessorType === AssessorTypes.Firm) {
+     return !firmSelected;
+    }
+    return true;
   }
 
   _assessorTypeChanged(selected: any) {
@@ -208,7 +230,10 @@ class AssessorInfo extends connect(store)(LitElement) {
        this._getMethod());
 
     makeRequest(endpointData, this.collectAssessorData())
-      .then((resp) => this.assessor = resp)
+      .then((resp) => {
+        this.assessor = resp;
+        this.originalAssessor = cloneDeep(this.assessor);
+      })
       .catch((err) =>  fireEvent(this, 'toast', {text: formatServerErrorAsText(err), showCloseBtn: true}));
   }
 
@@ -257,11 +282,36 @@ class AssessorInfo extends connect(store)(LitElement) {
     return this.externalIndividualElement.getAssessorForSave();
   }
 
-
   validate() {
     return true;
   }
 
+  cancelAssessor() {
+    if (this.isNew) {
+      this.assessor = new Assessor();
+    } else {
+      this.assessor = cloneDeep(this.originalAssessor);
+       this.editMode = false;
+    }
+  }
+
+  _allowEdit() {
+    this.editMode = true;
+  }
+
+  hideEditIcon(isNew: boolean, editMode: boolean) {
+    if (isNew || editMode) {
+      return true;
+    }
+    return false;
+  }
+
+  hideActionButtons(isNew: boolean, editMode: boolean) {
+    if (isNew || editMode) {
+      return false;
+    }
+    return true;
+  }
 
 }
 window.customElements.define('assessor-info', AssessorInfo);

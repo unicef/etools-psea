@@ -60,8 +60,8 @@ class AssessingFirm extends LitElement {
 
   @property({type: Object})
   assessor = {
-      auditor_firm: '',
       order_number: '',
+      auditor_firm: null,
       auditor_firm_name: ''
     };
 
@@ -92,7 +92,11 @@ class AssessingFirm extends LitElement {
       .catch((err: any) => {
         this.requestInProgress = false;
         console.log(err);
-        this.assessor = Object.assign(this.assessor, {auditor_firm: null, auditor_firm_name: ''});
+        this.assessor = {
+          order_number: this.assessor.order_number,
+          auditor_firm: null,
+          auditor_firm_name: ''
+        };
         fireEvent(this, 'firm-changed', {});
         this.prevOrderNumber = '';
         this.errMessage = 'PO number not found';

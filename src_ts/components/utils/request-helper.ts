@@ -22,7 +22,7 @@ export class RequestEndpoint {
   method?: string = 'GET';
   handleAs?: string = 'json'
 
-  constructor(url: string, method: string, handleAs = 'json') {
+  constructor(url: string, method: string = 'GET', handleAs = 'json') {
     this.url = url;
     this.method = method;
     this.handleAs = handleAs;
