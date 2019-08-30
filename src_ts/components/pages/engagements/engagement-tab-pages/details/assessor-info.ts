@@ -70,7 +70,7 @@ class AssessorInfo extends connect(store)(LitElement) {
           </paper-radio-group>
         </div>
 
-        ${this._getTemplateByAssessorType(this.assessor.assessor_type)}
+        ${this._getTemplateByAssessorType(this.assessor.assessor_type, this.editMode, this.isNew)}
 
         <div class="layout-horizontal right-align row-padding-v"
           ?hidden="${this.hideActionButtons(this.isNew, this.editMode)}">
@@ -83,7 +83,7 @@ class AssessorInfo extends connect(store)(LitElement) {
         </div>
       </etools-content-panel>
 
-      <firm-staff-members  id="firmStaffMembers" ?hidden="${this.hideFirmStaffMembers(this.assessor.assessor_type, this.firmSelected)}"></firm-staff-members>
+      <firm-staff-members  id="firmStaffMembers" ?hidden="${this.hideFirmStaffMembers(this.isNew, this.assessor.assessor_type, this.assessor.auditor_firm_name)}"></firm-staff-members>
     `;
   }
 
@@ -97,9 +97,6 @@ class AssessorInfo extends connect(store)(LitElement) {
   assessmentId!: string | number;
 
   @property({type: Boolean})
-  firmSelected: boolean = false;
-
-  @property({type: Boolean})
   isNew: boolean = false;
 
   @property({type: Boolean})
@@ -107,6 +104,9 @@ class AssessorInfo extends connect(store)(LitElement) {
 
   @property({type: Object})
   originalAssessor!: Assessor;
+
+  @property({type: Boolean})
+  firmNameReceived = false;
 
   @query('#assessingFirm')
   assessingFirmElement!: AssessingFirmElement;
@@ -140,6 +140,12 @@ class AssessorInfo extends connect(store)(LitElement) {
         this.isNew = false;
         this.editMode = this.isNew;
         this.originalAssessor = cloneDeep(this.assessor);
+        this.requestUpdate();
+
+        if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessor.auditor_firm) {
+          this.loadFirmStaffMembers(this.assessor.auditor_firm!);
+        }
+
       })
       .catch((err) => this._handleErrorrOnGetAssessor(err));
   }
@@ -154,7 +160,7 @@ class AssessorInfo extends connect(store)(LitElement) {
     }
   }
 
-  _getTemplateByAssessorType(assessorType: string) {
+  _getTemplateByAssessorType(assessorType: string, editMode: boolean, isNew: boolean) {
     switch (assessorType) {
       case 'staff':
         return html`
@@ -165,41 +171,36 @@ class AssessorInfo extends connect(store)(LitElement) {
             @etools-selected-item-changed="${this._setSelectedUnicefUser}"
             option-label="name"
             option-value="id"
+            required
             ?readonly="${this.isReadonly(this.editMode)}">
           </etools-dropdown>
         `;
       case 'firm':
         return html`
-          <assessing-firm id="assessingFirm" .assessor="${cloneDeep(this.assessor)}"></assessing-firm>
+          <assessing-firm id="assessingFirm"
+            .assessor="${cloneDeep(this.assessor)}"
+            .prevOrderNumber="${this.assessor.order_number}"
+            .editMode="${editMode}"
+            .isNew="${isNew}">
+          </assessing-firm>
         `;
       case 'external':
         return html`
-          <external-individual id="externalIndividual" .assessor="${cloneDeep(this.assessor)}"></external-individual>
+          <external-individual id="externalIndividual" .assessor="${cloneDeep(this.assessor)}">
+          </external-individual>
         `;
       default:
         return '';
     }
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.firmChanged = this.firmChanged.bind(this);
-    this.addEventListener('firm-changed', this.firmChanged as any);
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    this.removeEventListener('firm-changed', this.firmChanged as any);
-  }
-
-  firmChanged(e: CustomEvent) {
+  loadFirmStaffMembers(firmId: string) {
     let firmStaffMembersEl = this.shadowRoot!.querySelector('#firmStaffMembers') as FirmStaffMembersEl;
-   // this.firmSelected = e.detail.id ? true : false;
-    firmStaffMembersEl.populateStaffMembersList(e.detail.id);
+    firmStaffMembersEl.populateStaffMembersList(firmId);
   }
 
-  hideFirmStaffMembers(assessorType: AssessorTypes, firmSelected: boolean) {
-    if (!assessorType) {
+  hideFirmStaffMembers(isNew: boolean, assessorType: AssessorTypes, firmName: string) {
+    if (!assessorType || isNew) {
       return true;
     }
     if ([AssessorTypes.Staff, AssessorTypes.ExternalIndividual].includes(assessorType)) {
@@ -207,7 +208,7 @@ class AssessorInfo extends connect(store)(LitElement) {
     }
 
     if (assessorType === AssessorTypes.Firm) {
-     return !firmSelected;
+     return !firmName;
     }
     return true;
   }
@@ -237,11 +238,21 @@ class AssessorInfo extends connect(store)(LitElement) {
 
     makeRequest(endpointData, this.collectAssessorData())
       .then((resp) => {
-        this.assessor = resp;
-        this.originalAssessor = cloneDeep(this.assessor);
-        this.editMode = false;
+        this._handleAssessorSaved(resp);
       })
       .catch((err) =>  fireEvent(this, 'toast', {text: formatServerErrorAsText(err), showCloseBtn: true}));
+  }
+
+
+  _handleAssessorSaved(resp: any) {
+    this.assessor = resp;
+    this.originalAssessor = cloneDeep(this.assessor);
+    this.editMode = false;
+    this.isNew = false;
+
+    if (this.assessor.assessor_type === AssessorTypes.Firm) {
+      this.loadFirmStaffMembers(this.assessor.auditor_firm!);
+    }
   }
 
   _getMethod() {
@@ -323,6 +334,14 @@ class AssessorInfo extends connect(store)(LitElement) {
   isReadonly(editMode: boolean) {
     return !editMode;
   }
+
+  disableSaveButton(assessorType: AssessorTypes, firmNameReceived: boolean) {
+    if (assessorType === AssessorTypes.Firm && !firmNameReceived) {
+      return true;
+    }
+    return false;
+  }
+
 
 }
 window.customElements.define('assessor-info', AssessorInfo);

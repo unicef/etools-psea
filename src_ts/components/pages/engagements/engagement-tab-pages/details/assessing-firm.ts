@@ -7,8 +7,9 @@ import {PaperInputElement} from '@polymer/paper-input/paper-input';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest} from '../../../../utils/request-helper';
-import {fireEvent} from '../../../../utils/fire-custom-event';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
+import {AssessorTypes} from '../../../../../types/engagement';
+import {fireEvent} from '../../../../utils/fire-custom-event';
 
 /**
  * @customElement
@@ -34,16 +35,17 @@ class AssessingFirm extends LitElement {
           maxlength=10
           error-message="${this.errMessage}"
           auto-validate
+          required
+          ?readonly="${this.isReadonly(this.editMode)}"
           @blur="${this._getFirmName}">
         </paper-input>
       </div>
-      <div class="layout-vertical row-padding-v"
-          ?hidden="${this._hideFirmName(this.assessor.auditor_firm_name, this.requestInProgress)}">
-        <label class="paper-label">Firm Name</label>
-        <label class="input-label row-padding-v">
+      <div class="layout-vertical row-padding-v">
+        <span class="paper-label">Firm Name</span>
+        <span class="input-label row-padding-v" ?empty="${!this.assessor.auditor_firm_name}">
           ${this.assessor.auditor_firm_name}
           <paper-spinner ?hidden="${!this.requestInProgress}" ?active="${this.requestInProgress}"></paper-spinner>
-        </label>
+        </span>
 
       </div>
     `;
@@ -67,6 +69,12 @@ class AssessingFirm extends LitElement {
 
   @property({type: Boolean})
   requestInProgress: boolean = false;
+
+  @property({type: Boolean, attribute: true, reflect: true})
+  editMode!: boolean;
+
+  @property({type: Boolean, attribute: true, reflect: true})
+  isNew!: boolean;
 
   _getFirmName() {
 
@@ -95,7 +103,6 @@ class AssessingFirm extends LitElement {
       auditor_firm_name: resp.auditor_firm.name};
     this.prevOrderNumber = resp.order_number;
     this.requestInProgress = false;
-    fireEvent(this, 'firm-changed', resp.auditor_firm);
   }
 
   _handleErrorOnGetFirm(err: any) {
@@ -103,7 +110,6 @@ class AssessingFirm extends LitElement {
     console.log(err);
     this.assessor.auditor_firm = null;
     this.assessor.auditor_firm_name = '';
-    fireEvent(this, 'firm-changed', {});
     this.prevOrderNumber = '';
     this.errMessage = 'PO number not found';
     (this.shadowRoot!.querySelector('#poNumber') as PaperInputElement).invalid = true;
@@ -128,12 +134,12 @@ class AssessingFirm extends LitElement {
     console.log('order_number updated', this.assessor.order_number);
   }
 
-  _hideFirmName(firmName: string, requestInProgress: boolean) {
-    return !(firmName || requestInProgress);
-  }
-
   getAssessorForSave() {
     return this.assessor;
+  }
+
+  isReadonly(editMode: boolean) {
+    return !editMode;
   }
 
 }

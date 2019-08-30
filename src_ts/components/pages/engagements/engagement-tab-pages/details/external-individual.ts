@@ -29,6 +29,7 @@ class ExternalIndividual extends connect(store)(LitElement) {
           .selected="${this.assessor.user}"
           option-value="id"
           option-label="name"
+          required
           trigger-value-change-event
           @etools-selected-item-changed="${this._setSelectedExternalIndividual}">
         </etools-dropdown>

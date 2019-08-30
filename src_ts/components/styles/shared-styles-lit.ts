@@ -56,7 +56,9 @@ export const SharedStylesLit = html`
       };
   }
 
-  etools-dropdown[readonly], etools-dropdown-multi[readonly], datepicker-lite[readonly] {
+  etools-dropdown[readonly], etools-dropdown-multi[readonly],
+  datepicker-lite[readonly],
+  paper-input[readonly] {
     --paper-input-container-underline: {
       display: none;
     };
@@ -65,6 +67,7 @@ export const SharedStylesLit = html`
     };
     --paper-input-container-label-focus: {
       pointer-events: none;
+      color: var(--secondary-text-color);
     };
     --paper-input-container-underline-focus: {
       display: none;
