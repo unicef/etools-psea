@@ -252,7 +252,6 @@ export class EngagementsList extends connect(store)(LitElement) {
     let endPoint = {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`};
     return makeRequest(endPoint).then((response: GenericObject) => {
       this.paginator = getPaginator(this.paginator, response);
-      console.log(response.results);
       this.listData = [...response.results];
     })
       .catch((err: any) => console.error(err));
