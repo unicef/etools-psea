@@ -141,6 +141,10 @@ class FirmStaffMembers extends LitElement {
   populateStaffMembersList(firmId: string) {
     this.firmId = firmId;
     this.paginator.page = 1;
+    if (!firmId) {
+      this.staffMembers = [];
+      return;
+    }
     this.loadStaffMembers();
   }
 

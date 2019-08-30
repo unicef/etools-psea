@@ -25,7 +25,6 @@ import {FirmStaffMembersEl} from './firm-staff-members';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 
-
 /**
  * @customElement
  * @LitElement
@@ -45,6 +44,10 @@ class AssessorInfo extends connect(store)(LitElement) {
           margin-bottom: 24px;
         }
 
+        paper-radio-group[readonly] paper-radio-button:not([checked]){
+          display: none;
+        }
+
       </style>
       ${SharedStylesLit}${gridLayoutStylesLit}${buttonsStyles}${labelAndvalueStylesLit}
 
@@ -59,7 +62,7 @@ class AssessorInfo extends connect(store)(LitElement) {
 
         <div class="row-padding-v">
           <label class="paper-label">Assessor is:</label>
-          <paper-radio-group .selected="${this.assessor.assessor_type}"
+          <paper-radio-group .selected="${this.assessor.assessor_type}" ?readonly="${this.isReadonly(this.editMode)}"
               @selected-changed="${(e: CustomEvent) => this._assessorTypeChanged((e.target as PaperRadioGroupElement)!.selected!)}">
             <paper-radio-button name="staff">Unicef Staff</paper-radio-button>
             <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
@@ -134,6 +137,8 @@ class AssessorInfo extends connect(store)(LitElement) {
     makeRequest(new RequestEndpoint(url, 'GET'))
       .then(resp => {
         this.assessor = resp;
+        this.isNew = false;
+        this.editMode = this.isNew;
         this.originalAssessor = cloneDeep(this.assessor);
       })
       .catch((err) => this._handleErrorrOnGetAssessor(err));
@@ -142,6 +147,8 @@ class AssessorInfo extends connect(store)(LitElement) {
   _handleErrorrOnGetAssessor(err: any) {
     if (err.status === 404) {
       this.assessor = new Assessor();
+      this.isNew = true;
+      this.editMode = this.isNew;
     } else {
       fireEvent(this, 'toast', {text: 'Error on getting assessor data'})
     }
@@ -157,16 +164,17 @@ class AssessorInfo extends connect(store)(LitElement) {
             trigger-value-change-event
             @etools-selected-item-changed="${this._setSelectedUnicefUser}"
             option-label="name"
-            option-value="id">
+            option-value="id"
+            ?readonly="${this.isReadonly(this.editMode)}">
           </etools-dropdown>
         `;
       case 'firm':
         return html`
-          <assessing-firm id="assessingFirm" .assessor="${this.assessor}"></assessing-firm>
+          <assessing-firm id="assessingFirm" .assessor="${cloneDeep(this.assessor)}"></assessing-firm>
         `;
       case 'external':
         return html`
-          <external-individual id="externalIndividual" .assessor="${this.assessor}"></external-individual>
+          <external-individual id="externalIndividual" .assessor="${cloneDeep(this.assessor)}"></external-individual>
         `;
       default:
         return '';
@@ -186,10 +194,8 @@ class AssessorInfo extends connect(store)(LitElement) {
 
   firmChanged(e: CustomEvent) {
     let firmStaffMembersEl = this.shadowRoot!.querySelector('#firmStaffMembers') as FirmStaffMembersEl;
-    firmStaffMembersEl.hidden = false;
-    this.firmSelected = e.detail.id ? true : false;
+   // this.firmSelected = e.detail.id ? true : false;
     firmStaffMembersEl.populateStaffMembersList(e.detail.id);
-    this.requestUpdate();
   }
 
   hideFirmStaffMembers(assessorType: AssessorTypes, firmSelected: boolean) {
@@ -233,6 +239,7 @@ class AssessorInfo extends connect(store)(LitElement) {
       .then((resp) => {
         this.assessor = resp;
         this.originalAssessor = cloneDeep(this.assessor);
+        this.editMode = false;
       })
       .catch((err) =>  fireEvent(this, 'toast', {text: formatServerErrorAsText(err), showCloseBtn: true}));
   }
@@ -311,6 +318,10 @@ class AssessorInfo extends connect(store)(LitElement) {
       return false;
     }
     return true;
+  }
+
+  isReadonly(editMode: boolean) {
+    return !editMode;
   }
 
 }

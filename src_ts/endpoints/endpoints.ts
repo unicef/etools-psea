@@ -1,5 +1,5 @@
 import {GenericObject} from '../types/globals';
-import {etoolsEndpoints, EtoolsEndpoint} from './endpoints-list';
+import {EtoolsEndpoint} from './endpoints-list';
 
 const generateUrlFromTemplate = (tmpl: string, data: object | undefined) => {
   if (!tmpl) {

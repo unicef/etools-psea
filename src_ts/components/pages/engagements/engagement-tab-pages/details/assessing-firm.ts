@@ -31,7 +31,7 @@ class AssessingFirm extends LitElement {
           .value="${this.assessor.order_number}"
           @value-changed=${(e: CustomEvent) => this._updatePoNumber((e.target! as PaperInputElement).value!)}
           allowed-pattern="[0-9]"
-          max-length=10
+          maxlength=10
           error-message="${this.errMessage}"
           auto-validate
           @blur="${this._getFirmName}">
@@ -80,28 +80,34 @@ class AssessingFirm extends LitElement {
     this.requestInProgress = true;
 
     makeRequest(getEndpoint(etoolsEndpoints.auditorFirm, {id: this.assessor.order_number}))
-      .then((resp: any) => {
-        this.assessor = {
-          auditor_firm: resp.auditor_firm.id,
-          order_number: resp.order_number,
-          auditor_firm_name: resp.auditor_firm.name};
-        this.prevOrderNumber = resp.order_number;
-        this.requestInProgress = false;
-        fireEvent(this, 'firm-changed', resp.auditor_firm);
+      .then((response: any) => {
+        this._handleFirmReceived(response);
       })
       .catch((err: any) => {
-        this.requestInProgress = false;
-        console.log(err);
-        this.assessor = {
-          order_number: this.assessor.order_number,
-          auditor_firm: null,
-          auditor_firm_name: ''
-        };
-        fireEvent(this, 'firm-changed', {});
-        this.prevOrderNumber = '';
-        this.errMessage = 'PO number not found';
-        (this.shadowRoot!.querySelector('#poNumber') as PaperInputElement).invalid = true;
+        this._handleErrorOnGetFirm(err)
       });
+  }
+
+  _handleFirmReceived(resp: any) {
+    this.assessor = {
+      auditor_firm: resp.auditor_firm.id,
+      order_number: resp.order_number,
+      auditor_firm_name: resp.auditor_firm.name};
+    this.prevOrderNumber = resp.order_number;
+    this.requestInProgress = false;
+    fireEvent(this, 'firm-changed', resp.auditor_firm);
+  }
+
+  _handleErrorOnGetFirm(err: any) {
+    this.requestInProgress = false;
+    console.log(err);
+    this.assessor.auditor_firm = null;
+    this.assessor.auditor_firm_name = '';
+    fireEvent(this, 'firm-changed', {});
+    this.prevOrderNumber = '';
+    this.errMessage = 'PO number not found';
+    (this.shadowRoot!.querySelector('#poNumber') as PaperInputElement).invalid = true;
+    this.requestUpdate();
   }
 
   _validatePONumber() {
@@ -119,6 +125,7 @@ class AssessingFirm extends LitElement {
     this.errMessage = '10 digits expected';
     this.assessor.order_number = newVal;
     this.requestUpdate();
+    console.log('order_number updated', this.assessor.order_number);
   }
 
   _hideFirmName(firmName: string, requestInProgress: boolean) {

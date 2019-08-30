@@ -1,4 +1,3 @@
-import {GenericObject} from '../../../../../types/globals';
 import './assessment-info';
 import './assessor-info';
 import './firm-staff-members';
