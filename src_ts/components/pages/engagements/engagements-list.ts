@@ -31,10 +31,11 @@ import {
 import {defaultSelectedFilters, engagementsFilters, updateFiltersSelectedValues} from './list/filters';
 import {RouteDetails, RouteQueryParams} from '../../../routing/router';
 import {updateAppLocation} from '../../../routing/routes';
-import {getListDummydata} from './list/list-dummy-data';
 import {buttonsStyles} from '../../styles/button-styles';
-import {fireEvent} from "../../utils/fire-custom-event";
+import {fireEvent} from '../../utils/fire-custom-event';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
+import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
+import {makeRequest} from '../../utils/request-helper';
 
 /**
  * @LitElement
@@ -109,20 +110,20 @@ export class EngagementsList extends connect(store)(LitElement) {
   @property({type: Object})
   paginator: EtoolsPaginator = {...defaultPaginator};
 
-  @property({type: Object})
+  @property({type: Array})
   sort: EtoolsTableSortItem[] = [{name: 'ref_number', sort: EtoolsTableColumnSort.Desc}];
 
   @property({type: Array})
   filters: EtoolsFilter[] = [...engagementsFilters];
 
-  @property({type: Array})
+  @property({type: Object})
   selectedFilters: GenericObject = {...defaultSelectedFilters};
 
   @property({type: Array})
   listColumns: EtoolsTableColumn[] = [
     {
       label: 'Reference No.',
-      name: 'ref_number',
+      name: 'reference_number',
       link_tmpl: `${ROOT_PATH}engagements/:id/details`,
       type: EtoolsTableColumnType.Link
     },
@@ -160,7 +161,7 @@ export class EngagementsList extends connect(store)(LitElement) {
 
   stateChanged(state: RootState) {
     if (state.app!.routeDetails.routeName === 'engagements' &&
-        state.app!.routeDetails.subRouteName === 'list') {
+      state.app!.routeDetails.subRouteName === 'list') {
 
       const stateRouteDetails = {...state.app!.routeDetails};
       if (JSON.stringify(stateRouteDetails) !== JSON.stringify(this.routeDetails)) {
@@ -183,14 +184,18 @@ export class EngagementsList extends connect(store)(LitElement) {
   }
 
   updateUrlListQueryParams() {
+    const qs = this.getParamsForQuery();
+    updateAppLocation(`${this.routeDetails.path}?${qs}`, true);
+  }
+
+  getParamsForQuery() {
     const params = {
       ...this.selectedFilters,
       page: this.paginator.page,
       page_size: this.paginator.page_size,
       sort: getUrlQueryStringSort(this.sort)
     };
-    const qs = buildUrlQueryString(params);
-    updateAppLocation(`${this.routeDetails.path}?${qs}`, true);
+    return buildUrlQueryString(params);
   }
 
   updateListParamsFromRouteDetails(queryParams: RouteQueryParams) {
@@ -244,26 +249,13 @@ export class EngagementsList extends connect(store)(LitElement) {
    * (sort, filters, paginator init/change)
    */
   getEngagementsData() {
-    /**
-     * TODO:
-     *  - replace getListDummydata with the request to /engagements/list endpoint
-     *  - include in req params filters, sort, page, page_size
-     */
-    // const requestParams = {
-    //   ...this.selectedFilters,
-    //   page: this.paginator.page,
-    //   page_size: this.paginator.page_size,
-    //   sort: this.sort
-    // };
-    console.log('get engagements data...');
-    getListDummydata(this.paginator).then((response: any) => {
-      // update paginator (total_pages, visible_range, count...)
+    let endPoint = {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`};
+    return makeRequest(endPoint).then((response: GenericObject) => {
       this.paginator = getPaginator(this.paginator, response);
+      console.log(response.results);
       this.listData = [...response.results];
-    }).catch((err: any) => {
-      // TODO: handle req errors
-      console.error(err);
-    });
+    })
+      .catch((err: any) => console.error(err));
   }
 
   exportEngagements() {
