@@ -24,6 +24,7 @@ import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {FirmStaffMembersEl} from './firm-staff-members';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
+import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
 
 /**
  * @customElement
@@ -62,15 +63,15 @@ class AssessorInfo extends connect(store)(LitElement) {
 
         <div class="row-padding-v">
           <label class="paper-label">Assessor is:</label>
-          <paper-radio-group .selected="${this.assessor.assessor_type}" ?readonly="${this.isReadonly(this.editMode)}"
-              @selected-changed="${(e: CustomEvent) => this._assessorTypeChanged((e.target as PaperRadioGroupElement)!.selected!)}">
+          <paper-radio-group .selected="${this._getAssessorType(this.assessor)}" ?readonly="${this.isReadonly(this.editMode)}"
+              @selected-changed="${(e: CustomEvent) => this._setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
             <paper-radio-button name="staff">Unicef Staff</paper-radio-button>
             <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
             <paper-radio-button name="external">External Individual</paper-radio-button>
           </paper-radio-group>
         </div>
 
-        ${this._getTemplateByAssessorType(this.assessor.assessor_type, this.editMode, this.isNew)}
+        ${this._getTemplateByAssessorType(this.assessor, this.editMode, this.isNew)}
 
         <div class="layout-horizontal right-align row-padding-v"
           ?hidden="${this.hideActionButtons(this.isNew, this.editMode)}">
@@ -83,12 +84,12 @@ class AssessorInfo extends connect(store)(LitElement) {
         </div>
       </etools-content-panel>
 
-      <firm-staff-members  id="firmStaffMembers" ?hidden="${this.hideFirmStaffMembers(this.isNew, this.assessor.assessor_type, this.assessor.auditor_firm_name)}"></firm-staff-members>
+      <firm-staff-members  id="firmStaffMembers" ?hidden="${this.hideFirmStaffMembers(this.isNew, this.assessor)}"></firm-staff-members>
     `;
   }
 
   @property({type: Object})
-  assessor = new Assessor();
+  assessor!: Assessor;// Initialization here causes eternal individual field reset on refresh
 
   @property({type: Array})
   unicefUsers!: UnicefUser[];
@@ -104,9 +105,6 @@ class AssessorInfo extends connect(store)(LitElement) {
 
   @property({type: Object})
   originalAssessor!: Assessor;
-
-  @property({type: Boolean})
-  firmNameReceived = false;
 
   @query('#assessingFirm')
   assessingFirmElement!: AssessingFirmElement;
@@ -160,11 +158,15 @@ class AssessorInfo extends connect(store)(LitElement) {
     }
   }
 
-  _getTemplateByAssessorType(assessorType: string, editMode: boolean, isNew: boolean) {
-    switch (assessorType) {
+  _getTemplateByAssessorType(assessor: Assessor | null, editMode: boolean, isNew: boolean) {
+    if (!assessor) {
+      return '';
+    }
+    switch (assessor.assessor_type) {
       case 'staff':
         return html`
-          <etools-dropdown label="Unicef Staff" class="row-padding-v"
+          <etools-dropdown id="unicefUser"
+            label="Unicef Staff" class="row-padding-v"
             .options="${this.unicefUsers}"
             .selected="${this.assessor.user}"
             trigger-value-change-event
@@ -172,6 +174,7 @@ class AssessorInfo extends connect(store)(LitElement) {
             option-label="name"
             option-value="id"
             required
+            auto-validate
             ?readonly="${this.isReadonly(this.editMode)}">
           </etools-dropdown>
         `;
@@ -186,7 +189,9 @@ class AssessorInfo extends connect(store)(LitElement) {
         `;
       case 'external':
         return html`
-          <external-individual id="externalIndividual" .assessor="${cloneDeep(this.assessor)}">
+          <external-individual id="externalIndividual"
+           .assessor="${cloneDeep(this.assessor)}"
+           .editMode="${this.editMode}">
           </external-individual>
         `;
       default:
@@ -199,23 +204,35 @@ class AssessorInfo extends connect(store)(LitElement) {
     firmStaffMembersEl.populateStaffMembersList(firmId);
   }
 
-  hideFirmStaffMembers(isNew: boolean, assessorType: AssessorTypes, firmName: string) {
-    if (!assessorType || isNew) {
+  hideFirmStaffMembers(isNew: boolean, assessor: Assessor | null) {
+    if (!assessor || !assessor.assessor_type || isNew) {
       return true;
     }
+    let assessorType = assessor.assessor_type;
     if ([AssessorTypes.Staff, AssessorTypes.ExternalIndividual].includes(assessorType)) {
       return true;
     }
 
     if (assessorType === AssessorTypes.Firm) {
-     return !firmName;
+     return !assessor.auditor_firm;
     }
     return true;
   }
 
-  _assessorTypeChanged(selected: any) {
+  _setSelectedAssessorType(selected: any) {
+    if (!this.assessor) {
+      // @ts-ignore
+      this.assessor = {};
+    }
     this.assessor.assessor_type = selected;
     this.requestUpdate();
+  }
+
+  _getAssessorType(assessor: Assessor | null) {
+    if (!assessor) {
+      return null;
+    }
+    return assessor.assessor_type;
   }
 
   _setSelectedUnicefUser(event: CustomEvent) {
@@ -301,8 +318,28 @@ class AssessorInfo extends connect(store)(LitElement) {
   }
 
   validate() {
+    if (!this.assessor.assessor_type) {
+      return false;
+    }
+    switch(this.assessor.assessor_type) {
+      case AssessorTypes.Staff:
+        return this._validateUnicefStaff();
+      case AssessorTypes.Firm:
+        return this.assessingFirmElement.validate();
+      case AssessorTypes.ExternalIndividual:
+        return this.externalIndividualElement.validate();
+      default:
+        return false;
+    }
+  }
+  _validateUnicefStaff() {
+    if (!this.assessor.user) {
+      (this.shadowRoot!.querySelector('#unicefUser') as EtoolsDropdownEl).invalid = true;
+      return false;
+    }
     return true;
   }
+
 
   cancelAssessor() {
     if (this.isNew) {
@@ -334,14 +371,6 @@ class AssessorInfo extends connect(store)(LitElement) {
   isReadonly(editMode: boolean) {
     return !editMode;
   }
-
-  disableSaveButton(assessorType: AssessorTypes, firmNameReceived: boolean) {
-    if (assessorType === AssessorTypes.Firm && !firmNameReceived) {
-      return true;
-    }
-    return false;
-  }
-
 
 }
 window.customElements.define('assessor-info', AssessorInfo);

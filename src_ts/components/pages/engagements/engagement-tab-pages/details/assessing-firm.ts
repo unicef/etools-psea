@@ -8,8 +8,6 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest} from '../../../../utils/request-helper';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
-import {AssessorTypes} from '../../../../../types/engagement';
-import {fireEvent} from '../../../../utils/fire-custom-event';
 
 /**
  * @customElement
@@ -124,6 +122,18 @@ class AssessingFirm extends LitElement {
       poNumberElem.invalid = !valid;
     }
 
+    return valid;
+  }
+
+  validate() {
+    if (!this._validatePONumber()) {
+      return false;
+    }
+
+    if (!this.assessor.auditor_firm || !this.assessor.auditor_firm_name) {
+      return false;
+    }
+    let valid = true;
     return valid;
   }
 

@@ -8,6 +8,7 @@ import {StaffMemberDialogEl} from './staff-member-dialog';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {isJsonStrMatch} from '../../../../utils/utils';
+import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
 
 /**
  * @customElement
@@ -21,28 +22,39 @@ class ExternalIndividual extends connect(store)(LitElement) {
         a {
           cursor: pointer;
         }
+
+        .padd-bottom {
+          padding-bottom: 12px;
+        }
       </style>
       ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
       <div class="row-padding-v">
-        <etools-dropdown label="Select External Individual"
+        <etools-dropdown id="externalIndiv"
+          class="padd-bottom"
+          label="External Individual"
           .options="${this.externalIndividuals}"
           .selected="${this.assessor.user}"
           option-value="id"
           option-label="name"
           required
+          auto-validate
+          ?readonly="${this.isRedonly(this.editMode)}"
           trigger-value-change-event
           @etools-selected-item-changed="${this._setSelectedExternalIndividual}">
         </etools-dropdown>
-        <label class="paper-label">User not yet in the system? Add them <a @tap="${this.openAddDialog}">here</a></label>
+        <span ?hidden="${!this.editMode}" class="paper-label">User not yet in the system? Add them <a @tap="${this.openAddDialog}">here</a></span>
       </div>
     `;
   }
 
   @property({type: Object})
-  assessor!: {user: string| number | null};
+  assessor!: {user?: string| number | null} = {};
 
   @property({type: Array})
   externalIndividuals!: any[]
+
+  @property({type: Boolean})
+  editMode!: boolean;
 
   private dialogExternalMember!: StaffMemberDialogEl;
 
@@ -72,6 +84,17 @@ class ExternalIndividual extends connect(store)(LitElement) {
     this.requestUpdate();
   }
 
+  validate() {
+    if (!this.assessor.user) {
+      (this.shadowRoot!.querySelector('#externalIndiv') as EtoolsDropdownEl).invalid = true;
+      return false;
+    }
+    return true;
+  }
+
+  isRedonly(editMode: boolean) {
+    return !editMode;
+  }
 
   getAssessorForSave() {
     return {user: this.assessor.user};
