@@ -35,7 +35,30 @@ export const engagementsFilters: EtoolsFilter[] = [
     filterName: 'Status',
     filterKey: 'status',
     type: EtoolsFilterTypes.DropdownMulti,
-    selectionOptions: [],
+    selectionOptions: [
+      {
+        status: 'draft',
+        label: 'Draft'
+      },
+      {
+        status: 'submitted-accepted',
+        label: 'Submitted/Accepted'
+      },
+      {
+        status: 'report-submitted',
+        label: 'Report submitted'
+      },
+      {
+        status: 'rejected',
+        label: 'Rejected'
+      },
+      {
+        status: 'completed',
+        label: 'Completed'
+      }
+    ],
+    optionValue: 'status',
+    optionLabel: 'label',
     selectedValue: [],
     selected: true,
     minWidth: '350px',
