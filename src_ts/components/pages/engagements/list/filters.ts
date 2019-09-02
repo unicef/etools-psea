@@ -27,7 +27,9 @@ export const engagementsFilters: EtoolsFilter[] = [
     selected: true,
     minWidth: '350px',
     hideSearch: true,
-    disabled: false
+    disabled: false,
+    optionValue: 'id',
+    optionLabel: 'name'
   },
   {
     filterName: 'Status',
@@ -49,7 +51,9 @@ export const engagementsFilters: EtoolsFilter[] = [
     selected: true,
     minWidth: '350px',
     hideSearch: true,
-    disabled: false
+    disabled: false,
+    optionValue: 'id',
+    optionLabel: 'name'
   },
   {
     filterName: 'Partner Org',
@@ -60,7 +64,9 @@ export const engagementsFilters: EtoolsFilter[] = [
     selected: true,
     minWidth: '350px',
     hideSearch: true,
-    disabled: false
+    disabled: false,
+    optionValue: 'id',
+    optionLabel: 'name'
   },
   {
     filterName: 'Assessment Date',

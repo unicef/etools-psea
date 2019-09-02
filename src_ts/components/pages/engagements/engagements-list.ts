@@ -36,6 +36,7 @@ import {fireEvent} from '../../utils/fire-custom-event';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
 import {makeRequest} from '../../utils/request-helper';
+import {isJsonStrMatch} from '../../utils/utils';
 
 /**
  * @LitElement
@@ -159,9 +160,27 @@ export class EngagementsList extends connect(store)(LitElement) {
   @property({type: Array})
   listData: GenericObject[] = [];
 
+
   stateChanged(state: RootState) {
     if (state.app!.routeDetails.routeName === 'engagements' &&
       state.app!.routeDetails.subRouteName === 'list') {
+
+      if (state.commonData) {
+        let objIndex = this.filters.findIndex((obj => obj.filterKey === 'unicef_focal_point'));
+        if (objIndex >= 0) {
+          if (!isJsonStrMatch(this.filters[objIndex].selectionOptions, state.commonData!.unicefUsers)) {
+            this.filters[objIndex].selectionOptions = [...state.commonData!.unicefUsers];
+            this.filters = [...this.filters.slice(0, objIndex), this.filters[objIndex], ...this.filters.slice(objIndex + 1)];
+          }
+        }
+        objIndex = this.filters.findIndex((obj => obj.filterKey === 'partner'));
+        if (objIndex >= 0) {
+          if (!isJsonStrMatch(this.filters[objIndex].selectionOptions, state.commonData!.partners)) {
+            this.filters[objIndex].selectionOptions = [...state.commonData!.partners];
+            this.filters = [...this.filters.slice(0, objIndex), this.filters[objIndex], ...this.filters.slice(objIndex + 1)];
+          }
+        }
+      }
 
       const stateRouteDetails = {...state.app!.routeDetails};
       if (JSON.stringify(stateRouteDetails) !== JSON.stringify(this.routeDetails)) {
