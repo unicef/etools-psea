@@ -34,6 +34,8 @@ export interface EtoolsTableColumn {
    *    - id will be replaced with item object id property
    */
   link_tmpl?: string;
+  capitalize?: boolean;
+  placeholder?: string;
 }
 
 export enum EtoolsTableActionType {
@@ -197,11 +199,12 @@ export class EtoolsTable extends LitElement {
   // Rows
   getRowDataColumnClassList(key: string) {
     const column: EtoolsTableColumn = this.getColumnDetails(key);
+    let cssClass: string = column.capitalize ? 'capitalize ' : '';
     switch (column.type) {
       case EtoolsTableColumnType.Number:
-        return 'right-align';
+        return `${cssClass}right-align`;
       default:
-        return '';
+        return cssClass;
     }
   }
 
@@ -221,7 +224,7 @@ export class EtoolsTable extends LitElement {
       case EtoolsTableColumnType.Checkbox:
         return this._getCheckbox(item, key);
       default:
-        return this._getValueByKey(item, key);
+        return this._getValueByKey(item, key, column.placeholder);
 
     }
   }
@@ -233,18 +236,22 @@ export class EtoolsTable extends LitElement {
 
   }
 
-  _getValueByKey(item: any, key: string) {
+  _getValueByKey(item: any, key: string, placeholder?: string) {
+    let value = null;
     if (key.includes('.')) {
       let propertyNames = key.split('.');
 
-      let value = item[propertyNames.shift()!];
+      value = item[propertyNames.shift()!];
       while (propertyNames.length) {
         value = value[propertyNames.shift()!];
       }
-      return value;
     } else {
-      return item[key];
+      value = item[key];
     }
+    if (placeholder && (!value || value === '')) {
+      return placeholder;
+    }
+    return value;
   }
 
   // row actions

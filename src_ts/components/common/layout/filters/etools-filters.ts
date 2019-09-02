@@ -41,7 +41,7 @@ export interface EtoolsFilter {
 @customElement('etools-filters')
 export class EtoolsFilters extends LitElement {
 
-  @property({type: Object})
+  @property({type: Array})
   filters: EtoolsFilter[] = [];
 
   private lastSelectedValues: any = null;
@@ -57,7 +57,7 @@ export class EtoolsFilters extends LitElement {
                type="search"
                autocomplete="off"
                .value="${f.selectedValue}"
-               placeholder="${f.filterName}" 
+               placeholder="${f.filterName}"
                data-filter-key="${f.filterKey}"
                @value-changed="${this.textInputChange}">
         <iron-icon icon="search" slot="prefix"></iron-icon>
@@ -131,7 +131,7 @@ export class EtoolsFilters extends LitElement {
     return html`
       <div class="filter toggle" style="padding: 8px 0; box-sizing: border-box;">
         ${f.filterName}
-        <paper-toggle-button id="toggleFilter" 
+        <paper-toggle-button id="toggleFilter"
                              ?checked="${f.selectedValue}"
                              data-filter-key="${f.filterKey}"
                              @iron-change="${this.filterToggleChange}"></paper-toggle-button>
