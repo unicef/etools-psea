@@ -29,8 +29,8 @@ export const gridLayoutStylesLit = html`
       padding-right: 24px;
     }
     .row-padding-v {
-      padding-top: 6px;
-      padding-bottom: 6px;
+      padding-top: 8px;
+      padding-bottom: 8px;
     }
 
     .space-between {

@@ -17,10 +17,16 @@ class RequestError {
   }
 }
 
-class RequestEndpoint {
+export class RequestEndpoint {
   url: string = '';
   method?: string = 'GET';
   handleAs?: string = 'json'
+
+  constructor(url: string, method: string = 'GET', handleAs = 'json') {
+    this.url = url;
+    this.method = method;
+    this.handleAs = handleAs;
+  }
 }
 
 const createIronRequestElement = () => {
@@ -28,13 +34,13 @@ const createIronRequestElement = () => {
   return ironRequestElem;
 };
 
-const generateRequestConfigOptions = (endpoint: RequestEndpoint, data: any) => {
+const generateRequestConfigOptions = (endpoint: RequestEndpoint, body: any) => {
   let config = {
       url: endpoint.url,
       method: endpoint.method || 'GET',
       handleAs: endpoint.handleAs || 'json',
       headers: _getRequestHeaders({}),
-      body: data,
+      body: body,
   };
   return config;
 };

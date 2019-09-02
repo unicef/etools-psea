@@ -52,7 +52,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
         </div>
 
         <etools-dropdown id="partner" label="Partner Organization to Assess"
-          class="row-padding-v col-6 w100"
+          class="row-padding-v w100"
           .options="${this.partners}"
           .selected="${this.assessment.partner}"
           option-value="id"
@@ -65,7 +65,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
           auto-validate>
         </etools-dropdown>
 
-        ${this._showPartnerDetails(this.selectedPartner)}
+        ${this._showPartnerDetails(this.selectedPartner, this.staffMembers)}
 
         <etools-dropdown-multi label="UNICEF Focal Point"
           class="row-padding-v"
@@ -140,8 +140,8 @@ class AssessmentInfo extends connect(store)(LitElement) {
       this.partners = [...state.commonData!.partners];
     }
     if (state.app!.routeDetails!.params) {
-      let engagementId = state.app!.routeDetails.params.engagementId;
-      this.setPageData(engagementId);
+      let assessmentId = state.app!.routeDetails.params.engagementId;
+      this.setPageData(assessmentId);
     }
   }
 
@@ -153,17 +153,17 @@ class AssessmentInfo extends connect(store)(LitElement) {
 
   }
 
-  _getAssessmentInfo(engagementId: string|number) {
+  _getAssessmentInfo(assessmentId: string | number) {
 
-    if (!engagementId || engagementId === 'new' ) {
+    if (!assessmentId || assessmentId === 'new' ) {
       this.assessment = new Assessment();
       return Promise.resolve();
     }
-    if (this.assessment && this.assessment.id == engagementId) {
+    if (this.assessment && this.assessment.id == assessmentId) {
       return Promise.resolve();
     }
 
-    let url = etoolsEndpoints.assessment.url! + engagementId + '/';
+    let url = etoolsEndpoints.assessment.url! + assessmentId + '/';
 
     return makeRequest({url: url})
       .then((response) => {
@@ -182,9 +182,9 @@ class AssessmentInfo extends connect(store)(LitElement) {
     this.editMode = true;
   }
 
-  _showPartnerDetails(selectedPartner: GenericObject) {
+  _showPartnerDetails(selectedPartner: GenericObject, staffMembers: GenericObject[]) {
     return selectedPartner ?
-      html`<partner-details .partner="${this.selectedPartner}" .staffMembers="${this.staffMembers}"></partner-details>`: '';
+      html`<partner-details .partner="${selectedPartner}" .staffMembers="${staffMembers}"></partner-details>`: '';
   }
 
   _setSelectedPartner(event: CustomEvent) {
@@ -192,10 +192,10 @@ class AssessmentInfo extends connect(store)(LitElement) {
 
     if (this.selectedPartner) {
       this.assessment.partner = this.selectedPartner.id;
-      this.requestUpdate();
-
-      makeRequest(getEndpoint('partnerStaffMembers', {id: this.selectedPartner.id}))
-      .then((resp: any[]) => {this.staffMembers = resp;})
+      makeRequest(getEndpoint(etoolsEndpoints.partnerStaffMembers, {id: this.selectedPartner.id}))
+      .then((resp: any[]) => {
+        this.staffMembers = resp; this.requestUpdate();
+      })
       .catch((err: any) => {this.staffMembers = []; logError(err)});
     }
 
