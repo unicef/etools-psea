@@ -133,8 +133,7 @@ class AssessingFirm extends LitElement {
     if (!this.assessor.auditor_firm || !this.assessor.auditor_firm_name) {
       return false;
     }
-    let valid = true;
-    return valid;
+    return true;
   }
 
   _updatePoNumber(newVal: string) {
