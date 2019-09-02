@@ -11,6 +11,7 @@ import {makeRequest} from '../../../../utils/request-helper';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {cloneDeep} from '../../../../utils/utils';
+import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 
 /**
  * @customElement
@@ -232,7 +233,7 @@ class StaffMemberDialog extends LitElement {
 
     const options = {
       method: this.isNewRecord ? 'POST' : 'PATCH',
-      url: getEndpoint('staffMembers', {id: this.firmId}).url + this.editedItem.id + '/'
+      url: getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url + this.editedItem.id + '/'
     };
 
     makeRequest(options, this.editedItem)
