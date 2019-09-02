@@ -11,6 +11,7 @@ import {pageLayoutStyles} from '../../styles/page-layout-styles';
 
 import {GenericObject} from '../../../types/globals';
 import '../../common/layout/filters/etools-filters';
+import {updateFilterSelectionOptions} from '../engagements/list/filters';
 import {EtoolsFilter} from '../../common/layout/filters/etools-filters';
 import {ROOT_PATH} from '../../../config/config';
 import {elevationStyles} from '../../styles/lit-styles/elevation-styles';
@@ -31,10 +32,12 @@ import {
 import {defaultSelectedFilters, engagementsFilters, updateFiltersSelectedValues} from './list/filters';
 import {RouteDetails, RouteQueryParams} from '../../../routing/router';
 import {updateAppLocation} from '../../../routing/routes';
-import {getListDummydata} from './list/list-dummy-data';
 import {buttonsStyles} from '../../styles/button-styles';
-import {fireEvent} from "../../utils/fire-custom-event";
+import {fireEvent} from '../../utils/fire-custom-event';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
+import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
+import {makeRequest} from '../../utils/request-helper';
+import {isJsonStrMatch} from '../../utils/utils';
 
 /**
  * @LitElement
@@ -109,20 +112,20 @@ export class EngagementsList extends connect(store)(LitElement) {
   @property({type: Object})
   paginator: EtoolsPaginator = {...defaultPaginator};
 
-  @property({type: Object})
+  @property({type: Array})
   sort: EtoolsTableSortItem[] = [{name: 'ref_number', sort: EtoolsTableColumnSort.Desc}];
 
   @property({type: Array})
   filters: EtoolsFilter[] = [...engagementsFilters];
 
-  @property({type: Array})
+  @property({type: Object})
   selectedFilters: GenericObject = {...defaultSelectedFilters};
 
   @property({type: Array})
   listColumns: EtoolsTableColumn[] = [
     {
       label: 'Reference No.',
-      name: 'ref_number',
+      name: 'reference_number',
       link_tmpl: `${ROOT_PATH}engagements/:id/details`,
       type: EtoolsTableColumnType.Link
     },
@@ -141,32 +144,39 @@ export class EngagementsList extends connect(store)(LitElement) {
     {
       label: 'Status',
       name: 'status',
-      type: EtoolsTableColumnType.Text
+      type: EtoolsTableColumnType.Text,
+      capitalize: true
     },
     {
       label: 'Assessor',
       name: 'assessor',
-      type: EtoolsTableColumnType.Text
+      type: EtoolsTableColumnType.Text,
+      placeholder: '—'
     },
     {
       label: 'Rating',
       name: 'rating',
-      type: EtoolsTableColumnType.Text
+      type: EtoolsTableColumnType.Text,
+      placeholder: '—'
     }
   ];
 
   @property({type: Array})
   listData: GenericObject[] = [];
 
+
   stateChanged(state: RootState) {
     if (state.app!.routeDetails.routeName === 'engagements' &&
-        state.app!.routeDetails.subRouteName === 'list') {
+      state.app!.routeDetails.subRouteName === 'list') {
+
+      if (state.commonData) {
+        this.filters = updateFilterSelectionOptions(this.filters, 'unicef_focal_point', state.commonData!.unicefUsers);
+        this.filters = updateFilterSelectionOptions(this.filters, 'partner', state.commonData!.partners);
+      }
 
       const stateRouteDetails = {...state.app!.routeDetails};
       if (JSON.stringify(stateRouteDetails) !== JSON.stringify(this.routeDetails)) {
         this.routeDetails = stateRouteDetails;
-        console.log('new engagements list route details...', this.routeDetails);
-
         if (!this.routeDetails.queryParams || Object.keys(this.routeDetails.queryParams).length === 0) {
           // update url with params
           this.updateUrlListQueryParams();
@@ -178,19 +188,21 @@ export class EngagementsList extends connect(store)(LitElement) {
         }
       }
     }
-    // common data used for filter options should update without page restriction
-    // TODO: init filters options here!
   }
 
   updateUrlListQueryParams() {
+    const qs = this.getParamsForQuery();
+    updateAppLocation(`${this.routeDetails.path}?${qs}`, true);
+  }
+
+  getParamsForQuery() {
     const params = {
       ...this.selectedFilters,
       page: this.paginator.page,
       page_size: this.paginator.page_size,
       sort: getUrlQueryStringSort(this.sort)
     };
-    const qs = buildUrlQueryString(params);
-    updateAppLocation(`${this.routeDetails.path}?${qs}`, true);
+    return buildUrlQueryString(params);
   }
 
   updateListParamsFromRouteDetails(queryParams: RouteQueryParams) {
@@ -214,27 +226,18 @@ export class EngagementsList extends connect(store)(LitElement) {
     this.filters = updateFiltersSelectedValues(this.selectedFilters, this.filters);
   }
 
-  connectedCallback(): void {
-    super.connectedCallback();
-    // TODO: remove method, might not be needed
-    console.log('filters, sort, paginator initialized, engagements list attached...');
-  }
-
   filtersChange(e: CustomEvent) {
-    console.log('filters change event handling...', e.detail);
     this.selectedFilters = {...this.selectedFilters, ...e.detail};
     this.updateUrlListQueryParams();
   }
 
   paginatorChange(e: CustomEvent) {
     const newPaginator = {...e.detail};
-    console.log('paginator change: ', newPaginator);
     this.paginator = newPaginator;
     this.updateUrlListQueryParams();
   }
 
   sortChange(e: CustomEvent) {
-    console.log('sorting has changed...', e.detail);
     this.sort = getSortFields(e.detail);
     this.updateUrlListQueryParams();
   }
@@ -244,26 +247,12 @@ export class EngagementsList extends connect(store)(LitElement) {
    * (sort, filters, paginator init/change)
    */
   getEngagementsData() {
-    /**
-     * TODO:
-     *  - replace getListDummydata with the request to /engagements/list endpoint
-     *  - include in req params filters, sort, page, page_size
-     */
-    // const requestParams = {
-    //   ...this.selectedFilters,
-    //   page: this.paginator.page,
-    //   page_size: this.paginator.page_size,
-    //   sort: this.sort
-    // };
-    console.log('get engagements data...');
-    getListDummydata(this.paginator).then((response: any) => {
-      // update paginator (total_pages, visible_range, count...)
+    let endpoint = {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`};
+    return makeRequest(endpoint).then((response: GenericObject) => {
       this.paginator = getPaginator(this.paginator, response);
       this.listData = [...response.results];
-    }).catch((err: any) => {
-      // TODO: handle req errors
-      console.error(err);
-    });
+    })
+      .catch((err: any) => console.error(err));
   }
 
   exportEngagements() {
