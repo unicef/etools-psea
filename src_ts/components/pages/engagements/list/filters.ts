@@ -1,5 +1,6 @@
 import {EtoolsFilter, EtoolsFilterTypes} from '../../../common/layout/filters/etools-filters';
 import {GenericObject} from '../../../../types/globals';
+import {isJsonStrMatch} from '../../../utils/utils';
 
 export const defaultSelectedFilters: GenericObject = {
   q: '',
@@ -113,4 +114,15 @@ export const updateFiltersSelectedValues = (selectedFilters: GenericObject, filt
     }
   }
   return updatedFilters;
+};
+
+export const updateFilterSelectionOptions = (filters: EtoolsFilter[], fKey: string, options: GenericObject[]) => {
+  const filter = filters.find((f: EtoolsFilter) => f.filterKey === fKey);
+  if (filter) {
+    if (!isJsonStrMatch(filter.selectionOptions, options)) {
+      filter.selectionOptions = [...options];
+      filters = [...filters];
+    }
+  }
+  return filters;
 };

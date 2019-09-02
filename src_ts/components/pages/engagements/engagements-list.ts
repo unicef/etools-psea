@@ -11,6 +11,7 @@ import {pageLayoutStyles} from '../../styles/page-layout-styles';
 
 import {GenericObject} from '../../../types/globals';
 import '../../common/layout/filters/etools-filters';
+import {updateFilterSelectionOptions} from '../engagements/list/filters';
 import {EtoolsFilter} from '../../common/layout/filters/etools-filters';
 import {ROOT_PATH} from '../../../config/config';
 import {elevationStyles} from '../../styles/lit-styles/elevation-styles';
@@ -166,27 +167,13 @@ export class EngagementsList extends connect(store)(LitElement) {
       state.app!.routeDetails.subRouteName === 'list') {
 
       if (state.commonData) {
-        let objIndex = this.filters.findIndex((obj => obj.filterKey === 'unicef_focal_point'));
-        if (objIndex >= 0) {
-          if (!isJsonStrMatch(this.filters[objIndex].selectionOptions, state.commonData!.unicefUsers)) {
-            this.filters[objIndex].selectionOptions = [...state.commonData!.unicefUsers];
-            this.filters = [...this.filters.slice(0, objIndex), this.filters[objIndex], ...this.filters.slice(objIndex + 1)];
-          }
-        }
-        objIndex = this.filters.findIndex((obj => obj.filterKey === 'partner'));
-        if (objIndex >= 0) {
-          if (!isJsonStrMatch(this.filters[objIndex].selectionOptions, state.commonData!.partners)) {
-            this.filters[objIndex].selectionOptions = [...state.commonData!.partners];
-            this.filters = [...this.filters.slice(0, objIndex), this.filters[objIndex], ...this.filters.slice(objIndex + 1)];
-          }
-        }
+        this.filters = updateFilterSelectionOptions(this.filters, 'unicef_focal_point', state.commonData!.unicefUsers);
+        this.filters = updateFilterSelectionOptions(this.filters, 'partner', state.commonData!.partners);
       }
 
       const stateRouteDetails = {...state.app!.routeDetails};
       if (JSON.stringify(stateRouteDetails) !== JSON.stringify(this.routeDetails)) {
         this.routeDetails = stateRouteDetails;
-        console.log('new engagements list route details...', this.routeDetails);
-
         if (!this.routeDetails.queryParams || Object.keys(this.routeDetails.queryParams).length === 0) {
           // update url with params
           this.updateUrlListQueryParams();
@@ -198,8 +185,6 @@ export class EngagementsList extends connect(store)(LitElement) {
         }
       }
     }
-    // common data used for filter options should update without page restriction
-    // TODO: init filters options here!
   }
 
   updateUrlListQueryParams() {
@@ -238,27 +223,18 @@ export class EngagementsList extends connect(store)(LitElement) {
     this.filters = updateFiltersSelectedValues(this.selectedFilters, this.filters);
   }
 
-  connectedCallback(): void {
-    super.connectedCallback();
-    // TODO: remove method, might not be needed
-    console.log('filters, sort, paginator initialized, engagements list attached...');
-  }
-
   filtersChange(e: CustomEvent) {
-    console.log('filters change event handling...', e.detail);
     this.selectedFilters = {...this.selectedFilters, ...e.detail};
     this.updateUrlListQueryParams();
   }
 
   paginatorChange(e: CustomEvent) {
     const newPaginator = {...e.detail};
-    console.log('paginator change: ', newPaginator);
     this.paginator = newPaginator;
     this.updateUrlListQueryParams();
   }
 
   sortChange(e: CustomEvent) {
-    console.log('sorting has changed...', e.detail);
     this.sort = getSortFields(e.detail);
     this.updateUrlListQueryParams();
   }
