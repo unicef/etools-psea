@@ -241,7 +241,7 @@ export class EtoolsTable extends LitElement {
     if (key.includes('.')) {
       let propertyNames = key.split('.');
 
-      let value = item[propertyNames.shift()!];
+      value = item[propertyNames.shift()!];
       while (propertyNames.length) {
         value = value[propertyNames.shift()!];
       }
