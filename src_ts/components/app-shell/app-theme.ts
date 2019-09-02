@@ -44,15 +44,18 @@ documentContainer.innerHTML = `
         --paper-input-container-label: {
           color: var(--secondary-text-color, #737373);
         }
-
         --paper-input-container-label-floating: {
           color: var(--secondary-text-color, #737373);
         }
-
+        --paper-input-prefix: {
+          color: var(--secondary-text-color, #737373);
+          margin-right: 10px;
+        };
         --paper-checkbox-checked-color: var(--primary-color);
         --paper-checkbox-unchecked-color: var(--secondary-text-color);
         --paper-radio-button-checked-color: var(--primary-color);
         --paper-radio-button-unchecked-color: var(--secondary-text-color);
+
       }
     </style>
   </custom-style>`;

@@ -27,7 +27,11 @@ class StaffMemberDialog extends LitElement {
           margin: 0px 10px;
         }
         paper-input, paper-checkbox{
-          padding:5px 10px;
+          padding:4px 10px;
+        }
+        .m-12{
+          margin-top: 12px;
+          margin-bottom: 12px;
         }
       </style>
       ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
@@ -120,7 +124,7 @@ class StaffMemberDialog extends LitElement {
                       </div>
                   </div>
 
-                  <div class="layout-horizontal">
+                  <div class="layout-horizontal m-12">
                       <!--receive notification-->
                       <div class="input-container col-4">
                           <paper-checkbox
