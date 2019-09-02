@@ -144,17 +144,20 @@ export class EngagementsList extends connect(store)(LitElement) {
     {
       label: 'Status',
       name: 'status',
-      type: EtoolsTableColumnType.Text
+      type: EtoolsTableColumnType.Text,
+      capitalize: true
     },
     {
       label: 'Assessor',
       name: 'assessor',
-      type: EtoolsTableColumnType.Text
+      type: EtoolsTableColumnType.Text,
+      placeholder: '—'
     },
     {
       label: 'Rating',
       name: 'rating',
-      type: EtoolsTableColumnType.Text
+      type: EtoolsTableColumnType.Text,
+      placeholder: '—'
     }
   ];
 
