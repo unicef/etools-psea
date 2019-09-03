@@ -1,6 +1,10 @@
-import {LitElement, html} from 'lit-element';
+import {LitElement, html, property} from 'lit-element';
 import './questionnaire-item';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
+import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
+import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
+import {getEndpoint} from '../../../../../endpoints/endpoints';
+import {QuestionnaireItem} from '../../../../../types/engagement';
 
 /**
  * @customElement
@@ -42,17 +46,25 @@ class EngagementQuestionnairePage extends LitElement {
     `;
   }
 
-  constructor() {
-    super();
-  }
+  @property({type: Array})
+  questionnaire!: QuestionnaireItem[];
 
   connectedCallback() {
     super.connectedCallback();
+    this.getQuestionnaire();
   }
 
-  disconnectedCallback() {
-    super.disconnectedCallback();
+  getQuestionnaire() {
+    let url = getEndpoint(etoolsEndpoints.questionnaire).url!;
+    makeRequest(new RequestEndpoint(url))
+      .then((resp) => {
+        this.questionnaire = resp;
+      })
   }
+
+
+
+
 
 }
 

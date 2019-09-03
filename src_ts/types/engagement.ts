@@ -32,3 +32,23 @@ export class Assessor {
   auditor_firm_staff: string[] = [];
 }
 
+export class QuestionnaireItem {
+  id!: string | number;
+  subject: string = '';
+  content: string = '';
+  ratings: Rating[] = [];
+  evidences: ProofOfEvidence[] = [];
+}
+
+export class ProofOfEvidence {
+  id!: string | number;
+  label: string = '';
+  required_description: boolean = false;
+}
+
+export class Rating {
+  id!: string | number;
+  label: string = '';
+  weight: string = '';
+}
+

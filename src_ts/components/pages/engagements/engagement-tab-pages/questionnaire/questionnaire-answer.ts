@@ -28,7 +28,7 @@ class QuestionEditableDetails extends LitElement {
           padding-top: 6px;
         }
         .extra-padd {
-          padding-top: 24px;
+          padding-top: 32px;
         }
       </style>
       <div class="layout-vertical row-padding-v">

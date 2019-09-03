@@ -2,12 +2,12 @@ import {LitElement, html, property} from 'lit-element';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import {GenericObject} from '../../../../../types/globals';
-import './question-editable-details';
+import './questionnaire-answer';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {radioButtonStyles} from '../../../../styles/radio-button-styles';
 
-class QuestionnaireItem extends LitElement {
+class QuestionnaireAnswer extends LitElement {
   render() {
     return html`
       ${SharedStylesLit}${gridLayoutStylesLit}${radioButtonStyles}
@@ -24,7 +24,7 @@ class QuestionnaireItem extends LitElement {
       </style>
       <etools-content-panel panel-title="${this.item.title}" show-expand-btn>
         <div slot="panel-btns">
-          <paper-radio-button class="${this._getRadioBtnClass()}">
+          <paper-radio-button selected class="${this._getRadioBtnClass()}">
             Positive
           </paper-radio-button>
           <paper-icon-button
@@ -36,8 +36,8 @@ class QuestionnaireItem extends LitElement {
           ${ this.item.description}
         </div>
         <div class="row-padding-v">
-          <question-editable-details>
-          </question-editable-details>
+          <questionnaire-answer>
+          </questionnaire-answer>
         </div>
 
       </etools-content-panel>
@@ -57,9 +57,11 @@ class QuestionnaireItem extends LitElement {
     organizational policies related to PSEA (e.g. code of
     conduct)?`};
 
-    _getRadioBtnClass() {
-      //TODO
-      return 'green';
-    }
+  @property()
+
+  _getRadioBtnClass() {
+    //TODO
+    return 'green';
+  }
 }
-window.customElements.define('questionnaire-item', QuestionnaireItem);
+window.customElements.define('questionnaire-answer', QuestionnaireAnswer);
