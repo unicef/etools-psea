@@ -1,5 +1,5 @@
 import {GenericObject} from '../../../../../types/globals';
-import {LitElement, html, property} from 'lit-element';
+import {LitElement, html, property, customElement} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 
@@ -8,7 +8,8 @@ import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-
  * @customElement
  * @LitElement
  */
-class PartnerDetails extends LitElement {
+@customElement('partner-details')
+export class PartnerDetails extends LitElement {
   render() {
     // language=HTML
     return html`
@@ -31,7 +32,7 @@ class PartnerDetails extends LitElement {
 
       <div class="layout-horizontal row-padding-v">
         <div class="layout-vertical col-4">
-          <span class="paper-label">Authorizes Officers</span>
+          <span class="paper-label">Authorized Officers</span>
           <span class="input-label" ?empty="${this.staffMembers.length === 0}">
             ${this.staffMembers.map(i => html`<p>${i.first_name} ${i.last_name}</p>`)}
           </span>
@@ -51,5 +52,3 @@ class PartnerDetails extends LitElement {
   staffMembers: GenericObject[] = [];
 
 }
-
-window.customElements.define('partner-details', PartnerDetails);
