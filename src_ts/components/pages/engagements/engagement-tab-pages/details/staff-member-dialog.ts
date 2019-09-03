@@ -239,9 +239,8 @@ class StaffMemberDialog extends LitElement {
 
     const options = {
       method: this.isNewRecord ? 'POST' : 'PATCH',
-      url: (this.isStaffMember ? getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url :
-        getEndpoint(etoolsEndpoints.externalIndividual).url)
-        + this.editedItem.id + '/'
+      url: this.isStaffMember ? getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url + this.editedItem.id + '/' :
+                                getEndpoint(etoolsEndpoints.externalIndividuals).url
     };
 
     makeRequest(options, (this.isStaffMember ? this.editedItem : this.editedItem.user))
@@ -251,6 +250,7 @@ class StaffMemberDialog extends LitElement {
 
   _handleResponse(resp: any) {
     this.requestInProcess = false;
+    resp.isStaffMember = this.isStaffMember;
     fireEvent(this, 'member-updated', resp);
     this.handleDialogClosed();
   }

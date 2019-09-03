@@ -13,6 +13,7 @@ import './staff-member-dialog';
 import {StaffMemberDialogEl} from './staff-member-dialog';
 import {cloneDeep} from '../../../../utils/utils';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 /**
  * @customElement
@@ -117,7 +118,6 @@ class FirmStaffMembers extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.createAddStaffMemberDialog();
     this.initListeners();
   }
 
@@ -132,10 +132,17 @@ class FirmStaffMembers extends LitElement {
 
   removeListeners() {
     this.removeEventListener('edit-item', this.openStaffMemberDialog);
-    if (this.dialogStaffMember) {
-      this.dialogStaffMember.removeEventListener('member-updated', this.onStaffMemberSaved);
-      document.querySelector('body')!.removeChild(this.dialogStaffMember);
+  }
+
+  openStaffMemberDialog(event?: any) {
+    if (!this.dialogStaffMember) {
+      this.dialogStaffMember = document.querySelector('body')!.querySelector('#dialogStaffMember') as StaffMemberDialogEl;
     }
+    if (event && event.detail) {
+      this.dialogStaffMember.editedItem = cloneDeep(event.detail);
+    }
+    this.dialogStaffMember.firmId = this.firmId;
+    this.dialogStaffMember.openDialog();
   }
 
   populateStaffMembersList(firmId: string) {
@@ -164,29 +171,12 @@ class FirmStaffMembers extends LitElement {
       .catch((err: any) => {
         this.staffMembers = [];
         this.paginator = getPaginator(this.paginator, {count: 0, data: this.staffMembers})
-        console.log(err);
+        logError(err);
       }
       );
   }
 
-  createAddStaffMemberDialog() {
-    this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialogEl;
-    this.dialogStaffMember.setAttribute('id', 'dialogStaffMember');
-    this.onStaffMemberSaved = this.onStaffMemberSaved.bind(this);
-    this.dialogStaffMember.addEventListener('member-updated', this.onStaffMemberSaved);
-    document.querySelector('body')!.appendChild(this.dialogStaffMember);
-  }
-
-  openStaffMemberDialog(event?: any) {
-    if (event && event.detail) {
-      this.dialogStaffMember.editedItem = cloneDeep(event.detail);
-    }
-    this.dialogStaffMember.firmId = this.firmId;
-    this.dialogStaffMember.openDialog();
-  }
-
-  onStaffMemberSaved(e: any) {
-    const savedItem = e.detail;
+  public onMemberSaved(savedItem: any) {
     const index = this.staffMembers.findIndex((r: any) => r.id === savedItem.id);
     if (index > -1) { // edit
       this.staffMembers.splice(index, 1, savedItem);

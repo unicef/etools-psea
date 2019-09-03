@@ -1,5 +1,5 @@
 import '@unicef-polymer/etools-dropdown/etools-dropdown';
-import {LitElement, html, property} from 'lit-element';
+import {LitElement, html, property, customElement} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
@@ -9,11 +9,14 @@ import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {isJsonStrMatch} from '../../../../utils/utils';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
+import {loadExternalIndividuals} from '../../../../../redux/actions/common-data';
 
 /**
  * @customElement
  * @polymer
  */
+
+@customElement('external-individual')
 class ExternalIndividual extends connect(store)(LitElement) {
   render() {
     // language=HTML
@@ -48,7 +51,7 @@ class ExternalIndividual extends connect(store)(LitElement) {
   }
 
   @property({type: Object})
-  assessor!: {user?: string| number | null} = {};
+  assessor!: {user?: string | number | null} = {};
 
   @property({type: Array})
   externalIndividuals!: any[]
@@ -57,6 +60,11 @@ class ExternalIndividual extends connect(store)(LitElement) {
   editMode!: boolean;
 
   private dialogExternalMember!: StaffMemberDialogEl;
+
+  onMemberSaved(item: any) {
+    store.dispatch(loadExternalIndividuals());
+    this.assessor.user = item.id;
+  }
 
   stateChanged(state: RootState) {
     let stateExternalIndivs = state.commonData!.externalIndividuals;
@@ -72,7 +80,6 @@ class ExternalIndividual extends connect(store)(LitElement) {
     this.dialogExternalMember.isStaffMember = false;
     this.dialogExternalMember.openDialog();
   }
-
 
   _setSelectedExternalIndividual(event: CustomEvent) {
     let selectedUser = event.detail.selectedItem;
@@ -101,6 +108,5 @@ class ExternalIndividual extends connect(store)(LitElement) {
   }
 
 }
-export {ExternalIndividual as ExternalIndividualElement}
 
-window.customElements.define('external-individual', ExternalIndividual)
+export {ExternalIndividual as ExternalIndividualElement}

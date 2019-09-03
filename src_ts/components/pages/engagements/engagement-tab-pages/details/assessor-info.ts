@@ -5,7 +5,7 @@ import '@polymer/paper-button/paper-button.js';
 import './assessing-firm';
 import './external-individual';
 import './firm-staff-members';
-import { UnicefUser} from '../../../../../types/globals';
+import {UnicefUser} from '../../../../../types/globals';
 import {LitElement, html, property, query} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {buttonsStyles} from '../../../../styles/button-styles';
@@ -25,6 +25,7 @@ import {FirmStaffMembersEl} from './firm-staff-members';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
+import {StaffMemberDialogEl} from './staff-member-dialog';
 
 /**
  * @customElement
@@ -111,6 +112,8 @@ class AssessorInfo extends connect(store)(LitElement) {
 
   @query('#externalIndividual')
   externalIndividualElement!: ExternalIndividualElement;
+
+  private dialogStaffMember!: StaffMemberDialogEl;
 
   stateChanged(state: RootState) {
     if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
@@ -199,6 +202,16 @@ class AssessorInfo extends connect(store)(LitElement) {
     }
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    this.createStaffMemberDialog();
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeListeners();
+  }
+
   loadFirmStaffMembers(firmId: string) {
     let firmStaffMembersEl = this.shadowRoot!.querySelector('#firmStaffMembers') as FirmStaffMembersEl;
     firmStaffMembersEl.populateStaffMembersList(firmId);
@@ -214,7 +227,7 @@ class AssessorInfo extends connect(store)(LitElement) {
     }
 
     if (assessorType === AssessorTypes.Firm) {
-     return !assessor.auditor_firm;
+      return !assessor.auditor_firm;
     }
     return true;
   }
@@ -251,13 +264,13 @@ class AssessorInfo extends connect(store)(LitElement) {
     }
 
     let endpointData = new RequestEndpoint(this._getUrl(),
-       this._getMethod());
+      this._getMethod());
 
     makeRequest(endpointData, this.collectAssessorData())
       .then((resp) => {
         this._handleAssessorSaved(resp);
       })
-      .catch((err) =>  fireEvent(this, 'toast', {text: formatServerErrorAsText(err), showCloseBtn: true}));
+      .catch((err) => fireEvent(this, 'toast', {text: formatServerErrorAsText(err), showCloseBtn: true}));
   }
 
 
@@ -282,24 +295,24 @@ class AssessorInfo extends connect(store)(LitElement) {
   }
 
   collectAssessorData() {
-    let assessorPart1 = { assessor_type: this.assessor.assessor_type };
+    let assessorPart1 = {assessor_type: this.assessor.assessor_type};
 
     switch (this.assessor.assessor_type) {
       case AssessorTypes.Staff:
         return {
-            ...assessorPart1,
-            ...this._getDataForStaffAssessor()
-          };
+          ...assessorPart1,
+          ...this._getDataForStaffAssessor()
+        };
       case AssessorTypes.Firm:
         return {
           ...assessorPart1,
           ...this._getDataForFirmAssessor()
         };
       case AssessorTypes.ExternalIndividual:
-          return {
-            ...assessorPart1,
-            ...this._getDataForExternalIndivAssessor()
-          };
+        return {
+          ...assessorPart1,
+          ...this._getDataForExternalIndivAssessor()
+        };
       default:
         return {};
     }
@@ -321,7 +334,7 @@ class AssessorInfo extends connect(store)(LitElement) {
     if (!this.assessor.assessor_type) {
       return false;
     }
-    switch(this.assessor.assessor_type) {
+    switch (this.assessor.assessor_type) {
       case AssessorTypes.Staff:
         return this._validateUnicefStaff();
       case AssessorTypes.Firm:
@@ -346,7 +359,7 @@ class AssessorInfo extends connect(store)(LitElement) {
       this.assessor = new Assessor();
     } else {
       this.assessor = cloneDeep(this.originalAssessor);
-       this.editMode = false;
+      this.editMode = false;
     }
   }
 
@@ -370,6 +383,35 @@ class AssessorInfo extends connect(store)(LitElement) {
 
   isReadonly(editMode: boolean) {
     return !editMode;
+  }
+
+  removeListeners() {
+    if (this.dialogStaffMember) {
+      this.dialogStaffMember.removeEventListener('member-updated', this.onDialogMemberSaved);
+      document.querySelector('body')!.removeChild(this.dialogStaffMember);
+    }
+  }
+
+  createStaffMemberDialog() {
+    this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialogEl;
+    this.dialogStaffMember.setAttribute('id', 'dialogStaffMember');
+    this.onDialogMemberSaved = this.onDialogMemberSaved.bind(this);
+    this.dialogStaffMember.addEventListener('member-updated', this.onDialogMemberSaved);
+    document.querySelector('body')!.appendChild(this.dialogStaffMember);
+  }
+
+  onDialogMemberSaved(e: any) {
+    const savedItem = e.detail;
+    if (savedItem.isStaffMember) {
+      // Firm Staff Member
+      let firmStaffMembersEl = this.shadowRoot!.querySelector('#firmStaffMembers') as FirmStaffMembersEl;
+      firmStaffMembersEl.onMemberSaved(savedItem);
+    }
+    else {
+      // External Individual
+      let extIndividualEl = this.shadowRoot!.querySelector('#externalIndividual') as ExternalIndividualElement;
+      extIndividualEl.onMemberSaved(savedItem);
+    }
   }
 
 }
