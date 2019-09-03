@@ -29,13 +29,15 @@ class StaffMemberDialog extends LitElement {
         paper-input, paper-checkbox{
           padding:4px 10px;
         }
-        .m-12{
+        .mt-12{
           margin-top: 12px;
+        }
+        .mb-12{
           margin-bottom: 12px;
         }
       </style>
       ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
-      <etools-dialog id="staff-members" no-padding
+      <etools-dialog id="staff-members"
                       ?opened="${this.dialogOpened}"
                       dialog-title="${this.dialogTitle}"
                       size="md"
@@ -47,7 +49,7 @@ class StaffMemberDialog extends LitElement {
                       @confirm-btn-clicked="${this.onSaveClick}">
 
 
-                  <div class="layout-horizontal">
+                  <div class="layout-horizontal ${this.isStaffMember ? '' : 'mb-12'}">
                       <div class="input-container col-4">
                           <!-- Email address -->
                           <paper-input
@@ -96,8 +98,8 @@ class StaffMemberDialog extends LitElement {
                           </paper-input>
                       </div>
                   </div>
-                  <div class="layout-horizontal">
-                      <div class="input-container col-4" ?hidden="${!this.isStaffMember}">
+                  <div class="layout-horizontal" ?hidden="${!this.isStaffMember}">
+                      <div class="input-container col-4">
                           <!-- Position -->
                           <paper-input
                                   id="positionInput"
@@ -124,7 +126,7 @@ class StaffMemberDialog extends LitElement {
                       </div>
                   </div>
 
-                  <div class="layout-horizontal m-12">
+                  <div class="layout-horizontal mt-12 mb-12" ?hidden="${!this.isStaffMember}">
                       <!--receive notification-->
                       <div class="input-container col-4">
                           <paper-checkbox
@@ -224,9 +226,9 @@ class StaffMemberDialog extends LitElement {
     }
     this.editedItem.user.first_name = this.getEl('#firstNameInput').value;
     this.editedItem.user.last_name = this.getEl('#lastNameInput').value;
-    this.editedItem.user.profile.phone_number = this.getEl('#phoneInput').value;
-    this.editedItem.hasAccess = this.getEl('#hasAccessInput').checked;
     if (this.isStaffMember) {
+      this.editedItem.user.profile.phone_number = this.getEl('#phoneInput').value;
+      this.editedItem.hasAccess = this.getEl('#hasAccessInput').checked;
       this.editedItem.user.profile.job_title = this.getEl('#positionInput').value;
     }
   }
@@ -237,10 +239,12 @@ class StaffMemberDialog extends LitElement {
 
     const options = {
       method: this.isNewRecord ? 'POST' : 'PATCH',
-      url: getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url + this.editedItem.id + '/'
+      url: (this.isStaffMember ? getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url :
+        getEndpoint(etoolsEndpoints.externalIndividual).url)
+        + this.editedItem.id + '/'
     };
 
-    makeRequest(options, this.editedItem)
+    makeRequest(options, (this.isStaffMember ? this.editedItem : this.editedItem.user))
       .then((resp: any) => this._handleResponse(resp))
       .catch((err: any) => this._handleError(err))
   }
@@ -253,7 +257,7 @@ class StaffMemberDialog extends LitElement {
 
   _handleError(err: any) {
     this.requestInProcess = false;
-    const msg =  'Failed to save/update new '+  this.isStaffMember ? 'Firm Staff Member' : 'External Individual' + '!';
+    const msg = 'Failed to save/update new ' + this.isStaffMember ? 'Firm Staff Member' : 'External Individual' + '!';
     logError(msg, 'staff-member', err);
     fireEvent(this, 'toast', {text: msg});
   }

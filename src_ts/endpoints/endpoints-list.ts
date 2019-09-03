@@ -42,6 +42,9 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   staffMembers: {
     template: '/api/audit/audit-firms/<%=id%>/staff-members/'
   },
+  externalIndividual:{
+    template: '/api/v3/users/external/'
+  },
   partnerStaffMembers: {
     template: '/api/v2/partners/<%=id%>/staff-members/'
   }
