@@ -32,6 +32,11 @@ export class EngagementTabs extends connect(store)(LitElement) {
     // language=HTML
     return html`
       ${SharedStylesLit} ${pageContentHeaderSlottedStyles} ${pageLayoutStyles}
+      <style>
+        etools-status {
+          justify-content: center;
+        }
+      </style>
       <etools-status></etools-status>
 
       <page-content-header with-tabs-visible>
