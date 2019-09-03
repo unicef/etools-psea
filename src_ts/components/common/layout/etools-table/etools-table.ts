@@ -91,6 +91,8 @@ export class EtoolsTable extends LitElement {
   @property({type: Object})
   paginator!: EtoolsPaginator;
 
+  private defaultPlaceholder: string = '—';
+
   getColumnHtml(column: EtoolsTableColumn) {
     if (!this.columnHasSort(column.sort)) {
       return html`
@@ -199,7 +201,7 @@ export class EtoolsTable extends LitElement {
   // Rows
   getRowDataColumnClassList(key: string) {
     const column: EtoolsTableColumn = this.getColumnDetails(key);
-    let cssClass: string = column.capitalize ? 'capitalize ' : '';
+    const cssClass: string = column.capitalize ? 'capitalize ' : '';
     switch (column.type) {
       case EtoolsTableColumnType.Number:
         return `${cssClass}right-align`;
@@ -231,15 +233,15 @@ export class EtoolsTable extends LitElement {
 
   _getCheckbox(item: any, key: string) {
     return html`
-      <paper-checkbox ?checked="${this._getValueByKey(item, key)}"></paper-checkbox>
-    `;
+      <paper-checkbox ?checked="${this._getValueByKey(item, key, '', true)}">
+      </paper-checkbox>`;
 
   }
 
-  _getValueByKey(item: any, key: string, placeholder?: string) {
+  _getValueByKey(item: any, key: string, placeholder?: string, ignorePlaceholder: boolean = false) {
     let value = null;
     if (key.includes('.')) {
-      let propertyNames = key.split('.');
+      const propertyNames = key.split('.');
 
       value = item[propertyNames.shift()!];
       while (propertyNames.length) {
@@ -248,8 +250,8 @@ export class EtoolsTable extends LitElement {
     } else {
       value = item[key];
     }
-    if (placeholder && (!value || value === '')) {
-      return placeholder;
+    if (!ignorePlaceholder && (!value || value === '')) {
+      return placeholder ? placeholder : this.defaultPlaceholder;
     }
     return value;
   }

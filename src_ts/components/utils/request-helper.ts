@@ -36,11 +36,11 @@ const createIronRequestElement = () => {
 
 const generateRequestConfigOptions = (endpoint: RequestEndpoint, body: any) => {
   let config = {
-      url: endpoint.url,
-      method: endpoint.method || 'GET',
-      handleAs: endpoint.handleAs || 'json',
-      headers: _getRequestHeaders({}),
-      body: body,
+    url: endpoint.url,
+    method: endpoint.method || 'GET',
+    handleAs: endpoint.handleAs || 'json',
+    headers: _getRequestHeaders({}),
+    body: body,
   };
   return config;
 };
@@ -55,7 +55,7 @@ export const makeRequest = (endpoint: RequestEndpoint, data = {}) => {
     return result.response;
   }).catch((error) => {
     throw new RequestError(error, requestElem!.xhr!.status, requestElem!.xhr!.statusText,
-       requestElem!.xhr!.response);
+      requestElem!.xhr!.response);
   });
 };
 

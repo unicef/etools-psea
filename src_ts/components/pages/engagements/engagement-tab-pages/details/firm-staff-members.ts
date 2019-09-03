@@ -3,14 +3,18 @@ import '@polymer/paper-icon-button/paper-icon-button';
 import {LitElement, html, property, customElement} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {EtoolsTableColumn, EtoolsTableColumnType} from '../../../../common/layout/etools-table/etools-table';
-import {defaultPaginator, EtoolsPaginator, getPaginator} from '../../../../common/layout/etools-table/pagination/paginator';
+import {
+  defaultPaginator,
+  EtoolsPaginator,
+  getPaginator
+} from '../../../../common/layout/etools-table/pagination/paginator';
 import '../../../../common/layout/etools-table/etools-table';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {makeRequest} from '../../../../utils/request-helper';
+import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {buildUrlQueryString} from '../../../../common/layout/etools-table/etools-table-utility';
 import {GenericObject} from '../../../../../types/globals';
 import './staff-member-dialog';
-import {StaffMemberDialogEl} from './staff-member-dialog';
+import {StaffMemberDialog} from './staff-member-dialog';
 import {cloneDeep} from '../../../../utils/utils';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 
@@ -19,7 +23,7 @@ import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
  * @LitElement
  */
 @customElement('firm-staff-members')
-class FirmStaffMembers extends LitElement {
+export class FirmStaffMembers extends LitElement {
 
   render() {
     // language=HTML
@@ -64,7 +68,7 @@ class FirmStaffMembers extends LitElement {
             .paginator="${this.paginator}"
             @paginator-change="${this.paginatorChange}"
             showEdit
-            showDelete>
+            @edit-item="${this.openStaffMemberDialog}">
           </etools-table>
         </div>
       </etools-content-panel>
@@ -110,7 +114,7 @@ class FirmStaffMembers extends LitElement {
       type: EtoolsTableColumnType.Text
     }
   ];
-  private dialogStaffMember!: StaffMemberDialogEl;
+  private dialogStaffMember!: StaffMemberDialog;
 
   @property({type: String})
   firmId!: string;
@@ -118,7 +122,6 @@ class FirmStaffMembers extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.createAddStaffMemberDialog();
-    this.initListeners();
   }
 
   disconnectedCallback() {
@@ -126,12 +129,7 @@ class FirmStaffMembers extends LitElement {
     this.removeListeners();
   }
 
-  initListeners() {
-    this.addEventListener('edit-item', this.openStaffMemberDialog);
-  }
-
   removeListeners() {
-    this.removeEventListener('edit-item', this.openStaffMemberDialog);
     if (this.dialogStaffMember) {
       this.dialogStaffMember.removeEventListener('member-updated', this.onStaffMemberSaved);
       document.querySelector('body')!.removeChild(this.dialogStaffMember);
@@ -154,9 +152,9 @@ class FirmStaffMembers extends LitElement {
   }
 
   loadStaffMembers() {
-    let endpoint = getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId});
+    const endpoint = getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId});
     endpoint.url += `?${buildUrlQueryString(this.paginator)}`;
-    makeRequest(endpoint)
+    makeRequest(endpoint as RequestEndpoint)
       .then((resp: any) => {
         this.staffMembers = resp.results;
         this.paginator = getPaginator(this.paginator, {count: resp.count, data: this.staffMembers});
@@ -165,12 +163,11 @@ class FirmStaffMembers extends LitElement {
         this.staffMembers = [];
         this.paginator = getPaginator(this.paginator, {count: 0, data: this.staffMembers})
         console.log(err);
-      }
-      );
+      });
   }
 
   createAddStaffMemberDialog() {
-    this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialogEl;
+    this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialog;
     this.dialogStaffMember.setAttribute('id', 'dialogStaffMember');
     this.onStaffMemberSaved = this.onStaffMemberSaved.bind(this);
     this.dialogStaffMember.addEventListener('member-updated', this.onStaffMemberSaved);
@@ -202,5 +199,3 @@ class FirmStaffMembers extends LitElement {
   }
 
 }
-
-export {FirmStaffMembers as FirmStaffMembersEl}
