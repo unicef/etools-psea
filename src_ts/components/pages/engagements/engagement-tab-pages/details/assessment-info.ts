@@ -1,4 +1,4 @@
-import {LitElement, html, property} from 'lit-element';
+import {LitElement, html, property, customElement} from 'lit-element';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-button/paper-button.js';
@@ -15,7 +15,7 @@ import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {makeRequest} from '../../../../utils/request-helper';
+import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
 import {Assessment, AssessmentInvalidator} from '../../../../../types/engagement';
@@ -25,12 +25,12 @@ import {fireEvent} from '../../../../utils/fire-custom-event';
 import DatePickerLite from '@unicef-polymer/etools-date-time/datepicker-lite';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
 
-
 /**
  * @customElement
  * @LitElement
  */
-class AssessmentInfo extends connect(store)(LitElement) {
+@customElement('assessment-info')
+export class AssessmentInfo extends connect(store)(LitElement) {
 
   render() {
     // language=HTML
@@ -140,7 +140,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
       this.partners = [...state.commonData!.partners];
     }
     if (state.app!.routeDetails!.params) {
-      let assessmentId = state.app!.routeDetails.params.engagementId;
+      const assessmentId = state.app!.routeDetails.params.engagementId;
       this.setPageData(assessmentId);
     }
   }
@@ -149,13 +149,13 @@ class AssessmentInfo extends connect(store)(LitElement) {
     this.isNew = (assessmnetId === 'new');
     this.editMode = this.isNew;
     this._getAssessmentInfo(assessmnetId)
-        .then(() => setTimeout(() => this.resetValidations(), 100));
+      .then(() => setTimeout(() => this.resetValidations(), 100));
 
   }
 
   _getAssessmentInfo(assessmentId: string | number) {
 
-    if (!assessmentId || assessmentId === 'new' ) {
+    if (!assessmentId || assessmentId === 'new') {
       this.assessment = new Assessment();
       return Promise.resolve();
     }
@@ -163,7 +163,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
       return Promise.resolve();
     }
 
-    let url = etoolsEndpoints.assessment.url! + assessmentId + '/';
+    const url = etoolsEndpoints.assessment.url! + assessmentId + '/';
 
     return makeRequest({url: url})
       .then((response) => {
@@ -178,13 +178,14 @@ class AssessmentInfo extends connect(store)(LitElement) {
       updateAppLocation('/page-not-found', true);
     }
   }
+
   _allowEdit() {
     this.editMode = true;
   }
 
   _showPartnerDetails(selectedPartner: GenericObject, staffMembers: GenericObject[]) {
     return selectedPartner ?
-      html`<partner-details .partner="${selectedPartner}" .staffMembers="${staffMembers}"></partner-details>`: '';
+      html`<partner-details .partner="${selectedPartner}" .staffMembers="${staffMembers}"></partner-details>` : '';
   }
 
   _setSelectedPartner(event: CustomEvent) {
@@ -192,11 +193,15 @@ class AssessmentInfo extends connect(store)(LitElement) {
 
     if (this.selectedPartner) {
       this.assessment.partner = this.selectedPartner.id;
-      makeRequest(getEndpoint(etoolsEndpoints.partnerStaffMembers, {id: this.selectedPartner.id}))
-      .then((resp: any[]) => {
-        this.staffMembers = resp; this.requestUpdate();
-      })
-      .catch((err: any) => {this.staffMembers = []; logError(err)});
+      makeRequest(getEndpoint(etoolsEndpoints.partnerStaffMembers, {id: this.selectedPartner.id}) as RequestEndpoint)
+        .then((resp: any[]) => {
+          this.staffMembers = resp;
+          this.requestUpdate();
+        })
+        .catch((err: any) => {
+          this.staffMembers = [];
+          logError(err);
+        });
     }
 
   }
@@ -207,7 +212,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
   }
 
   _setSelectedFocalPoints(e: CustomEvent) {
-    this.assessment.focal_points = e .detail.selectedItems.map((i:any) => i.id);
+    this.assessment.focal_points = e.detail.selectedItems.map((i: any) => i.id);
   }
 
   cancelAssessment() {
@@ -224,18 +229,18 @@ class AssessmentInfo extends connect(store)(LitElement) {
       return;
     }
 
-    let options = {
+    const options = {
       url: this._getUrl()!,
-      method: this.isNew ?  'POST' : 'PATCH'
+      method: this.isNew ? 'POST' : 'PATCH'
     };
 
     if (this.isNew) {
       this.assessment.status = 'draft';
     }
-    let  body = this.assessment;
+    const body = this.assessment;
 
     makeRequest(options, body)
-      .then((response) =>
+      .then((response: any) =>
         updateAppLocation(`/engagements/${response.id}/details`, true)
       )
       .catch(_err => fireEvent(this, 'toast', {text: 'Error saving Assessment Info.'}));
@@ -253,15 +258,15 @@ class AssessmentInfo extends connect(store)(LitElement) {
 
   validate() {
     let valid = true;
-    let invalid = new AssessmentInvalidator();
+    const invalid = new AssessmentInvalidator();
 
     if (!this.assessment.partner) {
       valid = false;
       invalid.partner = true;
     }
-    if(!this.assessment.assessment_date) {
+    if (!this.assessment.assessment_date) {
       valid = false;
-      invalid.assessment_date = true
+      invalid.assessment_date = true;
     }
 
     this.invalid = cloneDeep(invalid);
@@ -269,7 +274,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
   }
 
   _getUrl() {
-    let url = etoolsEndpoints.assessment.url;
+    const url = etoolsEndpoints.assessment.url;
     if (this.isNew) {
       return url;
     }
@@ -277,19 +282,11 @@ class AssessmentInfo extends connect(store)(LitElement) {
   }
 
   hideEditIcon(isNew: boolean, editMode: boolean) {
-    if (isNew || editMode) {
-      return true;
-    }
-    return false;
+    return isNew || editMode;
   }
 
   hideActionButtons(isNew: boolean, editMode: boolean) {
-    if (isNew || editMode) {
-      return false;
-    }
-    return true;
+    return !isNew || !editMode;
   }
 
 }
-
-window.customElements.define('assessment-info', AssessmentInfo);
