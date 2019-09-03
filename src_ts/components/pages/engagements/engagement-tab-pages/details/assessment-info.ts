@@ -140,6 +140,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
     if (state.commonData && !isJsonStrMatch(this.partners, state.commonData!.partners)) {
       this.partners = [...state.commonData!.partners];
     }
+
     if (state.app!.routeDetails!.params) {
       let assessmentId = state.app!.routeDetails.params.engagementId;
       this.setPageData(assessmentId);
@@ -158,6 +159,7 @@ class AssessmentInfo extends connect(store)(LitElement) {
 
     if (!assessmentId || assessmentId === 'new' ) {
       this.assessment = new Assessment();
+      store.dispatch(updateAssessmentData(this.assessment));
       return Promise.resolve();
     }
     if (this.assessment && this.assessment.id == assessmentId) {
