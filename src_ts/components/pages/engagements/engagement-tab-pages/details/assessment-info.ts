@@ -24,6 +24,7 @@ import {formatDate} from '../../../../utils/date-utility';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import DatePickerLite from '@unicef-polymer/etools-date-time/datepicker-lite';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
+import {updateAssessmentData} from '../../../../../redux/actions/page-data';
 
 /**
  * @customElement
@@ -139,6 +140,7 @@ export class AssessmentInfo extends connect(store)(LitElement) {
     if (state.commonData && !isJsonStrMatch(this.partners, state.commonData!.partners)) {
       this.partners = [...state.commonData!.partners];
     }
+
     if (state.app!.routeDetails!.params) {
       const assessmentId = state.app!.routeDetails.params.engagementId;
       this.setPageData(assessmentId);
@@ -157,6 +159,7 @@ export class AssessmentInfo extends connect(store)(LitElement) {
 
     if (!assessmentId || assessmentId === 'new') {
       this.assessment = new Assessment();
+      store.dispatch(updateAssessmentData(this.assessment));
       return Promise.resolve();
     }
     if (this.assessment && this.assessment.id == assessmentId) {
@@ -167,6 +170,7 @@ export class AssessmentInfo extends connect(store)(LitElement) {
 
     return makeRequest({url: url})
       .then((response) => {
+        store.dispatch(updateAssessmentData(response));
         this.assessment = response;
         this.originalAssessment = cloneDeep(this.assessment);
       })
