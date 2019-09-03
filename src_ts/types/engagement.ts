@@ -32,7 +32,7 @@ export class Assessor {
   auditor_firm_staff: string[] = [];
 }
 
-export class QuestionnaireItem {
+export class Question {
   id!: string | number;
   subject: string = '';
   content: string = '';
@@ -41,14 +41,24 @@ export class QuestionnaireItem {
 }
 
 export class ProofOfEvidence {
-  id!: string | number;
+  id!: string;
   label: string = '';
-  required_description: boolean = false;
+  requires_description: boolean = false;
 }
 
 export class Rating {
   id!: string | number;
   label: string = '';
   weight: string = '';
+}
+
+export class Answer {
+  id: string | null = null;
+  assessment: string | null = null;
+  indicator: string | null = null;
+  rating: string | null = null;
+  comments: string = '';
+  evidences: string[] = [];
+  attachments: string[] = [];
 }
 

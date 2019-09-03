@@ -1,17 +1,23 @@
-import {LitElement, html, property} from 'lit-element';
+import {LitElement, html, property, customElement} from 'lit-element';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@polymer/paper-icon-button/paper-icon-button.js';
-import {GenericObject} from '../../../../../types/globals';
 import './questionnaire-answer';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {radioButtonStyles} from '../../../../styles/radio-button-styles';
+import {Question, Answer} from '../../../../../types/engagement';
 
-class QuestionnaireAnswer extends LitElement {
+@customElement('questionnaire-item')
+export class QuestionnaireItemElement extends LitElement {
   render() {
     return html`
       ${SharedStylesLit}${gridLayoutStylesLit}${radioButtonStyles}
       <style>
+        :host {
+          display: block;
+          margin-bottom: 24px;
+        }
+
         .description {
           margin-left: -24px;
           margin-right: -24px;
@@ -22,9 +28,9 @@ class QuestionnaireAnswer extends LitElement {
           background-color: var(--secondary-background-color);
         }
       </style>
-      <etools-content-panel panel-title="${this.item.title}" show-expand-btn>
+      <etools-content-panel panel-title="${this.question.subject}" show-expand-btn .open="${this.open}">
         <div slot="panel-btns">
-          <paper-radio-button selected class="${this._getRadioBtnClass()}">
+          <paper-radio-button checked class="${this._getRadioBtnClass()}">
             Positive
           </paper-radio-button>
           <paper-icon-button
@@ -33,10 +39,10 @@ class QuestionnaireAnswer extends LitElement {
           </paper-icon-button>
         </div>
         <div class="description">
-          ${ this.item.description}
+          ${this.question.content}
         </div>
         <div class="row-padding-v">
-          <questionnaire-answer>
+          <questionnaire-answer .question="${this.question}">
           </questionnaire-answer>
         </div>
 
@@ -45,23 +51,16 @@ class QuestionnaireAnswer extends LitElement {
   }
 
   @property({type: Object})
-  item: GenericObject = {title:'An organizational policy exists (as part of code of conduct'+
-    'and/or a comprehensive SEA policy) and is signed by all'+
-    'personnel.',
-    description:`Do organizational policies include:<br> A) a clear
-    definition of SEA;<br/> B) a clear description of behaviour
-    expected of personnel (incorporating the IASC’s Six
-    Core Principles Relating to SEA) and;<br> C) an explicit
-    statement of zero tolerance for SEA?
-    Are all personnel required to receive and sign
-    organizational policies related to PSEA (e.g. code of
-    conduct)?`};
+  question!: Question;
 
-  @property()
+  @property({type: Object})
+  answer!: Answer;
+
+  @property({type: Boolean})
+  open = false;
 
   _getRadioBtnClass() {
     //TODO
     return 'green';
   }
 }
-window.customElements.define('questionnaire-answer', QuestionnaireAnswer);

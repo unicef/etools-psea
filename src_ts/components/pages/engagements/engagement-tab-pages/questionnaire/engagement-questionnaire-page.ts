@@ -4,7 +4,7 @@ import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {QuestionnaireItem} from '../../../../../types/engagement';
+import {Question} from '../../../../../types/engagement';
 
 /**
  * @customElement
@@ -42,12 +42,21 @@ class EngagementQuestionnairePage extends LitElement {
         <div class="col-5 r-align">Overall Assessment:</div><div class="col-1"></div>
         <div class="col-6 l-align"> Positive</div>
       </div>
-      <questionnaire-item></questionnaire-item>
+      ${this._getQuestionnaireItemsTemplate(this.questionnaireItems)}
     `;
   }
 
   @property({type: Array})
-  questionnaire!: QuestionnaireItem[];
+  questionnaireItems!: Question[];
+
+  _getQuestionnaireItemsTemplate(questionnaireItems: Question[]) {
+    if (!questionnaireItems || !questionnaireItems.length) {
+      return '';
+    }
+
+    return this.questionnaireItems.map((question: Question) =>
+      html`<questionnaire-item .question="${question}"></questionnaire-item>`);
+  }
 
   connectedCallback() {
     super.connectedCallback();
@@ -58,9 +67,11 @@ class EngagementQuestionnairePage extends LitElement {
     let url = getEndpoint(etoolsEndpoints.questionnaire).url!;
     makeRequest(new RequestEndpoint(url))
       .then((resp) => {
-        this.questionnaire = resp;
+        this.questionnaireItems = resp;
       })
   }
+
+
 
 
 
