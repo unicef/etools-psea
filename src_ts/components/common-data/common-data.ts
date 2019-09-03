@@ -6,9 +6,9 @@ import {property} from '@polymer/decorators/lib/decorators';
 import {GenericObject, UnicefUser} from '../../types/globals';
 import {getEndpoint} from '../../endpoints/endpoints';
 import {updateUnicefUsersData} from '../../redux/actions/common-data';
+import {etoolsEndpoints} from '../../endpoints/endpoints-list';
 
 
-const UNICEF_USERS = 'unicefUsers';
 
 /**
  * @customElement
@@ -22,7 +22,7 @@ export class EtoolsCommonData extends connect(store)(EtoolsAjaxRequestMixin(Poly
   @property({type: Object, notify: true})
   unicefUsers!: UnicefUser[];
 
-  private unicefUsersEndpoint = getEndpoint(UNICEF_USERS);
+  private unicefUsersEndpoint = getEndpoint(etoolsEndpoints.unicefUsers);
 
   public stateChanged(state: RootState) {
     this.unicefUsers = state.commonData!.unicefUsers;

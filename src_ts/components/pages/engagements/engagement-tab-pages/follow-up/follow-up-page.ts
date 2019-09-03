@@ -1,7 +1,6 @@
 import {LitElement, html, property, customElement} from 'lit-element';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@polymer/paper-icon-button/paper-icon-button.js';
-// import {FollowUpDialog} from './follow-up-dialog';
 import './follow-up-dialog';
 import { FollowUpDialogEl } from './follow-up-dialog';
 
@@ -157,7 +156,7 @@ export class FollowUpPage extends (LitElement as Constructor<LitElement>) {
   @property({type: Boolean})
   canBeChanged!: boolean;
 
-  @property()
+  @property({type: Object})
   followUpDialog: any;
 
   connectedCallback() {

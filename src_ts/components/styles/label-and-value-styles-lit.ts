@@ -6,15 +6,14 @@ export const labelAndvalueStylesLit = html`
   <style>
     .paper-label {
       font-size: 12px;
-      font-weight: 600;
       color: var(--secondary-text-color);
-      padding-top: 4px;
+      padding-top: 6px;
     }
 
     .input-label {
       min-height: 24px;
       padding-top: 4px;
-      padding-bottom: 4px;
+      padding-bottom: 6px;
       min-width: 0;
       font-size: 16px;
     }

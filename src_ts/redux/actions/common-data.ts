@@ -1,11 +1,12 @@
 import {Action, ActionCreator} from 'redux';
-import {makeRequest} from '../../components/utils/request-helper';
+import {makeRequest, RequestEndpoint} from '../../components/utils/request-helper';
 import {etoolsEndpoints} from '../../endpoints/endpoints-list';
 
 export const UPDATE_UNICEF_USERS_DATA = 'UPDATE_UNICEF_USERS_DATA';
 export const SET_PARTNERS = 'SET_PARTNERS';
 export const SET_OFFICES = 'SET_OFFICES';
 export const SET_SECTIONS = 'SET_SECTIONS';
+export const SET_EXTERNAL_INDIVIDUALS = 'SET_EXTERNAL_INDIVIDUALS';
 
 
 export interface CommonDataActionUpdateUnicefUsersData extends Action<'UPDATE_UNICEF_USERS_DATA'> {
@@ -63,5 +64,19 @@ export const loadOffices = () => (dispatch) => {
 
 export const loadPartners = () => (dispatch) => {
   makeRequest(etoolsEndpoints.partners)
+export const setExternalIndividuals = (externalIndividuals: []) => {
+  return {
+    type: SET_EXTERNAL_INDIVIDUALS,
+    externalIndividuals
+  }
+}
+
+export const loadPartners = () => (dispatch: any) => {
+  makeRequest(new RequestEndpoint(etoolsEndpoints.partners.url!))
        .then((resp:any) => dispatch(setPartners(resp)));
+}
+
+export const loadExternalIndividuals = () => (dispatch: any) => {
+  makeRequest(new RequestEndpoint(etoolsEndpoints.externalIndividuals.url!))
+       .then((resp:any) => dispatch(setExternalIndividuals(resp)));
 }

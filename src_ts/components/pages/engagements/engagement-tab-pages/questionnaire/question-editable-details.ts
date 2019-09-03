@@ -43,10 +43,8 @@ class QuestionEditableDetails extends LitElement {
       </paper-textarea>
       <div class="layout-vertical row-padding-v">
         <label class="paper-label">Proof of Evidence</label>
-        <div class="layout-horizontal row-padding-v">
-          ${this._getProofOfEvidenceTemplate(this.item.proof_of_evidence)}
-        </div>
       </div>
+      ${this._getProofOfEvidenceTemplate(this.item.proof_of_evidence)}
 
       <div class="row-padding-v extra-padd">
         <question-attachments>
@@ -79,15 +77,13 @@ class QuestionEditableDetails extends LitElement {
     return proofOfEvidence.map((m: GenericObject, index) => {
       if (m.name.toLowerCase().includes('other') && index + 1 === proofOfEvidence.length) {
         return html`
-          <div class="layout-vertical">
             <paper-checkbox class="padd-right" ?checked="${m.checked}"
               @change="${(e: CustomEvent) => this._showOtherInput((e.target! as PaperCheckboxElement).checked!)}">
                 ${m.name}
             </paper-checkbox>
             <div class="row-padding-v" ?hidden=${!this.showOtherInput}>
               <paper-input label="Please specify other" always-float-label></paper-input>
-            </div>
-          </div>`;
+            </div>`;
       } else {
         return html`<paper-checkbox class="padd-right" ?checked="${m.checked}">${m.name}</paper-checkbox>`;
       }

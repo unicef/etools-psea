@@ -11,6 +11,7 @@ import {makeRequest} from '../../../../utils/request-helper';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {cloneDeep} from '../../../../utils/utils';
+import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 
 /**
  * @customElement
@@ -26,7 +27,11 @@ class StaffMemberDialog extends LitElement {
           margin: 0px 10px;
         }
         paper-input, paper-checkbox{
-          padding:5px 10px;
+          padding:4px 10px;
+        }
+        .m-12{
+          margin-top: 12px;
+          margin-bottom: 12px;
         }
       </style>
       ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
@@ -119,7 +124,7 @@ class StaffMemberDialog extends LitElement {
                       </div>
                   </div>
 
-                  <div class="layout-horizontal">
+                  <div class="layout-horizontal m-12">
                       <!--receive notification-->
                       <div class="input-container col-4">
                           <paper-checkbox
@@ -232,7 +237,7 @@ class StaffMemberDialog extends LitElement {
 
     const options = {
       method: this.isNewRecord ? 'POST' : 'PATCH',
-      url: getEndpoint('staffMembers', {id: this.firmId}).url + this.editedItem.id + '/'
+      url: getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url + this.editedItem.id + '/'
     };
 
     makeRequest(options, this.editedItem)

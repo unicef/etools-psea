@@ -16,6 +16,9 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   changeCountry: {
     url: '/api/v3/users/changecountry/'
   },
+  externalIndividuals: {
+    url: '/api/v3/users/external/'
+  },
   partners: {
     url: '/api/v2/partners/?hidden=false',
   },
@@ -28,7 +31,7 @@ export const etoolsEndpoints: EtoolsEndpoints = {
     url: '/api/psea/assessment/'
   },
   assessor: {
-    url: '/api/psea/assessor/'
+    template: '/api/psea/assessment/<%=id%>/assessor/'
   },
   questionnaire: {
     url: '/api/psea/indicator/'
@@ -57,4 +60,5 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   //   exp: 30 * 60 * 1000, // 30min
   //   cacheTableName: 'agreements'
   // },
+  }
 };

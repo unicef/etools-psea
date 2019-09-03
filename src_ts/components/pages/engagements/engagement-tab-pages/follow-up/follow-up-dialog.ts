@@ -5,11 +5,12 @@ import { GenericObject, Constructor } from '../../../../../types/globals';
 import '@unicef-polymer/etools-dialog/etools-dialog.js';
 import '@unicef-polymer/etools-dropdown/etools-dropdown.js';
 import { fireEvent } from '../../../../utils/fire-custom-event';
-import { getEndpoint } from '../../../../../endpoints/endpoints'
+import { getEndpoint } from '../../../../../endpoints/endpoints';
 import { inputsStyles } from '../../../../styles/inputs-styles';
 import { makeRequest } from '../../../../utils/request-helper';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 import {store, RootState} from '../../../../../redux/store';
+import './get-partner-data';
 // import { customElement, property } from '@polymer/decorators';
 
 import get from 'lodash-es/get';
@@ -30,6 +31,7 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
   render() {
     return html`
       ${inputsStyles}
+      <get-partner-data partner="${this.fullPartner}" partner-id="${this.selectedPartnerId}"></get-partner-data>
       <etools-dialog no-padding keep-dialog-open size="md"
             ?opened="${this.dialogOpened}"
             dialog-title="${this.dialogTitle}"
@@ -53,7 +55,7 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                     
                 <etools-dropdown
                         class="disabled-as-readonly validate-input [[_setRequired('partner', editedApBase)]] fua-person"
-                        ?selected="${this.selectedPartnerId}"
+                        .selected="${this.selectedPartnerId}"
                         label="${this.getLabel('partner', this.editedApBase)}"
                         placeholder="${this.getPlaceholderText('partner', this.editedApBase, 'select')}"
                         .options="${this.partners}"
@@ -61,8 +63,10 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                         option-value="id"
                         ?invalid="${this.errors.partner}"
                         error-message="${this.errors.partner}"
-                        @focus="_resetFieldError"
-                        @tap="_resetFieldError">
+                        @focus="${this._resetFieldError}"
+                        @tap="${this._resetFieldError}"
+                        trigger-value-change-event
+                        @etools-selected-item-changed="${this._requestPartner}">
                 </etools-dropdown>
               </div>
               <div class="input-container input-container-ms">
@@ -77,8 +81,8 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                         option-value="id"
                         invalid="${this.errors.intervention}"
                         error-message="${this.errors.intervention}"
-                        on-focus="_resetFieldError"
-                        on-tap="_resetFieldError">
+                        @focus="${this._resetFieldError}"
+                        @tap="${this._resetFieldError}">
                 </etools-dropdown>
               </div>
             </div>
@@ -97,8 +101,8 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                                 option-value="value"
                                 invalid="${this.errors.category}"
                                 error-message="${this.errors.category}"
-                                on-focus="_resetFieldError"
-                                on-tap="_resetFieldError">
+                                @focus="${this._resetFieldError}"
+                                @tap="${this._resetFieldError}">
                         </etools-dropdown>
                     </div>
                 </div>
@@ -109,14 +113,14 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                         <paper-textarea
                                 class="validate-input [[this._setRequired('description', this.editedApBase)]]"
                                 allowed-pattern="[\d\s]"
-                                value="${this.editedItem.description}"
+                                .value="${this.editedItem.description}"
                                 label="${this.getLabel('description', this.editedApBase)}"
                                 placeholder="${this.getPlaceholderText('description', this.editedApBase)}"
                                 max-rows="4"
                                 invalid="${this.errors.description}"
                                 error-message="${this.errors.description}"
-                                on-focus="_resetFieldError"
-                                on-tap="_resetFieldError">
+                                @focus="${this._resetFieldError}"
+                                @tap="${this._resetFieldError}">
                         </paper-textarea>
                     </div>
                 </div>
@@ -135,8 +139,8 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                                 option-value="id"
                                 invalid="${this.errors.assigned_to}"
                                 error-message="${this.errors.assigned_to}"
-                                on-focus="_resetFieldError"
-                                on-tap="_resetFieldError">
+                                @focus="${this._resetFieldError}"
+                                @tap="${this._resetFieldError}">
                         </etools-dropdown>
                     </div>
 
@@ -153,8 +157,8 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                                 option-value="id"
                                 invalid="${this.errors.section}"
                                 error-message="${this.errors.section}"
-                                on-focus="_resetFieldError"
-                                on-tap="_resetFieldError">
+                                @focus="${this._resetFieldError}"
+                                @tap="${this._resetFieldError}">
                         </etools-dropdown>
                     </div>
                 </div>
@@ -173,8 +177,8 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                                 option-value="id"
                                 invalid="${this.errors.office}"
                                 error-message="${this.errors.office}"
-                                on-focus="_resetFieldError"
-                                on-tap="_resetFieldError">
+                                @focus="${this._resetFieldError}"
+                                @tap="${this._resetFieldError}">
                         </etools-dropdown>
                     </div>
 
@@ -188,8 +192,8 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                                 placeholder="${this.getPlaceholderText('due_date', this.editedApBase, 'select')}"
                                 invalid="${this.errors.due_date}"
                                 error-message="${this.errors.due_date}"
-                                on-focus="_resetFieldError"
-                                on-tap="_resetFieldError"
+                                @focus="${this._resetFieldError}"
+                                @tap="${this._resetFieldError}"
                                 selected-date-display-format="D MMM YYYY">
                         </datepicker-lite>
                     </div>
@@ -248,7 +252,7 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
   editedItem: any = {intervention: {id: ''}, assigned_to: {id: ''}, section: {id: ''}, office: {id: ''}};
 
   @property({type: String})
-  selectedPartnerId: string = '';
+  selectedPartnerId: number | null = 0;
 
   @property({type: String})
   editedApBase!: string;
@@ -280,13 +284,25 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
   originalEditedObj: any = {};
 
   stateChanged(state: RootState) {
-    debugger
     if (state.commonData) {
       this.partners = [...state.commonData.partners];
       this.users = [...state.commonData.unicefUsers];
       this.offices = [...state.commonData.offices];
       this.sections = [...state.commonData.sections];
     }
+  }
+
+  _resetFieldError(event: any) {
+    if (!event || !event.target) {
+      return;
+    }
+
+    let field = event.target.getAttribute('field');
+    if (field) {
+      this.errors[field] = false;
+    }
+
+    event.target.invalid = false;
   }
 
   _openEditDialog(event: any) {
@@ -303,7 +319,7 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
     this._sendOptionsRequest(url);
   }
 
-  _handleOptionResponse(detail: any) {
+  _handleOptionResponse(detail: GenericObject) {
     fireEvent(this, 'global-loading', {type: 'get-ap-options'});
     if (detail && detail.actions) {
       this.updateCollection('edited_ap_options', detail.actions);
@@ -320,6 +336,17 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
       this.cancelBtnText = 'Cancel';
       // this._openDialog(itemIndex);
     }
+  }
+
+  _requestPartner(event: CustomEvent) {
+    //is this the best way of doing this?
+    if (!event.detail.selectedItem) {
+      return;
+    }
+    let partner = event.detail.selectedItem;
+    let id = partner && +partner.id || null;
+    // this.partnerId = id;
+    this.selectedPartnerId = id;
   }
 
   private handleDialogClosed() {
@@ -497,11 +524,9 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
   _sendOptionsRequest(url: string) {
     const requestOptions = {
       method: 'OPTIONS',
-      endpoint: {
-        url
-      },
+      url: url,
     };
-    this.sendRequest(requestOptions)
+    makeRequest(requestOptions)
       .then(this._handleOptionResponse.bind(this))
       .catch(this._handleOptionResponse.bind(this));
   }
@@ -546,9 +571,7 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
 
     const requestOptions = {
       method: 'OPTIONS',
-      endpoint: {
-        url
-      },
+      url: url,
     };
 
     makeRequest(requestOptions, this.editedItem)
