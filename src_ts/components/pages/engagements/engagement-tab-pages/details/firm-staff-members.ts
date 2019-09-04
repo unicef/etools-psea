@@ -17,9 +17,9 @@ import './staff-member-dialog';
 import {StaffMemberDialog} from './staff-member-dialog';
 import {cloneDeep} from '../../../../utils/utils';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
-import {EtoolsStaffMemberModel} from "../../../../user/user-model";
-import {fireEvent} from "../../../../utils/fire-custom-event";
-import {formatServerErrorAsText} from "../../../../utils/ajax-error-parser";
+import {EtoolsStaffMemberModel} from '../../../../user/user-model';
+import {fireEvent} from '../../../../utils/fire-custom-event';
+import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 
 /**
  * @customElement
@@ -71,7 +71,7 @@ export class FirmStaffMembers extends LitElement {
             .paginator="${this.paginator}"
             @paginator-change="${this.paginatorChange}"
             showEdit
-            @edit-item="${this.openStaffMemberDialog}" 
+            @edit-item="${this.openStaffMemberDialog}"
             @item-updated="${this.itemUpdated}">
           </etools-table>
         </div>
@@ -132,11 +132,6 @@ export class FirmStaffMembers extends LitElement {
   @property({type: String})
   firmId!: string;
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.createAddStaffMemberDialog();
-  }
-
   disconnectedCallback() {
     super.disconnectedCallback();
     this.removeListeners();
@@ -144,9 +139,40 @@ export class FirmStaffMembers extends LitElement {
 
   removeListeners() {
     if (this.dialogStaffMember) {
-      this.dialogStaffMember.removeEventListener('member-updated', this.onStaffMemberSaved);
+      this.dialogStaffMember.removeEventListener('staff-member-updated', this.onDialogMemberSaved);
       document.querySelector('body')!.removeChild(this.dialogStaffMember);
     }
+  }
+
+  openStaffMemberDialog(event?: any) {
+    if (!this.dialogStaffMember) {
+      this.createStaffMemberDialog();
+    }
+    if (event && event.detail) {
+      this.dialogStaffMember.editedItem = cloneDeep(event.detail);
+    }
+    this.dialogStaffMember.firmId = this.firmId;
+    this.dialogStaffMember.openDialog();
+  }
+
+  createStaffMemberDialog() {
+    this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialog;
+    this.dialogStaffMember.setAttribute('id', 'staffMemberDialog');
+    this.onDialogMemberSaved = this.onDialogMemberSaved.bind(this);
+    this.dialogStaffMember.addEventListener('staff-member-updated', this.onDialogMemberSaved);
+    document.querySelector('body')!.appendChild(this.dialogStaffMember);
+  }
+
+  public onDialogMemberSaved(e: any) {
+    const savedItem = e.detail;
+    const index = this.staffMembers.findIndex((r: any) => r.id === savedItem.id);
+    if (index > -1) { // edit
+      this.staffMembers.splice(index, 1, savedItem);
+    } else {
+      this.paginator.count++;
+      this.staffMembers.push(savedItem);
+    }
+    this.paginator = getPaginator(this.paginator, {count: this.paginator.count, data: this.staffMembers});
   }
 
   populateStaffMembersList(firmId: string) {
@@ -189,14 +215,6 @@ export class FirmStaffMembers extends LitElement {
     document.querySelector('body')!.appendChild(this.dialogStaffMember);
   }
 
-  openStaffMemberDialog(event?: any) {
-    if (event && event.detail) {
-      this.dialogStaffMember.editedItem = cloneDeep(event.detail);
-    }
-    this.dialogStaffMember.firmId = this.firmId;
-    this.dialogStaffMember.openDialog();
-  }
-
   onStaffMemberSaved(e: any) {
     const savedItem = e.detail;
     this.updateItemData(savedItem);
@@ -234,7 +252,8 @@ export class FirmStaffMembers extends LitElement {
       .then((resp) => {
         this.currentFirmAssessorStaffWithAccess = [...resp.auditor_firm_staff];
         fireEvent(this, 'toast', {
-          text: `${staffMember.user.first_name} ${staffMember.user.last_name} access has been updated`});
+          text: `${staffMember.user.first_name} ${staffMember.user.last_name} access has been updated`
+        });
       })
       .catch((err: any) =>
         fireEvent(this, 'toast', {text: formatServerErrorAsText(err), showCloseBtn: true}));
