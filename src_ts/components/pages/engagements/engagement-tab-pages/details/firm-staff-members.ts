@@ -139,7 +139,7 @@ export class FirmStaffMembers extends LitElement {
 
   removeListeners() {
     if (this.dialogStaffMember) {
-      this.dialogStaffMember.removeEventListener('staff-member-updated', this.onDialogMemberSaved);
+      this.dialogStaffMember.removeEventListener('staff-member-updated', this.onStaffMemberSaved);
       document.querySelector('body')!.removeChild(this.dialogStaffMember);
     }
   }
@@ -153,26 +153,6 @@ export class FirmStaffMembers extends LitElement {
     }
     this.dialogStaffMember.firmId = this.firmId;
     this.dialogStaffMember.openDialog();
-  }
-
-  createStaffMemberDialog() {
-    this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialog;
-    this.dialogStaffMember.setAttribute('id', 'staffMemberDialog');
-    this.onDialogMemberSaved = this.onDialogMemberSaved.bind(this);
-    this.dialogStaffMember.addEventListener('staff-member-updated', this.onDialogMemberSaved);
-    document.querySelector('body')!.appendChild(this.dialogStaffMember);
-  }
-
-  public onDialogMemberSaved(e: any) {
-    const savedItem = e.detail;
-    const index = this.staffMembers.findIndex((r: any) => r.id === savedItem.id);
-    if (index > -1) { // edit
-      this.staffMembers.splice(index, 1, savedItem);
-    } else {
-      this.paginator.count++;
-      this.staffMembers.push(savedItem);
-    }
-    this.paginator = getPaginator(this.paginator, {count: this.paginator.count, data: this.staffMembers});
   }
 
   populateStaffMembersList(firmId: string) {
@@ -207,11 +187,11 @@ export class FirmStaffMembers extends LitElement {
       });
   }
 
-  createAddStaffMemberDialog() {
+  createStaffMemberDialog() {
     this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialog;
     this.dialogStaffMember.setAttribute('id', 'dialogStaffMember');
     this.onStaffMemberSaved = this.onStaffMemberSaved.bind(this);
-    this.dialogStaffMember.addEventListener('member-updated', this.onStaffMemberSaved);
+    this.dialogStaffMember.addEventListener('staff-member-updated', this.onStaffMemberSaved);
     document.querySelector('body')!.appendChild(this.dialogStaffMember);
   }
 
@@ -252,7 +232,7 @@ export class FirmStaffMembers extends LitElement {
       .then((resp) => {
         this.currentFirmAssessorStaffWithAccess = [...resp.auditor_firm_staff];
         fireEvent(this, 'toast', {
-          text: `${staffMember.user.first_name} ${staffMember.user.last_name} access has been updated`
+          text: `${staffMember.user.first_name} ${staffMember.user.last_name}'s access has been updated`
         });
       })
       .catch((err: any) =>
