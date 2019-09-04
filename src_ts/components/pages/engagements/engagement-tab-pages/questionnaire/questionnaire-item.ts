@@ -20,7 +20,6 @@ export class QuestionnaireItemElement extends LitElement {
 
         .description {
           white-space: pre-line;
-          display: flex;
           margin-left: -24px;
           margin-right: -24px;
           margin-top: -8px;
