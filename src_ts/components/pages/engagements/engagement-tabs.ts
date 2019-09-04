@@ -117,10 +117,19 @@ export class EngagementTabs extends connect(store)(LitElement) {
 
       if (state.pageData) {
         this.engagement = state.pageData.currentAssessment;
+        if (this.engagement.id) {
+          this.enableTabs();
+        }
         this.pageTitle = this.engagement.reference_number ? `${this.engagement.reference_number}: ${this.engagement.partner_name}` : '';
       }
 
     }
+  }
+
+  enableTabs() {
+    this.pageTabs.forEach((tab) => {
+      tab.disabled = false;
+    });
   }
 
   handleTabChange(e: CustomEvent) {
