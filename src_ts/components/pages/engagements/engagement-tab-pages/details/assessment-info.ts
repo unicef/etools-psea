@@ -155,7 +155,7 @@ export class AssessmentInfo extends connect(store)(LitElement) {
       .then(() => {
         setTimeout(() => this.resetValidations(), 100);
         if (!pageData || !isJsonStrMatch(this.assessment, pageData.currentAssessment)) {
-          store.dispatch(updateAssessmentData(this.assessment));
+          store.dispatch(updateAssessmentData(cloneDeep(this.assessment)));
         }
       });
 
