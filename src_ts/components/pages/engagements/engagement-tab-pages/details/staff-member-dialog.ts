@@ -242,7 +242,7 @@ export class StaffMemberDialog extends LitElement {
 
   _handleResponse(resp: any) {
     this.requestInProcess = false;
-    fireEvent(this, 'staff-member-updated', resp);
+    fireEvent(this, 'staff-member-updated', {...resp, hasAccess: this.editedItem.hasAccess});
     this.handleDialogClosed();
   }
 
