@@ -3,8 +3,8 @@ import {LitElement, html, property, customElement} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
-import './staff-member-dialog';
-import {StaffMemberDialogEl} from './staff-member-dialog';
+import './external-individual-dialog';
+import {ExternalIndividualDialogEl} from './external-individual-dialog';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {isJsonStrMatch} from '../../../../utils/utils';
@@ -59,12 +59,7 @@ class ExternalIndividual extends connect(store)(LitElement) {
   @property({type: Boolean})
   editMode!: boolean;
 
-  private dialogExternalMember!: StaffMemberDialogEl;
-
-  onMemberSaved(item: any) {
-    store.dispatch(loadExternalIndividuals());
-    this.assessor.user = item.id;
-  }
+  private dialogExtIndividual!: ExternalIndividualDialogEl;
 
   stateChanged(state: RootState) {
     let stateExternalIndivs = state.commonData!.externalIndividuals;
@@ -74,11 +69,35 @@ class ExternalIndividual extends connect(store)(LitElement) {
   }
 
   private openAddDialog() {
-    if (!this.dialogExternalMember) {
-      this.dialogExternalMember = document.querySelector('body')!.querySelector('#dialogStaffMember') as StaffMemberDialogEl;
+    if (!this.dialogExtIndividual) {
+      this.createExternalIndividualDialog();
     }
-    this.dialogExternalMember.isStaffMember = false;
-    this.dialogExternalMember.openDialog();
+    this.dialogExtIndividual.openDialog();
+  }
+
+  createExternalIndividualDialog() {
+    this.dialogExtIndividual = document.createElement('external-individual-dialog') as ExternalIndividualDialogEl;
+    this.dialogExtIndividual.setAttribute('id', 'externalIndividualDialog');
+    this.onDialogIndividualSaved = this.onDialogIndividualSaved.bind(this);
+    this.dialogExtIndividual.addEventListener('external-individual-updated', this.onDialogIndividualSaved);
+    document.querySelector('body')!.appendChild(this.dialogExtIndividual);
+  }
+
+  onDialogIndividualSaved(e: any) {
+    store.dispatch(loadExternalIndividuals());
+    this.assessor.user = e.detail.id;
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeListeners();
+  }
+
+  removeListeners() {
+    if (this.dialogExtIndividual) {
+      this.dialogExtIndividual.removeEventListener('external-individual-updated', this.onDialogIndividualSaved);
+      document.querySelector('body')!.removeChild(this.dialogExtIndividual);
+    }
   }
 
   _setSelectedExternalIndividual(event: CustomEvent) {

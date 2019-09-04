@@ -25,7 +25,6 @@ import {FirmStaffMembersEl} from './firm-staff-members';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
-import {StaffMemberDialogEl} from './staff-member-dialog';
 
 /**
  * @customElement
@@ -113,8 +112,6 @@ class AssessorInfo extends connect(store)(LitElement) {
   @query('#externalIndividual')
   externalIndividualElement!: ExternalIndividualElement;
 
-  private dialogStaffMember!: StaffMemberDialogEl;
-
   stateChanged(state: RootState) {
     if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
@@ -200,16 +197,6 @@ class AssessorInfo extends connect(store)(LitElement) {
       default:
         return '';
     }
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    this.createStaffMemberDialog();
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    this.removeListeners();
   }
 
   loadFirmStaffMembers(firmId: string) {
@@ -383,35 +370,6 @@ class AssessorInfo extends connect(store)(LitElement) {
 
   isReadonly(editMode: boolean) {
     return !editMode;
-  }
-
-  removeListeners() {
-    if (this.dialogStaffMember) {
-      this.dialogStaffMember.removeEventListener('member-updated', this.onDialogMemberSaved);
-      document.querySelector('body')!.removeChild(this.dialogStaffMember);
-    }
-  }
-
-  createStaffMemberDialog() {
-    this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialogEl;
-    this.dialogStaffMember.setAttribute('id', 'dialogStaffMember');
-    this.onDialogMemberSaved = this.onDialogMemberSaved.bind(this);
-    this.dialogStaffMember.addEventListener('member-updated', this.onDialogMemberSaved);
-    document.querySelector('body')!.appendChild(this.dialogStaffMember);
-  }
-
-  onDialogMemberSaved(e: any) {
-    const savedItem = e.detail;
-    if (savedItem.isStaffMember) {
-      // Firm Staff Member
-      let firmStaffMembersEl = this.shadowRoot!.querySelector('#firmStaffMembers') as FirmStaffMembersEl;
-      firmStaffMembersEl.onMemberSaved(savedItem);
-    }
-    else {
-      // External Individual
-      let extIndividualEl = this.shadowRoot!.querySelector('#externalIndividual') as ExternalIndividualElement;
-      extIndividualEl.onMemberSaved(savedItem);
-    }
   }
 
 }

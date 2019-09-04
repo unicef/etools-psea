@@ -132,17 +132,41 @@ class FirmStaffMembers extends LitElement {
 
   removeListeners() {
     this.removeEventListener('edit-item', this.openStaffMemberDialog);
+    if (this.dialogStaffMember) {
+      this.dialogStaffMember.removeEventListener('staff-member-updated', this.onDialogMemberSaved);
+      document.querySelector('body')!.removeChild(this.dialogStaffMember);
+    }
   }
 
   openStaffMemberDialog(event?: any) {
     if (!this.dialogStaffMember) {
-      this.dialogStaffMember = document.querySelector('body')!.querySelector('#dialogStaffMember') as StaffMemberDialogEl;
+      this.createStaffMemberDialog();
     }
     if (event && event.detail) {
       this.dialogStaffMember.editedItem = cloneDeep(event.detail);
     }
     this.dialogStaffMember.firmId = this.firmId;
     this.dialogStaffMember.openDialog();
+  }
+
+  createStaffMemberDialog() {
+    this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialogEl;
+    this.dialogStaffMember.setAttribute('id', 'staffMemberDialog');
+    this.onDialogMemberSaved = this.onDialogMemberSaved.bind(this);
+    this.dialogStaffMember.addEventListener('staff-member-updated', this.onDialogMemberSaved);
+    document.querySelector('body')!.appendChild(this.dialogStaffMember);
+  }
+
+  public onDialogMemberSaved(e: any) {
+    const savedItem = e.detail;
+    const index = this.staffMembers.findIndex((r: any) => r.id === savedItem.id);
+    if (index > -1) { // edit
+      this.staffMembers.splice(index, 1, savedItem);
+    } else {
+      this.paginator.count++;
+      this.staffMembers.push(savedItem);
+    }
+    this.paginator = getPaginator(this.paginator, {count: this.paginator.count, data: this.staffMembers});
   }
 
   populateStaffMembersList(firmId: string) {
@@ -176,16 +200,7 @@ class FirmStaffMembers extends LitElement {
       );
   }
 
-  public onMemberSaved(savedItem: any) {
-    const index = this.staffMembers.findIndex((r: any) => r.id === savedItem.id);
-    if (index > -1) { // edit
-      this.staffMembers.splice(index, 1, savedItem);
-    } else {
-      this.paginator.count++;
-      this.staffMembers.push(savedItem);
-    }
-    this.paginator = getPaginator(this.paginator, {count: this.paginator.count, data: this.staffMembers});
-  }
+
 
   getIndexById(id: number) {
     return this.staffMembers.findIndex((r: any) => r.id === id);
