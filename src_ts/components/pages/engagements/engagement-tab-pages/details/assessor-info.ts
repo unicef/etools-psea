@@ -137,9 +137,10 @@ export class AssessorInfo extends connect(store)(LitElement) {
       return;
     }
     return html`<firm-staff-members id="firmStaffMembers" 
-        ?hidden="${this.hideFirmStaffMembers(isNew, assessor)} 
-        .assessorId=${this.assessor.id}"
-        .engagementId="${this.assessmentId}" >
+        ?hidden="${this.hideFirmStaffMembers(isNew, assessor)}"
+        .assessorId="${this.assessor.id}"
+        .assessmentId="${this.assessmentId}" 
+        .currentFirmAssessorStaffWithAccess="${this.assessor.auditor_firm_staff}">
       </firm-staff-members>`;
   }
 
@@ -172,15 +173,15 @@ export class AssessorInfo extends connect(store)(LitElement) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
     }
     if (state.app!.routeDetails!.params) {
-      const engagementId = state.app!.routeDetails.params.engagementId;
-      if (this.assessmentId !== engagementId) {
-        this.assessmentId = engagementId;
-        this.setPageData(this.assessmentId);
+      const assessmentId = state.app!.routeDetails.params.engagementId;
+      if (this.assessmentId !== assessmentId) {
+        this.assessmentId = assessmentId;
+        this.getAssessorDetails(this.assessmentId);
       }
     }
   }
 
-  setPageData(assessmentId: string | number) {
+  getAssessorDetails(assessmentId: string | number) {
     if (!assessmentId || assessmentId === 'new') {
       this.assessor = new Assessor();
       return;
@@ -199,10 +200,10 @@ export class AssessorInfo extends connect(store)(LitElement) {
           }
         });
       })
-      .catch((err: any) => this._handleErrorrOnGetAssessor(err));
+      .catch((err: any) => this._handleErrorOnGetAssessor(err));
   }
 
-  _handleErrorrOnGetAssessor(err: any) {
+  _handleErrorOnGetAssessor(err: any) {
     if (err.status === 404) {
       this.assessor = new Assessor();
       this.isNew = true;

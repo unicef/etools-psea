@@ -233,7 +233,8 @@ export class EtoolsTable extends LitElement {
 
   _getCheckbox(item: any, key: string) {
     return html`
-      <paper-checkbox ?checked="${this._getValueByKey(item, key, '', true)}">
+      <paper-checkbox ?checked="${this._getValueByKey(item, key, '', true)}"
+        @change="${(e: CustomEvent) => this.triggerItemUpdate(item, key, (e.currentTarget as any).checked)}">
       </paper-checkbox>`;
 
   }
@@ -285,6 +286,12 @@ export class EtoolsTable extends LitElement {
 
   toggleColumnSort(sort: EtoolsTableColumnSort): EtoolsTableColumnSort {
     return sort === EtoolsTableColumnSort.Asc ? EtoolsTableColumnSort.Desc : EtoolsTableColumnSort.Asc;
+  }
+
+  triggerItemUpdate(item: any, field: string, filedValue: any) {
+    const updatedItem = {...item};
+    updatedItem[field] = filedValue;
+    fireEvent(this, 'item-updated', updatedItem);
   }
 
 }
