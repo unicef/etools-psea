@@ -64,7 +64,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
 
         <div class="row-padding-v">
           <label class="paper-label">Assessor is:</label>
-          <paper-radio-group .selected="${this._getAssessorType(this.assessor)}" 
+          <paper-radio-group .selected="${this._getAssessorType(this.assessor)}"
               ?readonly="${this.isReadonly(this.editMode)}"
               @selected-changed="${(e: CustomEvent) => this._setSelectedAssessorType(
                   (e.target as PaperRadioGroupElement)!.selected!)}">

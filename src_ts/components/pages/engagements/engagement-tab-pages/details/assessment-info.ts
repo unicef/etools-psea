@@ -290,7 +290,7 @@ export class AssessmentInfo extends connect(store)(LitElement) {
   }
 
   hideActionButtons(isNew: boolean, editMode: boolean) {
-    return !isNew || !editMode;
+   return !(isNew || editMode);
   }
 
 }
