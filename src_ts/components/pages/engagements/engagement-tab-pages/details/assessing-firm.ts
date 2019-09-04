@@ -24,7 +24,7 @@ export class AssessingFirm extends LitElement {
           max-width: 230px;
         }
       </style>
-      
+
       <div class="row-padding-v">
         <paper-input id="poNumber" label="Enter PO Number" always-float-label
           class="input-width"
