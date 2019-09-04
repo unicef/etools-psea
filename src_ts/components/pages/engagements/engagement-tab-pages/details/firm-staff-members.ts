@@ -3,10 +3,14 @@ import '@polymer/paper-icon-button/paper-icon-button';
 import {LitElement, html, property, customElement} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {EtoolsTableColumn, EtoolsTableColumnType} from '../../../../common/layout/etools-table/etools-table';
-import {defaultPaginator, EtoolsPaginator, getPaginator} from '../../../../common/layout/etools-table/pagination/paginator';
+import {
+  defaultPaginator,
+  EtoolsPaginator,
+  getPaginator
+} from '../../../../common/layout/etools-table/pagination/paginator';
 import '../../../../common/layout/etools-table/etools-table';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {makeRequest} from '../../../../utils/request-helper';
+import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {buildUrlQueryString} from '../../../../common/layout/etools-table/etools-table-utility';
 import {GenericObject} from '../../../../../types/globals';
 import './staff-member-dialog';
@@ -20,7 +24,7 @@ import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
  * @LitElement
  */
 @customElement('firm-staff-members')
-class FirmStaffMembers extends LitElement {
+export class FirmStaffMembers extends LitElement {
 
   render() {
     // language=HTML
@@ -65,7 +69,7 @@ class FirmStaffMembers extends LitElement {
             .paginator="${this.paginator}"
             @paginator-change="${this.paginatorChange}"
             showEdit
-            showDelete>
+            @edit-item="${this.openStaffMemberDialog}">
           </etools-table>
         </div>
       </etools-content-panel>
@@ -116,22 +120,12 @@ class FirmStaffMembers extends LitElement {
   @property({type: String})
   firmId!: string;
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.initListeners();
-  }
-
   disconnectedCallback() {
     super.disconnectedCallback();
     this.removeListeners();
   }
 
-  initListeners() {
-    this.addEventListener('edit-item', this.openStaffMemberDialog);
-  }
-
   removeListeners() {
-    this.removeEventListener('edit-item', this.openStaffMemberDialog);
     if (this.dialogStaffMember) {
       this.dialogStaffMember.removeEventListener('staff-member-updated', this.onDialogMemberSaved);
       document.querySelector('body')!.removeChild(this.dialogStaffMember);
@@ -185,9 +179,9 @@ class FirmStaffMembers extends LitElement {
   }
 
   loadStaffMembers() {
-    let endpoint = getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId});
+    const endpoint = getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId});
     endpoint.url += `?${buildUrlQueryString(this.paginator)}`;
-    makeRequest(endpoint)
+    makeRequest(endpoint as RequestEndpoint)
       .then((resp: any) => {
         this.staffMembers = resp.results;
         this.paginator = getPaginator(this.paginator, {count: resp.count, data: this.staffMembers});
@@ -200,12 +194,8 @@ class FirmStaffMembers extends LitElement {
       );
   }
 
-
-
   getIndexById(id: number) {
     return this.staffMembers.findIndex((r: any) => r.id === id);
   }
 
 }
-
-export {FirmStaffMembers as FirmStaffMembersEl}

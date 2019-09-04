@@ -11,7 +11,7 @@ import {pageLayoutStyles} from '../../styles/page-layout-styles';
 
 import {GenericObject} from '../../../types/globals';
 import '../../common/layout/filters/etools-filters';
-import {updateFilterSelectionOptions} from '../engagements/list/filters';
+import {updateFilterSelectionOptions} from './list/filters';
 import {EtoolsFilter} from '../../common/layout/filters/etools-filters';
 import {ROOT_PATH} from '../../../config/config';
 import {elevationStyles} from '../../styles/lit-styles/elevation-styles';
@@ -37,7 +37,6 @@ import {fireEvent} from '../../utils/fire-custom-event';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
 import {makeRequest} from '../../utils/request-helper';
-import {isJsonStrMatch} from '../../utils/utils';
 
 /**
  * @LitElement
@@ -150,14 +149,12 @@ export class EngagementsList extends connect(store)(LitElement) {
     {
       label: 'Assessor',
       name: 'assessor',
-      type: EtoolsTableColumnType.Text,
-      placeholder: '—'
+      type: EtoolsTableColumnType.Text
     },
     {
       label: 'Rating',
       name: 'rating',
-      type: EtoolsTableColumnType.Text,
-      placeholder: '—'
+      type: EtoolsTableColumnType.Text
     }
   ];
 

@@ -21,20 +21,19 @@ export class AppMenu extends LitElement {
     // main template
     // language=HTML
     return html`
-        ${navMenuStyles}
-
+      ${navMenuStyles}
       <div class="menu-header">
-      <span id="app-name">
-        PSEA <br>
-        ASSESSMENTS
-      </span>
+        <span id="app-name">
+          PSEA <br>
+          ASSESSMENTS
+        </span>
 
         <span class="ripple-wrapper main">
-        <iron-icon id="menu-header-top-icon"
-                   icon="assignment-ind"
-                   @tap="${() => this._toggleSmallMenu()}"></iron-icon>
-        <paper-ripple class="circle" center></paper-ripple>
-      </span>
+          <iron-icon id="menu-header-top-icon"
+                     icon="assignment-ind"
+                     @tap="${() => this._toggleSmallMenu()}"></iron-icon>
+          <paper-ripple class="circle" center></paper-ripple>
+        </span>
 
         <paper-tooltip for="menu-header-top-icon" position="right">
           PSEA Assessments
@@ -54,8 +53,8 @@ export class AppMenu extends LitElement {
                        role="navigation">
 
           <a class="nav-menu-item" menu-name="engagements" href="${this.rootPath + 'engagements'}">
-            <iron-icon id="page1-icon" icon="accessibility"></iron-icon>
-            <paper-tooltip for="page1-icon" position="right">
+            <iron-icon id="assessments-list-opt" icon="settings-applications"></iron-icon>
+            <paper-tooltip for="assessments-list-opt" position="right">
              PSEA Assessments
             </paper-tooltip>
             <div class="name"> PSEA Assessments</div>

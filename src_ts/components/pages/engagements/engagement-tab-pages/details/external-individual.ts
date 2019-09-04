@@ -13,11 +13,11 @@ import {loadExternalIndividuals} from '../../../../../redux/actions/common-data'
 
 /**
  * @customElement
- * @polymer
+ * @LitElement
  */
 
 @customElement('external-individual')
-class ExternalIndividual extends connect(store)(LitElement) {
+export class ExternalIndividual extends connect(store)(LitElement) {
   render() {
     // language=HTML
     return html`
@@ -41,20 +41,22 @@ class ExternalIndividual extends connect(store)(LitElement) {
           option-label="name"
           required
           auto-validate
-          ?readonly="${this.isRedonly(this.editMode)}"
+          ?readonly="${this.isReadonly(this.editMode)}"
           trigger-value-change-event
           @etools-selected-item-changed="${this._setSelectedExternalIndividual}">
         </etools-dropdown>
-        <span ?hidden="${!this.editMode}" class="paper-label">User not yet in the system? Add them <a @tap="${this.openAddDialog}">here</a></span>
+        <span ?hidden="${!this.editMode}" class="paper-label">
+          User not yet in the system? Add them <a @tap="${this.openAddDialog}">here</a>
+        </span>
       </div>
     `;
   }
 
   @property({type: Object})
-  assessor!: {user?: string | number | null} = {};
+  assessor: { user?: string | number | null } = {};
 
   @property({type: Array})
-  externalIndividuals!: any[]
+  externalIndividuals!: any[];
 
   @property({type: Boolean})
   editMode!: boolean;
@@ -62,7 +64,7 @@ class ExternalIndividual extends connect(store)(LitElement) {
   private dialogExtIndividual!: ExternalIndividualDialogEl;
 
   stateChanged(state: RootState) {
-    let stateExternalIndivs = state.commonData!.externalIndividuals;
+    const stateExternalIndivs = state.commonData!.externalIndividuals;
     if (stateExternalIndivs && !isJsonStrMatch(stateExternalIndivs, this.externalIndividuals)) {
       this.externalIndividuals = [...stateExternalIndivs];
     }
@@ -101,7 +103,7 @@ class ExternalIndividual extends connect(store)(LitElement) {
   }
 
   _setSelectedExternalIndividual(event: CustomEvent) {
-    let selectedUser = event.detail.selectedItem;
+    const selectedUser = event.detail.selectedItem;
     if (selectedUser) {
       this.assessor.user = selectedUser.id;
     } else {
@@ -118,7 +120,7 @@ class ExternalIndividual extends connect(store)(LitElement) {
     return true;
   }
 
-  isRedonly(editMode: boolean) {
+  isReadonly(editMode: boolean) {
     return !editMode;
   }
 

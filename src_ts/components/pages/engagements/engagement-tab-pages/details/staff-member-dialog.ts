@@ -18,7 +18,7 @@ import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
  *  @LitElement
  */
 @customElement('staff-member-dialog')
-class StaffMemberDialog extends LitElement {
+export class StaffMemberDialog extends LitElement {
   render() {
     // language=HTML
     return html`
@@ -135,7 +135,14 @@ class StaffMemberDialog extends LitElement {
     `;
   }
 
-  private defaultItem: EtoolsStaffMemberModel = {user: {email: '', first_name: '', last_name: '', profile: {phone_number: '', job_title: ''}}, hasAccess: false, id: ''};
+  private defaultItem: EtoolsStaffMemberModel = {
+    user: {
+      email: '',
+      first_name: '',
+      last_name: '',
+      profile: {phone_number: '', job_title: ''}
+    }, hasAccess: false, id: ''
+  };
   private validationSelectors: string[] = ['#emailInput', '#firstNameInput', '#lastNameInput'];
 
   @property({type: Boolean, reflect: true})
@@ -230,7 +237,7 @@ class StaffMemberDialog extends LitElement {
 
     makeRequest(options, this.editedItem)
       .then((resp: any) => this._handleResponse(resp))
-      .catch((err: any) => this._handleError(err))
+      .catch((err: any) => this._handleError(err));
   }
 
   _handleResponse(resp: any) {
@@ -248,7 +255,7 @@ class StaffMemberDialog extends LitElement {
 
   getEl(elName: string): HTMLInputElement {
     return this.shadowRoot!.querySelector(elName)! as HTMLInputElement;
-  };
+  }
 
 }
 
