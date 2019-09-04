@@ -68,17 +68,20 @@ export class EngagementTabs extends connect(store)(LitElement) {
     {
       tab: 'details',
       tabLabel: 'Details',
-      hidden: false
+      hidden: false,
+      disabled: false
     },
     {
       tab: 'questionnaire',
       tabLabel: 'Questionnaire‎',
-      hidden: false
+      hidden: false,
+      disabled: true
     },
     {
       tab: 'followup',
       tabLabel: 'Follow-Up',
-      hidden: false
+      hidden: false,
+      disabled: true
     }
   ];
 
