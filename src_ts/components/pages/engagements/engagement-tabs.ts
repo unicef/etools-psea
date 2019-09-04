@@ -32,11 +32,16 @@ export class EngagementTabs extends connect(store)(LitElement) {
     // language=HTML
     return html`
       ${SharedStylesLit} ${pageContentHeaderSlottedStyles} ${pageLayoutStyles}
+      <style>
+        etools-status {
+          justify-content: center;
+        }
+      </style>
       <etools-status></etools-status>
 
       <page-content-header with-tabs-visible>
 
-        <h1 slot="page-title">${this.engagement.title}</h1>
+        <h1 slot="page-title">${this.pageTitle}</h1>
 
         <div slot="title-row-actions" class="content-header-actions">
           <paper-button raised>Action 1</paper-button>
@@ -51,17 +56,20 @@ export class EngagementTabs extends connect(store)(LitElement) {
 
       <div class="page-content">
         ${this.isActiveTab(this.activeTab,
-    'details') ? html`<engagement-details-page></engagement-details-page>` : ''}
+        'details') ? html`<engagement-details-page></engagement-details-page>` : ''}
         ${this.isActiveTab(this.activeTab,
-    'questionnaire') ? html`<engagement-questionnaire-page></engagement-questionnaire-page>` : ''}
+          'questionnaire') ? html`<engagement-questionnaire-page></engagement-questionnaire-page>` : ''}
         ${this.isActiveTab(this.activeTab,
-    'followup') ? html`<follow-up-page></follow-up-page>` : ''}
+            'followup') ? html`<follow-up-page></follow-up-page>` : ''}
       </div>
     `;
   }
 
   @property({type: Object})
   routeDetails!: RouteDetails;
+
+  @property({type: String})
+  pageTitle: string = '';
 
   @property({type: Array})
   pageTabs = [
@@ -86,10 +94,7 @@ export class EngagementTabs extends connect(store)(LitElement) {
   activeTab: string = 'details';
 
   @property({type: Object})
-  engagement: GenericObject = {
-    id: 23,
-    title: 'Engagement title'
-  };
+  engagement: GenericObject = {};
 
   isActiveTab(tab: string, expectedTab: string): boolean {
     return tab === expectedTab;
@@ -106,10 +111,12 @@ export class EngagementTabs extends connect(store)(LitElement) {
         this.activeTab = state.app!.routeDetails.subRouteName as string;
         this.tabChanged(this.activeTab, oldActiveTabValue);// Is this needed here
       }
-      const engagementId = state.app!.routeDetails.params!.engagementId;
-      if (engagementId) {
-        this.engagement.id = engagementId;
+
+      if (state.pageData) {
+        this.engagement = state.pageData.currentAssessment;
+        this.pageTitle = this.engagement.reference_number ? `${this.engagement.reference_number}: ${this.engagement.partner_name}` : '';
       }
+
     }
   }
 

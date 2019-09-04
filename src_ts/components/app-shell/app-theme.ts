@@ -40,6 +40,8 @@ documentContainer.innerHTML = `
         --ecp-header-title: {
           padding: 0 0;
           text-align: left;
+          font-size: 18px;
+          font-weight: 500;
         }
         --paper-input-container-label: {
           color: var(--secondary-text-color, #737373);

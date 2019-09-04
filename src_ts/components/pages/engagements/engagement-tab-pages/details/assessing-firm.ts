@@ -1,4 +1,4 @@
-import {LitElement, html, property} from 'lit-element';
+import {LitElement, html, property, customElement} from 'lit-element';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-spinner/paper-spinner';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
@@ -6,24 +6,25 @@ import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {PaperInputElement} from '@polymer/paper-input/paper-input';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {makeRequest} from '../../../../utils/request-helper';
+import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 
 /**
  * @customElement
  * @LitElement
  */
-class AssessingFirm extends LitElement {
+@customElement('assessing-firm')
+export class AssessingFirm extends LitElement {
   render() {
     // language=HTML
     return html`
+      ${SharedStylesLit} ${labelAndvalueStylesLit} ${gridLayoutStylesLit}
       <style>
         .input-width {
           max-width: 230px;
         }
-
       </style>
-      ${SharedStylesLit}${labelAndvalueStylesLit}${gridLayoutStylesLit}
+      
       <div class="row-padding-v">
         <paper-input id="poNumber" label="Enter PO Number" always-float-label
           class="input-width"
@@ -60,10 +61,10 @@ class AssessingFirm extends LitElement {
 
   @property({type: Object})
   assessor = {
-      order_number: '',
-      auditor_firm: null,
-      auditor_firm_name: ''
-    };
+    order_number: '',
+    auditor_firm: null,
+    auditor_firm_name: ''
+  };
 
   @property({type: Boolean})
   requestInProgress: boolean = false;
@@ -85,12 +86,12 @@ class AssessingFirm extends LitElement {
     }
     this.requestInProgress = true;
 
-    makeRequest(getEndpoint(etoolsEndpoints.auditorFirm, {id: this.assessor.order_number}))
+    makeRequest(getEndpoint(etoolsEndpoints.auditorFirm, {id: this.assessor.order_number}) as RequestEndpoint)
       .then((response: any) => {
         this._handleFirmReceived(response);
       })
       .catch((err: any) => {
-        this._handleErrorOnGetFirm(err)
+        this._handleErrorOnGetFirm(err);
       });
   }
 
@@ -98,7 +99,8 @@ class AssessingFirm extends LitElement {
     this.assessor = {
       auditor_firm: resp.auditor_firm.id,
       order_number: resp.order_number,
-      auditor_firm_name: resp.auditor_firm.name};
+      auditor_firm_name: resp.auditor_firm.name
+    };
     this.prevOrderNumber = resp.order_number;
     this.requestInProgress = false;
   }
@@ -129,11 +131,7 @@ class AssessingFirm extends LitElement {
     if (!this._validatePONumber()) {
       return false;
     }
-
-    if (!this.assessor.auditor_firm || !this.assessor.auditor_firm_name) {
-      return false;
-    }
-    return true;
+    return this.assessor.auditor_firm && this.assessor.auditor_firm_name;
   }
 
   _updatePoNumber(newVal: string) {
@@ -152,7 +150,3 @@ class AssessingFirm extends LitElement {
   }
 
 }
-
-export {AssessingFirm as AssessingFirmElement};
-
-window.customElements.define('assessing-firm', AssessingFirm);
