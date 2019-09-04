@@ -15,6 +15,7 @@ import {customElement, LitElement, html, property} from 'lit-element';
 import {elevationStyles} from '../../styles/lit-styles/elevation-styles';
 import {RouteDetails} from '../../../routing/router';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
+import {Assessment} from '../../../types/engagement';
 
 /**
  * @LitElement
@@ -112,18 +113,24 @@ export class EngagementTabs extends connect(store)(LitElement) {
       if (stateActiveTab !== this.activeTab) {
         const oldActiveTabValue = this.activeTab;
         this.activeTab = state.app!.routeDetails.subRouteName as string;
-        this.tabChanged(this.activeTab, oldActiveTabValue);// Is this needed here
+        //this.tabChanged(this.activeTab, oldActiveTabValue);// Is this needed here?
+      }
+
+      if (state.pageData && this.routeDetails.params) {
+        this.pageTitle = this._getPageTitle(this.routeDetails.params!.engagementId, state.pageData.currentAssessment);
       }
 
       if (state.pageData) {
         this.engagement = state.pageData.currentAssessment;
-        if (this.engagement.id) {
-          this.enableTabs();
-        }
         this.pageTitle = this.engagement.reference_number ? `${this.engagement.reference_number}: ${this.engagement.partner_name}` : '';
       }
 
+  _getPageTitle(assessmentId: string | number, assessment: Assessment) {
+    if (!assessmentId || assessmentId === 'new') {
+      return 'New PSEA Assessment';
     }
+    return assessment.reference_number ? `${assessment.reference_number}: ${assessment.partner_name}` : '';
+
   }
 
   enableTabs() {
@@ -146,7 +153,7 @@ export class EngagementTabs extends connect(store)(LitElement) {
       return;
     }
     if (newTabName !== oldTabName) {
-      const newPath = `engagements/${this.engagement.id}/${newTabName}`;
+      const newPath = `engagements/${this.routeDetails!.params ? this.routeDetails!.params.engagementId : 'new'}/${newTabName}`;
       if (this.routeDetails.path === newPath) {
         return;
       }

@@ -25,6 +25,7 @@ import {fireEvent} from '../../../../utils/fire-custom-event';
 import DatePickerLite from '@unicef-polymer/etools-date-time/datepicker-lite';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
 import {updateAssessmentData} from '../../../../../redux/actions/page-data';
+import {PageDataState} from '../../../../../redux/reducers/page-data';
 
 /**
  * @customElement
@@ -143,23 +144,27 @@ export class AssessmentInfo extends connect(store)(LitElement) {
 
     if (state.app!.routeDetails!.params) {
       const assessmentId = state.app!.routeDetails.params.engagementId;
-      this.setPageData(assessmentId);
+      this.setPageData(assessmentId, state.pageData!);
     }
   }
 
-  setPageData(assessmnetId: string | number) {
+  setPageData(assessmnetId: string | number, pageData: PageDataState) {
     this.isNew = (assessmnetId === 'new');
     this.editMode = this.isNew;
     this._getAssessmentInfo(assessmnetId)
-      .then(() => setTimeout(() => this.resetValidations(), 100));
+      .then(() => {
+        setTimeout(() => this.resetValidations(), 100);
+        if (!pageData || !isJsonStrMatch(this.assessment, pageData.currentAssessment)) {
+          store.dispatch(updateAssessmentData(cloneDeep(this.assessment)));
+        }
+      });
 
   }
 
-  _getAssessmentInfo(assessmentId: string | number) {
 
+  _getAssessmentInfo(assessmentId: string | number) {
     if (!assessmentId || assessmentId === 'new') {
       this.assessment = new Assessment();
-      store.dispatch(updateAssessmentData(this.assessment));
       return Promise.resolve();
     }
     if (this.assessment && this.assessment.id == assessmentId) {
@@ -170,7 +175,6 @@ export class AssessmentInfo extends connect(store)(LitElement) {
 
     return makeRequest({url: url})
       .then((response) => {
-        store.dispatch(updateAssessmentData(response));
         this.assessment = response;
         this.originalAssessment = cloneDeep(this.assessment);
       })
