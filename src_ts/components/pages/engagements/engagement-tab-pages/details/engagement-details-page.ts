@@ -11,7 +11,7 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
  * @LitElement
  */
 @customElement('engagement-details-page')
-class EngagementDetailsPage extends connect(store)(LitElement) {
+export class EngagementDetailsPage extends connect(store)(LitElement) {
 
   render() {
     // language=HTML
@@ -37,8 +37,5 @@ class EngagementDetailsPage extends connect(store)(LitElement) {
       this.isNew = (state.app!.routeDetails.params.engagementId === 'new');
     }
   }
-
-
-
 
 }
