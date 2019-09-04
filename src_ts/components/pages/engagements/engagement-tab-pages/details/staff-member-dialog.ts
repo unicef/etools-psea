@@ -12,6 +12,7 @@ import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {cloneDeep} from '../../../../utils/utils';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
+import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 
 /**
  * @customElement
@@ -169,6 +170,9 @@ export class StaffMemberDialog extends LitElement {
   @property({type: String})
   firmId!: string;
 
+  @property({type: Object})
+  toastEventSource!: LitElement;
+
   public openDialog() {
     this.isNewRecord = !(parseInt(this.editedItem.id) > 0);
     this.dialogTitle = this.isNewRecord ? 'Add New Firm Staff Member' : 'Edit Firm Staff Member';
@@ -250,7 +254,7 @@ export class StaffMemberDialog extends LitElement {
     this.requestInProcess = false;
     const msg = 'Failed to save/update new Firm Staff Member!';
     logError(msg, 'staff-member', err);
-    fireEvent(this, 'toast', {text: msg});
+    fireEvent(this.toastEventSource, 'toast', {text: formatServerErrorAsText(err)});
   }
 
   getEl(elName: string): HTMLInputElement {

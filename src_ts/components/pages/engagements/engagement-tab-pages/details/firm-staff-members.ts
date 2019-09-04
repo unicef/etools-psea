@@ -72,7 +72,7 @@ export class FirmStaffMembers extends LitElement {
             @paginator-change="${this.paginatorChange}"
             showEdit
             @edit-item="${this.openStaffMemberDialog}"
-            @item-updated="${this.itemUpdated}">
+            @item-changed="${this.itemChanged}">
           </etools-table>
         </div>
       </etools-content-panel>
@@ -190,6 +190,7 @@ export class FirmStaffMembers extends LitElement {
   createStaffMemberDialog() {
     this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialog;
     this.dialogStaffMember.setAttribute('id', 'dialogStaffMember');
+    this.dialogStaffMember.toastEventSource = this;
     this.onStaffMemberSaved = this.onStaffMemberSaved.bind(this);
     this.dialogStaffMember.addEventListener('staff-member-updated', this.onStaffMemberSaved);
     document.querySelector('body')!.appendChild(this.dialogStaffMember);
@@ -239,7 +240,7 @@ export class FirmStaffMembers extends LitElement {
         fireEvent(this, 'toast', {text: formatServerErrorAsText(err), showCloseBtn: true}));
   }
 
-  itemUpdated(e: CustomEvent) {
+  itemChanged(e: CustomEvent) {
     this.updateItemData(e.detail);
     this.updateFirmAssessorStaffAccess(e.detail as EtoolsStaffMemberModel);
   }
