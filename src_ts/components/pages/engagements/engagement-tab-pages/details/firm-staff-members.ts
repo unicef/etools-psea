@@ -17,7 +17,9 @@ import './staff-member-dialog';
 import {StaffMemberDialog} from './staff-member-dialog';
 import {cloneDeep} from '../../../../utils/utils';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
-import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+import {EtoolsStaffMemberModel} from '../../../../user/user-model';
+import {fireEvent} from '../../../../utils/fire-custom-event';
+import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 
 /**
  * @customElement
@@ -69,12 +71,22 @@ export class FirmStaffMembers extends LitElement {
             .paginator="${this.paginator}"
             @paginator-change="${this.paginatorChange}"
             showEdit
-            @edit-item="${this.openStaffMemberDialog}">
+            @edit-item="${this.openStaffMemberDialog}"
+            @item-changed="${this.itemChanged}">
           </etools-table>
         </div>
       </etools-content-panel>
     `;
   }
+
+  @property({type: Number})
+  assessmentId!: number;
+
+  @property({type: Array})
+  currentFirmAssessorStaffWithAccess!: number[];
+
+  @property({type: Number})
+  assessorId!: number;
 
   @property({type: Array})
   staffMembers: GenericObject[] = [];
@@ -127,7 +139,7 @@ export class FirmStaffMembers extends LitElement {
 
   removeListeners() {
     if (this.dialogStaffMember) {
-      this.dialogStaffMember.removeEventListener('staff-member-updated', this.onDialogMemberSaved);
+      this.dialogStaffMember.removeEventListener('staff-member-updated', this.onStaffMemberSaved);
       document.querySelector('body')!.removeChild(this.dialogStaffMember);
     }
   }
@@ -141,26 +153,6 @@ export class FirmStaffMembers extends LitElement {
     }
     this.dialogStaffMember.firmId = this.firmId;
     this.dialogStaffMember.openDialog();
-  }
-
-  createStaffMemberDialog() {
-    this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialog;
-    this.dialogStaffMember.setAttribute('id', 'staffMemberDialog');
-    this.onDialogMemberSaved = this.onDialogMemberSaved.bind(this);
-    this.dialogStaffMember.addEventListener('staff-member-updated', this.onDialogMemberSaved);
-    document.querySelector('body')!.appendChild(this.dialogStaffMember);
-  }
-
-  public onDialogMemberSaved(e: any) {
-    const savedItem = e.detail;
-    const index = this.staffMembers.findIndex((r: any) => r.id === savedItem.id);
-    if (index > -1) { // edit
-      this.staffMembers.splice(index, 1, savedItem);
-    } else {
-      this.paginator.count++;
-      this.staffMembers.push(savedItem);
-    }
-    this.paginator = getPaginator(this.paginator, {count: this.paginator.count, data: this.staffMembers});
   }
 
   populateStaffMembersList(firmId: string) {
@@ -183,19 +175,74 @@ export class FirmStaffMembers extends LitElement {
     endpoint.url += `?${buildUrlQueryString(this.paginator)}`;
     makeRequest(endpoint as RequestEndpoint)
       .then((resp: any) => {
-        this.staffMembers = resp.results;
+        this.staffMembers = resp.results.map((sm: any) => {
+          return {...sm, hasAccess: this.currentFirmAssessorStaffWithAccess.includes(sm.id)}
+        });
         this.paginator = getPaginator(this.paginator, {count: resp.count, data: this.staffMembers});
       })
       .catch((err: any) => {
         this.staffMembers = [];
-        this.paginator = getPaginator(this.paginator, {count: 0, data: this.staffMembers})
-        logError(err);
-      }
-      );
+        this.paginator = getPaginator(this.paginator, {count: 0, data: this.staffMembers});
+        console.log(err);
+      });
   }
 
-  getIndexById(id: number) {
-    return this.staffMembers.findIndex((r: any) => r.id === id);
+  createStaffMemberDialog() {
+    this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialog;
+    this.dialogStaffMember.setAttribute('id', 'dialogStaffMember');
+    this.dialogStaffMember.toastEventSource = this;
+    this.onStaffMemberSaved = this.onStaffMemberSaved.bind(this);
+    this.dialogStaffMember.addEventListener('staff-member-updated', this.onStaffMemberSaved);
+    document.querySelector('body')!.appendChild(this.dialogStaffMember);
+  }
+
+  onStaffMemberSaved(e: any) {
+    const savedItem = e.detail;
+    this.updateItemData(savedItem);
+    this.updateFirmAssessorStaffAccess(savedItem as EtoolsStaffMemberModel);
+  }
+
+  updateItemData(itemData: any) {
+    const index = this.staffMembers.findIndex((r: any) => r.id === itemData.id);
+    if (index > -1) { // edit
+      this.staffMembers.splice(index, 1, itemData);
+    } else {
+      this.paginator.count++;
+      this.staffMembers.push(itemData);
+    }
+    this.paginator = getPaginator(this.paginator, {count: this.paginator.count, data: this.staffMembers});
+  }
+
+  updateFirmAssessorStaffAccess(staffMember: EtoolsStaffMemberModel) {
+    if ((staffMember.hasAccess && this.currentFirmAssessorStaffWithAccess.includes(staffMember.id)) ||
+      (!staffMember.hasAccess && !this.currentFirmAssessorStaffWithAccess.includes(staffMember.id))) {
+      return;
+    }
+
+    let updatedStaffWithAccessIds: number[] = [...this.currentFirmAssessorStaffWithAccess];
+    if (staffMember.hasAccess) {
+      updatedStaffWithAccessIds.push(staffMember.id);
+    } else {
+      updatedStaffWithAccessIds = updatedStaffWithAccessIds.filter((id: number) => id !== staffMember.id);
+    }
+
+    const baseUrl = getEndpoint(etoolsEndpoints.assessor, {id: this.assessmentId}).url!;
+    const endpointData = new RequestEndpoint(baseUrl + this.assessorId + '/', 'PATCH');
+
+    makeRequest(endpointData, {auditor_firm_staff: updatedStaffWithAccessIds})
+      .then((resp) => {
+        this.currentFirmAssessorStaffWithAccess = [...resp.auditor_firm_staff];
+        fireEvent(this, 'toast', {
+          text: `${staffMember.user.first_name} ${staffMember.user.last_name}'s access has been updated`
+        });
+      })
+      .catch((err: any) =>
+        fireEvent(this, 'toast', {text: formatServerErrorAsText(err), showCloseBtn: true}));
+  }
+
+  itemChanged(e: CustomEvent) {
+    this.updateItemData(e.detail);
+    this.updateFirmAssessorStaffAccess(e.detail as EtoolsStaffMemberModel);
   }
 
 }

@@ -20,7 +20,7 @@ class RequestError {
 export class RequestEndpoint {
   url: string = '';
   method?: string = 'GET';
-  handleAs?: string = 'json'
+  handleAs?: string = 'json';
 
   constructor(url: string, method: string = 'GET', handleAs = 'json') {
     this.url = url;
