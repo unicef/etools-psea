@@ -136,7 +136,10 @@ export class AssessorInfo extends connect(store)(LitElement) {
     if (!assessor) {
       return;
     }
-    return html`<firm-staff-members id="firmStaffMembers" ?hidden="${this.hideFirmStaffMembers(isNew, assessor)}">
+    return html`<firm-staff-members id="firmStaffMembers" 
+        ?hidden="${this.hideFirmStaffMembers(isNew, assessor)} 
+        .assessorId=${this.assessor.id}"
+        .engagementId="${this.assessmentId}" >
       </firm-staff-members>`;
   }
 

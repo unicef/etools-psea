@@ -17,6 +17,9 @@ import './staff-member-dialog';
 import {StaffMemberDialog} from './staff-member-dialog';
 import {cloneDeep} from '../../../../utils/utils';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
+import {EtoolsStaffMemberModel} from "../../../../user/user-model";
+import {fireEvent} from "../../../../utils/fire-custom-event";
+import {formatServerErrorAsText} from "../../../../utils/ajax-error-parser";
 
 /**
  * @customElement
@@ -74,6 +77,12 @@ export class FirmStaffMembers extends LitElement {
       </etools-content-panel>
     `;
   }
+
+  @property({type: Number})
+  assessorId!: number;
+
+  @property({type: Number})
+  assessmentId!: number;
 
   @property({type: Array})
   staffMembers: GenericObject[] = [];
@@ -192,6 +201,19 @@ export class FirmStaffMembers extends LitElement {
       this.staffMembers.push(savedItem);
     }
     this.paginator = getPaginator(this.paginator, {count: this.paginator.count, data: this.staffMembers});
+    this.updateFirmAssessorStaffAccess(savedItem as EtoolsStaffMemberModel);
+  }
+
+  updateFirmAssessorStaffAccess(staffMember: EtoolsStaffMemberModel) {
+    const baseUrl = getEndpoint(etoolsEndpoints.assessor, {id: this.assessmentId}).url!;
+    const endpointData = new RequestEndpoint(baseUrl + this.assessorId + '/', 'PATCH');
+
+    makeRequest(endpointData, {})
+      .then((resp) => {
+        this._handleAssessorSaved(resp);
+      })
+      .catch((err: any) =>
+        fireEvent(this, 'toast', {text: formatServerErrorAsText(err), showCloseBtn: true}));
   }
 
   getIndexById(id: number) {
