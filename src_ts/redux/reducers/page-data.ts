@@ -1,14 +1,14 @@
 import {Reducer} from 'redux';
 import {UPDATE_ASSESSMENT_DATA} from '../actions/page-data';
 import {RootAction} from '../store';
-import {GenericObject} from '../../types/globals';
+import {Assessment} from '../../types/engagement';
 
 export interface PageDataState {
-  currentAssessment: GenericObject;
+  currentAssessment: Assessment;
 }
 
 const INITIAL_PAGE_DATA: PageDataState = {
-  currentAssessment: {}
+  currentAssessment: new Assessment()
 };
 
 const pageData: Reducer<PageDataState, RootAction> = (state = INITIAL_PAGE_DATA, action) => {

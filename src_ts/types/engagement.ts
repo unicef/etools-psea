@@ -4,6 +4,8 @@ export class PSEAEngagement {
 
 export class Assessment {
   id?: number;
+  reference_number?: string;
+  partner_name?: string;
   assessment_date: string | null = '';
   status: string = '';
   partner: string | null = '';
