@@ -259,4 +259,3 @@ export class StaffMemberDialog extends LitElement {
 
 }
 
-export {StaffMemberDialog as StaffMemberDialogEl}

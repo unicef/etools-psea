@@ -6,7 +6,7 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import {PaperInputElement} from '@polymer/paper-input/paper-input';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {makeRequest} from '../../../../utils/request-helper';
+import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {cloneDeep} from '../../../../utils/utils';
@@ -93,7 +93,7 @@ class ExternalIndividualDialog extends LitElement {
     `;
   }
 
-  private defaultItem: GenericObject = {email: '', first_name: '', last_name: ''};
+  private defaultItem = {email: '', first_name: '', last_name: ''};
   private validationSelectors: string[] = ['#emailInput', '#firstNameInput', '#lastNameInput'];
 
   @property({type: Boolean, reflect: true})
@@ -166,10 +166,7 @@ class ExternalIndividualDialog extends LitElement {
     this.getControlsData();
     this.requestInProcess = true;
 
-    const options = {
-      method: 'POST',
-      url: getEndpoint(etoolsEndpoints.externalIndividuals).url
-    };
+    const options = new RequestEndpoint(getEndpoint(etoolsEndpoints.externalIndividuals).url!, 'POST');
 
     makeRequest(options, this.editedItem)
       .then((resp: any) => this._handleResponse(resp))

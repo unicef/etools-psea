@@ -14,7 +14,7 @@ import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {buildUrlQueryString} from '../../../../common/layout/etools-table/etools-table-utility';
 import {GenericObject} from '../../../../../types/globals';
 import './staff-member-dialog';
-import {StaffMemberDialogEl} from './staff-member-dialog';
+import {StaffMemberDialog} from './staff-member-dialog';
 import {cloneDeep} from '../../../../utils/utils';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
@@ -115,7 +115,7 @@ export class FirmStaffMembers extends LitElement {
       type: EtoolsTableColumnType.Text
     }
   ];
-  private dialogStaffMember!: StaffMemberDialogEl;
+  private dialogStaffMember!: StaffMemberDialog;
 
   @property({type: String})
   firmId!: string;
@@ -144,7 +144,7 @@ export class FirmStaffMembers extends LitElement {
   }
 
   createStaffMemberDialog() {
-    this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialogEl;
+    this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialog;
     this.dialogStaffMember.setAttribute('id', 'staffMemberDialog');
     this.onDialogMemberSaved = this.onDialogMemberSaved.bind(this);
     this.dialogStaffMember.addEventListener('staff-member-updated', this.onDialogMemberSaved);
