@@ -107,7 +107,7 @@ export class EngagementTabs extends connect(store)(LitElement) {
   public stateChanged(state: RootState) {
     // update page route data
     if (state.app!.routeDetails.routeName === 'engagements' &&
-      state.app!.routeDetails.subRouteName !== 'list') {
+        state.app!.routeDetails.subRouteName !== 'list') {
       this.routeDetails = state.app!.routeDetails;
       const stateActiveTab = state.app!.routeDetails.subRouteName as string;
       if (stateActiveTab !== this.activeTab) {
@@ -117,13 +117,17 @@ export class EngagementTabs extends connect(store)(LitElement) {
       }
 
       if (state.pageData && this.routeDetails.params) {
+        if (this.routeDetails.params.engagementId !== 'new') {
+          this.enableTabs();
+        }else {
+          this.resetTabs();
+        }
+
         this.pageTitle = this._getPageTitle(this.routeDetails.params!.engagementId, state.pageData.currentAssessment);
       }
 
-      if (state.pageData) {
-        this.engagement = state.pageData.currentAssessment;
-        this.pageTitle = this.engagement.reference_number ? `${this.engagement.reference_number}: ${this.engagement.partner_name}` : '';
-      }
+    }
+  }
 
   _getPageTitle(assessmentId: string | number, assessment: Assessment) {
     if (!assessmentId || assessmentId === 'new') {
@@ -137,6 +141,14 @@ export class EngagementTabs extends connect(store)(LitElement) {
     this.pageTabs.forEach((tab) => {
       tab.disabled = false;
     });
+    this.pageTabs = [...this.pageTabs];
+  }
+
+  resetTabs() {
+    this.pageTabs.forEach((tab) => {
+      tab.tab == 'details' ? tab.disabled = false : tab.disabled = true;
+    });
+    this.pageTabs = [...this.pageTabs];
   }
 
   handleTabChange(e: CustomEvent) {
