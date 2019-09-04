@@ -44,5 +44,8 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   },
   partnerStaffMembers: {
     template: '/api/v2/partners/<%=id%>/staff-members/'
+  },
+  attachmentsUpload: {
+    url: '/api/v2/attachments/upload/'
   }
 };
