@@ -14,7 +14,7 @@ import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
-import {Assessor, AssessorTypes} from '../../../../../types/engagement';
+import {Assessor, AssessorTypes} from '../../../../../types/assessment';
 import {AssessingFirm} from './assessing-firm';
 import {ExternalIndividual} from './external-individual';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
@@ -67,7 +67,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
           <paper-radio-group .selected="${this._getAssessorType(this.assessor)}"
               ?readonly="${this.isReadonly(this.editMode)}"
               @selected-changed="${(e: CustomEvent) => this._setSelectedAssessorType(
-                  (e.target as PaperRadioGroupElement)!.selected!)}">
+      (e.target as PaperRadioGroupElement)!.selected!)}">
             <paper-radio-button name="staff">Unicef Staff</paper-radio-button>
             <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
             <paper-radio-button name="external">External Individual</paper-radio-button>
@@ -136,7 +136,11 @@ export class AssessorInfo extends connect(store)(LitElement) {
     if (!assessor) {
       return;
     }
-    return html`<firm-staff-members id="firmStaffMembers" ?hidden="${this.hideFirmStaffMembers(isNew, assessor)}">
+    return html`<firm-staff-members id="firmStaffMembers"
+        ?hidden="${this.hideFirmStaffMembers(isNew, assessor)}"
+        .assessorId="${this.assessor.id}"
+        .assessmentId="${this.assessmentId}"
+        .currentFirmAssessorStaffWithAccess="${this.assessor.auditor_firm_staff}">
       </firm-staff-members>`;
   }
 
@@ -169,15 +173,15 @@ export class AssessorInfo extends connect(store)(LitElement) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
     }
     if (state.app!.routeDetails!.params) {
-      const engagementId = state.app!.routeDetails.params.engagementId;
-      if (this.assessmentId !== engagementId) {
-        this.assessmentId = engagementId;
-        this.setPageData(this.assessmentId);
+      const assessmentId = state.app!.routeDetails.params.assessmentId;
+      if (this.assessmentId !== assessmentId) {
+        this.assessmentId = assessmentId;
+        this.getAssessorDetails(this.assessmentId);
       }
     }
   }
 
-  setPageData(assessmentId: string | number) {
+  getAssessorDetails(assessmentId: string | number) {
     if (!assessmentId || assessmentId === 'new') {
       this.assessor = new Assessor();
       return;
@@ -196,10 +200,10 @@ export class AssessorInfo extends connect(store)(LitElement) {
           }
         });
       })
-      .catch((err: any) => this._handleErrorrOnGetAssessor(err));
+      .catch((err: any) => this._handleErrorOnGetAssessor(err));
   }
 
-  _handleErrorrOnGetAssessor(err: any) {
+  _handleErrorOnGetAssessor(err: any) {
     if (err.status === 404) {
       this.assessor = new Assessor();
       this.isNew = true;

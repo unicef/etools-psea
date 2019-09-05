@@ -32,7 +32,9 @@ export const gridLayoutStylesLit = html`
       padding-top: 8px;
       padding-bottom: 8px;
     }
-
+    .row-padding-d {
+      padding-bottom: 12px;
+    }
     .space-between {
       justify-content: space-between;
     }

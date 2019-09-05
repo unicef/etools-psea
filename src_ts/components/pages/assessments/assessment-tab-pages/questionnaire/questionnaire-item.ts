@@ -5,7 +5,7 @@ import './questionnaire-answer';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {radioButtonStyles} from '../../../../styles/radio-button-styles';
-import {Question, Answer} from '../../../../../types/engagement';
+import {Question, Answer} from '../../../../../types/assessment';
 
 @customElement('questionnaire-item')
 export class QuestionnaireItemElement extends LitElement {

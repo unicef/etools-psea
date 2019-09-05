@@ -10,7 +10,7 @@ import './question-attachments';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {radioButtonStyles} from '../../../../styles/radio-button-styles';
 import {PaperCheckboxElement} from '@polymer/paper-checkbox/paper-checkbox';
-import {Answer, Question, ProofOfEvidence, Rating} from '../../../../../types/engagement';
+import {Answer, Question, ProofOfEvidence, Rating} from '../../../../../types/assessment';
 
 class QuestionnaireAnswer extends LitElement {
   render() {

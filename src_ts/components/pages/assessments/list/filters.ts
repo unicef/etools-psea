@@ -4,16 +4,15 @@ import {isJsonStrMatch} from '../../../utils/utils';
 
 export const defaultSelectedFilters: GenericObject = {
   q: '',
-  staff_member: [],
   status: [],
   unicef_focal_point: [],
   partner: [],
   assessment_date: null
 };
 
-export const engagementsFilters: EtoolsFilter[] = [
+export const assessmentsFilters: EtoolsFilter[] = [
   {
-    filterName: 'Search engagement',
+    filterName: 'Search assesment',
     filterKey: 'q',
     type: EtoolsFilterTypes.Search,
     selectedValue: '',
@@ -25,7 +24,7 @@ export const engagementsFilters: EtoolsFilter[] = [
     type: EtoolsFilterTypes.DropdownMulti,
     selectionOptions: [],
     selectedValue: [],
-    selected: true,
+    selected: false,
     minWidth: '350px',
     hideSearch: true,
     disabled: false,

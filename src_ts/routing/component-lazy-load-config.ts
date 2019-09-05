@@ -6,20 +6,20 @@ export interface RoutesLazyLoadComponentsPath {
 // each key from this object is computed from routeName_routeSubPage (if subRoute exists)
 export const componentsLazyLoadConfig: RoutesLazyLoadComponentsPath = {
 
-  'engagements_list': [
-    'components/pages/engagements/engagements-list.js'
+  'assessments_list': [
+    'components/pages/assessments/assessments-list.js'
   ],
-  'engagements_details': [
-    'components/pages/engagements/engagement-tabs.js',
-    'components/pages/engagements/engagement-tab-pages/details/engagement-details-page.js'
+  'assessments_details': [
+    'components/pages/assessments/assessment-tabs.js',
+    'components/pages/assessments/assessment-tab-pages/details/assessment-details-page.js'
   ],
-  'engagements_questionnaire': [
-    'components/pages/engagements/engagement-tabs.js',
-    'components/pages/engagements/engagement-tab-pages/questionnaire/engagement-questionnaire-page.js'
+  'assessments_questionnaire': [
+    'components/pages/assessments/assessment-tabs.js',
+    'components/pages/assessments/assessment-tab-pages/questionnaire/assessment-questionnaire-page.js'
   ],
-  'engagements_followup': [
-    'components/pages/engagements/engagement-tabs.js',
-    'components/pages/engagements/engagement-tab-pages/follow-up/follow-up-page.js'
+  'assessments_followup': [
+    'components/pages/assessments/assessment-tabs.js',
+    'components/pages/assessments/assessment-tab-pages/follow-up/follow-up-page.js'
   ],
   'page-not-found': [
     'components/pages/page-not-found.js'

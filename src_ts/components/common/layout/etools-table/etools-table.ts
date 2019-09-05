@@ -30,7 +30,7 @@ export interface EtoolsTableColumn {
   sort?: EtoolsTableColumnSort;
   /**
    * used only for EtoolsTableColumnType.Link to specify url template (route with a single param)
-   * ex: `${ROOT_PATH}engagements/:id/details`
+   * ex: `${ROOT_PATH}assessments/:id/details`
    *    - id will be replaced with item object id property
    */
   link_tmpl?: string;
@@ -233,7 +233,8 @@ export class EtoolsTable extends LitElement {
 
   _getCheckbox(item: any, key: string) {
     return html`
-      <paper-checkbox ?checked="${this._getValueByKey(item, key, '', true)}">
+      <paper-checkbox ?checked="${this._getValueByKey(item, key, '', true)}"
+        @change="${(e: CustomEvent) => this.triggerItemChanged(item, key, (e.currentTarget as any).checked)}">
       </paper-checkbox>`;
 
   }
@@ -285,6 +286,12 @@ export class EtoolsTable extends LitElement {
 
   toggleColumnSort(sort: EtoolsTableColumnSort): EtoolsTableColumnSort {
     return sort === EtoolsTableColumnSort.Asc ? EtoolsTableColumnSort.Desc : EtoolsTableColumnSort.Asc;
+  }
+
+  triggerItemChanged(item: any, field: string, filedValue: any) {
+    const changedItem = {...item};
+    changedItem[field] = filedValue;
+    fireEvent(this, 'item-changed', changedItem);
   }
 
 }

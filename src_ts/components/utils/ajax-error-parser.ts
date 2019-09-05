@@ -112,12 +112,13 @@ function _isArrayOfStrings(arr: any) {
   return allStrings;
 }
 
-export function formatServerErrorAsText(errors: any) {
-  const errorsArray = getErrorsArray(errors);
+export function formatServerErrorAsText(error: any) {
+  const errorResponse = tryGetResponseError(error);
+  const errorsArray = getErrorsArray(errorResponse);
   if (errorsArray && errorsArray.length) {
     return errorsArray.join('\n');
   }
-  return errors;
+  return error;
 }
 
 export function parseRequestErrorsAndShowAsToastMsgs(error: any, source: any, redirectOn404?: boolean) {
@@ -126,8 +127,7 @@ export function parseRequestErrorsAndShowAsToastMsgs(error: any, source: any, re
     return;
   }
 
-  const errorResponse = tryGetResponseError(error);
-  const errorsString = formatServerErrorAsText(errorResponse);
+  const errorsString = formatServerErrorAsText(error);
 
   showErrorAsToastMsg(errorsString, source);
 }

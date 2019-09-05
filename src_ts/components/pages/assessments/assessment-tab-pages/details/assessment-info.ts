@@ -18,14 +18,12 @@ import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
-import {Assessment, AssessmentInvalidator} from '../../../../../types/engagement';
+import {Assessment, AssessmentInvalidator} from '../../../../../types/assessment';
 import {updateAppLocation} from '../../../../../routing/routes';
 import {formatDate} from '../../../../utils/date-utility';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import DatePickerLite from '@unicef-polymer/etools-date-time/datepicker-lite';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
-import {updateAssessmentData} from '../../../../../redux/actions/page-data';
-import {PageDataState} from '../../../../../redux/reducers/page-data';
 
 /**
  * @customElement
@@ -108,7 +106,7 @@ export class AssessmentInfo extends connect(store)(LitElement) {
   }
 
   @property({type: Object})
-  assessment = new Assessment();
+  assessment!: Assessment;
 
   @property({type: Object})
   originalAssessment!: Assessment;
@@ -141,49 +139,12 @@ export class AssessmentInfo extends connect(store)(LitElement) {
     if (state.commonData && !isJsonStrMatch(this.partners, state.commonData!.partners)) {
       this.partners = [...state.commonData!.partners];
     }
-
-    if (state.app!.routeDetails!.params) {
-      const assessmentId = state.app!.routeDetails.params.engagementId;
-      this.setPageData(assessmentId, state.pageData!);
-    }
-  }
-
-  setPageData(assessmnetId: string | number, pageData: PageDataState) {
-    this.isNew = (assessmnetId === 'new');
-    this.editMode = this.isNew;
-    this._getAssessmentInfo(assessmnetId)
-      .then(() => {
-        setTimeout(() => this.resetValidations(), 100);
-        if (!pageData || !isJsonStrMatch(this.assessment, pageData.currentAssessment)) {
-          store.dispatch(updateAssessmentData(cloneDeep(this.assessment)));
-        }
-      });
-
-  }
-
-
-  _getAssessmentInfo(assessmentId: string | number) {
-    if (!assessmentId || assessmentId === 'new') {
-      this.assessment = new Assessment();
-      return Promise.resolve();
-    }
-    if (this.assessment && this.assessment.id == assessmentId) {
-      return Promise.resolve();
-    }
-
-    const url = etoolsEndpoints.assessment.url! + assessmentId + '/';
-
-    return makeRequest({url: url})
-      .then((response) => {
-        this.assessment = response;
-        this.originalAssessment = cloneDeep(this.assessment);
-      })
-      .catch(err => this.handleGetAssessmentError(err));
-  }
-
-  handleGetAssessmentError(err: any) {
-    if (err.status == 404) {
-      updateAppLocation('/page-not-found', true);
+    if (state.pageData && !isJsonStrMatch(this.assessment, state.pageData!.currentAssessment)) {
+      this.assessment = {...state.pageData!.currentAssessment};
+      this.originalAssessment = cloneDeep(this.assessment);
+      this.isNew = !this.assessment.id;
+      this.editMode = this.isNew;
+      setTimeout(() => this.resetValidations(), 100);
     }
   }
 
@@ -249,7 +210,7 @@ export class AssessmentInfo extends connect(store)(LitElement) {
 
     makeRequest(options, body)
       .then((response: any) =>
-        updateAppLocation(`/engagements/${response.id}/details`, true)
+        updateAppLocation(`/assessments/${response.id}/details`, true)
       )
       .catch(_err => fireEvent(this, 'toast', {text: 'Error saving Assessment Info.'}));
   }
