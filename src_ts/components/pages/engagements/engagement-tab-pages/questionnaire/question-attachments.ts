@@ -1,8 +1,9 @@
-import {LitElement, html} from 'lit-element';
+import {LitElement, html, customElement} from 'lit-element';
 import '@unicef-polymer/etools-upload/etools-upload-multi';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 
-class QuestionAttachments extends LitElement {
+@customElement('question-attachments')
+export class QuestionAttachmentsElement extends LitElement {
   render() {
     return html`
       ${gridLayoutStylesLit}
@@ -41,6 +42,9 @@ class QuestionAttachments extends LitElement {
       </div>
     `;
   }
+
+  getAttachmentsForSave() {
+    return [];
+  }
 }
 
-window.customElements.define('question-attachments', QuestionAttachments);

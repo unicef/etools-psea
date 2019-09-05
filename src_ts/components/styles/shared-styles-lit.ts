@@ -136,5 +136,9 @@ export const SharedStylesLit = html`
       }
     }
 
+    label[required] {
+      @apply --required-star-style;
+    }
+
 </style>
 `;
