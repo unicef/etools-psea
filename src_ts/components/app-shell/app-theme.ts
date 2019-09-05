@@ -53,6 +53,10 @@ documentContainer.innerHTML = `
           color: var(--secondary-text-color, #737373);
           margin-right: 10px;
         };
+        --esmm-external-wrapper: {
+          width: 100%;
+          margin: 0;
+        };
         --paper-checkbox-checked-color: var(--primary-color);
         --paper-checkbox-unchecked-color: var(--secondary-text-color);
         --paper-radio-button-checked-color: var(--primary-color);

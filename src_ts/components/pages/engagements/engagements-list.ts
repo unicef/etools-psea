@@ -60,7 +60,7 @@ export class EngagementsList extends connect(store)(LitElement) {
         }
       </style>
       <page-content-header>
-        <h1 slot="page-title">Engagements list</h1>
+        <h1 slot="page-title">Assessments list</h1>
 
         <div slot="title-row-actions" class="content-header-actions">
           <paper-button class="default left-icon" raised @tap="${this.exportEngagements}">

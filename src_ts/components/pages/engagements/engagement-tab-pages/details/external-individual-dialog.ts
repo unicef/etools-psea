@@ -114,6 +114,9 @@ class ExternalIndividualDialog extends LitElement {
   @property({type: Object})
   editedItem: GenericObject = cloneDeep(this.defaultItem);
 
+  @property({type: Object})
+  toastEventSource!: LitElement;
+
   public openDialog() {
     this.dialogOpened = true;
   }
@@ -183,7 +186,7 @@ class ExternalIndividualDialog extends LitElement {
     this.requestInProcess = false;
     const msg = 'Failed to save new External Individual!';
     logError(msg, 'external-individual-dialog', err);
-    fireEvent(this, 'toast', {text: msg});
+    fireEvent(this.toastEventSource, 'toast', {text: msg});
   }
 
   getEl(elName: string): HTMLInputElement {
