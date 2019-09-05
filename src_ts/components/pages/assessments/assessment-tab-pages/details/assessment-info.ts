@@ -24,8 +24,6 @@ import {formatDate} from '../../../../utils/date-utility';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import DatePickerLite from '@unicef-polymer/etools-date-time/datepicker-lite';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
-import {updateAssessmentData} from '../../../../../redux/actions/page-data';
-import {PageDataState} from '../../../../../redux/reducers/page-data';
 
 /**
  * @customElement
@@ -148,7 +146,6 @@ export class AssessmentInfo extends connect(store)(LitElement) {
       this.editMode = this.isNew;
       setTimeout(() => this.resetValidations(), 100);
     }
-
   }
 
   _allowEdit() {
