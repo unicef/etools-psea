@@ -1,7 +1,3 @@
-export class PSEAEngagement {
-
-}
-
 export class Assessment {
   id?: number;
   reference_number?: string;
@@ -63,4 +59,3 @@ export class Answer {
   evidences: string[] = [];
   attachments: string[] = [];
 }
-
