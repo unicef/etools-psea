@@ -29,7 +29,7 @@ import {
   getUrlQueryStringSort
 } from '../../common/layout/etools-table/etools-table-utility';
 
-import {defaultSelectedFilters, engagementsFilters, updateFiltersSelectedValues} from './list/filters';
+import {defaultSelectedFilters, assessmentsFilters, updateFiltersSelectedValues} from './list/filters';
 import {RouteDetails, RouteQueryParams} from '../../../routing/router';
 import {updateAppLocation} from '../../../routing/routes';
 import {buttonsStyles} from '../../styles/button-styles';
@@ -115,7 +115,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
   sort: EtoolsTableSortItem[] = [{name: 'ref_number', sort: EtoolsTableColumnSort.Desc}];
 
   @property({type: Array})
-  filters: EtoolsFilter[] = [...engagementsFilters];
+  filters: EtoolsFilter[] = [...assessmentsFilters];
 
   @property({type: Object})
   selectedFilters: GenericObject = {...defaultSelectedFilters};
