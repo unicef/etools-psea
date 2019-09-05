@@ -106,7 +106,7 @@ export class AssessmentInfo extends connect(store)(LitElement) {
   }
 
   @property({type: Object})
-  assessment = new Assessment();
+  assessment!: Assessment;
 
   @property({type: Object})
   originalAssessment!: Assessment;
