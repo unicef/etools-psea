@@ -112,7 +112,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
   public stateChanged(state: RootState) {
     // update page route data
     if (state.app!.routeDetails.routeName === 'assessments' &&
-      state.app!.routeDetails.subRouteName !== 'list') {
+        state.app!.routeDetails.subRouteName !== 'list') {
       this.routeDetails = state.app!.routeDetails;
 
       const stateActiveTab = state.app!.routeDetails.subRouteName as string;
@@ -125,17 +125,18 @@ export class AssessmentTabs extends connect(store)(LitElement) {
       if (state.app!.routeDetails!.params) {
         const assessmentId = state.app!.routeDetails.params.assessmentId;
         this.setPageData(assessmentId, state.pageData!);
-      if (state.pageData && this.routeDetails.params) {
+        if (state.pageData && this.routeDetails.params) {
 
-        if (this.routeDetails.params.engagementId !== 'new') {
-          this.enableTabs();
-        }else {
-          this.resetTabs();
+          if (this.routeDetails.params.engagementId !== 'new') {
+            this.enableTabs();
+          } else {
+            this.resetTabs();
+          }
+
+          this.pageTitle = this._getPageTitle(this.routeDetails.params!.engagementId, state.pageData.currentAssessment);
         }
 
-        this.pageTitle = this._getPageTitle(this.routeDetails.params!.engagementId, state.pageData.currentAssessment);
       }
-
     }
   }
 
