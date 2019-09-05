@@ -10,8 +10,8 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
  * @customElement
  * @LitElement
  */
-@customElement('engagement-details-page')
-export class EngagementDetailsPage extends connect(store)(LitElement) {
+@customElement('assessment-details-page')
+export class AssessmentDetailsPage extends connect(store)(LitElement) {
 
   render() {
     // language=HTML
@@ -34,7 +34,7 @@ export class EngagementDetailsPage extends connect(store)(LitElement) {
 
   stateChanged(state: RootState) {
     if (state.app!.routeDetails && state.app!.routeDetails.params) {
-      this.isNew = (state.app!.routeDetails.params.engagementId === 'new');
+      this.isNew = (state.app!.routeDetails.params.assessmentId === 'new');
     }
   }
 
