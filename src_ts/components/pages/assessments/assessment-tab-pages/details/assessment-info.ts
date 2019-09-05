@@ -141,50 +141,14 @@ export class AssessmentInfo extends connect(store)(LitElement) {
     if (state.commonData && !isJsonStrMatch(this.partners, state.commonData!.partners)) {
       this.partners = [...state.commonData!.partners];
     }
-
-    if (state.app!.routeDetails!.params) {
-      const assessmentId = state.app!.routeDetails.params.assessmentId;
-      this.setPageData(assessmentId, state.pageData!);
-    }
-  }
-
-  setPageData(assessmnetId: string | number, pageData: PageDataState) {
-    this.isNew = (assessmnetId === 'new');
-    this.editMode = this.isNew;
-    this._getAssessmentInfo(assessmnetId)
-      .then(() => {
-        setTimeout(() => this.resetValidations(), 100);
-        if (!pageData || !isJsonStrMatch(this.assessment, pageData.currentAssessment)) {
-          store.dispatch(updateAssessmentData(cloneDeep(this.assessment)));
-        }
-      });
-
-  }
-
-
-  _getAssessmentInfo(assessmentId: string | number) {
-    if (!assessmentId || assessmentId === 'new') {
-      this.assessment = new Assessment();
-      return Promise.resolve();
-    }
-    if (this.assessment && this.assessment.id == assessmentId) {
-      return Promise.resolve();
+    if (state.pageData && !isJsonStrMatch(this.assessment, state.pageData!.currentAssessment)) {
+      this.assessment = {...state.pageData!.currentAssessment};
+      this.originalAssessment = cloneDeep(this.assessment);
+      this.isNew = !this.assessment.id;
+      this.editMode = this.isNew;
+      setTimeout(() => this.resetValidations(), 100);
     }
 
-    const url = etoolsEndpoints.assessment.url! + assessmentId + '/';
-
-    return makeRequest({url: url})
-      .then((response) => {
-        this.assessment = response;
-        this.originalAssessment = cloneDeep(this.assessment);
-      })
-      .catch(err => this.handleGetAssessmentError(err));
-  }
-
-  handleGetAssessmentError(err: any) {
-    if (err.status == 404) {
-      updateAppLocation('/page-not-found', true);
-    }
   }
 
   _allowEdit() {
