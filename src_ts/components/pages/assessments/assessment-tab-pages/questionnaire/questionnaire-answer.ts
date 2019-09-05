@@ -10,7 +10,7 @@ import './question-attachments';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {radioButtonStyles} from '../../../../styles/radio-button-styles';
 import {PaperCheckboxElement} from '@polymer/paper-checkbox/paper-checkbox';
-import {Answer, Question, ProofOfEvidence, Rating} from '../../../../../types/engagement';
+import {Answer, Question, ProofOfEvidence, Rating} from '../../../../../types/assessment';
 import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {PaperRadioButtonElement} from '@polymer/paper-radio-button';
 import {cloneDeep} from 'lodash-es';
@@ -120,8 +120,8 @@ class QuestionnaireAnswer extends connect(store)(LitElement) {
   checkedEvidenceBoxes!: NodeList;
 
   stateChanged(state: RootState) {
-    if (state.app!.routeDetails.params && state.app!.routeDetails.params!.engagementId) {
-      let id = state.app!.routeDetails.params!.engagementId;
+    if (state.app!.routeDetails.params && state.app!.routeDetails.params!.assessmentId) {
+      let id = state.app!.routeDetails.params!.assessmentId;
       this.assessmentId = id === 'new' ? null : id;
     }
   }
