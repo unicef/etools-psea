@@ -126,14 +126,11 @@ export class AssessmentTabs extends connect(store)(LitElement) {
         const assessmentId = state.app!.routeDetails.params.assessmentId;
         this.setPageData(assessmentId, state.pageData!);
         if (state.pageData && this.routeDetails.params) {
-
-          if (this.routeDetails.params.engagementId !== 'new') {
+          if (this.routeDetails.params.assessmentId !== 'new') {
             this.enableTabs();
           } else {
             this.resetTabs();
           }
-
-          this.pageTitle = this._getPageTitle(this.routeDetails.params!.engagementId, state.pageData.currentAssessment);
         }
 
       }
