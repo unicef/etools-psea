@@ -4,11 +4,11 @@ import {RootAction} from '../store';
 import {Assessment} from '../../types/engagement';
 
 export interface PageDataState {
-  currentAssessment: Assessment;
+  currentAssessment: Assessment | null;
 }
 
 const INITIAL_PAGE_DATA: PageDataState = {
-  currentAssessment: new Assessment()
+  currentAssessment: null
 };
 
 const pageData: Reducer<PageDataState, RootAction> = (state = INITIAL_PAGE_DATA, action) => {

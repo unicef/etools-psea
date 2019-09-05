@@ -7,7 +7,6 @@ import {pageContentHeaderSlottedStyles}
 import '../../common/layout/status/etools-status';
 import {pageLayoutStyles} from '../../styles/page-layout-styles';
 
-import {GenericObject} from '../../../types/globals';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../redux/store';
 import {updateAppLocation} from '../../../routing/routes';
@@ -16,6 +15,12 @@ import {elevationStyles} from '../../styles/lit-styles/elevation-styles';
 import {RouteDetails} from '../../../routing/router';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {Assessment} from '../../../types/engagement';
+import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
+import {makeRequest} from '../../utils/request-helper';
+import {updateAssessmentData} from '../../../redux/actions/page-data';
+import {isJsonStrMatch, cloneDeep} from '../../utils/utils';
+import {PageDataState} from '../../../redux/reducers/page-data';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 /**
  * @LitElement
@@ -94,7 +99,7 @@ export class EngagementTabs extends connect(store)(LitElement) {
   activeTab: string = 'details';
 
   @property({type: Object})
-  engagement: GenericObject = {};
+  assessment!: Assessment;
 
   isActiveTab(tab: string, expectedTab: string): boolean {
     return tab === expectedTab;
@@ -113,19 +118,53 @@ export class EngagementTabs extends connect(store)(LitElement) {
         //this.tabChanged(this.activeTab, oldActiveTabValue);// Is this needed here?
       }
 
-      if (state.pageData && this.routeDetails.params) {
-        this.pageTitle = this._getPageTitle(this.routeDetails.params!.engagementId, state.pageData.currentAssessment);
+      if (state.app!.routeDetails!.params) {
+        const assessmentId = state.app!.routeDetails.params.engagementId;
+        this.setPageData(assessmentId, state.pageData!);
       }
 
     }
   }
 
-  _getPageTitle(assessmentId: string | number, assessment: Assessment) {
+  setPageData(assessmnetId: string | number, pageData: PageDataState) {
+    this._getAssessmentInfo(assessmnetId)
+      .then(() => {
+        if (!pageData || !isJsonStrMatch(this.assessment, pageData.currentAssessment)) {
+          store.dispatch(updateAssessmentData(cloneDeep(this.assessment)));
+          this.pageTitle = this._getPageTitle();
+        }
+      });
+  }
+
+  _getAssessmentInfo(assessmentId: string | number) {
+    if (this.assessment && this.assessment.id == assessmentId) {
+      return Promise.resolve();
+    }
     if (!assessmentId || assessmentId === 'new') {
+      this.assessment = new Assessment();
+      return Promise.resolve();
+    }
+    const url = etoolsEndpoints.assessment.url! + assessmentId + '/';
+
+    return makeRequest({url: url})
+      .then((response) => {
+        this.assessment = response;
+      })
+      .catch(err => this.handleGetAssessmentError(err));
+  }
+
+  handleGetAssessmentError(err: any) {
+    if (err.status == 404) {
+      updateAppLocation('/page-not-found', true);
+    }
+    logError(err);
+  }
+
+  _getPageTitle() {
+    if (!this.assessment.id) {
       return 'New PSEA Assessment';
     }
-    return assessment.reference_number ? `${assessment.reference_number}: ${assessment.partner_name}` : '';
-
+    return this.assessment.reference_number ? `${this.assessment.reference_number}: ${this.assessment.partner_name}` : '';
   }
 
   handleTabChange(e: CustomEvent) {
