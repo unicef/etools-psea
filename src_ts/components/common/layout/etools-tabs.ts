@@ -25,6 +25,11 @@ export class EtoolsTabs extends LitElement {
         paper-tab[disabled] {
           opacity: .3;
         }
+        
+        *[disabled] {
+          cursor: not-allowed !important;
+          pointer-events: auto !important;
+        }
 
         :host {
           @apply --layout-horizontal;
