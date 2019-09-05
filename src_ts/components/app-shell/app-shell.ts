@@ -89,9 +89,9 @@ export class AppShell extends connect(store)(LitElement) {
 
         <!-- Main content -->
         <main role="main" class="main-content">
-          <assessment-list class="page"
+          <assessments-list class="page"
             ?active="${this.isActivePage(this.mainPage, 'assessments', this.subPage, 'list')}">
-          </assessment-list>
+          </assessments-list>
           <assessment-tabs class="page"
             ?active="${this.isActivePage(this.mainPage, 'assessments', this.subPage, 'details|questionnaire|followup')}">
           </assessment-tabs>

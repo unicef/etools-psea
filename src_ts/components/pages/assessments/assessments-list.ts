@@ -42,7 +42,7 @@ import {makeRequest} from '../../utils/request-helper';
  * @LitElement
  * @customElement
  */
-@customElement('assessment-list')
+@customElement('assessments-list')
 export class AssessmentsList extends connect(store)(LitElement) {
 
   static get styles() {
