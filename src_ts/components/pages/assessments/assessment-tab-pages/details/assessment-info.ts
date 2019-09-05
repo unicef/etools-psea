@@ -18,7 +18,7 @@ import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
-import {Assessment, AssessmentInvalidator} from '../../../../../types/engagement';
+import {Assessment, AssessmentInvalidator} from '../../../../../types/assessment';
 import {updateAppLocation} from '../../../../../routing/routes';
 import {formatDate} from '../../../../utils/date-utility';
 import {fireEvent} from '../../../../utils/fire-custom-event';
@@ -143,7 +143,7 @@ export class AssessmentInfo extends connect(store)(LitElement) {
     }
 
     if (state.app!.routeDetails!.params) {
-      const assessmentId = state.app!.routeDetails.params.engagementId;
+      const assessmentId = state.app!.routeDetails.params.assessmentId;
       this.setPageData(assessmentId, state.pageData!);
     }
   }
@@ -249,7 +249,7 @@ export class AssessmentInfo extends connect(store)(LitElement) {
 
     makeRequest(options, body)
       .then((response: any) =>
-        updateAppLocation(`/engagements/${response.id}/details`, true)
+        updateAppLocation(`/assessments/${response.id}/details`, true)
       )
       .catch(_err => fireEvent(this, 'toast', {text: 'Error saving Assessment Info.'}));
   }

@@ -15,14 +15,14 @@ import {customElement, LitElement, html, property} from 'lit-element';
 import {elevationStyles} from '../../styles/lit-styles/elevation-styles';
 import {RouteDetails} from '../../../routing/router';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
-import {Assessment} from '../../../types/engagement';
+import {Assessment} from '../../../types/assessment';
 
 /**
  * @LitElement
  * @customElement
  */
-@customElement('engagement-tabs')
-export class EngagementTabs extends connect(store)(LitElement) {
+@customElement('assessment-tabs')
+export class AssessmentTabs extends connect(store)(LitElement) {
 
   static get styles() {
     return [elevationStyles];
@@ -57,9 +57,9 @@ export class EngagementTabs extends connect(store)(LitElement) {
 
       <div class="page-content">
         ${this.isActiveTab(this.activeTab,
-        'details') ? html`<engagement-details-page></engagement-details-page>` : ''}
+        'details') ? html`<assessment-details-page></assessment-details-page>` : ''}
         ${this.isActiveTab(this.activeTab,
-          'questionnaire') ? html`<engagement-questionnaire-page></engagement-questionnaire-page>` : ''}
+          'questionnaire') ? html`<assessment-questionnaire-page></assessment-questionnaire-page>` : ''}
         ${this.isActiveTab(this.activeTab,
             'followup') ? html`<follow-up-page></follow-up-page>` : ''}
       </div>
@@ -103,7 +103,7 @@ export class EngagementTabs extends connect(store)(LitElement) {
 
   public stateChanged(state: RootState) {
     // update page route data
-    if (state.app!.routeDetails.routeName === 'engagements' &&
+    if (state.app!.routeDetails.routeName === 'assessments' &&
       state.app!.routeDetails.subRouteName !== 'list') {
       this.routeDetails = state.app!.routeDetails;
 
@@ -115,7 +115,7 @@ export class EngagementTabs extends connect(store)(LitElement) {
       }
 
       if (state.pageData && this.routeDetails.params) {
-        this.pageTitle = this._getPageTitle(this.routeDetails.params!.engagementId, state.pageData.currentAssessment);
+        this.pageTitle = this._getPageTitle(this.routeDetails.params!.assessmentId, state.pageData.currentAssessment);
       }
 
     }
@@ -143,7 +143,7 @@ export class EngagementTabs extends connect(store)(LitElement) {
       return;
     }
     if (newTabName !== oldTabName) {
-      const newPath = `engagements/${this.routeDetails!.params ? this.routeDetails!.params.engagementId : 'new'}/${newTabName}`;
+      const newPath = `assessments/${this.routeDetails!.params ? this.routeDetails!.params.assessmentId : 'new'}/${newTabName}`;
       if (this.routeDetails.path === newPath) {
         return;
       }

@@ -14,7 +14,7 @@ import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
-import {Assessor, AssessorTypes} from '../../../../../types/engagement';
+import {Assessor, AssessorTypes} from '../../../../../types/assessment';
 import {AssessingFirm} from './assessing-firm';
 import {ExternalIndividual} from './external-individual';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
@@ -136,10 +136,10 @@ export class AssessorInfo extends connect(store)(LitElement) {
     if (!assessor) {
       return;
     }
-    return html`<firm-staff-members id="firmStaffMembers" 
+    return html`<firm-staff-members id="firmStaffMembers"
         ?hidden="${this.hideFirmStaffMembers(isNew, assessor)}"
         .assessorId="${this.assessor.id}"
-        .assessmentId="${this.assessmentId}" 
+        .assessmentId="${this.assessmentId}"
         .currentFirmAssessorStaffWithAccess="${this.assessor.auditor_firm_staff}">
       </firm-staff-members>`;
   }
@@ -173,7 +173,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
     }
     if (state.app!.routeDetails!.params) {
-      const assessmentId = state.app!.routeDetails.params.engagementId;
+      const assessmentId = state.app!.routeDetails.params.assessmentId;
       if (this.assessmentId !== assessmentId) {
         this.assessmentId = assessmentId;
         this.getAssessorDetails(this.assessmentId);

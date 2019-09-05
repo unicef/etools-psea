@@ -1,7 +1,7 @@
 import {Reducer} from 'redux';
 import {UPDATE_ASSESSMENT_DATA} from '../actions/page-data';
 import {RootAction} from '../store';
-import {Assessment} from '../../types/engagement';
+import {Assessment} from '../../types/assessment';
 
 export interface PageDataState {
   currentAssessment: Assessment;
