@@ -4,12 +4,12 @@ import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {Question} from '../../../../../types/engagement';
+import {Question} from '../../../../../types/assessment';
 
 /**
  * @customElement
  */
-class EngagementQuestionnairePage extends LitElement {
+class AssessmentQuestionnairePage extends LitElement {
 
   render() {
     // language=HTML
@@ -71,12 +71,6 @@ class EngagementQuestionnairePage extends LitElement {
       })
   }
 
-
-
-
-
-
-
 }
 
-window.customElements.define('engagement-questionnaire-page', EngagementQuestionnairePage);
+window.customElements.define('assessment-questionnaire-page', AssessmentQuestionnairePage);
