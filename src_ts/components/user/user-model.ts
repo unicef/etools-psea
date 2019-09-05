@@ -23,7 +23,7 @@ export interface EtoolsUserModel {
   [key: string]: any;
 }
 export interface EtoolsStaffMemberModel {
-  id: string;
+  id: number;
   hasAccess: boolean;
   user: EtoolsStaffUserModel;
 }
