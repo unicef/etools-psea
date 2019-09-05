@@ -1,6 +1,4 @@
 import { LitElement, html, property, customElement } from 'lit-element';
-// import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
-// import EtoolsAjaxRequestMixin from '@unicef-polymer/etools-ajax/etools-ajax-request-mixin.js';
 import { GenericObject, Constructor } from '../../../../../types/globals';
 import '@unicef-polymer/etools-dialog/etools-dialog.js';
 import '@unicef-polymer/etools-dropdown/etools-dropdown.js';
@@ -11,13 +9,12 @@ import { makeRequest } from '../../../../utils/request-helper';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 import {store, RootState} from '../../../../../redux/store';
 import './get-partner-data';
-// import { customElement, property } from '@polymer/decorators';
-
 import get from 'lodash-es/get';
 import omit from 'lodash-es/omit';
-// import isEmpty from 'lodash-es/isEmpty';
-// import isObject from 'lodash-es/isObject';
-// import every from 'lodash-es/every';
+import { SharedStylesLit } from '../../../../styles/shared-styles-lit'; 
+// import { etoolsEndpoints } from '../../../../../endpoints/endpoints-list';
+import { labelAndvalueStylesLit } from '../../../../styles/label-and-value-styles-lit';
+import { gridLayoutStylesLit } from '../../../../styles/grid-layout-styles-lit';
 
 let _permissionCollection: {
   edited_ap_options?: {allowed_actions:[]},
@@ -30,7 +27,40 @@ let _permissionCollection: {
 class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement>) {
   render() {
     return html`
-      ${inputsStyles}
+    ${inputsStyles}
+      <style>
+        etools-content-panel {
+          --ecp-content: {
+                padding: 0;
+            };
+        }
+        etools-dropdown.fua-category {
+          --paper-listbox: {
+                max-height: 340px;
+                -ms-overflow-style: auto;
+            };
+        }
+        etools-dropdown.fua-person {
+          --paper-listbox: {
+                max-height: 140px;
+                -ms-overflow-style: auto;
+            };
+        }
+        .checkbox-container {
+          padding-left: 12px;
+          box-sizing: border-box;
+          height: 34px;
+          padding-top: 6px;
+        }
+        .input-container paper-button {
+          height: 34px;
+          color: rgba(0, 0, 0, .54);
+          font-weight: 500;
+          z-index: 5;
+          border: 1px solid rgba(0, 0, 0, .54);
+          padding: 6px 13px;
+        }
+      </style>
       <get-partner-data partner="${this.fullPartner}" partner-id="${this.selectedPartnerId}"></get-partner-data>
       <etools-dialog no-padding keep-dialog-open size="md"
             ?opened="${this.dialogOpened}"
@@ -54,17 +84,13 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
               <div class="input-container input-container-ms">
                     
                 <etools-dropdown
-                        class="disabled-as-readonly validate-input [[_setRequired('partner', editedApBase)]] fua-person"
+                        class="disabled-as-readonly validate-input required fua-person"
+                        ?required
                         .selected="${this.selectedPartnerId}"
-                        label="${this.getLabel('partner', this.editedApBase)}"
-                        placeholder="${this.getPlaceholderText('partner', this.editedApBase, 'select')}"
+                        label="Partner"
                         .options="${this.partners}"
                         option-label="name"
                         option-value="id"
-                        ?invalid="${this.errors.partner}"
-                        error-message="${this.errors.partner}"
-                        @focus="${this._resetFieldError}"
-                        @tap="${this._resetFieldError}"
                         trigger-value-change-event
                         @etools-selected-item-changed="${this._requestPartner}">
                 </etools-dropdown>
@@ -72,17 +98,13 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
               <div class="input-container input-container-ms">
                   
                 <etools-dropdown
-                        class="disabled-as-readonly validate-input [[_setRequired('intervention', editedApBase)]] fua-person"
+                        class="disabled-as-readonly validate-input required fua-person"
+                        ?required
                         ?selected="${this.editedItem.intervention.id}"
-                        label="${this.getLabel('intervention', this.editedApBase)}"
-                        placeholder="${this.getPlaceholderText('intervention', this.editedApBase, 'select')}"
+                        label="Intervention"
                         .options="${this.fullPartner.interventions}"
                         option-label="title"
-                        option-value="id"
-                        invalid="${this.errors.intervention}"
-                        error-message="${this.errors.intervention}"
-                        @focus="${this._resetFieldError}"
-                        @tap="${this._resetFieldError}">
+                        option-value="id">
                 </etools-dropdown>
               </div>
             </div>
@@ -92,17 +114,13 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                     <div class="input-container input-container-ms">
                         
                         <etools-dropdown
-                                class="disabled-as-readonly validate-input [[_setRequired('category', editedApBase)]] fua-person"
+                                class="disabled-as-readonly validate-input required fua-person"
                                 ?selected="${this.editedItem.category}"
-                                label="${this.getLabel('category', this.editedApBase)}"
-                                placeholder="${this.getPlaceholderText('category', this.editedApBase, 'select')}"
+                                label="Category"
                                 .options="${this.categories}"
                                 option-label="display_name"
-                                option-value="value"
-                                invalid="${this.errors.category}"
-                                error-message="${this.errors.category}"
-                                @focus="${this._resetFieldError}"
-                                @tap="${this._resetFieldError}">
+                                ?required
+                                option-value="value">
                         </etools-dropdown>
                     </div>
                 </div>
@@ -111,16 +129,12 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                     <div class="input-container input-container-l">
                         
                         <paper-textarea
-                                class="validate-input [[this._setRequired('description', this.editedApBase)]]"
+                                class="validate-input required"
+                                ?required
                                 allowed-pattern="[\d\s]"
                                 .value="${this.editedItem.description}"
-                                label="${this.getLabel('description', this.editedApBase)}"
-                                placeholder="${this.getPlaceholderText('description', this.editedApBase)}"
-                                max-rows="4"
-                                invalid="${this.errors.description}"
-                                error-message="${this.errors.description}"
-                                @focus="${this._resetFieldError}"
-                                @tap="${this._resetFieldError}">
+                                label="Description"
+                                max-rows="4">
                         </paper-textarea>
                     </div>
                 </div>
@@ -130,17 +144,13 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                         
 
                         <etools-dropdown
-                                class="disabled-as-readonly validate-input [[_setRequired('assigned_to', this.editedApBase)]] fua-person"
+                                class="disabled-as-readonly validate-input required fua-person"
                                 ?selected="${this.editedItem.assigned_to.id}"
-                                label="${this.getLabel('assigned_to', this.editedApBase)}"
-                                placeholder="${this.getPlaceholderText('assigned_to', this.editedApBase, 'select')}"
+                                label="Assigned To"
                                 .options="${this.users}"
                                 option-label="name"
-                                option-value="id"
-                                invalid="${this.errors.assigned_to}"
-                                error-message="${this.errors.assigned_to}"
-                                @focus="${this._resetFieldError}"
-                                @tap="${this._resetFieldError}">
+                                ?required
+                                option-value="id">
                         </etools-dropdown>
                     </div>
 
@@ -148,17 +158,13 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                         
 
                         <etools-dropdown
-                                class="disabled-as-readonly validate-input [[_setRequired('section', this.editedApBase)]] fua-person"
+                                class="disabled-as-readonly validate-input required fua-person"
                                 ?selected="${this.editedItem.section.id}"
-                                label="${this.getLabel('section', this.editedApBase)}"
-                                placeholder="${this.getPlaceholderText('section', this.editedApBase, 'select')}"
+                                label="Section"
                                 .options="${this.sections}"
                                 option-label="name"
-                                option-value="id"
-                                invalid="${this.errors.section}"
-                                error-message="${this.errors.section}"
-                                @focus="${this._resetFieldError}"
-                                @tap="${this._resetFieldError}">
+                                ?required
+                                option-value="id">
                         </etools-dropdown>
                     </div>
                 </div>
@@ -168,17 +174,13 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                         
 
                         <etools-dropdown
-                                class="disabled-as-readonly validate-input [[_setRequired('office', this.editedApBase)]] fua-person"
+                                class="disabled-as-readonly validate-input required fua-person"
                                 ?selected="${this.editedItem.office.id}"
-                                label="${this.getLabel('office', this.editedApBase)}"
-                                placeholder="${this.getPlaceholderText('office', this.editedApBase, 'select')}"
+                                label="Office"
                                 .options="${this.offices}"
                                 option-label="name"
-                                option-value="id"
-                                invalid="${this.errors.office}"
-                                error-message="${this.errors.office}"
-                                @focus="${this._resetFieldError}"
-                                @tap="${this._resetFieldError}">
+                                ?required
+                                option-value="id">
                         </etools-dropdown>
                     </div>
 
@@ -186,14 +188,10 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                         
                         <datepicker-lite
                                 id="deadlineAction"
-                                class="disabled-as-readonly validate-input [[_setRequired('due_date', this.editedApBase)]]"
+                                class="disabled-as-readonly validate-input required"
                                 value="${this.editedItem.due_date}"
-                                label="${this.getLabel('due_date', this.editedApBase)}"
-                                placeholder="${this.getPlaceholderText('due_date', this.editedApBase, 'select')}"
-                                invalid="${this.errors.due_date}"
-                                error-message="${this.errors.due_date}"
-                                @focus="${this._resetFieldError}"
-                                @tap="${this._resetFieldError}"
+                                label="Due Date"
+                                ?required
                                 selected-date-display-format="D MMM YYYY">
                         </datepicker-lite>
                     </div>
@@ -203,7 +201,7 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                     
                     <div class="input-container checkbox-container input-container-l">
                         <paper-checkbox
-                                class="disabled-as-readonly"
+                                class="disabled-as-readonly required"
                                 ?checked="${this.editedItem.high_priority}">
                                 This action point is high priority
                         </paper-checkbox>
@@ -234,7 +232,7 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
   fullPartner: any = {interventions: []};
 
   @property({type: String})
-  dialogTitle: string = '';
+  dialogTitle: string = 'Add Action Point';
 
   @property({type: String})
   confirmBtnText: string = '';
@@ -264,7 +262,7 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
   // notTouched: boolean = false;
 
   @property({type: Number})
-  engagementId!: number;
+  engagementId!: number | null;
 
   @property({type: Array})
   dataItems: object[] = [];
@@ -284,25 +282,38 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
   originalEditedObj: any = {};
 
   stateChanged(state: RootState) {
+    debugger
     if (state.commonData) {
       this.partners = [...state.commonData.partners];
       this.users = [...state.commonData.unicefUsers];
       this.offices = [...state.commonData.offices];
       this.sections = [...state.commonData.sections];
     }
+
+    if (state.app && state.app.routeDetails.params.engagementId) {
+      this.engagementId = parseInt(state.app.routeDetails.params.engagementId);
+    }
   }
 
-  _resetFieldError(event: any) {
-    if (!event || !event.target) {
-      return;
+  // _resetFieldError(event: any) {
+  //   if (!event || !event.target) {
+  //     return;
+  //   }
+
+  //   let field = event.target.getAttribute('field');
+  //   if (field) {
+  //     this.errors[field] = false;
+  //   }
+
+  //   event.target.invalid = false;
+  // }
+
+  setPageData(engagementId) {
+    if (!engagementId) {
+      engagementId = 'new'
     }
 
-    let field = event.target.getAttribute('field');
-    if (field) {
-      this.errors[field] = false;
-    }
-
-    event.target.invalid = false;
+    // let url = getEndpoint(etoolsEndpoints.)
   }
 
   _openEditDialog(event: any) {

@@ -52,23 +52,21 @@ export const setSections = (sections: []) => {
   }
 }
 
-export const loadSections = () => (dispatch) => {
-  makeRequest(etoolsEndpoints.sections)
-       .then((resp: any) => dispatch(setSections(resp)))
-}
-
-export const loadOffices = () => (dispatch) => {
-  makeRequest(etoolsEndpoints.offices)
-       .then((resp: any) => dispatch(setOffices(resp)))
-}
-
-export const loadPartners = () => (dispatch) => {
-  makeRequest(etoolsEndpoints.partners)
 export const setExternalIndividuals = (externalIndividuals: []) => {
   return {
     type: SET_EXTERNAL_INDIVIDUALS,
     externalIndividuals
   }
+}
+
+export const loadSections = () => (dispatch: any) => {
+  makeRequest(new RequestEndpoint(etoolsEndpoints.sections.url!))
+       .then((resp: any) => dispatch(setSections(resp)))
+}
+
+export const loadOffices = () => (dispatch: any) => {
+  makeRequest(new RequestEndpoint(etoolsEndpoints.offices.url!))
+       .then((resp: any) => dispatch(setOffices(resp)))
 }
 
 export const loadPartners = () => (dispatch: any) => {

@@ -20,11 +20,17 @@ import { GenericObject, Constructor } from '../../../../../types/globals';
 import { getFollowUpDummydata } from './follow-up-dummy-data';
 import { ROOT_PATH } from '../../../../../config/config';
 import {cloneDeep} from '../../../../utils/utils';
+import { makeRequest } from '../../../../utils/request-helper';
+import { etoolsEndpoints } from '../../../../../endpoints/endpoints-list';
+import { getEndpoint } from '../../../../../endpoints/endpoints';
+import { RootState, store } from '../../../../../redux/store';
+import { connect } from 'pwa-helpers/connect-mixin';
 
 @customElement('follow-up-page')
-export class FollowUpPage extends (LitElement as Constructor<LitElement>) {
+export class FollowUpPage extends connect(store)(LitElement as Constructor<LitElement>) {
   render() {
     return html`
+      <get-action-points engagement-id="[[engagementId]]" action-points="{{dataItems}}"></get-action-points>
       <etools-content-panel panel-title="Action Points">
         <div slot="panel-btns">
           <paper-icon-button
@@ -159,10 +165,21 @@ export class FollowUpPage extends (LitElement as Constructor<LitElement>) {
   @property({type: Object})
   followUpDialog: any;
 
+  @property({type: String})
+  engagementId: string | number | null = null;
+
+  stateChanged(state: RootState) {
+    debugger;
+    if (state.app.routeDetails.params.engagementId) {
+      this.engagementId = state.app.routeDetails.params.engagementId
+      this.getFollowUpData();
+    }
+  }
+
   connectedCallback() {
     super.connectedCallback();
     this.createFollowUpDialog();
-    this.getFollowUpData();
+    // this.getFollowUpData();
   }
 
   getFollowUpData() {
@@ -177,16 +194,18 @@ export class FollowUpPage extends (LitElement as Constructor<LitElement>) {
     //   page_size: this.paginator.page_size,
     //   sort: this.sort
     // };
+    let endpoint = getEndpoint(etoolsEndpoints.actionPoints, {id: this.engagementId})
+    console.log(endpoint)
 
     console.log('get follow-up data...');
-    getFollowUpDummydata().then((response: any) => {
-      // update paginator (total_pages, visible_range, count...)
-      // // // this.paginator = getPaginator(this.paginator, response);
-      this.itemsToDisplay = [...response.results];
-    }).catch((err: any) => {
-      // TODO: handle req errors
-      console.error(err);
-    });
+    makeRequest(endpoint).then((response: any) => {
+      this.dataItems = response;
+    }).catch((err: any) => console.error(err));
+    // getFollowUpDummydata().then((response: any) => {
+    //   this.itemsToDisplay = [...response.results];
+    // }).catch((err: any) => {
+    //   console.error(err);
+    // });
   }
 
   createFollowUpDialog() {

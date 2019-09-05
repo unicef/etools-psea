@@ -60,5 +60,7 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   //   exp: 30 * 60 * 1000, // 30min
   //   cacheTableName: 'agreements'
   // },
+  actionPoints: {
+    template: '/api/action_points/action_points/?psea_assessment=<%=id%>'
   }
 };

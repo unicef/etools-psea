@@ -1,36 +1,55 @@
-// import {PolymerElement} from "@polymer/polymer";
-// import {property} from "@polymer/decorators";
-import {LitElement, property, customElement, html} from 'lit-element';
+import {LitElement, 
+  // property, customElement, 
+  html} from 'lit-element';
 import { GenericObject, Constructor } from '../../../../../types/globals';
 import { fireEvent } from '../../../../utils/fire-custom-event';
 import clone from 'lodash-es/clone';
 import { getEndpoint } from '../../../../../endpoints/endpoints';
 import { makeRequest } from '../../../../utils/request-helper';
 // import EtoolsAjaxRequestMixin from '@unicef-polymer/etools-ajax/etools-ajax-request-mixin';
-// import {getStaticData, setStaticData} from '../../elements/app-mixins/static-data-controller';
+import {getStaticData, setStaticData} from './static-data-controller';
 
-@customElement('get-partner-data')
+// @customElement('get-partner-data')
 export class GetPartnerData extends (LitElement as Constructor<LitElement>) {
+
+  static get properties() {
+    return {
+      partnerId: {type: Number},
+      partner: Object,
+      lastData: Object,
+      lastNumber: Number
+    }
+  }
+  constructor() {
+    super();
+    this.partnerId = null;
+    this.partner = {};
+    this.lastData = {};
+    this.lastNumber = null;
+  }
+
   render() {
     return html``;
   }
-  @property({type: Number})
-  partnerId!: number | null;
 
-  @property({type: Object})
-  partner!: GenericObject;
+  
+  // @property({type: Number})
+  // partnerId!: number | null;
 
-  @property({type: Object})
-  lastData!: GenericObject;
+  // @property({type: Object})
+  // partner!: GenericObject;
 
-  @property({type: Boolean})
-  lastError?: boolean;
+  // @property({type: Object})
+  // lastData!: GenericObject;
 
-  @property({type: Number})
-  lastNumber?: number;
+  // @property({type: Boolean})
+  // lastError?: boolean;
+
+  // @property({type: Number})
+  // lastNumber?: number;
 
   updated() {
-    debugger
+    // debugger
   }
 
   _handleResponse(detail: GenericObject) {
@@ -123,3 +142,5 @@ export class GetPartnerData extends (LitElement as Constructor<LitElement>) {
     this.partnerId = null;
   }
 }
+
+customElements.define('get-partner-data', GetPartnerData);
