@@ -12,30 +12,27 @@ import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {cloneDeep} from '../../../../utils/utils';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
+import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 
 /**
  * @customElement
  *  @LitElement
  */
 @customElement('staff-member-dialog')
-class StaffMemberDialog extends LitElement {
+export class StaffMemberDialog extends LitElement {
   render() {
     // language=HTML
     return html`
       <style>
-        .layout-horizontal{
-          margin: 0px 10px;
-        }
         paper-input, paper-checkbox{
           padding:4px 10px;
         }
-        .m-12{
+        .mt-12{
           margin-top: 12px;
-          margin-bottom: 12px;
         }
       </style>
       ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
-      <etools-dialog id="staff-members" no-padding
+      <etools-dialog id="staffMemberDialog"
                       ?opened="${this.dialogOpened}"
                       dialog-title="${this.dialogTitle}"
                       size="md"
@@ -46,7 +43,7 @@ class StaffMemberDialog extends LitElement {
                       keep-dialog-open
                       @confirm-btn-clicked="${this.onSaveClick}">
 
-
+              <div class="row-padding-d">
                   <div class="layout-horizontal">
                       <div class="input-container col-4">
                           <!-- Email address -->
@@ -97,7 +94,7 @@ class StaffMemberDialog extends LitElement {
                       </div>
                   </div>
                   <div class="layout-horizontal">
-                      <div class="input-container col-4" ?hidden="${!this.isStaffMember}">
+                      <div class="input-container col-4">
                           <!-- Position -->
                           <paper-input
                                   id="positionInput"
@@ -124,7 +121,7 @@ class StaffMemberDialog extends LitElement {
                       </div>
                   </div>
 
-                  <div class="layout-horizontal m-12">
+                  <div class="layout-horizontal mt-12">
                       <!--receive notification-->
                       <div class="input-container col-4">
                           <paper-checkbox
@@ -134,12 +131,19 @@ class StaffMemberDialog extends LitElement {
                           </paper-checkbox>
                       </div>
                   </div>
-
+            </div>
       </etools-dialog>
     `;
   }
 
-  private defaultItem: EtoolsStaffMemberModel = {user: {email: '', first_name: '', last_name: '', profile: {phone_number: '', job_title: ''}}, hasAccess: false, id: ''};
+  private defaultItem: EtoolsStaffMemberModel = {
+    user: {
+      email: '',
+      first_name: '',
+      last_name: '',
+      profile: {phone_number: '', job_title: ''}
+    }, hasAccess: false, id: ''
+  };
   private validationSelectors: string[] = ['#emailInput', '#firstNameInput', '#lastNameInput'];
 
   @property({type: Boolean, reflect: true})
@@ -163,15 +167,15 @@ class StaffMemberDialog extends LitElement {
   @property({type: Boolean})
   isNewRecord!: boolean;
 
-  @property({type: Boolean})
-  isStaffMember: boolean = true;
-
   @property({type: String})
   firmId!: string;
 
+  @property({type: Object})
+  toastEventSource!: LitElement;
+
   public openDialog() {
     this.isNewRecord = !(parseInt(this.editedItem.id) > 0);
-    this.dialogTitle = this.isNewRecord ? (this.isStaffMember ? 'Add New Firm Staff Member' : 'Add New External Individual') : 'Edit Firm Staff Member';
+    this.dialogTitle = this.isNewRecord ? 'Add New Firm Staff Member' : 'Edit Firm Staff Member';
     this.confirmBtnText = this.isNewRecord ? 'Add' : 'Save';
     this.dialogOpened = true;
   }
@@ -197,7 +201,6 @@ class StaffMemberDialog extends LitElement {
     this.getEl('#phoneInput').value = '';
     this.getEl('#hasAccessInput').checked = false;
     this.editedItem = cloneDeep(this.defaultItem);
-    this.isStaffMember = true;
   }
 
   private validate() {
@@ -219,16 +222,12 @@ class StaffMemberDialog extends LitElement {
   }
 
   private getControlsData() {
-    if (this.isNewRecord) {
-      this.editedItem.user.email = this.getEl('#emailInput').value;
-    }
+    this.editedItem.user.email = this.getEl('#emailInput').value;
     this.editedItem.user.first_name = this.getEl('#firstNameInput').value;
     this.editedItem.user.last_name = this.getEl('#lastNameInput').value;
     this.editedItem.user.profile.phone_number = this.getEl('#phoneInput').value;
     this.editedItem.hasAccess = this.getEl('#hasAccessInput').checked;
-    if (this.isStaffMember) {
-      this.editedItem.user.profile.job_title = this.getEl('#positionInput').value;
-    }
+    this.editedItem.user.profile.job_title = this.getEl('#positionInput').value;
   }
 
   private saveDialogData() {
@@ -242,26 +241,25 @@ class StaffMemberDialog extends LitElement {
 
     makeRequest(options, this.editedItem)
       .then((resp: any) => this._handleResponse(resp))
-      .catch((err: any) => this._handleError(err))
+      .catch((err: any) => this._handleError(err));
   }
 
   _handleResponse(resp: any) {
     this.requestInProcess = false;
-    fireEvent(this, 'member-updated', resp);
+    fireEvent(this, 'staff-member-updated', {...resp, hasAccess: this.editedItem.hasAccess});
     this.handleDialogClosed();
   }
 
   _handleError(err: any) {
     this.requestInProcess = false;
-    const msg =  'Failed to save/update new '+  this.isStaffMember ? 'Firm Staff Member' : 'External Individual' + '!';
+    const msg = 'Failed to save/update new Firm Staff Member!';
     logError(msg, 'staff-member', err);
-    fireEvent(this, 'toast', {text: msg});
+    fireEvent(this.toastEventSource, 'toast', {text: formatServerErrorAsText(err)});
   }
 
   getEl(elName: string): HTMLInputElement {
     return this.shadowRoot!.querySelector(elName)! as HTMLInputElement;
-  };
+  }
 
 }
 
-export {StaffMemberDialog as StaffMemberDialogEl}

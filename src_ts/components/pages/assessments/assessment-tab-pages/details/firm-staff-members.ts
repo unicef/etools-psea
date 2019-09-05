@@ -3,23 +3,30 @@ import '@polymer/paper-icon-button/paper-icon-button';
 import {LitElement, html, property, customElement} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {EtoolsTableColumn, EtoolsTableColumnType} from '../../../../common/layout/etools-table/etools-table';
-import {defaultPaginator, EtoolsPaginator, getPaginator} from '../../../../common/layout/etools-table/pagination/paginator';
+import {
+  defaultPaginator,
+  EtoolsPaginator,
+  getPaginator
+} from '../../../../common/layout/etools-table/pagination/paginator';
 import '../../../../common/layout/etools-table/etools-table';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {makeRequest} from '../../../../utils/request-helper';
+import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {buildUrlQueryString} from '../../../../common/layout/etools-table/etools-table-utility';
 import {GenericObject} from '../../../../../types/globals';
 import './staff-member-dialog';
-import {StaffMemberDialogEl} from './staff-member-dialog';
+import {StaffMemberDialog} from './staff-member-dialog';
 import {cloneDeep} from '../../../../utils/utils';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
+import {EtoolsStaffMemberModel} from '../../../../user/user-model';
+import {fireEvent} from '../../../../utils/fire-custom-event';
+import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 
 /**
  * @customElement
  * @LitElement
  */
 @customElement('firm-staff-members')
-class FirmStaffMembers extends LitElement {
+export class FirmStaffMembers extends LitElement {
 
   render() {
     // language=HTML
@@ -64,12 +71,22 @@ class FirmStaffMembers extends LitElement {
             .paginator="${this.paginator}"
             @paginator-change="${this.paginatorChange}"
             showEdit
-            showDelete>
+            @edit-item="${this.openStaffMemberDialog}"
+            @item-changed="${this.itemChanged}">
           </etools-table>
         </div>
       </etools-content-panel>
     `;
   }
+
+  @property({type: Number})
+  assessmentId!: number;
+
+  @property({type: Array})
+  currentFirmAssessorStaffWithAccess!: number[];
+
+  @property({type: Number})
+  assessorId!: number;
 
   @property({type: Array})
   staffMembers: GenericObject[] = [];
@@ -110,32 +127,32 @@ class FirmStaffMembers extends LitElement {
       type: EtoolsTableColumnType.Text
     }
   ];
-  private dialogStaffMember!: StaffMemberDialogEl;
+  private dialogStaffMember!: StaffMemberDialog;
 
   @property({type: String})
   firmId!: string;
-
-  connectedCallback() {
-    super.connectedCallback();
-    this.createAddStaffMemberDialog();
-    this.initListeners();
-  }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this.removeListeners();
   }
 
-  initListeners() {
-    this.addEventListener('edit-item', this.openStaffMemberDialog);
-  }
-
   removeListeners() {
-    this.removeEventListener('edit-item', this.openStaffMemberDialog);
     if (this.dialogStaffMember) {
-      this.dialogStaffMember.removeEventListener('member-updated', this.onStaffMemberSaved);
+      this.dialogStaffMember.removeEventListener('staff-member-updated', this.onStaffMemberSaved);
       document.querySelector('body')!.removeChild(this.dialogStaffMember);
     }
+  }
+
+  openStaffMemberDialog(event?: any) {
+    if (!this.dialogStaffMember) {
+      this.createStaffMemberDialog();
+    }
+    if (event && event.detail) {
+      this.dialogStaffMember.editedItem = cloneDeep(event.detail);
+    }
+    this.dialogStaffMember.firmId = this.firmId;
+    this.dialogStaffMember.openDialog();
   }
 
   populateStaffMembersList(firmId: string) {
@@ -154,53 +171,78 @@ class FirmStaffMembers extends LitElement {
   }
 
   loadStaffMembers() {
-    let endpoint = getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId});
+    const endpoint = getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId});
     endpoint.url += `?${buildUrlQueryString(this.paginator)}`;
-    makeRequest(endpoint)
+    makeRequest(endpoint as RequestEndpoint)
       .then((resp: any) => {
-        this.staffMembers = resp.results;
+        this.staffMembers = resp.results.map((sm: any) => {
+          return {...sm, hasAccess: this.currentFirmAssessorStaffWithAccess.includes(sm.id)}
+        });
         this.paginator = getPaginator(this.paginator, {count: resp.count, data: this.staffMembers});
       })
       .catch((err: any) => {
         this.staffMembers = [];
-        this.paginator = getPaginator(this.paginator, {count: 0, data: this.staffMembers})
+        this.paginator = getPaginator(this.paginator, {count: 0, data: this.staffMembers});
         console.log(err);
-      }
-      );
+      });
   }
 
-  createAddStaffMemberDialog() {
-    this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialogEl;
+  createStaffMemberDialog() {
+    this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialog;
     this.dialogStaffMember.setAttribute('id', 'dialogStaffMember');
+    this.dialogStaffMember.toastEventSource = this;
     this.onStaffMemberSaved = this.onStaffMemberSaved.bind(this);
-    this.dialogStaffMember.addEventListener('member-updated', this.onStaffMemberSaved);
+    this.dialogStaffMember.addEventListener('staff-member-updated', this.onStaffMemberSaved);
     document.querySelector('body')!.appendChild(this.dialogStaffMember);
-  }
-
-  openStaffMemberDialog(event?: any) {
-    if (event && event.detail) {
-      this.dialogStaffMember.editedItem = cloneDeep(event.detail);
-    }
-    this.dialogStaffMember.firmId = this.firmId;
-    this.dialogStaffMember.openDialog();
   }
 
   onStaffMemberSaved(e: any) {
     const savedItem = e.detail;
-    const index = this.staffMembers.findIndex((r: any) => r.id === savedItem.id);
+    this.updateItemData(savedItem);
+    this.updateFirmAssessorStaffAccess(savedItem as EtoolsStaffMemberModel);
+  }
+
+  updateItemData(itemData: any) {
+    const index = this.staffMembers.findIndex((r: any) => r.id === itemData.id);
     if (index > -1) { // edit
-      this.staffMembers.splice(index, 1, savedItem);
+      this.staffMembers.splice(index, 1, itemData);
     } else {
       this.paginator.count++;
-      this.staffMembers.push(savedItem);
+      this.staffMembers.push(itemData);
     }
     this.paginator = getPaginator(this.paginator, {count: this.paginator.count, data: this.staffMembers});
   }
 
-  getIndexById(id: number) {
-    return this.staffMembers.findIndex((r: any) => r.id === id);
+  updateFirmAssessorStaffAccess(staffMember: EtoolsStaffMemberModel) {
+    if ((staffMember.hasAccess && this.currentFirmAssessorStaffWithAccess.includes(staffMember.id)) ||
+      (!staffMember.hasAccess && !this.currentFirmAssessorStaffWithAccess.includes(staffMember.id))) {
+      return;
+    }
+
+    let updatedStaffWithAccessIds: number[] = [...this.currentFirmAssessorStaffWithAccess];
+    if (staffMember.hasAccess) {
+      updatedStaffWithAccessIds.push(staffMember.id);
+    } else {
+      updatedStaffWithAccessIds = updatedStaffWithAccessIds.filter((id: number) => id !== staffMember.id);
+    }
+
+    const baseUrl = getEndpoint(etoolsEndpoints.assessor, {id: this.assessmentId}).url!;
+    const endpointData = new RequestEndpoint(baseUrl + this.assessorId + '/', 'PATCH');
+
+    makeRequest(endpointData, {auditor_firm_staff: updatedStaffWithAccessIds})
+      .then((resp) => {
+        this.currentFirmAssessorStaffWithAccess = [...resp.auditor_firm_staff];
+        fireEvent(this, 'toast', {
+          text: `${staffMember.user.first_name} ${staffMember.user.last_name}'s access has been updated`
+        });
+      })
+      .catch((err: any) =>
+        fireEvent(this, 'toast', {text: formatServerErrorAsText(err), showCloseBtn: true}));
+  }
+
+  itemChanged(e: CustomEvent) {
+    this.updateItemData(e.detail);
+    this.updateFirmAssessorStaffAccess(e.detail as EtoolsStaffMemberModel);
   }
 
 }
-
-export {FirmStaffMembers as FirmStaffMembersEl}

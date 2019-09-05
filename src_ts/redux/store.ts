@@ -23,17 +23,20 @@ import {UserAction} from './actions/user.js';
 import {UserState} from './reducers/user.js';
 import {CommonDataAction} from './actions/common-data';
 import {CommonDataState} from './reducers/common-data';
+import {PageDataAction} from './actions/page-data';
+import {PageDataState} from './reducers/page-data';
 
 // Overall state extends static states and partials lazy states.
 export interface RootState {
   app?: AppState;
   user?: UserState;
   commonData?: CommonDataState;
+  pageData?: PageDataState;
 }
 
 // could be more than one action AppAction | OtherAppAction ...
 // TODO: remove any and find a way to fix generated ts-lint errors
-export type RootAction = AppAction | UserAction | CommonDataAction | any;
+export type RootAction = AppAction | UserAction | CommonDataAction | PageDataAction | any;
 
 // Sets up a Chrome extension for time travel debugging.
 // See https://github.com/zalmoxisus/redux-devtools-extension for more information.

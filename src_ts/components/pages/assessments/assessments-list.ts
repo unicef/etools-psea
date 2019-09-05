@@ -11,7 +11,7 @@ import {pageLayoutStyles} from '../../styles/page-layout-styles';
 
 import {GenericObject} from '../../../types/globals';
 import '../../common/layout/filters/etools-filters';
-import {updateFilterSelectionOptions} from '../engagements/list/filters';
+import {updateFilterSelectionOptions} from './list/filters';
 import {EtoolsFilter} from '../../common/layout/filters/etools-filters';
 import {ROOT_PATH} from '../../../config/config';
 import {elevationStyles} from '../../styles/lit-styles/elevation-styles';
@@ -29,7 +29,7 @@ import {
   getUrlQueryStringSort
 } from '../../common/layout/etools-table/etools-table-utility';
 
-import {defaultSelectedFilters, engagementsFilters, updateFiltersSelectedValues} from './list/filters';
+import {defaultSelectedFilters, assessmentsFilters, updateFiltersSelectedValues} from './list/filters';
 import {RouteDetails, RouteQueryParams} from '../../../routing/router';
 import {updateAppLocation} from '../../../routing/routes';
 import {buttonsStyles} from '../../styles/button-styles';
@@ -37,14 +37,13 @@ import {fireEvent} from '../../utils/fire-custom-event';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
 import {makeRequest} from '../../utils/request-helper';
-import {isJsonStrMatch} from '../../utils/utils';
 
 /**
  * @LitElement
  * @customElement
  */
-@customElement('engagements-list')
-export class EngagementsList extends connect(store)(LitElement) {
+@customElement('assessments-list')
+export class AssessmentsList extends connect(store)(LitElement) {
 
   static get styles() {
     return [elevationStyles];
@@ -61,15 +60,15 @@ export class EngagementsList extends connect(store)(LitElement) {
         }
       </style>
       <page-content-header>
-        <h1 slot="page-title">Engagements list</h1>
+        <h1 slot="page-title">Assessments list</h1>
 
         <div slot="title-row-actions" class="content-header-actions">
-          <paper-button class="default left-icon" raised @tap="${this.exportEngagements}">
+          <paper-button class="default left-icon" raised @tap="${this.exportAssessments}">
             <iron-icon icon="file-download"></iron-icon>Export
           </paper-button>
 
           <paper-button class="primary left-icon" raised @tap="${this.goToAddnewPage}">
-            <iron-icon icon="add"></iron-icon>Add new engagement
+            <iron-icon icon="add"></iron-icon>Add new assessment
           </paper-button>
         </div>
       </page-content-header>
@@ -116,7 +115,7 @@ export class EngagementsList extends connect(store)(LitElement) {
   sort: EtoolsTableSortItem[] = [{name: 'ref_number', sort: EtoolsTableColumnSort.Desc}];
 
   @property({type: Array})
-  filters: EtoolsFilter[] = [...engagementsFilters];
+  filters: EtoolsFilter[] = [...assessmentsFilters];
 
   @property({type: Object})
   selectedFilters: GenericObject = {...defaultSelectedFilters};
@@ -126,7 +125,7 @@ export class EngagementsList extends connect(store)(LitElement) {
     {
       label: 'Reference No.',
       name: 'reference_number',
-      link_tmpl: `${ROOT_PATH}engagements/:id/details`,
+      link_tmpl: `${ROOT_PATH}assessments/:id/details`,
       type: EtoolsTableColumnType.Link
     },
     {
@@ -150,14 +149,12 @@ export class EngagementsList extends connect(store)(LitElement) {
     {
       label: 'Assessor',
       name: 'assessor',
-      type: EtoolsTableColumnType.Text,
-      placeholder: '—'
+      type: EtoolsTableColumnType.Text
     },
     {
       label: 'Rating',
       name: 'rating',
-      type: EtoolsTableColumnType.Text,
-      placeholder: '—'
+      type: EtoolsTableColumnType.Text
     }
   ];
 
@@ -166,7 +163,7 @@ export class EngagementsList extends connect(store)(LitElement) {
 
 
   stateChanged(state: RootState) {
-    if (state.app!.routeDetails.routeName === 'engagements' &&
+    if (state.app!.routeDetails.routeName === 'assessments' &&
       state.app!.routeDetails.subRouteName === 'list') {
 
       if (state.commonData) {
@@ -184,7 +181,7 @@ export class EngagementsList extends connect(store)(LitElement) {
         } else {
           // init filters, sort, page, page_size from url params
           this.updateListParamsFromRouteDetails(this.routeDetails.queryParams);
-          this.getEngagementsData();
+          this.getAssessmentsData();
         }
       }
     }
@@ -246,7 +243,7 @@ export class EngagementsList extends connect(store)(LitElement) {
    * This method runs each time new data is received from routeDetails state
    * (sort, filters, paginator init/change)
    */
-  getEngagementsData() {
+  getAssessmentsData() {
     let endpoint = {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`};
     return makeRequest(endpoint).then((response: GenericObject) => {
       this.paginator = getPaginator(this.paginator, response);
@@ -255,7 +252,7 @@ export class EngagementsList extends connect(store)(LitElement) {
       .catch((err: any) => console.error(err));
   }
 
-  exportEngagements() {
+  exportAssessments() {
     // const exportParams = {
     //   ...this.selectedFilters
     // };
@@ -265,6 +262,6 @@ export class EngagementsList extends connect(store)(LitElement) {
   }
 
   goToAddnewPage() {
-    updateAppLocation('/engagements/new/details', true);
+    updateAppLocation('/assessments/new/details', true);
   }
 }

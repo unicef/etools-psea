@@ -40,6 +40,8 @@ documentContainer.innerHTML = `
         --ecp-header-title: {
           padding: 0 0;
           text-align: left;
+          font-size: 18px;
+          font-weight: 500;
         }
         --paper-input-container-label: {
           color: var(--secondary-text-color, #737373);
@@ -50,6 +52,10 @@ documentContainer.innerHTML = `
         --paper-input-prefix: {
           color: var(--secondary-text-color, #737373);
           margin-right: 10px;
+        };
+        --esmm-external-wrapper: {
+          width: 100%;
+          margin: 0;
         };
         --paper-checkbox-checked-color: var(--primary-color);
         --paper-checkbox-unchecked-color: var(--secondary-text-color);

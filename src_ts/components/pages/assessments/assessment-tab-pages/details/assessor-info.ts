@@ -5,8 +5,8 @@ import '@polymer/paper-button/paper-button.js';
 import './assessing-firm';
 import './external-individual';
 import './firm-staff-members';
-import { UnicefUser} from '../../../../../types/globals';
-import {LitElement, html, property, query} from 'lit-element';
+import {UnicefUser} from '../../../../../types/globals';
+import {LitElement, html, property, query, customElement} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {buttonsStyles} from '../../../../styles/button-styles';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
@@ -14,14 +14,14 @@ import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
-import {Assessor, AssessorTypes} from '../../../../../types/engagement';
-import {AssessingFirmElement} from './assessing-firm';
-import {ExternalIndividualElement} from './external-individual';
+import {Assessor, AssessorTypes} from '../../../../../types/assessment';
+import {AssessingFirm} from './assessing-firm';
+import {ExternalIndividual} from './external-individual';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
-import {FirmStaffMembersEl} from './firm-staff-members';
+import {FirmStaffMembers} from './firm-staff-members';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
@@ -30,7 +30,8 @@ import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown'
  * @customElement
  * @LitElement
  */
-class AssessorInfo extends connect(store)(LitElement) {
+@customElement('assessor-info')
+export class AssessorInfo extends connect(store)(LitElement) {
 
   render() {
     // language=HTML
@@ -63,8 +64,10 @@ class AssessorInfo extends connect(store)(LitElement) {
 
         <div class="row-padding-v">
           <label class="paper-label">Assessor is:</label>
-          <paper-radio-group .selected="${this._getAssessorType(this.assessor)}" ?readonly="${this.isReadonly(this.editMode)}"
-              @selected-changed="${(e: CustomEvent) => this._setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
+          <paper-radio-group .selected="${this._getAssessorType(this.assessor)}"
+              ?readonly="${this.isReadonly(this.editMode)}"
+              @selected-changed="${(e: CustomEvent) => this._setSelectedAssessorType(
+      (e.target as PaperRadioGroupElement)!.selected!)}">
             <paper-radio-button name="staff">Unicef Staff</paper-radio-button>
             <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
             <paper-radio-button name="external">External Individual</paper-radio-button>
@@ -74,7 +77,7 @@ class AssessorInfo extends connect(store)(LitElement) {
         ${this._getTemplateByAssessorType(this.assessor, this.editMode, this.isNew)}
 
         <div class="layout-horizontal right-align row-padding-v"
-          ?hidden="${this.hideActionButtons(this.isNew, this.editMode)}">
+            ?hidden="${this.hideActionButtons(this.isNew, this.editMode)}">
           <paper-button class="default" @tap="${this.cancelAssessor}">
             Cancel
           </paper-button>
@@ -84,78 +87,8 @@ class AssessorInfo extends connect(store)(LitElement) {
         </div>
       </etools-content-panel>
 
-      <firm-staff-members  id="firmStaffMembers" ?hidden="${this.hideFirmStaffMembers(this.isNew, this.assessor)}"></firm-staff-members>
+      ${this.getFirmStaffMembersHtml(this.isNew, this.assessor)}
     `;
-  }
-
-  @property({type: Object})
-  assessor!: Assessor;// Initialization here causes eternal individual field reset on refresh
-
-  @property({type: Array})
-  unicefUsers!: UnicefUser[];
-
-  @property({type: Object})
-  assessmentId!: string | number;
-
-  @property({type: Boolean})
-  isNew: boolean = false;
-
-  @property({type: Boolean})
-  editMode: boolean = true;
-
-  @property({type: Object})
-  originalAssessor!: Assessor;
-
-  @query('#assessingFirm')
-  assessingFirmElement!: AssessingFirmElement;
-
-  @query('#externalIndividual')
-  externalIndividualElement!: ExternalIndividualElement;
-
-  stateChanged(state: RootState) {
-    if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
-      this.unicefUsers = [...state.commonData!.unicefUsers];
-    }
-    if (state.app!.routeDetails!.params) {
-      let engagementId = state.app!.routeDetails.params.engagementId;
-      if (this.assessmentId !== engagementId) {
-        this.assessmentId = engagementId;
-        this.setPageData(this.assessmentId);
-      }
-    }
-
-  }
-
-  setPageData(assessmentId: string | number) {
-    if (!assessmentId || assessmentId === 'new') {
-      this.assessor = new Assessor();
-      return;
-    }
-    let url = getEndpoint(etoolsEndpoints.assessor, {id: assessmentId}).url!;
-    makeRequest(new RequestEndpoint(url, 'GET'))
-      .then(resp => {
-        this.assessor = resp;
-        this.isNew = false;
-        this.editMode = this.isNew;
-        this.originalAssessor = cloneDeep(this.assessor);
-        this.requestUpdate();
-
-        if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessor.auditor_firm) {
-          this.loadFirmStaffMembers(this.assessor.auditor_firm!);
-        }
-
-      })
-      .catch((err) => this._handleErrorrOnGetAssessor(err));
-  }
-
-  _handleErrorrOnGetAssessor(err: any) {
-    if (err.status === 404) {
-      this.assessor = new Assessor();
-      this.isNew = true;
-      this.editMode = this.isNew;
-    } else {
-      fireEvent(this, 'toast', {text: 'Error on getting assessor data'})
-    }
   }
 
   _getTemplateByAssessorType(assessor: Assessor | null, editMode: boolean, isNew: boolean) {
@@ -199,8 +132,93 @@ class AssessorInfo extends connect(store)(LitElement) {
     }
   }
 
+  getFirmStaffMembersHtml(isNew: boolean, assessor: Assessor) {
+    if (!assessor) {
+      return;
+    }
+    return html`<firm-staff-members id="firmStaffMembers"
+        ?hidden="${this.hideFirmStaffMembers(isNew, assessor)}"
+        .assessorId="${this.assessor.id}"
+        .assessmentId="${this.assessmentId}"
+        .currentFirmAssessorStaffWithAccess="${this.assessor.auditor_firm_staff}">
+      </firm-staff-members>`;
+  }
+
+  @property({type: Object})
+  assessor!: Assessor; // Initialization here causes eternal individual field reset on refresh
+
+  @property({type: Array})
+  unicefUsers!: UnicefUser[];
+
+  @property({type: Object})
+  assessmentId!: string | number;
+
+  @property({type: Boolean})
+  isNew: boolean = false;
+
+  @property({type: Boolean})
+  editMode: boolean = true;
+
+  @property({type: Object})
+  originalAssessor!: Assessor;
+
+  @query('#assessingFirm')
+  assessingFirmElement!: AssessingFirm;
+
+  @query('#externalIndividual')
+  externalIndividualElement!: ExternalIndividual;
+
+  stateChanged(state: RootState) {
+    if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
+      this.unicefUsers = [...state.commonData!.unicefUsers];
+    }
+    if (state.app!.routeDetails!.params) {
+      const assessmentId = state.app!.routeDetails.params.assessmentId;
+      if (this.assessmentId !== assessmentId) {
+        this.assessmentId = assessmentId;
+        this.getAssessorDetails(this.assessmentId);
+      }
+    }
+  }
+
+  getAssessorDetails(assessmentId: string | number) {
+    if (!assessmentId || assessmentId === 'new') {
+      this.assessor = new Assessor();
+      return;
+    }
+    const url = getEndpoint(etoolsEndpoints.assessor, {id: assessmentId}).url!;
+    makeRequest(new RequestEndpoint(url, 'GET'))
+      .then((resp: any) => {
+        this.assessor = resp;
+        this.isNew = false;
+        this.editMode = this.isNew;
+        this.originalAssessor = cloneDeep(this.assessor);
+        this.requestUpdate().then(() => {
+          // load staff members after staff members element is initialized
+          if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessor.auditor_firm) {
+            this.loadFirmStaffMembers(this.assessor.auditor_firm!);
+          }
+        });
+      })
+      .catch((err: any) => this._handleErrorOnGetAssessor(err));
+  }
+
+  _handleErrorOnGetAssessor(err: any) {
+    if (err.status === 404) {
+      this.assessor = new Assessor();
+      this.isNew = true;
+      this.editMode = this.isNew;
+    } else {
+      console.error(err);
+      fireEvent(this, 'toast', {text: 'Error on getting assessor data'});
+    }
+  }
+
   loadFirmStaffMembers(firmId: string) {
-    let firmStaffMembersEl = this.shadowRoot!.querySelector('#firmStaffMembers') as FirmStaffMembersEl;
+    const firmStaffMembersEl = this.shadowRoot!.querySelector('#firmStaffMembers') as FirmStaffMembers;
+    if (!firmStaffMembersEl) {
+      return;
+    }
     firmStaffMembersEl.populateStaffMembersList(firmId);
   }
 
@@ -208,13 +226,13 @@ class AssessorInfo extends connect(store)(LitElement) {
     if (!assessor || !assessor.assessor_type || isNew) {
       return true;
     }
-    let assessorType = assessor.assessor_type;
+    const assessorType = assessor.assessor_type;
     if ([AssessorTypes.Staff, AssessorTypes.ExternalIndividual].includes(assessorType)) {
       return true;
     }
 
     if (assessorType === AssessorTypes.Firm) {
-     return !assessor.auditor_firm;
+      return !assessor.auditor_firm;
     }
     return true;
   }
@@ -236,7 +254,7 @@ class AssessorInfo extends connect(store)(LitElement) {
   }
 
   _setSelectedUnicefUser(event: CustomEvent) {
-    let selectedUser = event.detail.selectedItem;
+    const selectedUser = event.detail.selectedItem;
     if (selectedUser) {
       this.assessor.user = selectedUser.id;
     } else {
@@ -250,14 +268,14 @@ class AssessorInfo extends connect(store)(LitElement) {
       return;
     }
 
-    let endpointData = new RequestEndpoint(this._getUrl(),
-       this._getMethod());
+    const endpointData = new RequestEndpoint(this._getUrl(), this._getMethod());
 
     makeRequest(endpointData, this.collectAssessorData())
       .then((resp) => {
         this._handleAssessorSaved(resp);
       })
-      .catch((err) =>  fireEvent(this, 'toast', {text: formatServerErrorAsText(err), showCloseBtn: true}));
+      .catch((err: any) =>
+        fireEvent(this, 'toast', {text: formatServerErrorAsText(err), showCloseBtn: true}));
   }
 
 
@@ -277,29 +295,29 @@ class AssessorInfo extends connect(store)(LitElement) {
   }
 
   _getUrl() {
-    let baseUrl = getEndpoint(etoolsEndpoints.assessor, {id: this.assessmentId}).url!;
+    const baseUrl = getEndpoint(etoolsEndpoints.assessor, {id: this.assessmentId}).url!;
     return this.assessor.id ? baseUrl + this.assessor.id + '/' : baseUrl;
   }
 
   collectAssessorData() {
-    let assessorPart1 = { assessor_type: this.assessor.assessor_type };
+    const assessorPart1 = {assessor_type: this.assessor.assessor_type};
 
     switch (this.assessor.assessor_type) {
       case AssessorTypes.Staff:
         return {
-            ...assessorPart1,
-            ...this._getDataForStaffAssessor()
-          };
+          ...assessorPart1,
+          ...this._getDataForStaffAssessor()
+        };
       case AssessorTypes.Firm:
         return {
           ...assessorPart1,
           ...this._getDataForFirmAssessor()
         };
       case AssessorTypes.ExternalIndividual:
-          return {
-            ...assessorPart1,
-            ...this._getDataForExternalIndivAssessor()
-          };
+        return {
+          ...assessorPart1,
+          ...this._getDataForExternalIndivAssessor()
+        };
       default:
         return {};
     }
@@ -321,7 +339,7 @@ class AssessorInfo extends connect(store)(LitElement) {
     if (!this.assessor.assessor_type) {
       return false;
     }
-    switch(this.assessor.assessor_type) {
+    switch (this.assessor.assessor_type) {
       case AssessorTypes.Staff:
         return this._validateUnicefStaff();
       case AssessorTypes.Firm:
@@ -346,7 +364,7 @@ class AssessorInfo extends connect(store)(LitElement) {
       this.assessor = new Assessor();
     } else {
       this.assessor = cloneDeep(this.originalAssessor);
-       this.editMode = false;
+      this.editMode = false;
     }
   }
 
@@ -355,17 +373,11 @@ class AssessorInfo extends connect(store)(LitElement) {
   }
 
   hideEditIcon(isNew: boolean, editMode: boolean) {
-    if (isNew || editMode) {
-      return true;
-    }
-    return false;
+    return isNew || editMode;
   }
 
   hideActionButtons(isNew: boolean, editMode: boolean) {
-    if (isNew || editMode) {
-      return false;
-    }
-    return true;
+    return !(isNew || editMode);
   }
 
   isReadonly(editMode: boolean) {
@@ -373,4 +385,3 @@ class AssessorInfo extends connect(store)(LitElement) {
   }
 
 }
-window.customElements.define('assessor-info', AssessorInfo);

@@ -40,6 +40,7 @@ import './app-theme.js';
 import {ToastNotificationHelper} from '../common/toast-notifications/toast-notification-helper';
 import user from '../../redux/reducers/user';
 import commonData from '../../redux/reducers/common-data';
+import pageData from '../../redux/reducers/page-data';
 import {SMALL_MENU_ACTIVE_LOCALSTORAGE_KEY} from '../../config/config';
 import {getCurrentUserData} from '../user/user-actions';
 import {EtoolsRouter} from '../../routing/routes';
@@ -49,7 +50,8 @@ import {loadPartners, loadOffices, loadSections, loadExternalIndividuals} from '
 
 store.addReducers({
   user,
-  commonData
+  commonData,
+  pageData
 });
 
 /**
@@ -87,12 +89,12 @@ export class AppShell extends connect(store)(LitElement) {
 
         <!-- Main content -->
         <main role="main" class="main-content">
-          <engagements-list class="page"
-            ?active="${this.isActivePage(this.mainPage, 'engagements', this.subPage, 'list')}">
-          </engagements-list>
-          <engagement-tabs class="page"
-            ?active="${this.isActivePage(this.mainPage, 'engagements', this.subPage, 'details|questionnaire|followup')}">
-          </engagement-tabs>
+          <assessments-list class="page"
+            ?active="${this.isActivePage(this.mainPage, 'assessments', this.subPage, 'list')}">
+          </assessments-list>
+          <assessment-tabs class="page"
+            ?active="${this.isActivePage(this.mainPage, 'assessments', this.subPage, 'details|questionnaire|followup')}">
+          </assessment-tabs>
           <page-not-found class="page"
             ?active="${this.isActivePage(this.mainPage, 'page-not-found')}">
           </page-not-found>

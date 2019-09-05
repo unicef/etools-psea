@@ -20,7 +20,7 @@ export const etoolsEndpoints: EtoolsEndpoints = {
     url: '/api/v3/users/external/'
   },
   partners: {
-    url: '/api/v2/partners/?hidden=false',
+    url: '/api/v2/partners/?hidden=false'
   },
   unicefUsers: {
     url: '/api/v3/users/?verbosity=minimal',
@@ -62,5 +62,8 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   // },
   actionPoints: {
     template: '/api/action_points/action_points/?psea_assessment=<%=id%>'
+  },
+  attachmentsUpload: {
+    url: '/api/v2/attachments/upload/'
   }
 };

@@ -30,7 +30,7 @@ export interface EtoolsTableColumn {
   sort?: EtoolsTableColumnSort;
   /**
    * used only for EtoolsTableColumnType.Link to specify url template (route with a single param)
-   * ex: `${ROOT_PATH}engagements/:id/details`
+   * ex: `${ROOT_PATH}assessments/:id/details`
    *    - id will be replaced with item object id property
    */
   link_tmpl?: string;
@@ -90,6 +90,8 @@ export class EtoolsTable extends LitElement {
 
   @property({type: Object})
   paginator!: EtoolsPaginator;
+
+  private defaultPlaceholder: string = '—';
 
   getColumnHtml(column: EtoolsTableColumn) {
     if (!this.columnHasSort(column.sort)) {
@@ -199,7 +201,7 @@ export class EtoolsTable extends LitElement {
   // Rows
   getRowDataColumnClassList(key: string) {
     const column: EtoolsTableColumn = this.getColumnDetails(key);
-    let cssClass: string = column.capitalize ? 'capitalize ' : '';
+    const cssClass: string = column.capitalize ? 'capitalize ' : '';
     switch (column.type) {
       case EtoolsTableColumnType.Number:
         return `${cssClass}right-align`;
@@ -231,15 +233,16 @@ export class EtoolsTable extends LitElement {
 
   _getCheckbox(item: any, key: string) {
     return html`
-      <paper-checkbox ?checked="${this._getValueByKey(item, key)}"></paper-checkbox>
-    `;
+      <paper-checkbox ?checked="${this._getValueByKey(item, key, '', true)}"
+        @change="${(e: CustomEvent) => this.triggerItemChanged(item, key, (e.currentTarget as any).checked)}">
+      </paper-checkbox>`;
 
   }
 
-  _getValueByKey(item: any, key: string, placeholder?: string) {
+  _getValueByKey(item: any, key: string, placeholder?: string, ignorePlaceholder: boolean = false) {
     let value = null;
     if (key.includes('.')) {
-      let propertyNames = key.split('.');
+      const propertyNames = key.split('.');
 
       value = item[propertyNames.shift()!];
       while (propertyNames.length) {
@@ -248,8 +251,8 @@ export class EtoolsTable extends LitElement {
     } else {
       value = item[key];
     }
-    if (placeholder && (!value || value === '')) {
-      return placeholder;
+    if (!ignorePlaceholder && (!value || value === '')) {
+      return placeholder ? placeholder : this.defaultPlaceholder;
     }
     return value;
   }
@@ -283,6 +286,12 @@ export class EtoolsTable extends LitElement {
 
   toggleColumnSort(sort: EtoolsTableColumnSort): EtoolsTableColumnSort {
     return sort === EtoolsTableColumnSort.Asc ? EtoolsTableColumnSort.Desc : EtoolsTableColumnSort.Asc;
+  }
+
+  triggerItemChanged(item: any, field: string, filedValue: any) {
+    const changedItem = {...item};
+    changedItem[field] = filedValue;
+    fireEvent(this, 'item-changed', changedItem);
   }
 
 }
