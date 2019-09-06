@@ -4,14 +4,18 @@ import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../redux/store';
 
 import '../../common/layout/page-content-header/page-content-header';
-import {pageContentHeaderSlottedStyles}
-  from '../../common/layout/page-content-header/page-content-header-slotted-styles';
+import {pageContentHeaderSlottedStyles} from '../../common/layout/page-content-header/page-content-header-slotted-styles';
 
 import {pageLayoutStyles} from '../../styles/page-layout-styles';
 
 import {GenericObject} from '../../../types/globals';
 import '../../common/layout/filters/etools-filters';
-import {updateFilterSelectionOptions} from './list/filters';
+import {
+  assessmentsFilters,
+  defaultSelectedFilters,
+  updateFilterSelectionOptions,
+  updateFiltersSelectedValues
+} from './list/filters';
 import {EtoolsFilter} from '../../common/layout/filters/etools-filters';
 import {ROOT_PATH} from '../../../config/config';
 import {elevationStyles} from '../../styles/lit-styles/elevation-styles';
@@ -24,12 +28,12 @@ import {
 import {defaultPaginator, EtoolsPaginator, getPaginator} from '../../common/layout/etools-table/pagination/paginator';
 import {
   buildUrlQueryString,
-  EtoolsTableSortItem, getSelectedFiltersFromUrlParams,
-  getSortFields, getSortFieldsFromUrlSortParams,
+  EtoolsTableSortItem,
+  getSelectedFiltersFromUrlParams,
+  getSortFields,
+  getSortFieldsFromUrlSortParams,
   getUrlQueryStringSort
 } from '../../common/layout/etools-table/etools-table-utility';
-
-import {defaultSelectedFilters, assessmentsFilters, updateFiltersSelectedValues} from './list/filters';
 import {RouteDetails, RouteQueryParams} from '../../../routing/router';
 import {updateAppLocation} from '../../../routing/routes';
 import {buttonsStyles} from '../../styles/button-styles';
