@@ -61,12 +61,11 @@ export class AssessmentTabs extends connect(store)(LitElement) {
       </page-content-header>
 
       <div class="page-content">
-        ${this.isActiveTab(this.activeTab,
-        'details') ? html`<assessment-details-page></assessment-details-page>` : ''}
-        ${this.isActiveTab(this.activeTab,
-          'questionnaire') ? html`<assessment-questionnaire-page></assessment-questionnaire-page>` : ''}
-        ${this.isActiveTab(this.activeTab,
-          'followup') ? html`<follow-up-page></follow-up-page>` : ''}
+        <assessment-details-page ?hidden="${!this.isActiveTab(this.activeTab,'details')}">
+        </assessment-details-page>
+        <assessment-questionnaire-page ?hidden="${!this.isActiveTab(this.activeTab,'questionnaire')}">
+        </assessment-questionnaire-page>
+        <follow-up-page ?hidden="${!this.isActiveTab(this.activeTab,'followup')}"></follow-up-page>
       </div>
     `;
   }
@@ -82,17 +81,20 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     {
       tab: 'details',
       tabLabel: 'Details',
-      hidden: false
+      hidden: false,
+      disabled: false
     },
     {
       tab: 'questionnaire',
       tabLabel: 'Questionnaire‎',
-      hidden: false
+      hidden: false,
+      disabled: true
     },
     {
       tab: 'followup',
       tabLabel: 'Follow-Up',
-      hidden: false
+      hidden: false,
+      disabled: true
     }
   ];
 
@@ -109,7 +111,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
   public stateChanged(state: RootState) {
     // update page route data
     if (state.app!.routeDetails.routeName === 'assessments' &&
-      state.app!.routeDetails.subRouteName !== 'list') {
+        state.app!.routeDetails.subRouteName !== 'list') {
       this.routeDetails = state.app!.routeDetails;
 
       const stateActiveTab = state.app!.routeDetails.subRouteName as string;
@@ -122,8 +124,15 @@ export class AssessmentTabs extends connect(store)(LitElement) {
       if (state.app!.routeDetails!.params) {
         const assessmentId = state.app!.routeDetails.params.assessmentId;
         this.setPageData(assessmentId, state.pageData!);
-      }
+        if (state.pageData && this.routeDetails.params) {
+          if (this.routeDetails.params.assessmentId !== 'new') {
+            this.enableTabs();
+          } else {
+            this.resetTabs();
+          }
+        }
 
+      }
     }
   }
 
@@ -166,6 +175,20 @@ export class AssessmentTabs extends connect(store)(LitElement) {
       return 'New PSEA Assessment';
     }
     return this.assessment.reference_number ? `${this.assessment.reference_number}: ${this.assessment.partner_name}` : '';
+  }
+
+  enableTabs() {
+    this.pageTabs.forEach((tab) => {
+      tab.disabled = false;
+    });
+    this.pageTabs = [...this.pageTabs];
+  }
+
+  resetTabs() {
+    this.pageTabs.forEach((tab) => {
+      tab.tab == 'details' ? tab.disabled = false : tab.disabled = true;
+    });
+    this.pageTabs = [...this.pageTabs];
   }
 
   handleTabChange(e: CustomEvent) {
