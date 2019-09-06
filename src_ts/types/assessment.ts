@@ -56,6 +56,11 @@ export class Answer {
   indicator: string | null = null;
   rating: string | null = null;
   comments: string = '';
-  evidences: string[] = [];
+  evidences: AnswerEvidence[] = [];
   attachments: string[] = [];
+}
+
+export class AnswerEvidence {
+  evidence!: string; // id
+  description?: string;
 }

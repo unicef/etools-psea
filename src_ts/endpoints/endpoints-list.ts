@@ -48,7 +48,7 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   attachmentsUpload: {
     url: '/api/v2/attachments/upload/'
   },
-  questionnaireItemAnswer: {
+  questionnaireItemAnswers: {
     template: '/api/psea/assessment/<%=assessmentId%>/answer/'
   }
 

@@ -1,34 +1,29 @@
-import {LitElement, html, property, query, queryAll} from 'lit-element';
+import {LitElement, html, property, query, queryAll, customElement} from 'lit-element';
 import '@polymer/paper-input/paper-textarea';
 import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-radio-group';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
-import {buttonsStyles} from '../../../../styles/button-styles';
 import './question-attachments';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {radioButtonStyles} from '../../../../styles/radio-button-styles';
 import {PaperCheckboxElement} from '@polymer/paper-checkbox/paper-checkbox';
-import {Answer, Question, ProofOfEvidence, Rating} from '../../../../../types/assessment';
+import {Answer, Question, ProofOfEvidence, Rating, AnswerEvidence} from '../../../../../types/assessment';
 import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {PaperRadioButtonElement} from '@polymer/paper-radio-button';
-import {cloneDeep} from 'lodash-es';
-import {RequestEndpoint, makeRequest} from '../../../../utils/request-helper';
-import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
-import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {GenericObject} from '../../../../../types/globals';
 import {PaperTextareaElement} from '@polymer/paper-input/paper-textarea';
 import {QuestionAttachmentsElement} from './question-attachments';
-import {fireEvent} from '../../../../utils/fire-custom-event';
-import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import {PaperInputElement} from '@polymer/paper-input/paper-input';
 
-class QuestionnaireAnswer extends connect(store)(LitElement) {
+@customElement('questionnaire-answer')
+export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   render() {
     return html`
-      ${SharedStylesLit}${gridLayoutStylesLit}${labelAndvalueStylesLit}${buttonsStyles}
+      ${SharedStylesLit}${gridLayoutStylesLit}${labelAndvalueStylesLit}
       ${radioButtonStyles}
       <style>
         .padd-right {
@@ -51,9 +46,9 @@ class QuestionnaireAnswer extends connect(store)(LitElement) {
           display: block;
         }
       </style>
-      <div class="row-padding-v">
+      <div class="row-padding-v" ?hidden="${!this.editMode}">
         <label class="paper-label" required>Rating</label> <br/>
-        <paper-radio-group id="ratingElement" .selected="${this.answer.rating}" @change="${(e => this._selectedRatingChanged(e.target))}">
+        <paper-radio-group id="ratingElement" .selected="${this.answer.rating}" @change="${((e: CustomEvent) => this._selectedRatingChanged(e.target as PaperRadioButtonElement))}">
           ${this._getRatingRadioButtonsTemplate(this.question)}
         </paper-radio-group>
         <span class="invalid-color block" ?hidden="${this.hideRatingRequired}">Please select Rating</span>
@@ -67,7 +62,7 @@ class QuestionnaireAnswer extends connect(store)(LitElement) {
       ${this._getProofOfEvidenceTemplate(this.question.evidences, this.answer)}
 
       <div class="row-padding-v" ?hidden=${!this.showOtherInput}>
-        <paper-input label="Please specify other" always-float-label></paper-input>
+        <paper-input id="otherEvidenceInput" label="Please specify other" always-float-label></paper-input>
       </div>
 
       <div class="row-padding-v extra-padd">
@@ -75,14 +70,6 @@ class QuestionnaireAnswer extends connect(store)(LitElement) {
         </question-attachments>
       </div>
 
-      <div class="layout-horizontal right-align row-padding-v">
-      <paper-button class="default" @tap="${this.cancel}">
-        Cancel
-      </paper-button>
-      <paper-button class="primary" @tap="${this.saveAnswer}">
-        Save
-      </paper-button>
-    </div>
     `;
   }
 
@@ -91,9 +78,6 @@ class QuestionnaireAnswer extends connect(store)(LitElement) {
 
   @property({type: Object})
   answer = new Answer();
-
-  @property({type: Object})
-  originalAnswer!: Answer;
 
   @property({type: Boolean})
   showOtherInput: boolean = false;
@@ -116,8 +100,11 @@ class QuestionnaireAnswer extends connect(store)(LitElement) {
   @query('#attachmentsElement')
   attachmentsElement!: QuestionAttachmentsElement;
 
-  @queryAll('paper-checkbox.proofOfEvidence[checked]')
-  checkedEvidenceBoxes!: NodeList;
+  @query('#otherEvidenceInput')
+  otherEvidenceInput!: PaperInputElement;
+
+  // @queryAll('paper-checkbox.proofOfEvidence[checked]')
+  // checkedEvidenceBoxes!: NodeList;
 
   stateChanged(state: RootState) {
     if (state.app!.routeDetails.params && state.app!.routeDetails.params!.assessmentId) {
@@ -131,7 +118,7 @@ class QuestionnaireAnswer extends connect(store)(LitElement) {
       return html`
         <paper-checkbox class="proofOfEvidence padd-right" ?checked="${this._isChecked(evidence.id, answer.evidences)}"
             evidenceid="${evidence.id}"
-            @change="${(e: CustomEvent) => this._checkedEvidenceChanged(evidence, (e.target as PaperCheckboxElement).checked!)}">
+            @change="${(e: CustomEvent) => this._checkedEvidenceChanged(evidence, answer.evidences, (e.target as PaperCheckboxElement).checked!)}">
             ${evidence.label}
         </paper-checkbox>`;
     });
@@ -157,11 +144,13 @@ class QuestionnaireAnswer extends connect(store)(LitElement) {
     }
   }
 
-  _isChecked(evidenceId: string, selectedEvidenceIds: string[]) {
-    if (!selectedEvidenceIds || !selectedEvidenceIds.length) {
+  _isChecked(evidenceId: string, selectedEvidences: {evidence:string, other: string}[]) {
+    if (!selectedEvidences || !selectedEvidences.length) {
       return false;
     }
-    return selectedEvidenceIds.includes(evidenceId);
+    let checked = false;
+    selectedEvidences.forEach(ev => { if (Number(ev.evidence) === Number(evidenceId)) {checked = true;} });
+    return checked;
   }
 
   _selectedRatingChanged(target: PaperRadioButtonElement) {
@@ -171,47 +160,31 @@ class QuestionnaireAnswer extends connect(store)(LitElement) {
     this.hideRatingRequired = !!target.name;
   }
 
-  _checkedEvidenceChanged(evidence: ProofOfEvidence, checked: boolean) {
+  _checkedEvidenceChanged(evidence: ProofOfEvidence, answerEvidences: any, checked: boolean) {
     if (evidence.requires_description) {
       this.showOtherInput = checked;
     }
 
-    //this._computeSelectedEvidencesIds(evidence, checked);
+    this._computeSelectedEvidencesIds(evidence, answerEvidences, checked);
 
   }
 
-  // _computeSelectedEvidencesIds(evidence: ProofOfEvidence, checked: boolean) {
-  //   if (!this.answer.evidences.length) {
-  //     this.answer.evidences = [];
-  //   }
-  //   if (checked) {
-  //     this.answer.evidences.push(evidence.id);
-  //   } else {
-  //     this.answer.evidences =  this.answer.evidences.filter(id => Number(id) !== Number(evidence.id));
-  //   }
-  // }
+  _computeSelectedEvidencesIds(evidence: ProofOfEvidence, answerEvidences: AnswerEvidence[], checked: boolean) {
+    if (!answerEvidences.length) {
+      this.answer.evidences = [];
+    }
 
-  cancel() {
-    if (this.answer && this.answer.id) {
-      this.answer = cloneDeep(this.originalAnswer)
+    if (checked) {
+      let ev: AnswerEvidence = {evidence: evidence.id};
+      if (evidence.requires_description) {
+        ev.description = this.otherEvidenceInput.value!;
+      }
+      answerEvidences.push(ev);
     } else {
-      this.answer = new Answer();
-    }
-  }
-
-  saveAnswer() {
-    if (!this.validate()) {
-      return;
+      answerEvidences =  this.answer.evidences.filter(ev => Number(ev.evidence) !== Number(evidence.id));
     }
 
-    let endpointData = new RequestEndpoint(this._getUrl(), this._getMethod());
-    let answerBody = this.getAnswerForSave();
-    makeRequest(endpointData, answerBody)
-      .then((resp) => {
-        this.answer = resp;
-        this.editMode = false;
-      })
-      .catch((err:any) => fireEvent(this, 'toast', {text: formatServerErrorAsText(err)}));
+    this.answer.evidences = answerEvidences;
   }
 
   getAnswerForSave() {
@@ -220,40 +193,29 @@ class QuestionnaireAnswer extends connect(store)(LitElement) {
     answer.indicator = this.question.id;
     answer.rating = this.answer.rating;
     answer.comments = this.commentsElement.value;
-    answer.evidences = this._getSelectedEvidenceIds();
+    answer.evidences = this.answer.evidences;
     answer.attachments = this.attachmentsElement.getAttachmentsForSave();
     return answer;
   }
 
-  _getSelectedEvidenceIds() {
-    if (!this.checkedEvidenceBoxes || !this.checkedEvidenceBoxes.length) {
-      return [];
-    }
+  // _getSelectedEvidenceIds() {
+  //   if (!this.checkedEvidenceBoxes || !this.checkedEvidenceBoxes.length) {
+  //     return [];
+  //   }
 
-    let ids: string[] = [];
-    this.checkedEvidenceBoxes.forEach((checkboxEl =>
-      ids.push(checkboxEl.getAttribute('evidenceid'))));
-    return ids;
-  }
+  //   let ids: string[] = [];
+  //   this.checkedEvidenceBoxes.forEach((checkboxEl =>
+  //     ids.push(checkboxEl.getAttribute('evidenceid'))));
+  //   return ids;
+  // }
 
-
-  _getUrl() {
-    let url = getEndpoint(etoolsEndpoints.questionnaireItemAnswer, {assessmentId: this.assessmentId}).url!;
-    if (this.answer && this.answer.id) {
-      url = url + this.answer.id + '/';
-    }
-
-    return url;
-  }
-
-  _getMethod() {
-    return (this.answer && this.answer.id) ? 'PATCH' : 'POST';
-  }
 
   validate() {
     this.hideRatingRequired = !!this.ratingElement.selected;
     return this.hideRatingRequired;
   }
+
+
 }
 
-window.customElements.define('questionnaire-answer', QuestionnaireAnswer);
+
