@@ -97,6 +97,45 @@ export const assessmentsFilters: EtoolsFilter[] = [
     type: EtoolsFilterTypes.Date,
     selectedValue: null,
     selected: false
+  },
+  {
+    filterName: 'Assessor Unicef Staff',
+    filterKey: 'assessor_staff',
+    type: EtoolsFilterTypes.DropdownMulti,
+    selectionOptions: [],
+    selectedValue: [],
+    selected: true,
+    minWidth: '350px',
+    hideSearch: true,
+    disabled: false,
+    optionValue: 'id',
+    optionLabel: 'name'
+  },
+  {
+    filterName: 'Assessor Assessing Firm',
+    filterKey: 'assessor_firm',
+    type: EtoolsFilterTypes.DropdownMulti,
+    selectionOptions: [],
+    selectedValue: [],
+    selected: true,
+    minWidth: '350px',
+    hideSearch: true,
+    disabled: false,
+    optionValue: 'id',
+    optionLabel: 'name'
+  },
+  {
+    filterName: 'Assessor External Individual',
+    filterKey: 'assessor_external',
+    type: EtoolsFilterTypes.DropdownMulti,
+    selectionOptions: [],
+    selectedValue: [],
+    selected: true,
+    minWidth: '350px',
+    hideSearch: true,
+    disabled: false,
+    optionValue: 'id',
+    optionLabel: 'name'
   }
 ];
 
@@ -117,7 +156,7 @@ export const updateFiltersSelectedValues = (selectedFilters: GenericObject, filt
 
 export const updateFilterSelectionOptions = (filters: EtoolsFilter[], fKey: string, options: GenericObject[]) => {
   const filter = filters.find((f: EtoolsFilter) => f.filterKey === fKey);
-  if (filter) {
+  if (filter && options) {
     if (!isJsonStrMatch(filter.selectionOptions, options)) {
       filter.selectionOptions = [...options];
       filters = [...filters];

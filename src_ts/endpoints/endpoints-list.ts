@@ -39,6 +39,9 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   auditorFirm: {
     template: '/api/audit/purchase-orders/sync/<%=id%>/?auditor_firm__unicef_users_allowed=False'
   },
+  auditorFirms: {
+    url: '/api/audit/purchase-orders/?auditor_firm__unicef_users_allowed=False&page_size=all'
+  },
   staffMembers: {
     template: '/api/audit/audit-firms/<%=id%>/staff-members/'
   },

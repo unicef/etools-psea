@@ -112,7 +112,8 @@ export class AssessmentsList extends connect(store)(LitElement) {
   paginator: EtoolsPaginator = {...defaultPaginator};
 
   @property({type: Array})
-  sort: EtoolsTableSortItem[] = [{name: 'ref_number', sort: EtoolsTableColumnSort.Desc}];
+  sort: EtoolsTableSortItem[] = [{name: 'reference_number', sort: EtoolsTableColumnSort.Desc},
+  {name: 'assessment_date', sort: EtoolsTableColumnSort.Desc}, {name: 'partner_name', sort: EtoolsTableColumnSort.Asc}];
 
   @property({type: Array})
   filters: EtoolsFilter[] = [...assessmentsFilters];
@@ -126,7 +127,8 @@ export class AssessmentsList extends connect(store)(LitElement) {
       label: 'Reference No.',
       name: 'reference_number',
       link_tmpl: `${ROOT_PATH}assessments/:id/details`,
-      type: EtoolsTableColumnType.Link
+      type: EtoolsTableColumnType.Link,
+      sort: EtoolsTableColumnSort.Desc
     },
     {
       label: 'Assessment Date',
@@ -169,6 +171,9 @@ export class AssessmentsList extends connect(store)(LitElement) {
       if (state.commonData) {
         this.filters = updateFilterSelectionOptions(this.filters, 'unicef_focal_point', state.commonData!.unicefUsers);
         this.filters = updateFilterSelectionOptions(this.filters, 'partner', state.commonData!.partners);
+        this.filters = updateFilterSelectionOptions(this.filters, 'assessor_external', state.commonData!.externalIndividuals);
+        this.filters = updateFilterSelectionOptions(this.filters, 'assessor_staff', state.commonData!.unicefUsers);
+        this.filters = updateFilterSelectionOptions(this.filters, 'assessor_firm', state.commonData!.assessingFirms);
       }
 
       const stateRouteDetails = {...state.app!.routeDetails};
