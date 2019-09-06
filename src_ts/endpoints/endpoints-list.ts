@@ -40,7 +40,7 @@ export const etoolsEndpoints: EtoolsEndpoints = {
     template: '/api/audit/purchase-orders/sync/<%=id%>/?auditor_firm__unicef_users_allowed=False'
   },
   auditorFirms: {
-    url: '/api/audit/purchase-orders/?auditor_firm__unicef_users_allowed=False&page_size=all'
+    url: '/api/audit/audit-firms/?page_size=all'
   },
   staffMembers: {
     template: '/api/audit/audit-firms/<%=id%>/staff-members/'

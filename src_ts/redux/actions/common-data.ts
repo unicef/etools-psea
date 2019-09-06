@@ -54,9 +54,5 @@ export const loadExternalIndividuals = () => (dispatch: any) => {
 
 export const loadAssessingFirms = () => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.auditorFirms.url!))
-    .then((resp: any) => {
-      let uniqueSorted = resp.map((x: any) => {return {id: x.auditor_firm.id, name: x.auditor_firm.name, order_number: x.order_number}}).sort((a: any, b: any) => {return a.name.localeCompare(b.name)});
-      uniqueSorted = [...new Map(uniqueSorted.map((item: any) => [item.id, item])).values()];
-      dispatch(setAssessingFirms(uniqueSorted));
-    });
+    .then((resp: any) => {dispatch(setAssessingFirms(resp));});
 }

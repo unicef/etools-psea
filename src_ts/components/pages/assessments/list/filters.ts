@@ -73,7 +73,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
     selectedValue: [],
     selected: true,
     minWidth: '350px',
-    hideSearch: true,
+    hideSearch: false,
     disabled: false,
     optionValue: 'id',
     optionLabel: 'name'
@@ -86,7 +86,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
     selectedValue: [],
     selected: true,
     minWidth: '350px',
-    hideSearch: true,
+    hideSearch: false,
     disabled: false,
     optionValue: 'id',
     optionLabel: 'name'
@@ -106,7 +106,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
     selectedValue: [],
     selected: true,
     minWidth: '350px',
-    hideSearch: true,
+    hideSearch: false,
     disabled: false,
     optionValue: 'id',
     optionLabel: 'name'
@@ -119,7 +119,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
     selectedValue: [],
     selected: true,
     minWidth: '350px',
-    hideSearch: true,
+    hideSearch: false,
     disabled: false,
     optionValue: 'id',
     optionLabel: 'name'
@@ -132,7 +132,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
     selectedValue: [],
     selected: true,
     minWidth: '350px',
-    hideSearch: true,
+    hideSearch: false,
     disabled: false,
     optionValue: 'id',
     optionLabel: 'name'
