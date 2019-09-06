@@ -153,6 +153,13 @@ export class AppShell extends connect(store)(LitElement) {
     store.dispatch(loadExternalIndividuals());
   }
 
+  ready() {
+    super.ready();
+
+    window.EtoolsEsmmFitIntoEl = this.$.appHeadLayout!.shadowRoot!.querySelector('#contentContainer');
+    this.etoolsLoadingContainer = window.EtoolsEsmmFitIntoEl;
+  }
+
   public connectedCallback() {
     super.connectedCallback();
 
