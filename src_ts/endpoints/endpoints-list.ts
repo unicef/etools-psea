@@ -61,7 +61,7 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   //   cacheTableName: 'agreements'
   // },
   actionPoints: {
-    template: '/api/action_points/action_points/?psea_assessment=<%=id%>'
+    template: '/api/psea/assessment/<%=id%>/action-points/'
   },
   attachmentsUpload: {
     url: '/api/v2/attachments/upload/'

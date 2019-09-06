@@ -17,7 +17,7 @@ import '@polymer/polymer/lib/elements/dom-if';
 import '@polymer/polymer/lib/elements/dom-repeat';
 
 import { GenericObject, Constructor } from '../../../../../types/globals';
-import { getFollowUpDummydata } from './follow-up-dummy-data';
+// import { getFollowUpDummydata } from './follow-up-dummy-data';
 import { ROOT_PATH } from '../../../../../config/config';
 import {cloneDeep} from '../../../../utils/utils';
 import { makeRequest } from '../../../../utils/request-helper';
@@ -30,7 +30,6 @@ import { connect } from 'pwa-helpers/connect-mixin';
 export class FollowUpPage extends connect(store)(LitElement as Constructor<LitElement>) {
   render() {
     return html`
-      <get-action-points engagement-id="[[engagementId]]" action-points="{{dataItems}}"></get-action-points>
       <etools-content-panel panel-title="Action Points">
         <div slot="panel-btns">
           <paper-icon-button
@@ -43,49 +42,44 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
                      order-by="{{orderBy}}"
                      no-additional
                      base-permission-path="[[basePermissionPath]]"></list-header> -->
+        <etools-table .items="${this.dataItems}"
+                      .columns="${this.columns}">
+          <!-- <div slot="checkbox" class="checkbox">
+            <paper-checkbox disabled="disabled"
+                            checked="{{item.high_priority}}"
+                            label="">
+            </paper-checkbox>
+          </div> -->
+          <div slot="hover" class="edit-icon-slot">
+            <paper-icon-button icon="icons:content-copy" class="edit-icon" on-tap="_openCopyDialog"></paper-icon-button>
+          </div>
+        </etools-table>
+        <!-- <list-element class="list-element"
+                      data="[[item]]"
+                      base-permission-path="[[basePermissionPath]]"
+                      headings="[[columns]]"
+                      no-additional
+                      no-animation>
+          <div slot="checkbox" class="checkbox">
+            <paper-checkbox disabled="disabled"
+                            checked="{{item.high_priority}}"
+                            label="">
+            </paper-checkbox>
+          </div>
+          <div slot="hover" class="edit-icon-slot">
+            <paper-icon-button icon="icons:content-copy" class="edit-icon" on-tap="_openCopyDialog"></paper-icon-button>
+            <paper-icon-button icon="icons:create" class="edit-icon" on-tap="_openEditDialog" hidden$="[[!canBeEdited(item.status)]]"></paper-icon-button>
+          </div>
+        </list-element> -->
 
-            <!-- <template is="dom-repeat" items="[[itemsToDisplay]]" filter="_showItems"> -->
-              <etools-table .items="${this.itemsToDisplay}"
-                            .columns="${this.columns}">
-                <!-- <div slot="checkbox" class="checkbox">
-                  <paper-checkbox disabled="disabled"
-                                  checked="{{item.high_priority}}"
-                                  label="">
-                  </paper-checkbox>
-                </div> -->
-                <div slot="hover" class="edit-icon-slot">
-                  <paper-icon-button icon="icons:content-copy" class="edit-icon" on-tap="_openCopyDialog"></paper-icon-button>
-                </div>
-              </etools-table>
-              <!-- <list-element class="list-element"
-                            data="[[item]]"
-                            base-permission-path="[[basePermissionPath]]"
-                            headings="[[columns]]"
-                            no-additional
-                            no-animation>
-                <div slot="checkbox" class="checkbox">
-                  <paper-checkbox disabled="disabled"
-                                  checked="{{item.high_priority}}"
-                                  label="">
-                  </paper-checkbox>
-                </div>
-                <div slot="hover" class="edit-icon-slot">
-                  <paper-icon-button icon="icons:content-copy" class="edit-icon" on-tap="_openCopyDialog"></paper-icon-button>
-                  <paper-icon-button icon="icons:create" class="edit-icon" on-tap="_openEditDialog" hidden$="[[!canBeEdited(item.status)]]"></paper-icon-button>
-                </div>
-              </list-element> -->
-            <!-- </template> -->
-
-            <template is="dom-if" if="${!this.dataItems.length}">
-              <etools-table
-                      data="${this.itemModel}"
-                      headings="${this.columns}">
-                <div slot="checkbox" class="checkbox">
-                  <span>–</span>
-                </div>
-              </etools-table>
-            </template>
-        </etools-content-panel>
+        <!-- <etools-table
+                .items"${this.itemModel}"
+                .columns="${this.columns}">
+          <div slot="checkbox" class="checkbox">
+            <span>–</span>
+          </div>
+        </etools-table>
+      </etools-content-panel>-->
     `;
   }
 
@@ -156,8 +150,8 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
   @property({type: Boolean})
   copyDialog!: boolean;
 
-  @property({type: Array})
-  itemsToDisplay!: GenericObject[];
+  // @property({type: Array})
+  // itemsToDisplay!: GenericObject[];
 
   @property({type: Boolean})
   canBeChanged!: boolean;
@@ -166,12 +160,11 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
   followUpDialog: any;
 
   @property({type: String})
-  engagementId: string | number | null = null;
+  assessmentId: string | number | null = null;
 
   stateChanged(state: RootState) {
-    debugger;
-    if (state.app.routeDetails.params.engagementId) {
-      this.engagementId = state.app.routeDetails.params.engagementId
+    if (state.app && state.app.routeDetails.params && state.app.routeDetails.params.assessmentId) {
+      this.assessmentId = state.app.routeDetails.params.assessmentId
       this.getFollowUpData();
     }
   }
@@ -183,23 +176,12 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
   }
 
   getFollowUpData() {
-  /**
-     * TODO:
-     *  - replace getFollowUpDummydata with the request to endpoint
-     *  - include in req params filters, sort, page, page_size
-     */
-    // const requestParams = {
-    //   ...this.selectedFilters,
-    //   page: this.paginator.page,
-    //   page_size: this.paginator.page_size,
-    //   sort: this.sort
-    // };
-    let endpoint = getEndpoint(etoolsEndpoints.actionPoints, {id: this.engagementId})
-    console.log(endpoint)
+    let endpoint = getEndpoint(etoolsEndpoints.actionPoints, {id: this.assessmentId})
 
     console.log('get follow-up data...');
+    // @ts-ignore
     makeRequest(endpoint).then((response: any) => {
-      this.dataItems = response;
+      this.dataItems = response.results;
     }).catch((err: any) => console.error(err));
     // getFollowUpDummydata().then((response: any) => {
     //   this.itemsToDisplay = [...response.results];
