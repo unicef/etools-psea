@@ -35,6 +35,12 @@ export const SharedStylesLit = html`
   section {
     background-color: var(--primary-background-color);
   }
+  
+  .error {
+    color: var(--error-color);
+    font-size: 12px;
+    align-self: center;
+  }
 
   paper-input-container {
       margin: 0 12px;
