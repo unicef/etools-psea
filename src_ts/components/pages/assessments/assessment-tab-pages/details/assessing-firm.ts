@@ -36,6 +36,11 @@ export class AssessingFirm extends LitElement {
           margin-right: 6px;
           margin-left: 16px;
         }
+        .no-details-warning iron-icon {
+          width: 16px;
+          height: 16px;
+        }
+       
       </style>
 
       <div class="layout-horizontal row-padding-v">
@@ -61,6 +66,9 @@ export class AssessingFirm extends LitElement {
           </paper-spinner>
           Loading...
         </span>
+        <span class="no-details-warning error" ?hidden="${!this.showGetDetailsBtnWarn}">
+          <iron-icon icon="arrow-back"></iron-icon> Press "Get firm details"
+        </span>
       </div>
       <div class="layout-vertical row-padding-v">
         <span class="paper-label">Firm Name</span>
@@ -75,9 +83,6 @@ export class AssessingFirm extends LitElement {
   errMessage: string = '10 digits expected';
 
   @property({type: String})
-  prevOrderNumber: string = '';
-
-  @property({type: String})
   currentOrderNumber: string = '';
 
   @property({type: Object})
@@ -86,6 +91,9 @@ export class AssessingFirm extends LitElement {
     auditor_firm: null,
     auditor_firm_name: ''
   };
+
+  @property({type: Boolean})
+  showGetDetailsBtnWarn: boolean = false;
 
   @property({type: Boolean})
   poRequestInProgress: boolean = false;
@@ -97,14 +105,11 @@ export class AssessingFirm extends LitElement {
   isNew!: boolean;
 
   getAssessorFirmByPoNumber() {
-
+    this.showGetDetailsBtnWarn = false;
     if (!this._validatePONumber()) {
       return;
     }
 
-    if (Number(this.assessor.order_number) === Number(this.prevOrderNumber)) {
-      return;
-    }
     this.poRequestInProgress = true;
 
     makeRequest(getEndpoint(etoolsEndpoints.auditorFirm, {id: this.assessor.order_number}) as RequestEndpoint)
@@ -124,14 +129,12 @@ export class AssessingFirm extends LitElement {
       order_number: resp.order_number,
       auditor_firm_name: resp.auditor_firm.name
     };
-    this.prevOrderNumber = resp.order_number;
   }
 
   _handleErrorOnGetFirm(err: any) {
     console.log(err);
     this.assessor.auditor_firm = null;
     this.assessor.auditor_firm_name = '';
-    this.prevOrderNumber = '';
     this.errMessage = 'PO number not found';
     (this.shadowRoot!.querySelector('#poNumber') as PaperInputElement).invalid = true;
     this.requestUpdate();
@@ -152,14 +155,18 @@ export class AssessingFirm extends LitElement {
     if (!this._validatePONumber()) {
       return false;
     }
-    return this.assessor.auditor_firm && this.assessor.auditor_firm_name;
+    // !! is used in case both used value are undefined, the result will be undefined
+    const valid = !!(this.assessor.auditor_firm && this.assessor.auditor_firm_name);
+    this.showGetDetailsBtnWarn = !valid;
+    return valid;
   }
 
   _updatePoNumber(newVal: string) {
     this.errMessage = '10 digits expected';
     this.assessor.order_number = newVal;
+    this.assessor.auditor_firm = null;
+    this.assessor.auditor_firm_name = '';
     this.requestUpdate();
-    console.log('order_number updated', this.assessor.order_number);
   }
 
   getAssessorForSave() {
