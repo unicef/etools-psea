@@ -61,10 +61,10 @@ export class AssessmentTabs extends connect(store)(LitElement) {
       </page-content-header>
 
       <div class="page-content">
-        <engagement-details-page ?hidden="${!this.isActiveTab(this.activeTab,'details')}">
-        </engagement-details-page>
-        <engagement-questionnaire-page ?hidden="${!this.isActiveTab(this.activeTab,'questionnaire')}">
-        </engagement-questionnaire-page>
+        <assessment-details-page ?hidden="${!this.isActiveTab(this.activeTab,'details')}">
+        </assessment-details-page>
+        <assessment-questionnaire-page ?hidden="${!this.isActiveTab(this.activeTab,'questionnaire')}">
+        </assessment-questionnaire-page>
         <follow-up-page ?hidden="${!this.isActiveTab(this.activeTab,'followup')}"></follow-up-page>
       </div>
     `;
