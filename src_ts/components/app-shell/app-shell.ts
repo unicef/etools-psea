@@ -156,13 +156,13 @@ export class AppShell extends connect(store)(LitElement) {
   public connectedCallback() {
     super.connectedCallback();
 
-    window.EtoolsEsmmFitIntoEl = this.$.appHeadLayout!.shadowRoot!.querySelector('#contentContainer');
-    // code above will prevent etools-dropdown to overlap page header
-
     installRouter(location => store.dispatch(
       navigate(decodeURIComponent(location.pathname + location.search))));
     installMediaQueryWatcher(`(min-width: 460px)`,
       () => store.dispatch(updateDrawerState(false)));
+
+    window.EtoolsEsmmFitIntoEl = this.$.appHeadLayout!.shadowRoot!.querySelector('#contentContainer');
+    // code above will prevent etools-dropdown to overlap page header
   }
 
   public disconnectedCallback() {
