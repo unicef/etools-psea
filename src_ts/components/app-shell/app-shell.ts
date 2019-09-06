@@ -161,7 +161,7 @@ export class AppShell extends connect(store)(LitElement) {
     installMediaQueryWatcher(`(min-width: 460px)`,
       () => store.dispatch(updateDrawerState(false)));
 
-    // code above will prevent etools-dropdown to overlap page header
+    // this will prevent the header to overlap etools-dropdown
     window.EtoolsEsmmFitIntoEl = this.$.appHeadLayout!.shadowRoot!.querySelector('#contentContainer');
   }
 
