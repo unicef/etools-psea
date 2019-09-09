@@ -112,8 +112,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
   paginator: EtoolsPaginator = {...defaultPaginator};
 
   @property({type: Array})
-  sort: EtoolsTableSortItem[] = [{name: 'reference_number', sort: EtoolsTableColumnSort.Desc},
-  {name: 'assessment_date', sort: EtoolsTableColumnSort.Desc}, {name: 'partner_name', sort: EtoolsTableColumnSort.Asc}];
+  sort: EtoolsTableSortItem[] = [{name: 'assessment_date', sort: EtoolsTableColumnSort.Desc}, {name: 'partner_name', sort: EtoolsTableColumnSort.Asc}];
 
   @property({type: Array})
   filters: EtoolsFilter[] = [...assessmentsFilters];
@@ -128,7 +127,6 @@ export class AssessmentsList extends connect(store)(LitElement) {
       name: 'reference_number',
       link_tmpl: `${ROOT_PATH}assessments/:id/details`,
       type: EtoolsTableColumnType.Link,
-      sort: EtoolsTableColumnSort.Desc
     },
     {
       label: 'Assessment Date',
