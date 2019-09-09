@@ -30,6 +30,9 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   assessment: {
     url: '/api/psea/assessment/'
   },
+  assessmentStatusUpdate: {
+    template: '/api/psea/assessment/<%=id%>/<%=statusAction%>/'
+  },
   assessor: {
     template: '/api/psea/assessment/<%=id%>/assessor/'
   },

@@ -21,6 +21,15 @@ import {updateAssessmentData} from '../../../redux/actions/page-data';
 import {isJsonStrMatch, cloneDeep} from '../../utils/utils';
 import {PageDataState} from '../../../redux/reducers/page-data';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+import {buttonsStyles} from '../../styles/button-styles';
+
+import {
+  getAssessmentStatusesList,
+  assessmentStatusActionBtnsTmpl,
+  updateAssessmentStatus,
+  createStatusChangeConfirmationsDialog,
+  removeStatusChangeConfirmationsDialog
+} from './assessment-status-actions';
 
 /**
  * @LitElement
@@ -37,22 +46,22 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     // main template
     // language=HTML
     return html`
-      ${SharedStylesLit} ${pageContentHeaderSlottedStyles} ${pageLayoutStyles}
+      ${SharedStylesLit} ${pageContentHeaderSlottedStyles} ${pageLayoutStyles} ${buttonsStyles}
       <style>
         etools-status {
           justify-content: center;
         }
       </style>
-      <etools-status></etools-status>
+      <etools-status .statuses="${getAssessmentStatusesList(this.assessment.status_list)}"
+                     .activeStatus="${this.assessment.status}"></etools-status>
 
       <page-content-header with-tabs-visible>
 
         <h1 slot="page-title">${this.pageTitle}</h1>
 
-        <div slot="title-row-actions" class="content-header-actions">
-          <paper-button raised>Action 1</paper-button>
-          <paper-button raised>Action 2</paper-button>
-        </div>
+        ${(this.assessment.id && !!this.assessment.assessor) ? html`<div slot="title-row-actions" class="content-header-actions">
+          ${assessmentStatusActionBtnsTmpl(this.assessment.status, this.changeStatusAction.bind(this))}
+        </div>` : ''}
 
         <etools-tabs slot="tabs"
                      .tabs="${this.pageTabs}"
@@ -104,6 +113,16 @@ export class AssessmentTabs extends connect(store)(LitElement) {
   @property({type: Object})
   assessment!: Assessment;
 
+  connectedCallback(): void {
+    super.connectedCallback();
+    createStatusChangeConfirmationsDialog();
+  }
+
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    removeStatusChangeConfirmationsDialog();
+  }
+
   isActiveTab(tab: string, expectedTab: string): boolean {
     return tab === expectedTab;
   }
@@ -116,7 +135,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
 
       const stateActiveTab = state.app!.routeDetails.subRouteName as string;
       if (stateActiveTab !== this.activeTab) {
-        const oldActiveTabValue = this.activeTab;
+        // const oldActiveTabValue = this.activeTab;
         this.activeTab = state.app!.routeDetails.subRouteName as string;
         //this.tabChanged(this.activeTab, oldActiveTabValue);// Is this needed here?
       }
@@ -212,6 +231,20 @@ export class AssessmentTabs extends connect(store)(LitElement) {
       // go to new tab
       updateAppLocation(newPath, true);
     }
+  }
+
+  changeStatusAction(action: string) {
+    // let status = '';
+    // switch (action) {
+    //   case 'assign':
+    //     status = 'in_progress';
+    //     break;
+    //   case 'submit':
+    //     status = 'submitted';
+    //     break;
+    //   case ''
+    // }
+    updateAssessmentStatus(this.assessment, action);
   }
 
 }
