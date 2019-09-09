@@ -36,6 +36,7 @@ export class Question {
   content: string = '';
   ratings: Rating[] = [];
   evidences: ProofOfEvidence[] = [];
+  document_types = [];
 }
 
 export class ProofOfEvidence {
@@ -63,4 +64,12 @@ export class Answer {
 export class AnswerEvidence {
   evidence!: string; // id
   description?: string;
+}
+
+export class AnswerAttachment {
+  id?: string;
+  created: string = '';
+  file_type: string = ''; //id
+  url: string ='';
+  _filename: string = ''; //temp prop , used only on frontend
 }

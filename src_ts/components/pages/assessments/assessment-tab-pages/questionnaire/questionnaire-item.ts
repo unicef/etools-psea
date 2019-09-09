@@ -118,6 +118,7 @@ export class QuestionnaireItemElement extends LitElement {
     } else {
       this.answer = new Answer();
     }
+    this.editMode = false;
   }
 
   saveAnswer() {
