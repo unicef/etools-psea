@@ -1,4 +1,5 @@
 import {LitElement, html, property, customElement} from 'lit-element';
+import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-spinner/paper-spinner';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
@@ -8,6 +9,7 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
+import {buttonsStyles} from "../../../../styles/button-styles";
 
 /**
  * @customElement
@@ -18,14 +20,30 @@ export class AssessingFirm extends LitElement {
   render() {
     // language=HTML
     return html`
-      ${SharedStylesLit} ${labelAndvalueStylesLit} ${gridLayoutStylesLit}
+      ${SharedStylesLit} ${labelAndvalueStylesLit} ${gridLayoutStylesLit} ${buttonsStyles}
       <style>
         .input-width {
           max-width: 230px;
         }
+        .po-loading {
+          @apply --layout-horizontal;
+          @apply --layout-center;
+        }
+        paper-spinner {
+          align-self: center;
+          width: 20px;
+          height: 20px;
+          margin-right: 6px;
+          margin-left: 16px;
+        }
+        .no-details-warning iron-icon {
+          width: 16px;
+          height: 16px;
+        }
+       
       </style>
 
-      <div class="row-padding-v">
+      <div class="layout-horizontal row-padding-v">
         <paper-input id="poNumber" label="Enter PO Number" always-float-label
           class="input-width"
           .value="${this.assessor.order_number}"
@@ -35,26 +53,34 @@ export class AssessingFirm extends LitElement {
           error-message="${this.errMessage}"
           auto-validate
           required
-          ?readonly="${this.isReadonly(this.editMode)}"
-          @blur="${this._getFirmName}">
+          ?readonly="${this.isReadonly(this.editMode)}">
         </paper-input>
+        <paper-button class="info left-icon" 
+                      @tap="${this.getAssessorFirmByPoNumber}"
+                      ?hidden="${this.isReadonly(this.editMode) || this.poRequestInProgress}">
+          <iron-icon icon="autorenew"></iron-icon>
+          Get firm details
+        </paper-button>
+        <span class="po-loading" ?hidden="${!this.poRequestInProgress}">
+          <paper-spinner ?active="${this.poRequestInProgress}">
+          </paper-spinner>
+          Loading...
+        </span>
+        <span class="no-details-warning error" ?hidden="${!this.showGetDetailsBtnWarn}">
+          <iron-icon icon="arrow-back"></iron-icon> Press "Get firm details"
+        </span>
       </div>
       <div class="layout-vertical row-padding-v">
         <span class="paper-label">Firm Name</span>
         <span class="input-label row-padding-v" ?empty="${!this.assessor.auditor_firm_name}">
           ${this.assessor.auditor_firm_name}
-          <paper-spinner ?hidden="${!this.requestInProgress}" ?active="${this.requestInProgress}"></paper-spinner>
         </span>
-
       </div>
     `;
   }
 
   @property({type: String})
   errMessage: string = '10 digits expected';
-
-  @property({type: String})
-  prevOrderNumber: string = '';
 
   @property({type: String})
   currentOrderNumber: string = '';
@@ -67,7 +93,10 @@ export class AssessingFirm extends LitElement {
   };
 
   @property({type: Boolean})
-  requestInProgress: boolean = false;
+  showGetDetailsBtnWarn: boolean = false;
+
+  @property({type: Boolean})
+  poRequestInProgress: boolean = false;
 
   @property({type: Boolean, attribute: true, reflect: true})
   editMode!: boolean;
@@ -75,16 +104,13 @@ export class AssessingFirm extends LitElement {
   @property({type: Boolean, attribute: true, reflect: true})
   isNew!: boolean;
 
-  _getFirmName() {
-
+  getAssessorFirmByPoNumber() {
+    this.showGetDetailsBtnWarn = false;
     if (!this._validatePONumber()) {
       return;
     }
 
-    if (Number(this.assessor.order_number) === Number(this.prevOrderNumber)) {
-      return;
-    }
-    this.requestInProgress = true;
+    this.poRequestInProgress = true;
 
     makeRequest(getEndpoint(etoolsEndpoints.auditorFirm, {id: this.assessor.order_number}) as RequestEndpoint)
       .then((response: any) => {
@@ -92,6 +118,8 @@ export class AssessingFirm extends LitElement {
       })
       .catch((err: any) => {
         this._handleErrorOnGetFirm(err);
+      }).then(() => {
+        this.poRequestInProgress = false;
       });
   }
 
@@ -101,16 +129,12 @@ export class AssessingFirm extends LitElement {
       order_number: resp.order_number,
       auditor_firm_name: resp.auditor_firm.name
     };
-    this.prevOrderNumber = resp.order_number;
-    this.requestInProgress = false;
   }
 
   _handleErrorOnGetFirm(err: any) {
-    this.requestInProgress = false;
     console.log(err);
     this.assessor.auditor_firm = null;
     this.assessor.auditor_firm_name = '';
-    this.prevOrderNumber = '';
     this.errMessage = 'PO number not found';
     (this.shadowRoot!.querySelector('#poNumber') as PaperInputElement).invalid = true;
     this.requestUpdate();
@@ -131,14 +155,18 @@ export class AssessingFirm extends LitElement {
     if (!this._validatePONumber()) {
       return false;
     }
-    return this.assessor.auditor_firm && this.assessor.auditor_firm_name;
+    // !! is used in case both used value are undefined, the result will be undefined
+    const valid = !!(this.assessor.auditor_firm && this.assessor.auditor_firm_name);
+    this.showGetDetailsBtnWarn = !valid;
+    return valid;
   }
 
   _updatePoNumber(newVal: string) {
     this.errMessage = '10 digits expected';
     this.assessor.order_number = newVal;
+    this.assessor.auditor_firm = null;
+    this.assessor.auditor_firm_name = '';
     this.requestUpdate();
-    console.log('order_number updated', this.assessor.order_number);
   }
 
   getAssessorForSave() {
