@@ -106,8 +106,8 @@ export const etoolsTableStyles = html`
       @apply --layout-end-justified;
       background: transparent;
     }
-
-    tr:hover td div.actions {
+    
+    tr:hover .row-actions .actions {
       display: block;
       @apply --layout-horizontal;
     }
