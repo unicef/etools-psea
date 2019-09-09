@@ -175,8 +175,8 @@ export class AssessmentsList extends connect(store)(LitElement) {
       }
 
       if (state.user && !this.canAdd) {
-        if(state.user!.data && state.user!.data.groups){
-          this.canAdd = Boolean(state.user!.data.groups.find((group: any) => group.name === 'UNICEF User' || group.name === 'UNICEF Audit Focal Point'));
+        if(state.user.data && state.user.data.groups){
+          this.canAdd = Boolean(state.user.data.groups.find((group: any) => group.name === 'UNICEF User' || group.name === 'UNICEF Audit Focal Point'));
         }
       }
 
