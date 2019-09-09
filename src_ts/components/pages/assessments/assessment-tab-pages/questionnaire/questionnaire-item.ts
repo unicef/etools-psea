@@ -5,7 +5,7 @@ import './questionnaire-answer';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {radioButtonStyles} from '../../../../styles/radio-button-styles';
-import {Question, Answer} from '../../../../../types/assessment';
+import {Question, Answer, ProofOfEvidence, Rating} from '../../../../../types/assessment';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {QuestionnaireAnswerElement} from './questionnaire-answer';
 import {cloneDeep} from '../../../../utils/utils';
@@ -36,11 +36,14 @@ export class QuestionnaireItemElement extends LitElement {
           font-size: 16px;
           background-color: var(--secondary-background-color);
         }
+        .readonlyRadioBtn {
+          pointer-events: none;
+        }
       </style>
       <etools-content-panel panel-title="${this.question.subject}" show-expand-btn .open="${this.open}">
         <div slot="panel-btns">
-          <paper-radio-button checked class="${this._getRadioBtnClass(this.answer)}" ?hidden="${!this._answerIsSaved(this.answer)}">
-            Positive
+          <paper-radio-button checked class="${this._getRadioBtnClass(this.answer)} readonlyRadioBtn"  ?hidden="${!this._answerIsSaved(this.answer)}">
+            ${this._getSelectedRating(this.answer)}
           </paper-radio-button>
           <paper-icon-button
                 on-tap="_allowEdit"
@@ -105,6 +108,14 @@ export class QuestionnaireItemElement extends LitElement {
     }
   }
 
+  _getSelectedRating(answer: Answer) {
+    if (!answer || !answer.id) {
+      return ''; //it should be hidden in this case
+    }
+    let ratingObj =  this.question.ratings.find((r: Rating) => Number(r.id) === Number(this.answer.rating));
+    return ratingObj ? ratingObj.label : '';
+  }
+
   _answerIsSaved(answer: Answer) {
     if (!answer || !answer.id) {
       return false;
@@ -115,10 +126,10 @@ export class QuestionnaireItemElement extends LitElement {
   cancel() {
     if (this.answer && this.answer.id) {
       this.answer = cloneDeep(this.answer);
+      this.editMode = false;
     } else {
       this.answer = new Answer();
     }
-    this.editMode = false;
   }
 
   saveAnswer() {
@@ -172,6 +183,7 @@ export class QuestionnaireItemElement extends LitElement {
 
   _allowEdit() {
     this.editMode = true;
+    this.open = true;
   }
 
 }
