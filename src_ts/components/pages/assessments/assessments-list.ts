@@ -67,7 +67,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
             <iron-icon icon="file-download"></iron-icon>Export
           </paper-button>
 
-          <paper-button class="primary left-icon" raised @tap="${this.goToAddnewPage}">
+          <paper-button class="primary left-icon" ?hidden="${!this.canAdd}" raised @tap="${this.goToAddnewPage}">
             <iron-icon icon="add"></iron-icon>Add new assessment
           </paper-button>
         </div>
@@ -120,6 +120,9 @@ export class AssessmentsList extends connect(store)(LitElement) {
   @property({type: Object})
   selectedFilters: GenericObject = {...defaultSelectedFilters};
 
+  @property({type: Boolean})
+  canAdd: boolean = false;
+
   @property({type: Array})
   listColumns: EtoolsTableColumn[] = [
     {
@@ -169,6 +172,12 @@ export class AssessmentsList extends connect(store)(LitElement) {
       if (state.commonData) {
         this.filters = updateFilterSelectionOptions(this.filters, 'unicef_focal_point', state.commonData!.unicefUsers);
         this.filters = updateFilterSelectionOptions(this.filters, 'partner', state.commonData!.partners);
+      }
+
+      if (state.user && !this.canAdd) {
+        if(state.user!.data && state.user!.data.groups){
+          this.canAdd = Boolean(state.user!.data.groups.find((group: any) => group.name === 'UNICEF User' || group.name === 'UNICEF Audit Focal Point'));
+        }
       }
 
       const stateRouteDetails = {...state.app!.routeDetails};
