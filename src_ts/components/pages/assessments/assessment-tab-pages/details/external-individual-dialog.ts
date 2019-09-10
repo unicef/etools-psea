@@ -141,15 +141,17 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
   }
 
   private onSaveClick() {
-    if (this.validateInput()) {
-      this.getControlsData();
-      if (this.validateData()) {
-        this.saveDialogData();
-      }
+    if (this.validateData()) {
+      this.saveDialogData();
     }
   }
 
   private validateData() {
+    if (!this.validateInput()) {
+      return false;
+    }
+    this.getControlsData();
+
     // check if email is unique
     let isValid = !this.externalIndividuals.find(x => x.email === this.editedItem.email);
     if (!isValid) {
