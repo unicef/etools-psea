@@ -41,20 +41,24 @@ export const assessmentsFilters: EtoolsFilter[] = [
         name: 'Draft'
       },
       {
-        id: 'submitted-accepted',
-        name: 'Submitted/Accepted'
+        id: 'in_progress',
+        name: 'In Progress'
       },
       {
-        id: 'report-submitted',
-        name: 'Report submitted'
+        id: 'submitted',
+        name: 'Submitted'
       },
       {
         id: 'rejected',
         name: 'Rejected'
       },
       {
-        id: 'completed',
-        name: 'Completed'
+        id: 'final',
+        name: 'Final'
+      },
+      {
+        id: 'canceled',
+        name: 'Canceled'
       }
     ],
     optionValue: 'id',
