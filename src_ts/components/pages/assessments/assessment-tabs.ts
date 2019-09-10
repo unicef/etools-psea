@@ -28,7 +28,9 @@ import {
   assessmentStatusActionBtnsTmpl,
   updateAssessmentStatus,
   createStatusChangeConfirmationsDialog,
-  removeStatusChangeConfirmationsDialog
+  removeStatusChangeConfirmationsDialog,
+  canShowCancelAction,
+  canShowStatusActions, cancelAssessmentStatusActionTmpl
 } from './assessment-status-actions';
 
 /**
@@ -59,9 +61,16 @@ export class AssessmentTabs extends connect(store)(LitElement) {
 
         <h1 slot="page-title">${this.pageTitle}</h1>
 
-        ${(this.assessment.id && !!this.assessment.assessor) ? html`<div slot="title-row-actions" class="content-header-actions">
-          ${assessmentStatusActionBtnsTmpl(this.assessment.status, this.changeStatusAction.bind(this))}
-        </div>` : ''}
+        <div slot="title-row-actions" class="content-header-actions">
+          ${canShowCancelAction(this.assessment)
+            ? cancelAssessmentStatusActionTmpl(this.changeStatusAction.bind(this))
+            : ''}
+          
+          ${canShowStatusActions(this.assessment) 
+            ? assessmentStatusActionBtnsTmpl(this.assessment.status, this.changeStatusAction.bind(this))
+            : ''}
+        </div>
+          
 
         <etools-tabs slot="tabs"
                      .tabs="${this.pageTabs}"

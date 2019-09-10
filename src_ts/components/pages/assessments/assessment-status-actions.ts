@@ -18,12 +18,28 @@ const updateConfirmationMsgAction = (action: string) => {
   confirmationMSg.innerText = `Are you sure you want to ${action} this assessment`;
 };
 
+export const canShowCancelAction = (assessment: Assessment) => {
+  return !!assessment.id;
+};
+
+export const canShowStatusActions = (assessment: Assessment) => {
+  return assessment.id && !!assessment.assessor;
+};
 
 export const getAssessmentStatusesList = (statusesList: string[][]): EtoolsStatusModel[] => {
   if (statusesList.length === 0) return [];
   return statusesList.map((s: string[]) => {
     return {status: s[0], label: s[1]} as EtoolsStatusModel;
   });
+};
+
+export const cancelAssessmentStatusActionTmpl = (statusAction: (...args: any[]) => void) => {
+  return html`
+    <paper-button class="default right-icon" raised @tap="${() => statusAction('cancel')}">
+      Cancel
+      <iron-icon icon="remove-circle-outline"></iron-icon>
+    </paper-button>
+  `;
 };
 
 export const assessmentStatusActionBtnsTmpl = (status: string, statusAction: (...args: any[]) => void) => {
@@ -62,6 +78,7 @@ const validateStatusChange = (): boolean => {
   let valid = false;
   switch (statusAction) {
     case 'assign':
+      // assessment should be added
       valid = assessment !== null && !!assessment.id && !!assessment.assessor;
       break;
     case 'submit':
@@ -72,19 +89,23 @@ const validateStatusChange = (): boolean => {
     case 'finalize':
       // TODO: determine finalize validations
       break;
+    case 'cancel':
+      // TODO: determine cancel validations by user group and add it to this condition
+      valid = assessment !== null && (['submitted', 'final'].indexOf(assessment.status) === -1);
+      break;
   }
   return valid;
 };
 
 export const updateAssessmentStatus = (currentAssessment: Assessment, action: string) => {
   console.log(currentAssessment, action);
-  // TODO: validate action
-  if (!validateStatusChange()) {
-    // TODO: show a toast message explaining why status change cannot be made
-    return;
-  }
   assessment = {...currentAssessment};
   statusAction = action;
+  if (!validateStatusChange()) {
+    // TODO: show a toast message explaining why status change cannot be made
+    resetCurrentStatusUpdateData();
+    return;
+  }
 
   updateConfirmationMsgAction(statusAction);
   if (!statusChangeConfirmationDialog) {
