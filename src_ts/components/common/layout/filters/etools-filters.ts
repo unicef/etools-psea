@@ -54,13 +54,13 @@ export class EtoolsFilters extends LitElement {
     // language=HTML
     return html`
       <paper-input class="filter search"
-               ?hidden="${!f.selected}"
-               type="search"
-               autocomplete="off"
-               .value="${f.selectedValue}"
-               placeholder="${f.filterName}"
-               data-filter-key="${f.filterKey}"
-               @value-changed="${this.textInputChange}">
+          ?hidden="${!f.selected}"
+          type="search"
+          autocomplete="off"
+          .value="${f.selectedValue}"
+          placeholder="${f.filterName}"
+          data-filter-key="${f.filterKey}"
+          @value-changed="${this.textInputChange}">
         <iron-icon icon="search" slot="prefix"></iron-icon>
       </paper-input>
     `;
@@ -94,39 +94,39 @@ export class EtoolsFilters extends LitElement {
   getDropdownMultiTmpl(f: EtoolsFilter) {
     // language=HTML
     return html`
-          <etools-dropdown-multi
-              ?hidden="${!f.selected}"
-              class="filter"
-              label="${f.filterName}"
-              placeholder="Select"
-              ?disabled="${f.disabled}"
-              .options="${f.selectionOptions}"
-              .optionValue="${f.optionValue ? f.optionValue : 'value'}"
-              .optionLabel="${f.optionLabel ? f.optionLabel : 'label'}"
-              .selectedValues="${[...f.selectedValue]}"
-              trigger-value-change-event
-              @etools-selected-items-changed="${this.filterMultiSelectionChange}"
-              data-filter-key="${f.filterKey}"
-              ?hide-search="${f.hideSearch}"
-              .minWidth="${f.minWidth}"
-              horizontal-align="left"
-              no-dynamic-align>
-          </etools-dropdown-multi>
+      <etools-dropdown-multi
+          ?hidden="${!f.selected}"
+          class="filter"
+          label="${f.filterName}"
+          placeholder="Select"
+          ?disabled="${f.disabled}"
+          .options="${f.selectionOptions}"
+          .optionValue="${f.optionValue ? f.optionValue : 'value'}"
+          .optionLabel="${f.optionLabel ? f.optionLabel : 'label'}"
+          .selectedValues="${[...f.selectedValue]}"
+          trigger-value-change-event
+          @etools-selected-items-changed="${this.filterMultiSelectionChange}"
+          data-filter-key="${f.filterKey}"
+          ?hide-search="${f.hideSearch}"
+          .minWidth="${f.minWidth}"
+          horizontal-align="left"
+          no-dynamic-align>
+      </etools-dropdown-multi>
     `;
   }
 
   getDateTmpl(f: EtoolsFilter) {
     // language=HTML
     return html`
-        <datepicker-lite class="filter date"
-            ?hidden="${!f.selected}"
-            .label="${f.filterName}"
-            .value="${f.selectedValue}"
-            fire-date-has-changed
-            @date-has-changed="${this.filterDateChange}"
-            data-filter-key="${f.filterKey}"
-            selected-date-display-format="D MMM YYYY">
-        </datepicker-lite>
+      <datepicker-lite class="filter date"
+          ?hidden="${!f.selected}"
+          .label="${f.filterName}"
+          .value="${f.selectedValue}"
+          fire-date-has-changed
+          @date-has-changed="${this.filterDateChange}"
+          data-filter-key="${f.filterKey}"
+          selected-date-display-format="D MMM YYYY">
+      </datepicker-lite>
     `;
   }
 
@@ -137,9 +137,10 @@ export class EtoolsFilters extends LitElement {
         <div class="filter toggle" style="padding: 8px 0; box-sizing: border-box;">
           ${f.filterName}
           <paper-toggle-button id="toggleFilter"
-                              ?checked="${f.selectedValue}"
-                              data-filter-key="${f.filterKey}"
-                              @iron-change="${this.filterToggleChange}"></paper-toggle-button>
+              ?checked="${f.selectedValue}"
+              data-filter-key="${f.filterKey}"
+              @iron-change="${this.filterToggleChange}">
+          </paper-toggle-button>
         </div>
       </div>
     `;
