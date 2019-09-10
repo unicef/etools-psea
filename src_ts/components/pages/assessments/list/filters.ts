@@ -37,28 +37,32 @@ export const assessmentsFilters: EtoolsFilter[] = [
     type: EtoolsFilterTypes.DropdownMulti,
     selectionOptions: [
       {
-        status: 'draft',
-        label: 'Draft'
+        id: 'draft',
+        name: 'Draft'
       },
       {
-        status: 'submitted-accepted',
-        label: 'Submitted/Accepted'
+        id: 'in_progress',
+        name: 'In Progress'
       },
       {
-        status: 'report-submitted',
-        label: 'Report submitted'
+        id: 'submitted',
+        name: 'Submitted'
       },
       {
-        status: 'rejected',
-        label: 'Rejected'
+        id: 'rejected',
+        name: 'Rejected'
       },
       {
-        status: 'completed',
-        label: 'Completed'
+        id: 'final',
+        name: 'Final'
+      },
+      {
+        id: 'canceled',
+        name: 'Canceled'
       }
     ],
-    optionValue: 'status',
-    optionLabel: 'label',
+    optionValue: 'id',
+    optionLabel: 'name',
     selectedValue: [],
     selected: true,
     minWidth: '350px',
