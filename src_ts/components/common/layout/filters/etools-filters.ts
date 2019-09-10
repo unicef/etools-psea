@@ -53,8 +53,8 @@ export class EtoolsFilters extends LitElement {
   getSearchTmpl(f: EtoolsFilter) {
     // language=HTML
     return html`
-    <div ?hidden="${!f.selected}">
       <paper-input class="filter search"
+               ?hidden="${!f.selected}"
                type="search"
                autocomplete="off"
                .value="${f.selectedValue}"
@@ -63,15 +63,14 @@ export class EtoolsFilters extends LitElement {
                @value-changed="${this.textInputChange}">
         <iron-icon icon="search" slot="prefix"></iron-icon>
       </paper-input>
-    </div>
     `;
   }
 
   getDropdownTmpl(f: EtoolsFilter) {
     // language=HTML
     return html`
-    <div ?hidden="${!f.selected}">
       <etools-dropdown
+          ?hidden="${!f.selected}"
           class="filter"
           label="${f.filterName}"
           placeholder="&#8212;"
@@ -89,15 +88,14 @@ export class EtoolsFilters extends LitElement {
           no-dynamic-align
           enable-none-option>
       </etools-dropdown>
-    </div>
     `;
   }
 
   getDropdownMultiTmpl(f: EtoolsFilter) {
     // language=HTML
     return html`
-        <div ?hidden="${!f.selected}">
           <etools-dropdown-multi
+              ?hidden="${!f.selected}"
               class="filter"
               label="${f.filterName}"
               placeholder="Select"
@@ -114,23 +112,21 @@ export class EtoolsFilters extends LitElement {
               horizontal-align="left"
               no-dynamic-align>
           </etools-dropdown-multi>
-      </div>
     `;
   }
 
   getDateTmpl(f: EtoolsFilter) {
     // language=HTML
     return html`
-      <div ?hidden="${!f.selected}">
         <datepicker-lite class="filter date"
-                        .label="${f.filterName}"
-                        .value="${f.selectedValue}"
-                        fire-date-has-changed
-                        @date-has-changed="${this.filterDateChange}"
-                        data-filter-key="${f.filterKey}"
-                        selected-date-display-format="D MMM YYYY">
+            ?hidden="${!f.selected}"
+            .label="${f.filterName}"
+            .value="${f.selectedValue}"
+            fire-date-has-changed
+            @date-has-changed="${this.filterDateChange}"
+            data-filter-key="${f.filterKey}"
+            selected-date-display-format="D MMM YYYY">
         </datepicker-lite>
-      </div>
     `;
   }
 
@@ -203,6 +199,9 @@ export class EtoolsFilters extends LitElement {
             --paper-input-prefix: {
               color: var(--secondary-text-color, rgba(0, 0, 0, 0.54));
             }
+          }
+          *[hidden] {
+            display: none !important;
           }
         </style>
         <div id="filters">
