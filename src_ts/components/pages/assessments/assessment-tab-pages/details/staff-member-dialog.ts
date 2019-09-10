@@ -241,20 +241,19 @@ export class StaffMemberDialog extends LitElement {
 
     makeRequest(options, this.editedItem)
       .then((resp: any) => this._handleResponse(resp))
-      .catch((err: any) => this._handleError(err));
+      .catch((err: any) => this._handleError(err))
+      .then(() => this.requestInProgress = false);
   }
 
   _handleResponse(resp: any) {
-    this.requestInProgress = false;
     fireEvent(this, 'staff-member-updated', {...resp, hasAccess: this.editedItem.hasAccess});
     this.handleDialogClosed();
   }
 
   _handleError(err: any) {
-    this.requestInProgress = false;
-    const msg = 'Failed to save/update new Firm Staff Member!';
+    let msg = formatServerErrorAsText(err);
     logError(msg, 'staff-member', err);
-    fireEvent(this.toastEventSource, 'toast', {text: formatServerErrorAsText(err)});
+    fireEvent(this.toastEventSource, 'toast', {text: msg});
   }
 
   getEl(elName: string): HTMLInputElement {

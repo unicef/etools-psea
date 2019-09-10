@@ -202,16 +202,15 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
     makeRequest(options, this.editedItem)
       .then((resp: any) => this._handleResponse(resp))
       .catch((err: any) => this._handleError(err))
+      .then(() => this.requestInProgress = false);
   }
 
   _handleResponse(resp: any) {
-    this.requestInProgress = false;
     fireEvent(this, 'external-individual-updated', resp);
     this.handleDialogClosed();
   }
 
   _handleError(err: any) {
-    this.requestInProgress = false;
     let msg = formatServerErrorAsText(err);
     logError(msg, 'external-individual-dialog', err);
     fireEvent(this.toastEventSource, 'toast', {text: msg});
