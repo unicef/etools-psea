@@ -53,6 +53,7 @@ export class EtoolsFilters extends LitElement {
   getSearchTmpl(f: EtoolsFilter) {
     // language=HTML
     return html`
+    <div ?hidden="${!f.selected}">
       <paper-input class="filter search"
                type="search"
                autocomplete="off"
@@ -62,12 +63,14 @@ export class EtoolsFilters extends LitElement {
                @value-changed="${this.textInputChange}">
         <iron-icon icon="search" slot="prefix"></iron-icon>
       </paper-input>
+    </div>
     `;
   }
 
   getDropdownTmpl(f: EtoolsFilter) {
     // language=HTML
     return html`
+    <div ?hidden="${!f.selected}">
       <etools-dropdown
           class="filter"
           label="${f.filterName}"
@@ -86,86 +89,91 @@ export class EtoolsFilters extends LitElement {
           no-dynamic-align
           enable-none-option>
       </etools-dropdown>
+    </div>
     `;
   }
 
   getDropdownMultiTmpl(f: EtoolsFilter) {
     // language=HTML
     return html`
-      <etools-dropdown-multi
-          class="filter"
-          label="${f.filterName}"
-          placeholder="Select"
-          ?disabled="${f.disabled}"
-          .options="${f.selectionOptions}"
-          .optionValue="${f.optionValue ? f.optionValue : 'value'}"
-          .optionLabel="${f.optionLabel ? f.optionLabel : 'label'}"
-          .selectedValues="${[...f.selectedValue]}"
-          trigger-value-change-event
-          @etools-selected-items-changed="${this.filterMultiSelectionChange}"
-          data-filter-key="${f.filterKey}"
-          ?hide-search="${f.hideSearch}"
-          .minWidth="${f.minWidth}"
-          horizontal-align="left"
-          no-dynamic-align>
-      </etools-dropdown-multi>
+        <div ?hidden="${!f.selected}">
+          <etools-dropdown-multi
+              class="filter"
+              label="${f.filterName}"
+              placeholder="Select"
+              ?disabled="${f.disabled}"
+              .options="${f.selectionOptions}"
+              .optionValue="${f.optionValue ? f.optionValue : 'value'}"
+              .optionLabel="${f.optionLabel ? f.optionLabel : 'label'}"
+              .selectedValues="${[...f.selectedValue]}"
+              trigger-value-change-event
+              @etools-selected-items-changed="${this.filterMultiSelectionChange}"
+              data-filter-key="${f.filterKey}"
+              ?hide-search="${f.hideSearch}"
+              .minWidth="${f.minWidth}"
+              horizontal-align="left"
+              no-dynamic-align>
+          </etools-dropdown-multi>
+      </div>
     `;
   }
 
   getDateTmpl(f: EtoolsFilter) {
     // language=HTML
     return html`
-      <datepicker-lite class="filter date"
-                       .label="${f.filterName}"
-                       .value="${f.selectedValue}"
-                       fire-date-has-changed
-                       @date-has-changed="${this.filterDateChange}"
-                       data-filter-key="${f.filterKey}"
-                       selected-date-display-format="D MMM YYYY">
-      </datepicker-lite>
+      <div ?hidden="${!f.selected}">
+        <datepicker-lite class="filter date"
+                        .label="${f.filterName}"
+                        .value="${f.selectedValue}"
+                        fire-date-has-changed
+                        @date-has-changed="${this.filterDateChange}"
+                        data-filter-key="${f.filterKey}"
+                        selected-date-display-format="D MMM YYYY">
+        </datepicker-lite>
+      </div>
     `;
   }
 
   getToggleTmpl(f: EtoolsFilter) {
     // language=HTML
     return html`
-      <div class="filter toggle" style="padding: 8px 0; box-sizing: border-box;">
-        ${f.filterName}
-        <paper-toggle-button id="toggleFilter"
-                             ?checked="${f.selectedValue}"
-                             data-filter-key="${f.filterKey}"
-                             @iron-change="${this.filterToggleChange}"></paper-toggle-button>
+      <div ?hidden="${!f.selected}">
+        <div class="filter toggle" style="padding: 8px 0; box-sizing: border-box;">
+          ${f.filterName}
+          <paper-toggle-button id="toggleFilter"
+                              ?checked="${f.selectedValue}"
+                              data-filter-key="${f.filterKey}"
+                              @iron-change="${this.filterToggleChange}"></paper-toggle-button>
+        </div>
       </div>
     `;
   }
 
   get selectedFiltersTmpl() {
     const tmpl: any[] = [];
-    this.filters
-      .filter((f: EtoolsFilter) => f.selected)
-      .forEach((f: EtoolsFilter) => {
-        let filterHtml = null;
-        switch (f.type) {
-          case EtoolsFilterTypes.Search:
-            filterHtml = this.getSearchTmpl(f);
-            break;
-          case EtoolsFilterTypes.Dropdown:
-            filterHtml = this.getDropdownTmpl(f);
-            break;
-          case EtoolsFilterTypes.DropdownMulti:
-            filterHtml = this.getDropdownMultiTmpl(f);
-            break;
-          case EtoolsFilterTypes.Date:
-            filterHtml = this.getDateTmpl(f);
-            break;
-          case EtoolsFilterTypes.Toggle:
-            filterHtml = this.getToggleTmpl(f);
-            break;
-        }
-        if (filterHtml) {
-          tmpl.push(filterHtml);
-        }
-      });
+    this.filters.forEach((f: EtoolsFilter) => {
+      let filterHtml = null;
+      switch (f.type) {
+        case EtoolsFilterTypes.Search:
+          filterHtml = this.getSearchTmpl(f);
+          break;
+        case EtoolsFilterTypes.Dropdown:
+          filterHtml = this.getDropdownTmpl(f);
+          break;
+        case EtoolsFilterTypes.DropdownMulti:
+          filterHtml = this.getDropdownMultiTmpl(f);
+          break;
+        case EtoolsFilterTypes.Date:
+          filterHtml = this.getDateTmpl(f);
+          break;
+        case EtoolsFilterTypes.Toggle:
+          filterHtml = this.getToggleTmpl(f);
+          break;
+      }
+      if (filterHtml) {
+        tmpl.push(filterHtml);
+      }
+    });
     return tmpl;
   }
 
@@ -229,7 +237,7 @@ export class EtoolsFilters extends LitElement {
       f.selectedValue = this.getFilterEmptyValue(f.type);
     });
     // repaint
-    this.requestUpdate();
+    this.requestUpdate().then(() => this.fireFiltersChangeEvent());
   }
 
   selectFilter(e: CustomEvent) {
@@ -337,7 +345,7 @@ export class EtoolsFilters extends LitElement {
     }
     const keys: string[] = Object.keys(filterValues);
     this.filters.forEach((f: EtoolsFilter) => {
-      if (keys.indexOf(f.filterKey) > -1 ) {
+      if (keys.indexOf(f.filterKey) > -1) {
         // filter found by key
         if (!f.selected) {
           // select filter is not already selected
