@@ -114,10 +114,10 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                         id="assessmentInput"
                         class="disabled-as-readonly validate-input required fua-person"
                         ?required
-                        .selected="${this.assessmentId}"
+                        .selected="${this.selectedAssessmentId}"
                         label="Assessment"
-                        .options="${this.fullPartner.assessments}"
-                        option-label="title"
+                        .options="${this._getAsArray(this.assessment.reference_number)}"
+                        option-label="number"
                         option-value="id"
                         ?readOnly="${this.assessmentId}"
                         trigger-value-change-event
@@ -247,7 +247,7 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
   }
 
   private defaultItem: GenericObject = {
-    assessment: null,
+    psea_assessment: null,
     assigned_to: null,
     section: null,
     office: null,
@@ -274,7 +274,7 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
   partners: object[] = [];
 
   @property({type: Object})
-  fullPartner: any = {assessments: []};
+  assessment: any = {};
 
   @property({type: String})
   dialogTitle: string = 'Add Action Point';
@@ -331,7 +331,7 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
 
   @property({type: Array})
   modelFields: string[] = ['assigned_to', 'category', 'description', 'section', 'office', 'due_date',
-    'high_priority', 'assessment'];
+    'high_priority', 'psea_assessment'];
 
   @property({type: Boolean})
   isNewRecord: boolean = true;
@@ -339,8 +339,10 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
   @property({type: Object})
   toastEventSource!: LitElement;
 
+  @property({type: Number})
+  selectedAssessmentId: number = 1;
+
   stateChanged(state: RootState) {
-    debugger
     if (state.commonData) {
       this.partners = [...state.commonData.partners];
       this.users = [...state.commonData.unicefUsers];
@@ -355,6 +357,7 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
 
     if (state.app && state.app.routeDetails && state.app.routeDetails.params && state.app.routeDetails.params.assessmentId) {
       this.assessmentId = state.app.routeDetails.params.assessmentId;
+      this.getAssessmentsData(this.assessmentId);
     }
   }
 
@@ -379,6 +382,15 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
     // let url = getEndpoint(etoolsEndpoints.)
   }
 
+  getAssessmentsData(assessmentId: string) {
+    let endpoint = {url: etoolsEndpoints.assessment.url + `/${assessmentId}`};
+    return makeRequest(endpoint).then((response: GenericObject) => {
+      this.assessment = response;
+      this.editedItem.psea_assessment = assessmentId;
+    })
+      .catch((err: any) => console.error(err));
+  }
+
   // _openEditDialog(event: any) {
   //   this.editedApBase = '';
   //   fireEvent(this, 'global-loading', {type: 'get-ap-options', active: true, message: 'Loading data...'});
@@ -397,6 +409,11 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
     if (this.validate()) {
       this.saveDialogData();
     }
+  }
+
+  _getAsArray(number: string) {
+    // this.selectedAssessmentId = 1;
+    return [{number: number, id: 1}];
   }
 
   private validate() {
@@ -418,8 +435,6 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
       method: this.isNewRecord ? 'POST' : 'PATCH',
       url: getEndpoint(etoolsEndpoints.actionPoints, {id: this.assessmentId}).url
     };
-
-    debugger
 
     makeRequest(options, this.editedItem)
       .then((resp: any) => this._handleResponse(resp))
