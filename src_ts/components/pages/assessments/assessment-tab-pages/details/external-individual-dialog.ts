@@ -14,6 +14,7 @@ import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {GenericObject} from '../../../../../types/globals';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../../../redux/store';
+import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 
 /**
  * @customElement
@@ -34,10 +35,10 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
                       ?opened="${this.dialogOpened}"
                       dialog-title="${this.dialogTitle}"
                       size="md"
-                      ?show-spinner="${this.requestInProcess}"
+                      ?show-spinner="${this.requestInProgress}"
                       @close="${this.handleDialogClosed}"
                       ok-btn-text="${this.confirmBtnText}"
-                      ?disable-confirm-btn="${this.requestInProcess}"
+                      ?disable-confirm-btn="${this.requestInProgress}"
                       keep-dialog-open
                       @confirm-btn-clicked="${this.onSaveClick}">
 
@@ -102,7 +103,7 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
   dialogOpened: boolean = false;
 
   @property({type: Boolean, reflect: true})
-  requestInProcess: boolean = false;
+  requestInProgress: boolean = false;
 
   @property({type: String})
   dialogTitle: string = 'Add New External Individual';
@@ -194,7 +195,7 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
   }
 
   private saveDialogData() {
-    this.requestInProcess = true;
+    this.requestInProgress = true;
 
     const options = new RequestEndpoint(getEndpoint(etoolsEndpoints.externalIndividuals).url!, 'POST');
 
@@ -204,17 +205,14 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
   }
 
   _handleResponse(resp: any) {
-    this.requestInProcess = false;
+    this.requestInProgress = false;
     fireEvent(this, 'external-individual-updated', resp);
     this.handleDialogClosed();
   }
 
   _handleError(err: any) {
-    this.requestInProcess = false;
-    let msg = 'Failed to save new External Individual!';
-    if (err.response && err.response.email && err.response.email[0]) {
-      msg = err.response.email[0];
-    }
+    this.requestInProgress = false;
+    let msg = formatServerErrorAsText(err);
     logError(msg, 'external-individual-dialog', err);
     fireEvent(this.toastEventSource, 'toast', {text: msg});
   }
