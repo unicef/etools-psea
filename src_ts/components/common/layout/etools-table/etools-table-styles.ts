@@ -97,19 +97,19 @@ export const etoolsTableStyles = html`
     }
 
     .row-actions .actions {
-      display: none;
+      visibility: hidden;
       position: absolute;
       right: var(--etools-table-side-padding, 16px);
       top: 0;
       bottom: 0;
+      @apply --layout-horizontal;
       @apply --layout-center;
       @apply --layout-end-justified;
       background: transparent;
     }
-    
+
     tr:hover .row-actions .actions {
-      display: block;
-      @apply --layout-horizontal;
+      visibility: visible;
     }
 
     .row-actions paper-icon-button {
