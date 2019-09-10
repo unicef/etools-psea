@@ -160,6 +160,14 @@ export class AppShell extends connect(store)(LitElement) {
       navigate(decodeURIComponent(location.pathname + location.search))));
     installMediaQueryWatcher(`(min-width: 460px)`,
       () => store.dispatch(updateDrawerState(false)));
+
+    // this will prevent the header to overlap etools-dropdown
+    customElements.whenDefined('app-header-layout').then(() => {
+      if (this.appHeaderLayout !== null) {
+        window.EtoolsEsmmFitIntoEl = this.appHeaderLayout!.shadowRoot.querySelector('#contentContainer');
+      }
+    });
+
   }
 
   public disconnectedCallback() {
