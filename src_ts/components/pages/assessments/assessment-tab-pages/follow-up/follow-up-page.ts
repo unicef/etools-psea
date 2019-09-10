@@ -10,16 +10,13 @@ import '@polymer/paper-checkbox/paper-checkbox.js';
 import '@polymer/paper-input/paper-textarea.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-tooltip/paper-tooltip.js';
-// import '../../list-tab-elements/list-header/list-header';
 import {EtoolsTableColumn, EtoolsTableColumnType} from '../../../../common/layout/etools-table/etools-table'
 import '@unicef-polymer/etools-dropdown/etools-dropdown.js';
 import '@polymer/polymer/lib/elements/dom-if';
 import '@polymer/polymer/lib/elements/dom-repeat';
 
 import { GenericObject, Constructor } from '../../../../../types/globals';
-// import { getFollowUpDummydata } from './follow-up-dummy-data';
-// import { ROOT_PATH } from '../../../../../config/config';
-import {cloneDeep} from '../../../../utils/utils';
+import { cloneDeep } from '../../../../utils/utils';
 import { makeRequest } from '../../../../utils/request-helper';
 import { etoolsEndpoints } from '../../../../../endpoints/endpoints-list';
 import { getEndpoint } from '../../../../../endpoints/endpoints';
@@ -37,51 +34,29 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
                 icon="add">
           </paper-icon-button>
         </div>
-
-        <!-- <list-header data="[[columns]]"
-                     order-by="{{orderBy}}"
-                     no-additional
-                     base-permission-path="[[basePermissionPath]]"></list-header> -->
-        ${this.hasItems ? 
-        html`<etools-table .items="${this.dataItems}"
-                           .columns="${this.columns}"
-                           showEdit
-                           showCopy>
-        </etools-table>` : 
-        html`<div>
-        <etools-table
-                .items"${this.dataItems}"
-                .columns="${this.columns}">
-          <div slot="checkbox" class="checkbox">
-            <span>–</span>
-          </div>
-        </etools-table></div>`}
+        
+        <etools-table .items="${this.hasItems ? this.dataItems : this.blankAPList}"
+                      .columns="${this.columns}"
+                      ?showEdit="${this.hasItems}"
+                      ?showCopy="${this.hasItems}">
+        </etools-table>
       </etools-content-panel>
     `;
   }
-
-  @property({type: Array})
-  modelFields: string[] = ['assigned_to', 'category', 'description', 'section', 'office', 'due_date',
-    'high_priority', 'psea_assessment'];
   
   @property({type: Array})
   dataItems: object[] = [];
-  
-  @property({type: Object})
-  itemModel: GenericObject = {
-    assigned_to: '',
-    due_date: undefined,
-    description: '',
-    high_priority: false
-  };
+
+  @property({type: Array})
+  blankAPList: object[] = [
+    {reference_number: '', category: '', assigned_to: '', status: '', due_date: '', high_priority: ''}
+  ];
 
   @property({type: Array})
   columns: EtoolsTableColumn[] = [
     {
       label: 'Reference #',
       name: 'reference_number',
-      // link_tmpl: `${ROOT_PATH}blahblah`,
-      // sort: EtoolsTableColumnSort.Asc,
       type: EtoolsTableColumnType.Text
     }, {
       label: 'Action Point Category',
@@ -107,33 +82,6 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
   ];
 
   @property({type: Object})
-  addDialogTexts: GenericObject = {title: 'Add Action Point', confirmBtn: 'Save'};
-
-  @property({type: Object})
-  editDialogTexts: GenericObject = {title: 'Edit Action Point'};
-
-  @property({type: Object})
-  copyDialogTexts: GenericObject = {title: 'Duplicate Action Point'};
-
-  @property({type: Array})
-  viewDialogTexts: GenericObject = {title: 'View Action Point'};
-
-  @property({type: String})
-  orderBy: string = '-reference_number';
-
-  @property({type: Object})
-  requestData!: GenericObject;
-
-  @property({type: Boolean})
-  copyDialog!: boolean;
-
-  // @property({type: Array})
-  // itemsToDisplay!: GenericObject[];
-
-  @property({type: Boolean})
-  canBeChanged!: boolean;
-
-  @property({type: Object})
   followUpDialog: any;
 
   @property({type: String})
@@ -142,45 +90,84 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
   @property({type: Boolean})
   hasItems: boolean = false;
 
+  @property({type: Boolean})
+  listLoaded: boolean = false;
+
+  @property({type: Number})
+  partnerId: number | null = null;
+
   stateChanged(state: RootState) {
     if (state.app && state.app.routeDetails.params && state.app.routeDetails.params.assessmentId) {
       this.assessmentId = state.app.routeDetails.params.assessmentId
-      this.getFollowUpData();
+      if (!this.listLoaded) {
+        this.getFollowUpData();
+      }
+    }
+
+    if (state && state.pageData && state.pageData.currentAssessment) {
+      // @ts-ignore
+      this.partnerId = state.pageData.currentAssessment.partner
+      this.followUpDialog.selectedPartnerId = this.partnerId;
+      this.followUpDialog.editedItem.partner = this.partnerId;
     }
   }
 
   connectedCallback() {
     super.connectedCallback();
     this.createFollowUpDialog();
-    this.addEventListener('edit-item', () => this.editActionPoint());
-    this.addEventListener('copy-item', () => this.copyActionPoint());
+    this.addEventListener('edit-item', (e) => this.editActionPoint(e));
+    this.addEventListener('copy-item', (e) => this.copyActionPoint(e));
+    document.addEventListener('action-point-updated', (e) => this.updateActionPoints(e));
+  }
+
+
+  updateActionPoints(event: GenericObject) {
+    let oldArray = cloneDeep(this.dataItems);
+    let existingActionPointIndex: number = this.dataItems.findIndex((ap: GenericObject) => ap.id === event.detail.id);
+    if (existingActionPointIndex > -1) {
+      oldArray.splice(existingActionPointIndex, 1, event.detail);
+    } else {
+      oldArray.push(event.detail);
+    }
+    this.dataItems = oldArray;
+    this.requestUpdate();
   }
 
   getFollowUpData() {
     let endpoint = getEndpoint(etoolsEndpoints.actionPoints, {id: this.assessmentId})
-
-    console.log('get follow-up data...');
     // @ts-ignore
     makeRequest(endpoint).then((response: any) => {
-      // debugger
       this.dataItems = response;
-      this.hasItems = true;
+      this.hasItems = this.dataItems.length ? true : false;
     }).catch((err: any) => console.error(err));
+    this.listLoaded = true;
   }
 
-  editActionPoint() {
-    console.log('editttttt');
+  editActionPoint(event: GenericObject) {
+    this.copyActionPointData(event);
+    this.openFollowUpDialog();
   }
 
-  copyActionPoint() {
-    console.log('copyyyyy');
+  copyActionPoint(event: GenericObject) {
+    this.copyActionPointData(event);
+    this.followUpDialog.editedItem.id = 0;
+    this.openFollowUpDialog();
+  }
+
+  copyActionPointData(event: GenericObject) {
+    this.followUpDialog.editedItem = {...event.detail}
+    this.followUpDialog.editedItem.partner = event.detail.partner.id
+    // this.followUpDialog.editedItem.category = event.detail.category.id
+    this.followUpDialog.editedItem.assigned_to = event.detail.assigned_to.id
+    this.followUpDialog.editedItem.section = event.detail.section.id
+    this.followUpDialog.editedItem.office = event.detail.office.id
   }
 
   createFollowUpDialog() {
     this.followUpDialog = document.createElement('follow-up-dialog') as FollowUpDialogEl;
     this.followUpDialog.setAttribute('id', 'followUpDialog');
-    // this.onStaffMemberSaved = this.onStaffMemberSaved.bind(this);
-    // this.followUpDialog.addEventListener('member-updated', this.onStaffMemberSaved);
+    this.followUpDialog.assessmentId = this.assessmentId;
+    this.followUpDialog.toastEventSource = this;
     document.querySelector('body')!.appendChild(this.followUpDialog);
   }
 
@@ -188,11 +175,6 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
     if (event && event.detail) {
       this.followUpDialog.editedItem = cloneDeep(event.detail);
     }
-    // this.followUpDialog.firmId = this.firmId;
     this.followUpDialog.openDialog();
-  }
-
-  canBeEdited(status: string) {
-    return status !== 'completed';
   }
 }

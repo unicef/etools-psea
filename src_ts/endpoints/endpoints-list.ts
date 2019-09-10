@@ -63,6 +63,9 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   actionPoints: {
     template: '/api/psea/assessment/<%=id%>/action-points/'
   },
+  editActionPoint: {
+    template: '/api/psea/assessment/<%=id%>/action-points/<%=actionPoint%>/'
+  },
   attachmentsUpload: {
     url: '/api/v2/attachments/upload/'
   }
