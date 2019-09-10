@@ -162,7 +162,12 @@ export class AppShell extends connect(store)(LitElement) {
       () => store.dispatch(updateDrawerState(false)));
 
     // this will prevent the header to overlap etools-dropdown
-    window.EtoolsEsmmFitIntoEl = this.$.appHeadLayout!.shadowRoot!.querySelector('#contentContainer');
+    customElements.whenDefined('app-header-layout').then(() => {
+      if (this.appHeaderLayout !== null) {
+        window.EtoolsEsmmFitIntoEl = this.appHeaderLayout!.shadowRoot.querySelector('#contentContainer');
+      }
+    });
+
   }
 
   public disconnectedCallback() {
