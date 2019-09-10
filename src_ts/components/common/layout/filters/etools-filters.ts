@@ -229,7 +229,7 @@ export class EtoolsFilters extends LitElement {
       f.selectedValue = this.getFilterEmptyValue(f.type);
     });
     // repaint
-    this.requestUpdate();
+    this.requestUpdate().then(() => this.fireFiltersChangeEvent());
   }
 
   selectFilter(e: CustomEvent) {
