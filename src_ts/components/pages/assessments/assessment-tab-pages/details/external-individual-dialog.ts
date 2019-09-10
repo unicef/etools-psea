@@ -12,13 +12,15 @@ import {fireEvent} from '../../../../utils/fire-custom-event';
 import {cloneDeep} from '../../../../utils/utils';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {GenericObject} from '../../../../../types/globals';
+import {connect} from 'pwa-helpers/connect-mixin';
+import {RootState, store} from '../../../../../redux/store';
 
 /**
  * @customElement
  *  @LitElement
  */
 @customElement('external-individual-dialog')
-class ExternalIndividualDialog extends LitElement {
+class ExternalIndividualDialog extends connect(store)(LitElement) {
   render() {
     // language=HTML
     return html`
@@ -117,6 +119,18 @@ class ExternalIndividualDialog extends LitElement {
   @property({type: Object})
   toastEventSource!: LitElement;
 
+  @property({type: Array})
+  externalIndividuals: any[] = [];
+
+
+  stateChanged(state: RootState) {
+    if (state.app!.routeDetails.routeName === 'assessments' && state.app!.routeDetails.subRouteName === 'details') {
+      if (state.commonData) {
+        this.externalIndividuals = state.commonData!.externalIndividuals;
+      }
+    }
+  }
+
   public openDialog() {
     this.dialogOpened = true;
   }
@@ -127,9 +141,21 @@ class ExternalIndividualDialog extends LitElement {
   }
 
   private onSaveClick() {
-    if (this.validate()) {
-      this.saveDialogData();
+    if (this.validateInput()) {
+      this.getControlsData();
+      if (this.validateData()) {
+        this.saveDialogData();
+      }
     }
+  }
+
+  private validateData() {
+    // check if email is unique
+    let isValid = !this.externalIndividuals.find(x => x.email === this.editedItem.email);
+    if (!isValid) {
+      fireEvent(this.toastEventSource, 'toast', {text: 'This email address is already being used!'});
+    }
+    return isValid;
   }
 
   private resetControls() {
@@ -141,7 +167,7 @@ class ExternalIndividualDialog extends LitElement {
     this.editedItem = cloneDeep(this.defaultItem);
   }
 
-  private validate() {
+  private validateInput() {
     let isValid = true;
     this.validationSelectors.forEach((selector: string) => {
       const el = this.shadowRoot!.querySelector(selector) as PolymerElement & {validate(): boolean};
@@ -166,7 +192,6 @@ class ExternalIndividualDialog extends LitElement {
   }
 
   private saveDialogData() {
-    this.getControlsData();
     this.requestInProcess = true;
 
     const options = new RequestEndpoint(getEndpoint(etoolsEndpoints.externalIndividuals).url!, 'POST');
@@ -184,7 +209,10 @@ class ExternalIndividualDialog extends LitElement {
 
   _handleError(err: any) {
     this.requestInProcess = false;
-    const msg = 'Failed to save new External Individual!';
+    let msg = 'Failed to save new External Individual!';
+    if (err.response && err.response.email && err.response.email[0]) {
+      msg = err.response.email[0];
+    }
     logError(msg, 'external-individual-dialog', err);
     fireEvent(this.toastEventSource, 'toast', {text: msg});
   }
