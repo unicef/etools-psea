@@ -108,7 +108,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
     type: EtoolsFilterTypes.DropdownMulti,
     selectionOptions: [],
     selectedValue: [],
-    selected: true,
+    selected: false,
     minWidth: '350px',
     hideSearch: false,
     disabled: false,
@@ -121,7 +121,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
     type: EtoolsFilterTypes.DropdownMulti,
     selectionOptions: [],
     selectedValue: [],
-    selected: true,
+    selected: false,
     minWidth: '350px',
     hideSearch: false,
     disabled: false,
@@ -134,7 +134,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
     type: EtoolsFilterTypes.DropdownMulti,
     selectionOptions: [],
     selectedValue: [],
-    selected: true,
+    selected: false,
     minWidth: '350px',
     hideSearch: false,
     disabled: false,
@@ -159,12 +159,13 @@ export const updateFiltersSelectedValues = (selectedFilters: GenericObject, filt
 };
 
 export const updateFilterSelectionOptions = (filters: EtoolsFilter[], fKey: string, options: GenericObject[]) => {
-  const filter = filters.find((f: EtoolsFilter) => f.filterKey === fKey);
+  let updatedFilters: EtoolsFilter[] = [...filters];
+  const filter = updatedFilters.find((f: EtoolsFilter) => f.filterKey === fKey);
   if (filter && options) {
     if (!isJsonStrMatch(filter.selectionOptions, options)) {
       filter.selectionOptions = [...options];
-      filters = [...filters];
+      updatedFilters = [...updatedFilters];
     }
   }
-  return filters;
+  return updatedFilters;
 };
