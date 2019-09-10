@@ -185,7 +185,6 @@ export class AssessmentsList extends connect(store)(LitElement) {
           }
           // update filter selection and assign the result to main filters object(trigger render)
           this.filters = updateFiltersSelectedValues(this.selectedFilters, updatedFilters);
-          console.log('============= Filters are set ===============', this.filters);
           // get assessments based on filters, sort and pagination
           this.getAssessmentsData();
         }
@@ -242,7 +241,6 @@ export class AssessmentsList extends connect(store)(LitElement) {
   }
 
   filtersChange(e: CustomEvent) {
-    console.log('status change-------------------', e.detail);
     this.selectedFilters = {...this.selectedFilters, ...e.detail};
     this.updateUrlListQueryParams();
   }
