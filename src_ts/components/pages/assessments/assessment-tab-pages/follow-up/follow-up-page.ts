@@ -97,8 +97,11 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
   partnerId: number | null = null;
 
   stateChanged(state: RootState) {
-    if (state.app && state.app.routeDetails.params && state.app.routeDetails.params.assessmentId) {
-      this.assessmentId = state.app.routeDetails.params.assessmentId
+    if (state.app && state.app.routeDetails.params && state.app.routeDetails.params.assessmentId !== 'new') {
+      if (this.assessmentId !== state.app.routeDetails.params.assessmentId) {
+        this.assessmentId = state.app.routeDetails.params.assessmentId
+        this.getFollowUpData();
+      }
       if (!this.listLoaded) {
         this.getFollowUpData();
       }
