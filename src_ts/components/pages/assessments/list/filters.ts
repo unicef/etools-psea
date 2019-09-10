@@ -37,28 +37,28 @@ export const assessmentsFilters: EtoolsFilter[] = [
     type: EtoolsFilterTypes.DropdownMulti,
     selectionOptions: [
       {
-        id: 'draft',
-        name: 'Draft'
+        status: 'draft',
+        status_name: 'Draft'
       },
       {
-        id: 'submitted-accepted',
-        name: 'Submitted/Accepted'
+        status: 'submitted-accepted',
+        status_name: 'Submitted/Accepted'
       },
       {
-        id: 'report-submitted',
-        name: 'Report submitted'
+        status: 'report-submitted',
+        status_name: 'Report submitted'
       },
       {
-        id: 'rejected',
-        name: 'Rejected'
+        status: 'rejected',
+        status_name: 'Rejected'
       },
       {
-        id: 'completed',
-        name: 'Completed'
+        status: 'completed',
+        status_name: 'Completed'
       }
     ],
-    optionValue: 'id',
-    optionLabel: 'name',
+    optionValue: 'status',
+    optionLabel: 'status_name',
     selectedValue: [],
     selected: true,
     minWidth: '350px',
@@ -104,7 +104,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
     type: EtoolsFilterTypes.DropdownMulti,
     selectionOptions: [],
     selectedValue: [],
-    selected: true,
+    selected: false,
     minWidth: '350px',
     hideSearch: false,
     disabled: false,
@@ -117,7 +117,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
     type: EtoolsFilterTypes.DropdownMulti,
     selectionOptions: [],
     selectedValue: [],
-    selected: true,
+    selected: false,
     minWidth: '350px',
     hideSearch: false,
     disabled: false,
@@ -130,7 +130,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
     type: EtoolsFilterTypes.DropdownMulti,
     selectionOptions: [],
     selectedValue: [],
-    selected: true,
+    selected: false,
     minWidth: '350px',
     hideSearch: false,
     disabled: false,
@@ -155,12 +155,13 @@ export const updateFiltersSelectedValues = (selectedFilters: GenericObject, filt
 };
 
 export const updateFilterSelectionOptions = (filters: EtoolsFilter[], fKey: string, options: GenericObject[]) => {
-  const filter = filters.find((f: EtoolsFilter) => f.filterKey === fKey);
+  let updatedFilters: EtoolsFilter[] = [...filters];
+  const filter = updatedFilters.find((f: EtoolsFilter) => f.filterKey === fKey);
   if (filter && options) {
     if (!isJsonStrMatch(filter.selectionOptions, options)) {
       filter.selectionOptions = [...options];
-      filters = [...filters];
+      updatedFilters = [...updatedFilters];
     }
   }
-  return filters;
+  return updatedFilters;
 };
