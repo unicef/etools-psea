@@ -133,15 +133,13 @@ export class EtoolsFilters extends LitElement {
   getToggleTmpl(f: EtoolsFilter) {
     // language=HTML
     return html`
-      <div ?hidden="${!f.selected}">
-        <div class="filter toggle" style="padding: 8px 0; box-sizing: border-box;">
-          ${f.filterName}
-          <paper-toggle-button id="toggleFilter"
-              ?checked="${f.selectedValue}"
-              data-filter-key="${f.filterKey}"
-              @iron-change="${this.filterToggleChange}">
-          </paper-toggle-button>
-        </div>
+      <div class="filter toggle" ?hidden="${!f.selected}" style="padding: 8px 0; box-sizing: border-box;">
+        ${f.filterName}
+        <paper-toggle-button id="toggleFilter"
+            ?checked="${f.selectedValue}"
+            data-filter-key="${f.filterKey}"
+            @iron-change="${this.filterToggleChange}">
+        </paper-toggle-button>
       </div>
     `;
   }
