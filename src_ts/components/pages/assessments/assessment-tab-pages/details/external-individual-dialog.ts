@@ -141,12 +141,12 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
   }
 
   private onSaveClick() {
-    if (this.validateData()) {
+    if (this.validate()) {
       this.saveDialogData();
     }
   }
 
-  private validateData() {
+  public validate() {
     if (!this.validateInput()) {
       return false;
     }
