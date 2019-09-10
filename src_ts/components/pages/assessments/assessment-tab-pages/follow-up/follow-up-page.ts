@@ -46,7 +46,7 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
         html`<etools-table .items="${this.dataItems}"
                            .columns="${this.columns}"
                            showEdit
-                           showDelete>
+                           showCopy>
         </etools-table>` : 
         html`<div>
         <etools-table
@@ -153,7 +153,7 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
     super.connectedCallback();
     this.createFollowUpDialog();
     this.addEventListener('edit-item', () => this.editActionPoint());
-    this.addEventListener('delete-item', () => this.deleteActionPoint());
+    this.addEventListener('copy-item', () => this.copyActionPoint());
   }
 
   getFollowUpData() {
@@ -172,8 +172,8 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
     console.log('editttttt');
   }
 
-  deleteActionPoint() {
-    console.log('deleteeee');
+  copyActionPoint() {
+    console.log('copyyyyy');
   }
 
   createFollowUpDialog() {
