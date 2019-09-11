@@ -48,7 +48,9 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       </style>
       <div class="row-padding-v" ?hidden="${!this.editMode}">
         <label class="paper-label" required>Rating</label> <br/>
-        <paper-radio-group id="ratingElement" .selected="${this.answer.rating}" @change="${((e: CustomEvent) => this._selectedRatingChanged(e.target as PaperRadioButtonElement))}">
+        <paper-radio-group id="ratingElement" 
+            .selected="${this.answer.rating}" 
+            @change="${((e: CustomEvent) => this._selectedRatingChanged(e.target as PaperRadioButtonElement))}">
           ${this._getRatingRadioButtonsTemplate(this.question)}
         </paper-radio-group>
         <span class="invalid-color block" ?hidden="${this.hideRatingRequiredMsg}">Please select Rating</span>

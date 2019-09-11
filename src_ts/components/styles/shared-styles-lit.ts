@@ -62,9 +62,11 @@ export const SharedStylesLit = html`
       };
   }
 
-  etools-dropdown[readonly], etools-dropdown-multi[readonly],
+  etools-dropdown[readonly], 
+  etools-dropdown-multi[readonly],
   datepicker-lite[readonly],
-  paper-input[readonly] {
+  paper-input[readonly],
+  paper-textarea[readonly] {
     --paper-input-container-underline: {
       display: none;
     };
@@ -111,6 +113,7 @@ export const SharedStylesLit = html`
     }
 
     paper-input,
+    paper-textarea,
     paper-input-container,
     datepicker-lite,
     etools-dropdown,
@@ -126,6 +129,7 @@ export const SharedStylesLit = html`
     }
 
     paper-input[required][label],
+    paper-textarea[required][label],
     paper-input-container[required],
     datepicker-lite[required],
     etools-dropdown[required],
@@ -139,6 +143,12 @@ export const SharedStylesLit = html`
       --paper-input-container-label-floating: {
         @apply --required-star-style;
         color: var(--secondary-text-color, #737373);
+      }
+    }
+    
+    paper-textarea {
+      --paper-input-container-input: {
+        display: block;
       }
     }
 
