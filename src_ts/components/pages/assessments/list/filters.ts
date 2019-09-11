@@ -37,28 +37,32 @@ export const assessmentsFilters: EtoolsFilter[] = [
     type: EtoolsFilterTypes.DropdownMulti,
     selectionOptions: [
       {
-        status: 'draft',
-        label: 'Draft'
+        id: 'draft',
+        name: 'Draft'
       },
       {
-        status: 'submitted-accepted',
-        label: 'Submitted/Accepted'
+        id: 'in_progress',
+        name: 'In Progress'
       },
       {
-        status: 'report-submitted',
-        label: 'Report submitted'
+        id: 'submitted',
+        name: 'Submitted'
       },
       {
-        status: 'rejected',
-        label: 'Rejected'
+        id: 'rejected',
+        name: 'Rejected'
       },
       {
-        status: 'completed',
-        label: 'Completed'
+        id: 'final',
+        name: 'Final'
+      },
+      {
+        id: 'canceled',
+        name: 'Canceled'
       }
     ],
-    optionValue: 'status',
-    optionLabel: 'label',
+    optionValue: 'id',
+    optionLabel: 'name',
     selectedValue: [],
     selected: true,
     minWidth: '350px',
@@ -73,7 +77,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
     selectedValue: [],
     selected: true,
     minWidth: '350px',
-    hideSearch: true,
+    hideSearch: false,
     disabled: false,
     optionValue: 'id',
     optionLabel: 'name'
@@ -86,7 +90,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
     selectedValue: [],
     selected: true,
     minWidth: '350px',
-    hideSearch: true,
+    hideSearch: false,
     disabled: false,
     optionValue: 'id',
     optionLabel: 'name'
@@ -97,6 +101,45 @@ export const assessmentsFilters: EtoolsFilter[] = [
     type: EtoolsFilterTypes.Date,
     selectedValue: null,
     selected: false
+  },
+  {
+    filterName: 'Assessor Unicef Staff',
+    filterKey: 'assessor_staff',
+    type: EtoolsFilterTypes.DropdownMulti,
+    selectionOptions: [],
+    selectedValue: [],
+    selected: false,
+    minWidth: '350px',
+    hideSearch: false,
+    disabled: false,
+    optionValue: 'id',
+    optionLabel: 'name'
+  },
+  {
+    filterName: 'Assessor Assessing Firm',
+    filterKey: 'assessor_firm',
+    type: EtoolsFilterTypes.DropdownMulti,
+    selectionOptions: [],
+    selectedValue: [],
+    selected: false,
+    minWidth: '350px',
+    hideSearch: false,
+    disabled: false,
+    optionValue: 'id',
+    optionLabel: 'name'
+  },
+  {
+    filterName: 'Assessor External Individual',
+    filterKey: 'assessor_external',
+    type: EtoolsFilterTypes.DropdownMulti,
+    selectionOptions: [],
+    selectedValue: [],
+    selected: false,
+    minWidth: '350px',
+    hideSearch: false,
+    disabled: false,
+    optionValue: 'id',
+    optionLabel: 'name'
   }
 ];
 
@@ -116,12 +159,13 @@ export const updateFiltersSelectedValues = (selectedFilters: GenericObject, filt
 };
 
 export const updateFilterSelectionOptions = (filters: EtoolsFilter[], fKey: string, options: GenericObject[]) => {
-  const filter = filters.find((f: EtoolsFilter) => f.filterKey === fKey);
-  if (filter) {
+  let updatedFilters: EtoolsFilter[] = [...filters];
+  const filter = updatedFilters.find((f: EtoolsFilter) => f.filterKey === fKey);
+  if (filter && options) {
     if (!isJsonStrMatch(filter.selectionOptions, options)) {
       filter.selectionOptions = [...options];
-      filters = [...filters];
+      updatedFilters = [...updatedFilters];
     }
   }
-  return filters;
+  return updatedFilters;
 };

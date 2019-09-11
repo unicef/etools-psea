@@ -36,10 +36,10 @@ export class StaffMemberDialog extends LitElement {
                       ?opened="${this.dialogOpened}"
                       dialog-title="${this.dialogTitle}"
                       size="md"
-                      ?show-spinner="${this.requestInProcess}"
+                      ?show-spinner="${this.requestInProgress}"
                       @close="${this.handleDialogClosed}"
                       ok-btn-text="${this.confirmBtnText}"
-                      ?disable-confirm-btn="${this.requestInProcess}"
+                      ?disable-confirm-btn="${this.requestInProgress}"
                       keep-dialog-open
                       @confirm-btn-clicked="${this.onSaveClick}">
 
@@ -150,7 +150,7 @@ export class StaffMemberDialog extends LitElement {
   dialogOpened: boolean = false;
 
   @property({type: Boolean, reflect: true})
-  requestInProcess: boolean = false;
+  requestInProgress: boolean = false;
 
   @property({type: String})
   dialogTitle!: string;
@@ -235,7 +235,7 @@ export class StaffMemberDialog extends LitElement {
 
   private saveDialogData() {
     this.getControlsData();
-    this.requestInProcess = true;
+    this.requestInProgress = true;
 
     const options = {
       method: this.isNewRecord ? 'POST' : 'PATCH',
@@ -261,7 +261,7 @@ export class StaffMemberDialog extends LitElement {
   }
 
   _staffMemberDataComplete(resp: any, updated: boolean = true) {
-    this.requestInProcess = false;
+    this.requestInProgress = false;
     fireEvent(this, 'staff-member-updated', {
       item: {...resp, hasAccess: this.editedItem.hasAccess},
       updated
@@ -270,10 +270,9 @@ export class StaffMemberDialog extends LitElement {
   }
 
   _handleError(err: any) {
-    this.requestInProcess = false;
-    const msg = 'Failed to save/update new Firm Staff Member!';
+    let msg = formatServerErrorAsText(err);
     logError(msg, 'staff-member', err);
-    fireEvent(this.toastEventSource, 'toast', {text: formatServerErrorAsText(err)});
+    fireEvent(this.toastEventSource, 'toast', {text: msg});
   }
 
   getEl(elName: string): HTMLInputElement {
@@ -281,4 +280,3 @@ export class StaffMemberDialog extends LitElement {
   }
 
 }
-
