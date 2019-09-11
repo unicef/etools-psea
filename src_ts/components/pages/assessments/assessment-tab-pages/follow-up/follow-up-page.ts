@@ -107,7 +107,7 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
       }
     }
 
-    if (state && state.pageData && state.pageData.currentAssessment) {
+    if (state && state.pageData && state.pageData.currentAssessment && this.followUpDialog) {
       // @ts-ignore
       this.partnerId = state.pageData.currentAssessment.partner
       this.followUpDialog.selectedPartnerId = this.partnerId;
@@ -147,23 +147,23 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
   }
 
   editActionPoint(event: GenericObject) {
-    this.copyActionPointData(event);
+    this.extractActionPointData(event.detail);
     this.openFollowUpDialog();
   }
 
   copyActionPoint(event: GenericObject) {
-    this.copyActionPointData(event);
+    this.extractActionPointData(event.detail);
     this.followUpDialog.editedItem.id = 0;
     this.openFollowUpDialog();
   }
 
-  copyActionPointData(event: GenericObject) {
-    this.followUpDialog.editedItem = {...event.detail}
-    this.followUpDialog.editedItem.partner = event.detail.partner.id
-    // this.followUpDialog.editedItem.category = event.detail.category.id
-    this.followUpDialog.editedItem.assigned_to = event.detail.assigned_to.id
-    this.followUpDialog.editedItem.section = event.detail.section.id
-    this.followUpDialog.editedItem.office = event.detail.office.id
+  extractActionPointData(item: GenericObject) {
+    this.followUpDialog.editedItem = {...item}
+    this.followUpDialog.editedItem.partner = item.partner.id
+    // this.followUpDialog.editedItem.category = item.category.id
+    this.followUpDialog.editedItem.assigned_to = item.assigned_to.id
+    this.followUpDialog.editedItem.section = item.section.id
+    this.followUpDialog.editedItem.office = item.office.id
   }
 
   createFollowUpDialog() {

@@ -12,13 +12,16 @@ import {fireEvent} from '../../../../utils/fire-custom-event';
 import {cloneDeep} from '../../../../utils/utils';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {GenericObject} from '../../../../../types/globals';
+import {connect} from 'pwa-helpers/connect-mixin';
+import {RootState, store} from '../../../../../redux/store';
+import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 
 /**
  * @customElement
  *  @LitElement
  */
 @customElement('external-individual-dialog')
-class ExternalIndividualDialog extends LitElement {
+class ExternalIndividualDialog extends connect(store)(LitElement) {
   render() {
     // language=HTML
     return html`
@@ -32,10 +35,10 @@ class ExternalIndividualDialog extends LitElement {
                       ?opened="${this.dialogOpened}"
                       dialog-title="${this.dialogTitle}"
                       size="md"
-                      ?show-spinner="${this.requestInProcess}"
+                      ?show-spinner="${this.requestInProgress}"
                       @close="${this.handleDialogClosed}"
                       ok-btn-text="${this.confirmBtnText}"
-                      ?disable-confirm-btn="${this.requestInProcess}"
+                      ?disable-confirm-btn="${this.requestInProgress}"
                       keep-dialog-open
                       @confirm-btn-clicked="${this.onSaveClick}">
 
@@ -100,7 +103,7 @@ class ExternalIndividualDialog extends LitElement {
   dialogOpened: boolean = false;
 
   @property({type: Boolean, reflect: true})
-  requestInProcess: boolean = false;
+  requestInProgress: boolean = false;
 
   @property({type: String})
   dialogTitle: string = 'Add New External Individual';
@@ -117,6 +120,18 @@ class ExternalIndividualDialog extends LitElement {
   @property({type: Object})
   toastEventSource!: LitElement;
 
+  @property({type: Array})
+  externalIndividuals: any[] = [];
+
+
+  stateChanged(state: RootState) {
+    if (state.app!.routeDetails.routeName === 'assessments' && state.app!.routeDetails.subRouteName === 'details') {
+      if (state.commonData) {
+        this.externalIndividuals = state.commonData!.externalIndividuals;
+      }
+    }
+  }
+
   public openDialog() {
     this.dialogOpened = true;
   }
@@ -132,6 +147,20 @@ class ExternalIndividualDialog extends LitElement {
     }
   }
 
+  public validate() {
+    if (!this.validateInput()) {
+      return false;
+    }
+    this.getControlsData();
+
+    // check if email is unique
+    let isValid = !this.externalIndividuals.find(x => x.email === this.editedItem.email);
+    if (!isValid) {
+      fireEvent(this.toastEventSource, 'toast', {text: 'This email address is already being used!'});
+    }
+    return isValid;
+  }
+
   private resetControls() {
     this.validationSelectors.forEach((selector: string) => {
       const el = this.shadowRoot!.querySelector(selector) as PaperInputElement;
@@ -141,7 +170,7 @@ class ExternalIndividualDialog extends LitElement {
     this.editedItem = cloneDeep(this.defaultItem);
   }
 
-  private validate() {
+  private validateInput() {
     let isValid = true;
     this.validationSelectors.forEach((selector: string) => {
       const el = this.shadowRoot!.querySelector(selector) as PolymerElement & {validate(): boolean};
@@ -166,25 +195,23 @@ class ExternalIndividualDialog extends LitElement {
   }
 
   private saveDialogData() {
-    this.getControlsData();
-    this.requestInProcess = true;
+    this.requestInProgress = true;
 
     const options = new RequestEndpoint(getEndpoint(etoolsEndpoints.externalIndividuals).url!, 'POST');
 
     makeRequest(options, this.editedItem)
       .then((resp: any) => this._handleResponse(resp))
       .catch((err: any) => this._handleError(err))
+      .then(() => this.requestInProgress = false);
   }
 
   _handleResponse(resp: any) {
-    this.requestInProcess = false;
     fireEvent(this, 'external-individual-updated', resp);
     this.handleDialogClosed();
   }
 
   _handleError(err: any) {
-    this.requestInProcess = false;
-    const msg = 'Failed to save new External Individual!';
+    let msg = formatServerErrorAsText(err);
     logError(msg, 'external-individual-dialog', err);
     fireEvent(this.toastEventSource, 'toast', {text: msg});
   }
