@@ -10,7 +10,7 @@ import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest} from '../../../../utils/request-helper';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {fireEvent} from '../../../../utils/fire-custom-event';
-import {cloneDeep} from '../../../../utils/utils';
+import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 
@@ -173,11 +173,14 @@ export class StaffMemberDialog extends LitElement {
   @property({type: Object})
   toastEventSource!: LitElement;
 
+  private initialItem: {} = {};
+
   public openDialog() {
     this.isNewRecord = !(parseInt(this.editedItem.id) > 0);
     this.dialogTitle = this.isNewRecord ? 'Add New Firm Staff Member' : 'Edit Firm Staff Member';
     this.confirmBtnText = this.isNewRecord ? 'Add' : 'Save';
     this.dialogOpened = true;
+    this.initialItem = cloneDeep(this.editedItem);
   }
 
   private handleDialogClosed() {
@@ -239,14 +242,30 @@ export class StaffMemberDialog extends LitElement {
       url: getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url + this.editedItem.id + '/'
     };
 
-    makeRequest(options, this.editedItem)
-      .then((resp: any) => this._handleResponse(resp))
-      .catch((err: any) => this._handleError(err));
+    if (this._staffMemberHasChanged(this.initialItem, this.editedItem)) {
+      makeRequest(options, this.editedItem)
+          .then((resp: any) => this._staffMemberDataComplete(resp))
+          .catch((err: any) => this._handleError(err));
+    } else {
+      this._staffMemberDataComplete(this.editedItem);
+    }
   }
 
-  _handleResponse(resp: any) {
+  private _staffMemberHasChanged(initialItem, editedItem) {
+    let _initialItem = cloneDeep(initialItem);
+    let _editedItem = cloneDeep(editedItem);
+    delete _initialItem.hasAccess;
+    delete _editedItem.hasAccess;
+
+    return !isJsonStrMatch(_initialItem.user, _editedItem.user);
+  }
+
+  _staffMemberDataComplete(resp: any, updated: boolean = true) {
     this.requestInProcess = false;
-    fireEvent(this, 'staff-member-updated', {...resp, hasAccess: this.editedItem.hasAccess});
+    fireEvent(this, 'staff-member-updated', {
+      item: {...resp, hasAccess: this.editedItem.hasAccess},
+      updated
+    });
     this.handleDialogClosed();
   }
 

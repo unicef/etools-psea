@@ -196,9 +196,11 @@ export class FirmStaffMembers extends LitElement {
     document.querySelector('body')!.appendChild(this.dialogStaffMember);
   }
 
-  onStaffMemberSaved(e: any) {
-    const savedItem = e.detail;
-    this.updateItemData(savedItem);
+  onStaffMemberSaved(e: CustomEvent) {
+    const savedItem = e.detail.item;
+    if (e.detail.updated) {
+      this.updateItemData(savedItem);
+    }
     this.updateFirmAssessorStaffAccess(savedItem as EtoolsStaffMemberModel);
   }
 
@@ -216,6 +218,11 @@ export class FirmStaffMembers extends LitElement {
   updateFirmAssessorStaffAccess(staffMember: EtoolsStaffMemberModel) {
     if ((staffMember.hasAccess && this.currentFirmAssessorStaffWithAccess.includes(staffMember.id)) ||
       (!staffMember.hasAccess && !this.currentFirmAssessorStaffWithAccess.includes(staffMember.id))) {
+      if (staffMember.hasAccess) {
+        fireEvent(this, 'toast', {
+          text: `${staffMember.user.first_name} ${staffMember.user.last_name} already has access.`
+        });
+      }
       return;
     }
 
