@@ -1,12 +1,12 @@
 import {PolymerElement} from '@polymer/polymer/polymer-element.js';
 import EtoolsAjaxRequestMixin from '@unicef-polymer/etools-ajax/etools-ajax-request-mixin';
 import {property} from '@polymer/decorators/lib/decorators';
-import {EtoolsUserModel} from './user-model';
+import {EtoolsUserModel, EtoolsUserPermissions} from './user-model';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../redux/store';
 import {getEndpoint} from '../../endpoints/endpoints';
 import {GenericObject} from '../../types/globals';
-import {updateUserData} from '../../redux/actions/user';
+import {updateUserData, updateUserPermissions} from '../../redux/actions/user';
 import {etoolsEndpoints} from '../../endpoints/endpoints-list';
 
 /**
@@ -31,6 +31,7 @@ export class EtoolsUser extends connect(store)(EtoolsAjaxRequestMixin(PolymerEle
     return this.sendRequest({endpoint: this.profileEndpoint}).then((response: GenericObject) => {
       // console.log('response', response);
       store.dispatch(updateUserData(response));
+      store.dispatch(updateUserPermissions(this.getUserPermissions(response)));
     }).catch((error: GenericObject) => {
       console.error('[EtoolsUser]: getUserData req error...', error);
       throw error;
@@ -44,10 +45,18 @@ export class EtoolsUser extends connect(store)(EtoolsAjaxRequestMixin(PolymerEle
       body: profile
     }).then((response: GenericObject) => {
       store.dispatch(updateUserData(response));
+      store.dispatch(updateUserPermissions(this.getUserPermissions(response)));
     }).catch((error: GenericObject) => {
       console.error('[EtoolsUser]: updateUserData req error ', error);
       throw error;
     });
+  }
+
+  private getUserPermissions(user: GenericObject): EtoolsUserPermissions {
+    const permissions: EtoolsUserPermissions = {
+      canAddAssessment: user && user.groups && Boolean(user.groups.find((group: any) => group.name === 'UNICEF User' || group.name === 'UNICEF Audit Focal Point'))
+    }
+    return permissions;
   }
 
   public changeCountry(countryId: number) {

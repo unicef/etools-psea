@@ -71,7 +71,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
             <iron-icon icon="file-download"></iron-icon>Export
           </paper-button>
 
-          <paper-button class="primary left-icon" raised @tap="${this.goToAddnewPage}">
+          <paper-button class="primary left-icon" ?hidden="${!this.canAdd}" raised @tap="${this.goToAddnewPage}">
             <iron-icon icon="add"></iron-icon>Add new assessment
           </paper-button>
         </div>
@@ -116,13 +116,16 @@ export class AssessmentsList extends connect(store)(LitElement) {
   paginator: EtoolsPaginator = {...defaultPaginator};
 
   @property({type: Array})
-  sort: EtoolsTableSortItem[] = [{name: 'ref_number', sort: EtoolsTableColumnSort.Desc}];
+  sort: EtoolsTableSortItem[] = [{name: 'assessment_date', sort: EtoolsTableColumnSort.Desc}, {name: 'partner_name', sort: EtoolsTableColumnSort.Asc}];
 
   @property({type: Array})
-  filters: EtoolsFilter[] = [...assessmentsFilters];
+  filters!: EtoolsFilter[];
 
   @property({type: Object})
   selectedFilters: GenericObject = {...defaultSelectedFilters};
+
+  @property({type: Boolean})
+  canAdd: boolean = false;
 
   @property({type: Array})
   listColumns: EtoolsTableColumn[] = [
@@ -130,7 +133,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
       label: 'Reference No.',
       name: 'reference_number',
       link_tmpl: `${ROOT_PATH}assessments/:id/details`,
-      type: EtoolsTableColumnType.Link
+      type: EtoolsTableColumnType.Link,
     },
     {
       label: 'Assessment Date',
@@ -165,30 +168,54 @@ export class AssessmentsList extends connect(store)(LitElement) {
   @property({type: Array})
   listData: GenericObject[] = [];
 
-
   stateChanged(state: RootState) {
     if (state.app!.routeDetails.routeName === 'assessments' &&
       state.app!.routeDetails.subRouteName === 'list') {
 
-      if (state.commonData) {
-        this.filters = updateFilterSelectionOptions(this.filters, 'unicef_focal_point', state.commonData!.unicefUsers);
-        this.filters = updateFilterSelectionOptions(this.filters, 'partner', state.commonData!.partners);
-      }
-
       const stateRouteDetails = {...state.app!.routeDetails};
       if (JSON.stringify(stateRouteDetails) !== JSON.stringify(this.routeDetails)) {
         this.routeDetails = stateRouteDetails;
+
+        if (state.user && state.user.permissions) {
+          this.canAdd = state.user.permissions.canAddAssessment;
+        }
+
         if (!this.routeDetails.queryParams || Object.keys(this.routeDetails.queryParams).length === 0) {
           // update url with params
           this.updateUrlListQueryParams();
           return;
         } else {
-          // init filters, sort, page, page_size from url params
+          // init selectedFilters, sort, page, page_size from url params
           this.updateListParamsFromRouteDetails(this.routeDetails.queryParams);
+
+          // do other initialization after route changes are complete
+          // init filters using default defined filters (including options)
+          let updatedFilters = [...assessmentsFilters];
+          if (state.commonData) {
+            // update dropdowns filters options from redux
+            updatedFilters = [...this.updateDropdownFiltersOptionsFromCommonData(state.commonData, updatedFilters)];
+          }
+          // update filter selection and assign the result to main filters object(trigger render)
+          this.filters = updateFiltersSelectedValues(this.selectedFilters, updatedFilters);
+          // get assessments based on filters, sort and pagination
           this.getAssessmentsData();
         }
+
       }
     }
+  }
+
+  updateDropdownFiltersOptionsFromCommonData(commonData: any, currentFilters: EtoolsFilter[]): EtoolsFilter[] {
+    let updatedFilters = updateFilterSelectionOptions(currentFilters,
+      'unicef_focal_point', commonData.unicefUsers);
+    updatedFilters = updateFilterSelectionOptions(updatedFilters, 'partner', commonData.partners);
+    updatedFilters = updateFilterSelectionOptions(updatedFilters,
+      'assessor_external', commonData.externalIndividuals);
+    updatedFilters = updateFilterSelectionOptions(updatedFilters,
+      'assessor_staff', commonData.unicefUsers);
+    updatedFilters = updateFilterSelectionOptions(updatedFilters,
+      'assessor_firm', commonData.assessingFirms);
+    return updatedFilters;
   }
 
   updateUrlListQueryParams() {
@@ -222,9 +249,8 @@ export class AssessmentsList extends connect(store)(LitElement) {
     }
     this.paginator = {...this.paginator, ...paginatorParams};
 
-    // update filters
+    // update selectedFilters
     this.selectedFilters = getSelectedFiltersFromUrlParams(this.selectedFilters, queryParams);
-    this.filters = updateFiltersSelectedValues(this.selectedFilters, this.filters);
   }
 
   filtersChange(e: CustomEvent) {

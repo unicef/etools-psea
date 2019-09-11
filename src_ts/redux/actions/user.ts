@@ -1,5 +1,5 @@
 import {Action, ActionCreator} from 'redux';
-import {EtoolsUserModel} from '../../components/user/user-model';
+import {EtoolsUserModel, EtoolsUserPermissions} from '../../components/user/user-model';
 // import {ThunkAction} from 'redux-thunk';
 // import {RootState} from '../store';
 import {GenericObject} from '../../types/globals';
@@ -21,7 +21,7 @@ export const updateUserData: ActionCreator<UserActionUpdate> = (data: EtoolsUser
   };
 };
 
-export const updateUserPermissions: ActionCreator<UserActionUpdatePermissions> = (permissions: GenericObject) => {
+export const updateUserPermissions: ActionCreator<UserActionUpdatePermissions> = (permissions: EtoolsUserPermissions) => {
   return {
     type: UPDATE_USER_PERMISSIONS,
     permissions
