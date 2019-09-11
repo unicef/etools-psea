@@ -139,7 +139,7 @@ const onStatusChangeConfirmation = (e: CustomEvent) => {
   }
   const url = getEndpoint(etoolsEndpoints.assessmentStatusUpdate,
     {id: assessment.id, statusAction: statusAction}).url!;
-  console.log(url);
+  console.log('update status: PATCH', url);
   return makeRequest({url: url, method: 'PATCH'})
     .then((response) => {
       console.log('success on status change...', response);
