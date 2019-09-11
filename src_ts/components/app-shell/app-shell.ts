@@ -46,7 +46,7 @@ import {getCurrentUserData} from '../user/user-actions';
 import {EtoolsRouter} from '../../routing/routes';
 import {RouteDetails} from '../../routing/router';
 import {getUnicefUsersData} from '../common-data/common-data-actions';
-import {loadPartners, loadExternalIndividuals} from '../../redux/actions/common-data';
+import {loadPartners, loadExternalIndividuals, loadAssessingFirms} from '../../redux/actions/common-data';
 
 store.addReducers({
   user,
@@ -151,6 +151,7 @@ export class AppShell extends connect(store)(LitElement) {
     getUnicefUsersData();
     store.dispatch(loadPartners());
     store.dispatch(loadExternalIndividuals());
+    store.dispatch(loadAssessingFirms());
   }
 
   public connectedCallback() {
@@ -160,6 +161,14 @@ export class AppShell extends connect(store)(LitElement) {
       navigate(decodeURIComponent(location.pathname + location.search))));
     installMediaQueryWatcher(`(min-width: 460px)`,
       () => store.dispatch(updateDrawerState(false)));
+
+    // this will prevent the header to overlap etools-dropdown
+    customElements.whenDefined('app-header-layout').then(() => {
+      if (this.appHeaderLayout !== null) {
+        window.EtoolsEsmmFitIntoEl = this.appHeaderLayout!.shadowRoot.querySelector('#contentContainer');
+      }
+    });
+
   }
 
   public disconnectedCallback() {

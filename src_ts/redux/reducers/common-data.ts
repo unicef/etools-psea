@@ -1,5 +1,5 @@
 import {Reducer} from 'redux';
-import {UPDATE_UNICEF_USERS_DATA, SET_PARTNERS, SET_EXTERNAL_INDIVIDUALS} from '../actions/common-data';
+import {UPDATE_UNICEF_USERS_DATA, SET_PARTNERS, SET_EXTERNAL_INDIVIDUALS, SET_ASSESSING_FIRMS} from '../actions/common-data';
 import {RootAction} from '../store';
 import {UnicefUser} from '../../types/globals';
 
@@ -7,12 +7,14 @@ export interface CommonDataState {
   unicefUsers: UnicefUser[];
   partners: [];
   externalIndividuals: [];
+  assessingFirms: [];
 }
 
 const INITIAL_COMMON_DATA: CommonDataState = {
   unicefUsers: [],
   partners: [],
-  externalIndividuals: []
+  externalIndividuals: [],
+  assessingFirms: []
 };
 
 const commonData: Reducer<CommonDataState, RootAction> = (state = INITIAL_COMMON_DATA, action) => {
@@ -32,6 +34,11 @@ const commonData: Reducer<CommonDataState, RootAction> = (state = INITIAL_COMMON
         ...state,
         externalIndividuals: action.externalIndividuals
       }
+      case SET_ASSESSING_FIRMS:
+        return {
+          ...state,
+          assessingFirms: action.assessingFirms
+        }
     default:
       return state;
   }
