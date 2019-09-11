@@ -22,6 +22,9 @@ export interface EtoolsUserModel {
   vendor_number: string | null;
   [key: string]: any;
 }
+export interface EtoolsUserPermissions{
+  canAddAssessment: boolean;
+}
 export interface EtoolsStaffMemberModel {
   id: number;
   hasAccess: boolean;
