@@ -148,7 +148,7 @@ export class QuestionnaireItemElement extends LitElement {
   }
 
   _getUrl() {
-    let url = getEndpoint(etoolsEndpoints.questionnaireItemAnswers, {assessmentId: this.assessmentId}).url!;
+    let url = getEndpoint(etoolsEndpoints.questionnaireAnswers, {assessmentId: this.assessmentId}).url!;
     if (this.answer && this.answer.id) {
       url = url + this.answer.id + '/';
     }

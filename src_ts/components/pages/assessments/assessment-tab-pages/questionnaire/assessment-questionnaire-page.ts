@@ -8,6 +8,7 @@ import {Question, Answer} from '../../../../../types/assessment';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {cloneDeep} from '../../../../utils/utils';
+import get from 'lodash-es/get';
 
 /**
  * @customElement
@@ -59,10 +60,17 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   assessmentId!: string | number;
 
   stateChanged(state: RootState) {
-    if (state.app!.routeDetails && state.app!.routeDetails.params) {
-      this.assessmentId = state.app!.routeDetails.params.assessmentId;
+    if (get(state, 'app.routeDetails.params.assessmentId') !== this.assessmentId) {
+      this.assessmentId = state.app!.routeDetails!.params!.assessmentId;
+      this.getAnswers();
     }
   }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.getQuestionnaire();
+  }
+
 
   _getQuestionnaireItemsTemplate(questionnaireItems: Question[], answers: Answer[]) {
     if (!questionnaireItems || !questionnaireItems.length) {
@@ -87,14 +95,9 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     return answer ? cloneDeep(answer) : new Answer();
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.getQuestionnaire();
-    this.getAnswers();
-  }
-
   getQuestionnaire() {
-    let url = getEndpoint(etoolsEndpoints.questionnaire).url!;
+    console.log('---GET questionnaire---');
+    let url = etoolsEndpoints.questionnaire.url!;
     makeRequest(new RequestEndpoint(url))
       .then((resp) => {
         this.questionnaireItems = resp;
@@ -102,7 +105,7 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   }
 
   getAnswers() {
-    let url = getEndpoint(etoolsEndpoints.questionnaireItemAnswers, {assessmentId: this.assessmentId}).url!;
+    let url = getEndpoint(etoolsEndpoints.questionnaireAnswers, {assessmentId: this.assessmentId}).url!;
     makeRequest(new RequestEndpoint(url))
     .then((resp) => {
       this.answers = resp;
