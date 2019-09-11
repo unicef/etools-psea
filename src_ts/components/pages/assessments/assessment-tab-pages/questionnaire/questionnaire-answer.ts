@@ -55,7 +55,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       </div>
       <paper-textarea id="commentsElement" label="Comments" always-float-label class="row-padding-v"
        .value="${this.answer.comments}"
-       ?readonly="${this.editMode}">
+       ?readonly="${!this.editMode}">
       </paper-textarea>
       <div class="layout-vertical row-padding-v">
         <label class="paper-label">Proof of Evidence</label>
