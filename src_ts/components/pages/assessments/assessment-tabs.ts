@@ -30,7 +30,7 @@ import {
   createStatusChangeConfirmationsDialog,
   removeStatusChangeConfirmationsDialog,
   canShowCancelAction,
-  canShowStatusActions, cancelAssessmentStatusActionTmpl
+  canShowStatusActions, cancelAssessmentStatusActionTmpl, setStatusActionsModuleParentEl
 } from './assessment-status-actions';
 
 /**
@@ -66,7 +66,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
             ? cancelAssessmentStatusActionTmpl(this.changeStatusAction.bind(this))
             : ''}
           
-          ${canShowStatusActions(this.assessment) 
+          ${canShowStatusActions(this.assessment)
             ? assessmentStatusActionBtnsTmpl(this.assessment.status, this.changeStatusAction.bind(this))
             : ''}
         </div>
@@ -79,11 +79,11 @@ export class AssessmentTabs extends connect(store)(LitElement) {
       </page-content-header>
 
       <div class="page-content">
-        <assessment-details-page ?hidden="${!this.isActiveTab(this.activeTab,'details')}">
+        <assessment-details-page ?hidden="${!this.isActiveTab(this.activeTab, 'details')}">
         </assessment-details-page>
-        <assessment-questionnaire-page ?hidden="${!this.isActiveTab(this.activeTab,'questionnaire')}">
+        <assessment-questionnaire-page ?hidden="${!this.isActiveTab(this.activeTab, 'questionnaire')}">
         </assessment-questionnaire-page>
-        <follow-up-page ?hidden="${!this.isActiveTab(this.activeTab,'followup')}"></follow-up-page>
+        <follow-up-page ?hidden="${!this.isActiveTab(this.activeTab, 'followup')}"></follow-up-page>
       </div>
     `;
   }
@@ -125,6 +125,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
   connectedCallback(): void {
     super.connectedCallback();
     createStatusChangeConfirmationsDialog();
+    setStatusActionsModuleParentEl(this);
   }
 
   disconnectedCallback(): void {
@@ -139,14 +140,14 @@ export class AssessmentTabs extends connect(store)(LitElement) {
   public stateChanged(state: RootState) {
     // update page route data
     if (state.app!.routeDetails.routeName === 'assessments' &&
-        state.app!.routeDetails.subRouteName !== 'list') {
+      state.app!.routeDetails.subRouteName !== 'list') {
       this.routeDetails = state.app!.routeDetails;
 
       const stateActiveTab = state.app!.routeDetails.subRouteName as string;
       if (stateActiveTab !== this.activeTab) {
         // const oldActiveTabValue = this.activeTab;
         this.activeTab = state.app!.routeDetails.subRouteName as string;
-        //this.tabChanged(this.activeTab, oldActiveTabValue);// Is this needed here?
+        // this.tabChanged(this.activeTab, oldActiveTabValue);// Is this needed here?
       }
 
       if (state.app!.routeDetails!.params) {
@@ -202,7 +203,9 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     if (!this.assessment.id) {
       return 'New PSEA Assessment';
     }
-    return this.assessment.reference_number ? `${this.assessment.reference_number}: ${this.assessment.partner_name}` : '';
+    return this.assessment.reference_number
+      ? `${this.assessment.reference_number}: ${this.assessment.partner_name}`
+      : '';
   }
 
   enableTabs() {
@@ -233,7 +236,8 @@ export class AssessmentTabs extends connect(store)(LitElement) {
       return;
     }
     if (newTabName !== oldTabName) {
-      const newPath = `assessments/${this.routeDetails!.params ? this.routeDetails!.params.assessmentId : 'new'}/${newTabName}`;
+      const newPath =
+        `assessments/${this.routeDetails!.params ? this.routeDetails!.params.assessmentId : 'new'}/${newTabName}`;
       if (this.routeDetails.path === newPath) {
         return;
       }
@@ -255,5 +259,4 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     // }
     updateAssessmentStatus(this.assessment, action);
   }
-
 }

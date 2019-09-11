@@ -7,6 +7,16 @@ import {getEndpoint} from '../../../endpoints/endpoints';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import EtoolsDialog from '@unicef-polymer/etools-dialog/etools-dialog';
 import {ConfigObj, createDynamicDialog, removeDialog} from '@unicef-polymer/etools-dialog/dynamic-dialog';
+import {parseRequestErrorsAndShowAsToastMsgs} from '../../utils/ajax-error-parser';
+import {AssessmentTabs} from './assessment-tabs';
+import {store} from "../../../redux/store";
+import {updateAssessmentData} from "../../../redux/actions/page-data";
+import {cloneDeep} from "../../utils/utils";
+
+let assessmentTabsElement: AssessmentTabs | null = null;
+export const setStatusActionsModuleParentEl = (el: AssessmentTabs) => {
+  assessmentTabsElement = el;
+};
 
 let assessment: Assessment | null = null;
 let statusAction: string | null = null;
@@ -29,6 +39,7 @@ export const canShowStatusActions = (assessment: Assessment) => {
 export const getAssessmentStatusesList = (statusesList: string[][]): EtoolsStatusModel[] => {
   if (statusesList.length === 0) return [];
   return statusesList.map((s: string[]) => {
+    // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
     return {status: s[0], label: s[1]} as EtoolsStatusModel;
   });
 };
@@ -82,12 +93,10 @@ const validateStatusChange = (): boolean => {
       valid = assessment !== null && !!assessment.id && !!assessment.assessor;
       break;
     case 'submit':
-      // TODO: determine submit validations
-      break;
     case 'reject':
-      // TODO: determine reject validations
     case 'finalize':
-      // TODO: determine finalize validations
+      // use only validation of status transition of the API
+      valid = true;
       break;
     case 'cancel':
       // TODO: determine cancel validations by user group and add it to this condition
@@ -95,6 +104,11 @@ const validateStatusChange = (): boolean => {
       break;
   }
   return valid;
+};
+
+const resetCurrentStatusUpdateData = () => {
+  assessment = null;
+  statusAction = null;
 };
 
 export const updateAssessmentStatus = (currentAssessment: Assessment, action: string) => {
@@ -114,11 +128,6 @@ export const updateAssessmentStatus = (currentAssessment: Assessment, action: st
   statusChangeConfirmationDialog.opened = true;
 };
 
-const resetCurrentStatusUpdateData = () => {
-  assessment = null;
-  statusAction = null;
-};
-
 const onStatusChangeConfirmation = (e: CustomEvent) => {
   if (!e.detail.confirmed) {
     // cancel status update action
@@ -131,11 +140,19 @@ const onStatusChangeConfirmation = (e: CustomEvent) => {
   const url = getEndpoint(etoolsEndpoints.assessmentStatusUpdate,
     {id: assessment.id, statusAction: statusAction}).url!;
   console.log(url);
-  // return makeRequest({url: url})
-  //   .then((response) => {
-  //     console.log(response)
-  //   })
-  //   .catch(err => logError(err));
+  return makeRequest({url: url, method: 'PATCH'})
+    .then((response) => {
+      console.log('success on status change...', response);
+      // update assessment data in redux store
+      store.dispatch(updateAssessmentData({...assessment, response}));
+    })
+    .catch((err: any) => {
+      logError(err);
+      parseRequestErrorsAndShowAsToastMsgs(err, assessmentTabsElement);
+    }).then(() => {
+      // req finalized... reset data
+      resetCurrentStatusUpdateData();
+    });
 };
 
 export const createStatusChangeConfirmationsDialog = () => {
@@ -158,3 +175,4 @@ export const removeStatusChangeConfirmationsDialog = () => {
     removeDialog(statusChangeConfirmationDialog);
   }
 };
+
