@@ -56,8 +56,9 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
         <span class="invalid-color block" ?hidden="${this.hideRatingRequiredMsg}">Please select Rating</span>
       </div>
       <paper-textarea id="commentsElement" label="Comments" always-float-label class="row-padding-v"
-       .value="${this.answer.comments}"
-       ?readonly="${this.editMode}">
+        placeholder="—"
+        .value="${this.answer.comments}"
+        ?readonly="${this.editMode}">
       </paper-textarea>
       <div class="layout-vertical row-padding-v">
         <label class="paper-label">Proof of Evidence</label>
