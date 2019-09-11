@@ -5,7 +5,7 @@ import {etoolsEndpoints} from '../../endpoints/endpoints-list';
 export const UPDATE_UNICEF_USERS_DATA = 'UPDATE_UNICEF_USERS_DATA';
 export const SET_PARTNERS = 'SET_PARTNERS';
 export const SET_EXTERNAL_INDIVIDUALS = 'SET_EXTERNAL_INDIVIDUALS';
-
+export const SET_ASSESSING_FIRMS = 'SET_ASSESSING_FIRMS';
 
 export interface CommonDataActionUpdateUnicefUsersData extends Action<'UPDATE_UNICEF_USERS_DATA'> {
   unicefUsersData: object[];
@@ -14,12 +14,12 @@ export interface CommonDataActionUpdateUnicefUsersData extends Action<'UPDATE_UN
 export type CommonDataAction = CommonDataActionUpdateUnicefUsersData;
 
 export const updateUnicefUsersData: ActionCreator<CommonDataActionUpdateUnicefUsersData> =
-    (unicefUsersData: object[]) => {
-      return {
-        type: UPDATE_UNICEF_USERS_DATA,
-        unicefUsersData
-      };
+  (unicefUsersData: object[]) => {
+    return {
+      type: UPDATE_UNICEF_USERS_DATA,
+      unicefUsersData
     };
+  };
 
 export const setPartners = (partners: []) => {
   return {
@@ -35,12 +35,24 @@ export const setExternalIndividuals = (externalIndividuals: []) => {
   }
 }
 
+export const setAssessingFirms = (assessingFirms: []) => {
+  return {
+    type: SET_ASSESSING_FIRMS,
+    assessingFirms
+  }
+}
+
 export const loadPartners = () => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.partners.url!))
-       .then((resp:any) => dispatch(setPartners(resp)));
+    .then((resp: any) => dispatch(setPartners(resp)));
 }
 
 export const loadExternalIndividuals = () => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.externalIndividuals.url!))
-       .then((resp:any) => dispatch(setExternalIndividuals(resp)));
+    .then((resp: any) => dispatch(setExternalIndividuals(resp)));
+}
+
+export const loadAssessingFirms = () => (dispatch: any) => {
+  makeRequest(new RequestEndpoint(etoolsEndpoints.auditorFirms.url!))
+    .then((resp: any) => {dispatch(setAssessingFirms(resp));});
 }
