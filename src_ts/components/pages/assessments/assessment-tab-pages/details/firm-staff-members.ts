@@ -218,11 +218,6 @@ export class FirmStaffMembers extends LitElement {
   updateFirmAssessorStaffAccess(staffMember: EtoolsStaffMemberModel) {
     if ((staffMember.hasAccess && this.currentFirmAssessorStaffWithAccess.includes(staffMember.id)) ||
       (!staffMember.hasAccess && !this.currentFirmAssessorStaffWithAccess.includes(staffMember.id))) {
-      if (staffMember.hasAccess) {
-        fireEvent(this, 'toast', {
-          text: `${staffMember.user.first_name} ${staffMember.user.last_name} already has access.`
-        });
-      }
       return;
     }
 
