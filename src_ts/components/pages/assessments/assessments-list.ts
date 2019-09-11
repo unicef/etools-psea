@@ -174,15 +174,14 @@ export class AssessmentsList extends connect(store)(LitElement) {
         this.filters = updateFilterSelectionOptions(this.filters, 'partner', state.commonData!.partners);
       }
 
-      if (state.user && !this.canAdd) {
-        if(state.user.data && state.user.data.groups){
-          this.canAdd = Boolean(state.user.data.groups.find((group: any) => group.name === 'UNICEF User' || group.name === 'UNICEF Audit Focal Point'));
-        }
-      }
-
       const stateRouteDetails = {...state.app!.routeDetails};
       if (JSON.stringify(stateRouteDetails) !== JSON.stringify(this.routeDetails)) {
         this.routeDetails = stateRouteDetails;
+
+        if (state.user && state.user.permissions) {
+          this.canAdd = state.user.permissions.canAddAssessment;
+        }
+
         if (!this.routeDetails.queryParams || Object.keys(this.routeDetails.queryParams).length === 0) {
           // update url with params
           this.updateUrlListQueryParams();
@@ -192,6 +191,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
           this.updateListParamsFromRouteDetails(this.routeDetails.queryParams);
           this.getAssessmentsData();
         }
+
       }
     }
   }
