@@ -58,7 +58,7 @@ export class Answer {
   rating: string | null = null;
   comments: string = '';
   evidences: AnswerEvidence[] = [];
-  attachments: string[] = [];
+  attachments: AnswerAttachment[] = [];
 }
 
 export class AnswerEvidence {
@@ -72,4 +72,12 @@ export class AnswerAttachment {
   file_type: string = ''; //id
   url: string ='';
   _filename: string = ''; //temp prop , used only on frontend
+}
+
+export interface UploadedFileInfo {
+  id: string;
+  filename: string;
+  created: string; // "11 Sep 2019"
+  file_link: string; //ex. '/api/v2/attachments/file/3482/'
+  uploaded_by: string; // it's the first last name of user
 }

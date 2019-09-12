@@ -5,7 +5,7 @@ import './questionnaire-answer';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {radioButtonStyles} from '../../../../styles/radio-button-styles';
-import {Question, Answer, ProofOfEvidence, Rating} from '../../../../../types/assessment';
+import {Question, Answer, Rating} from '../../../../../types/assessment';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {QuestionnaireAnswerElement} from './questionnaire-answer';
 import {cloneDeep} from '../../../../utils/utils';
@@ -35,14 +35,13 @@ export class QuestionnaireItemElement extends LitElement {
           padding: 16px 24px;
           font-size: 16px;
           background-color: var(--secondary-background-color);
+          color: black;
         }
-        .readonlyRadioBtn {
-          pointer-events: none;
-        }
+
       </style>
       <etools-content-panel panel-title="${this.question.subject}" show-expand-btn .open="${this.open}">
         <div slot="panel-btns">
-          <paper-radio-button checked class="${this._getRadioBtnClass(this.answer)} readonlyRadioBtn"
+          <paper-radio-button checked class="${this._getRadioBtnClass(this.answer)} readonly"
               ?hidden="${!this._answerIsSaved(this.answer)}">
             ${this._getSelectedRating(this.answer)}
           </paper-radio-button>
@@ -148,11 +147,9 @@ export class QuestionnaireItemElement extends LitElement {
   }
 
   _getUrl() {
-    let url = getEndpoint(etoolsEndpoints.questionnaireAnswers, {assessmentId: this.assessmentId}).url!;
-    if (this.answer && this.answer.id) {
-      url = url + this.answer.id + '/';
-    }
-
+    let url = getEndpoint(etoolsEndpoints.saveQuestionnaireAnswer, {
+      assessmentId: this.assessmentId,
+      indicatorId: this.question.id}).url!;
     return url;
   }
 

@@ -60,8 +60,9 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   assessmentId!: string | number;
 
   stateChanged(state: RootState) {
-    if (get(state, 'app.routeDetails.params.assessmentId') !== this.assessmentId) {
-      this.assessmentId = state.app!.routeDetails!.params!.assessmentId;
+    let newAssessmentId = get(state, 'app.routeDetails.params.assessmentId');
+    if (newAssessmentId && newAssessmentId !== this.assessmentId) {
+      this.assessmentId = newAssessmentId;
       this.getAnswers();
     }
   }
@@ -79,7 +80,7 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
 
     return this.questionnaireItems.map((question: Question) => {
       let answer = this._getAnswerByQuestionId(question.id, answers);
-      return html`<questionnaire-item .question="${question}"
+      return html`<questionnaire-item .question="${cloneDeep(question)}"
        .answer="${answer}"
        .editMode="${(!answer || !answer.id)}"
        .assessmentId="${this.assessmentId}"></questionnaire-item>`
@@ -105,7 +106,7 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   }
 
   getAnswers() {
-    let url = getEndpoint(etoolsEndpoints.questionnaireAnswers, {assessmentId: this.assessmentId}).url!;
+    let url = getEndpoint(etoolsEndpoints.getQuestionnaireAnswers, {assessmentId: this.assessmentId}).url!;
     makeRequest(new RequestEndpoint(url))
     .then((resp) => {
       this.answers = resp;

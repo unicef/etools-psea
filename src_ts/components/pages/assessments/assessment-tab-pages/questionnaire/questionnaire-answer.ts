@@ -18,6 +18,12 @@ import {PaperTextareaElement} from '@polymer/paper-input/paper-textarea';
 import {QuestionAttachmentsElement} from './question-attachments';
 import {PaperInputElement} from '@polymer/paper-input/paper-input';
 import {PaperCheckboxElement} from '@polymer/paper-checkbox/paper-checkbox';
+import get from 'lodash-es/get';
+import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
+import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
+import {getEndpoint} from '../../../../../endpoints/endpoints';
+import {fireEvent} from '../../../../utils/fire-custom-event';
+import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 
 @customElement('questionnaire-answer')
 export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
@@ -77,7 +83,8 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
         <question-attachments id="attachmentsElement"
           .documentTypes="${this.question.document_types}"
           .editMode="${this.editMode}"
-          .attachments="${this.answer.attachments}">
+          .attachments="${this.answer.attachments}"
+          @delete-attachment="${this.deleteAnswerAttachment}">
         </question-attachments>
       </div>
 
@@ -115,10 +122,10 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   otherEvidenceInput!: PaperInputElement;
 
   @queryAll('paper-checkbox.proofOfEvidence[checked]')
-  checkedEvidenceBoxes!: NodeList;
+  checkedEvidenceBoxes!: PaperCheckboxElement[];
 
   stateChanged(state: RootState) {
-    if (state.app!.routeDetails.params && state.app!.routeDetails.params!.assessmentId) {
+    if (get(state, 'app.routeDetails.params.assessmentId')) {
       let id = state.app!.routeDetails.params!.assessmentId;
       this.assessmentId = id === 'new' ? null : id;
     }
@@ -127,11 +134,11 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   _getProofOfEvidenceTemplate(evidences: ProofOfEvidence[], answer: Answer) {
     return evidences.map((evidence: ProofOfEvidence) => {
       return html`
-        <paper-checkbox class="proofOfEvidence padd-right"
+        <paper-checkbox class="proofOfEvidence padd-right ${this._getReadonlyStyle(this.editMode)}"
             ?checked="${this._isChecked(evidence.id, answer.evidences)}"
             evidenceid="${evidence.id}"
             ?requires-description="${evidence.requires_description}"
-            @checked-changed="${(e: CustomEvent) => this._checkedEvidenceChanged(evidence, (e.target as PaperCheckboxElement).checked, answer)}">
+            @checked-changed="${(e: CustomEvent) => this._checkedEvidenceChanged(evidence, (e.target as PaperCheckboxElement).checked!, answer)}">
             ${evidence.label}
         </paper-checkbox>`;
 
@@ -223,9 +230,9 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
 
     let evidences: AnswerEvidence[] = [];
     this.checkedEvidenceBoxes.forEach((checkboxEl => {
-      let ev: AnswerEvidence = {evidence: checkboxEl.getAttribute('evidenceid')};
+      let ev: AnswerEvidence = {evidence: checkboxEl.getAttribute('evidenceid')!};
       if (checkboxEl.hasAttribute('requires-description')) {
-        ev.description = this.otherEvidenceInput.value;
+        ev.description = this.otherEvidenceInput.value!;
       }
       evidences.push(ev);
     }));
@@ -237,6 +244,42 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
     this.hideRatingRequiredMsg = !!this.ratingElement.selected;
     return this.hideRatingRequiredMsg;
   }
+
+  _getReadonlyStyle(editMode: Boolean) {
+    return editMode ? '' : 'readonly';
+  }
+
+  deleteAnswerAttachment(e: CustomEvent) {
+    const attachmentId = e.detail.attachmentId;
+    this._deleteAttachment(attachmentId);
+  }
+
+  _deleteAttachment(attachmentId: string) {
+
+    // TODO -handle case when attachment is not yet saved in PSEA
+    let url = getEndpoint(etoolsEndpoints.answerAttachment, {
+      assessmentId: this.assessmentId,
+      indicatorId: this.question.id,
+      attachmentId: attachmentId
+    }).url!;
+    makeRequest(new RequestEndpoint(url, 'DELETE'))
+      .then(() => {
+        this._deleteFromAttachmentsLibrary(attachmentId);
+        this.answer = {...this.answer, attachments: this._filterOutDeletedAttachment(attachmentId)};
+      })
+      .catch((err) => fireEvent(this, 'toast', {text: formatServerErrorAsText(err)}));
+  }
+
+  _deleteFromAttachmentsLibrary(attachmentId: string) {
+    let url = etoolsEndpoints.attachmentsUpload.url + attachmentId;
+    makeRequest(new RequestEndpoint(url, 'DELETE'))
+      .catch((err) => fireEvent(this, 'toast', {text: formatServerErrorAsText(err)}))
+  }
+
+  _filterOutDeletedAttachment(attachmentId: string) {
+    return this.answer.attachments.filter(att => Number(att.id) !== Number(attachmentId));
+  }
+
 
 
 }

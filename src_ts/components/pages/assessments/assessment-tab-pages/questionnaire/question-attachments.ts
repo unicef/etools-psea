@@ -1,4 +1,6 @@
 import {LitElement, html, customElement, property} from 'lit-element';
+import '@polymer/iron-icons/iron-icons';
+import '@polymer/paper-button/paper-button';
 import '@unicef-polymer/etools-upload/etools-upload-multi';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
@@ -7,7 +9,8 @@ import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {getFileNameFromURL} from '../../../../utils/utils';
 import {prettyDate} from '../../../../utils/date-utility';
-import {AnswerAttachment} from '../../../../../types/assessment';
+import {AnswerAttachment, UploadedFileInfo} from '../../../../../types/assessment';
+import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 
 @customElement('question-attachments')
 export class QuestionAttachmentsElement extends LitElement {
@@ -62,7 +65,7 @@ export class QuestionAttachmentsElement extends LitElement {
   editMode!: boolean;
 
   @property({type: Array})
-  attachments = [];
+  attachments: AnswerAttachment[] = [];
 
   @property({type: Array})
   documentTypes = [];
@@ -101,8 +104,10 @@ export class QuestionAttachmentsElement extends LitElement {
               @etools-selected-item-changed="${(e: CustomEvent) => this._setSelectedDocType(e, att)}">
             </etools-dropdown>
           </div>
-          <div class="col-5 padd-right">${att._filename ? att._filename : getFileNameFromURL(att.url)}</div>
-          <div class="col-1 delete">DELETE</div>
+          <div class="col-5 padd-right"><iron-icon icon="file-download"></iron-icon> ${att._filename ? att._filename : getFileNameFromURL(att.url)}</div>
+          <div class="col-1 delete" ?hidden="${!this.editMode}">
+            <paper-button @tap="${(e:CustomEvent) => this.deleteAttachment(att.id!)}">DELETE</paper-button>
+          </div>
         </div>
       `;
     })
@@ -121,22 +126,26 @@ export class QuestionAttachmentsElement extends LitElement {
       return;
     }
 
-    uploadedFiles.forEach(f => {
+    uploadedFiles.forEach((f: string) => {
       this.attachments.push(this._parseUploadedFileResponse(JSON.parse(f)));
     });
     this.attachments = [...this.attachments];
   }
 
-  _parseUploadedFileResponse(response: any) {
+  _parseUploadedFileResponse(response: UploadedFileInfo) {
     return {
       id: response.id,
       _filename: response.filename,
       created: response.created
-    }
+    } as AnswerAttachment;
   }
 
   getAttachmentsForSave() {
     return this.attachments;
+  }
+
+  deleteAttachment(attId: string) {
+    fireEvent(this, 'delete-attachment', {attachmentId: attId});
   }
 }
 
