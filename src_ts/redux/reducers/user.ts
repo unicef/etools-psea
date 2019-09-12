@@ -1,5 +1,5 @@
 import {Reducer} from 'redux';
-import {UPDATE_USER_DATA, UPDATE_USER_PERMISSIONS} from '../actions/user';
+import {SET_USER_DATA, SET_USER_PERMISSIONS} from '../actions/user';
 import {EtoolsUserModel, EtoolsUserPermissions} from '../../types/user-model';
 import {RootAction} from '../store';
 
@@ -15,12 +15,12 @@ const INITIAL_USER_DATA: UserState = {
 
 const userData: Reducer<UserState, RootAction> = (state = INITIAL_USER_DATA, action) => {
   switch (action.type) {
-    case UPDATE_USER_DATA:
+    case SET_USER_DATA:
       return {
         ...state,
         data: action.data
       };
-    case UPDATE_USER_PERMISSIONS:
+    case SET_USER_PERMISSIONS:
       return {
         ...state,
         permissions: action.permissions
