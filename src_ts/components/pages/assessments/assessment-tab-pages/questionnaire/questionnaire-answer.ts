@@ -189,28 +189,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
         this.otherEvidenceInput.value = !!(otherEvidence && otherEvidence.length) ? otherEvidence[0].description : this.otherEvidenceInput.value;
       }
     }
-
-   // this._computeSelectedEvidencesIds(evidence, answerEvidences, checked);
-
   }
-
-  // _computeSelectedEvidencesIds(evidence: ProofOfEvidence, answerEvidences: AnswerEvidence[], checked: boolean) {
-  //   if (!answerEvidences.length) {
-  //     this.answer.evidences = [];
-  //   }
-
-  //   if (checked) {
-  //     let ev: AnswerEvidence = {evidence: evidence.id};
-  //     if (evidence.requires_description) {
-  //       ev.description = this.otherEvidenceInput.value!;
-  //     }
-  //     answerEvidences.push(ev);
-  //   } else {
-  //     answerEvidences =  this.answer.evidences.filter(ev => Number(ev.evidence) !== Number(evidence.id));
-  //   }
-
-  //   this.answer.evidences = answerEvidences;
-  // }
 
   getAnswerForSave() {
     let answer: GenericObject = {};
@@ -251,29 +230,17 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
 
   deleteAnswerAttachment(e: CustomEvent) {
     const attachmentId = e.detail.attachmentId;
-    this._deleteAttachment(attachmentId);
-  }
-
-  _deleteAttachment(attachmentId: string) {
-
-    // TODO -handle case when attachment is not yet saved in PSEA
     let url = getEndpoint(etoolsEndpoints.answerAttachment, {
       assessmentId: this.assessmentId,
-      indicatorId: this.question.id,
-      attachmentId: attachmentId
+      indicatorId: this.question.id
     }).url!;
-    makeRequest(new RequestEndpoint(url, 'DELETE'))
+    url = url + attachmentId +'/';
+
+    return makeRequest(new RequestEndpoint(url, 'DELETE'))
       .then(() => {
-        this._deleteFromAttachmentsLibrary(attachmentId);
         this.answer = {...this.answer, attachments: this._filterOutDeletedAttachment(attachmentId)};
       })
-      .catch((err) => fireEvent(this, 'toast', {text: formatServerErrorAsText(err)}));
-  }
-
-  _deleteFromAttachmentsLibrary(attachmentId: string) {
-    let url = etoolsEndpoints.attachmentsUpload.url + attachmentId;
-    makeRequest(new RequestEndpoint(url, 'DELETE'))
-      .catch((err) => fireEvent(this, 'toast', {text: formatServerErrorAsText(err)}))
+      .catch((err) => fireEvent(this, 'toast', formatServerErrorAsText(err)));
   }
 
   _filterOutDeletedAttachment(attachmentId: string) {

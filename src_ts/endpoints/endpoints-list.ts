@@ -58,7 +58,7 @@ export const etoolsEndpoints: EtoolsEndpoints = {
     template: '/api/psea/assessment/<%=assessmentId%>/indicator/<%=indicatorId%>/'
   },
   answerAttachment: {
-    template: `/api/psea/assessment/<%=assessmentId%>/indicator/<%=indicatorId%>/attachments/{%=attachmentId%}/`
+    template: `/api/psea/assessment/<%=assessmentId%>/indicator/<%=indicatorId%>/attachments/`
   }
 
 
