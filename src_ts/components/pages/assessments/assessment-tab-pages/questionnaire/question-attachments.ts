@@ -160,6 +160,7 @@ export class QuestionAttachmentsElement extends LitElement {
   }
 
   getAttachmentsForSave() {
+    // At the moment, the endpoint expects all attachments to be sent
     return this.attachments;
   }
 

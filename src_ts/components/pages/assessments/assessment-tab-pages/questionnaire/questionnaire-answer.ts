@@ -74,6 +74,8 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
 
       <div class="row-padding-v" ?hidden="${!this.showOtherInput}">
         <paper-input id="otherEvidenceInput" label="Please specify other" always-float-label
+          required
+          auto-validate
           placeholder="—"
           value="${this._getOtherEvidenceInputValue(this.answer)}"
           ?readonly="${!this.editMode}"></paper-input>
