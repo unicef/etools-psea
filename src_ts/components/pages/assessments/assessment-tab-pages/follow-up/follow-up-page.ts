@@ -57,7 +57,8 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
     {
       label: 'Reference #',
       name: 'reference_number',
-      type: EtoolsTableColumnType.Text
+      type: EtoolsTableColumnType.Link,
+      link_tmpl: `/apd/action-points/detail/:id`
     }, {
       label: 'Action Point Category',
       name: 'category',
@@ -123,7 +124,6 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
     document.addEventListener('action-point-updated', (e) => this.updateActionPoints(e));
   }
 
-
   updateActionPoints(event: GenericObject) {
     let oldArray = cloneDeep(this.dataItems);
     let existingActionPointIndex: number = this.dataItems.findIndex((ap: GenericObject) => ap.id === event.detail.id);
@@ -154,16 +154,18 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
   copyActionPoint(event: GenericObject) {
     this.extractActionPointData(event.detail);
     this.followUpDialog.editedItem.id = 0;
+    this.followUpDialog.watchForChanges = true;
     this.openFollowUpDialog();
   }
 
   extractActionPointData(item: GenericObject) {
-    this.followUpDialog.editedItem = {...item}
-    this.followUpDialog.editedItem.partner = item.partner.id
-    // this.followUpDialog.editedItem.category = item.category.id
-    this.followUpDialog.editedItem.assigned_to = item.assigned_to.id
-    this.followUpDialog.editedItem.section = item.section.id
-    this.followUpDialog.editedItem.office = item.office.id
+    let newEditedItem = {partner: null, category: null, assigned_to: null, section: '', office: null};
+    newEditedItem.partner = item.partner.id;
+    // newEditedItem.category = item.category.id;
+    newEditedItem.assigned_to = item.assigned_to.id;
+    newEditedItem.section = item.section.id;
+    newEditedItem.office = item.office.id;
+    this.followUpDialog.editedItem = newEditedItem;
   }
 
   createFollowUpDialog() {

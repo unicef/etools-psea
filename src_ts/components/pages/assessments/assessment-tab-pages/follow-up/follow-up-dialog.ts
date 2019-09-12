@@ -6,7 +6,6 @@ import '@unicef-polymer/etools-dropdown/etools-dropdown.js';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import { fireEvent } from '../../../../utils/fire-custom-event';
 import { getEndpoint } from '../../../../../endpoints/endpoints';
-import { inputsStyles } from '../../../../styles/inputs-styles';
 import { makeRequest } from '../../../../utils/request-helper';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 import {store, RootState} from '../../../../../redux/store';
@@ -14,13 +13,24 @@ import { etoolsEndpoints } from '../../../../../endpoints/endpoints-list';
 import { cloneDeep } from '../../../../utils/utils';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {formatDate} from '../../../../utils/date-utility';
+import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
+import { gridLayoutStylesLit } from '../../../../styles/grid-layout-styles-lit';
 
 @customElement('follow-up-dialog')
 class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement>) {
   render() {
     return html`
-      ${inputsStyles}
+      ${gridLayoutStylesLit}
+      ${SharedStylesLit}
       <style>
+        :host .copy-warning {
+          position: relative;
+          margin-bottom: 10px;
+          padding: 20px 24px;
+          background-color: #ededee;
+          color: #212121;
+          font-size: 15px;
+        }
         etools-content-panel {
           --ecp-content: {
                 padding: 0;
@@ -63,13 +73,16 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                      ?disable-confirm-btn="${this.requestInProcess}"
                      @confirm-btn-clicked="${this.onSaveClick}"
                      @close="${this.handleDialogClosed}">
-        <!-- <template is="dom-if" if="[[this.notTouched]]">
-          <div class="copy-warning">
-              It is required to change at least one of the fields below.
-          </div>
-        </template> -->
+        ${this.watchForChanges ? 
+          html`
+            <div class="copy-warning">
+                It is required to change at least one of the fields below.
+            </div>
+          ` :
+          html``
+        }
 
-        <div class="row-h repeatable-item-container" without-line>
+        <div class="row-hrepeatable-item-container" without-line>
           <div class="repeatable-item-content">
 
             <div class="row-h group">
@@ -104,117 +117,117 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
             </div>
           </div>
 
-            <div class="row-h group">
-              <div class="input-container input-container-ms">
-                  
-                <etools-dropdown
-                        id="categoriesInput"
-                        class="disabled-as-readonly validate-input required fua-person"
-                        .selected="${this.editedItem.category}"
-                        label="Category"
-                        .options="${this.categories}"
-                        option-label="display_name"
-                        ?required
-                        option-value="value"
-                        trigger-value-change-event
-                        @etools-selected-item-changed="${this._setSelectedCategory}">
-                </etools-dropdown>
-              </div>
-            </div>
-
-            <div class="row-h group">
-              <div class="input-container input-container-l">
-                  
-                <paper-textarea
-                        id="descriptionInput"
-                        class="validate-input required"
-                        ?required
-                        allowed-pattern="[\d\s]"
-                        value="${this.editedItem.description}"
-                        label="Description"
-                        .max-rows="4"
-                        @keyup="${this.captureInput}">
-                </paper-textarea>
-              </div>
-            </div>
-
-            <div class="row-h group">
-              <div class="input-container input-container-ms">
-                  
-                <etools-dropdown
-                        id="assignedToInput"
-                        class="disabled-as-readonly validate-input required fua-person"
-                        .selected="${this.editedItem.assigned_to}"
-                        label="Assigned To"
-                        .options="${this.users}"
-                        option-label="name"
-                        ?required
-                        option-value="id"
-                        trigger-value-change-event
-                        @etools-selected-item-changed="${this._setSelectedAssignee}">
-                </etools-dropdown>
-              </div>
-
-              <div class="input-container input-container-ms">
-                  
-                <etools-dropdown
-                        id="sectionInput"
-                        class="disabled-as-readonly validate-input required fua-person"
-                        .selected="${this.editedItem.section}"
-                        label="Section"
-                        .options="${this.sections}"
-                        option-label="name"
-                        ?required
-                        option-value="id"
-                        trigger-value-change-event
-                        @etools-selected-item-changed="${this._setSelectedSection}">
-                </etools-dropdown>
-              </div>
-            </div>
-
-            <div class="row-h group">
-              <div class="input-container input-container-ms">
-                  
-
-                <etools-dropdown
-                        id="officeInput"
-                        class="disabled-as-readonly validate-input required fua-person"
-                        .selected="${this.editedItem.office}"
-                        label="Office"
-                        .options="${this.offices}"
-                        option-label="name"
-                        ?required
-                        option-value="id"
-                        trigger-value-change-event
-                        @etools-selected-item-changed="${this._setSelectedOffice}">
-                </etools-dropdown>
-              </div>
-
-              <div class="input-container input-container-40">
-                  
-                <datepicker-lite
-                        id="dueDateInput"
-                        class="disabled-as-readonly validate-input required"
-                        value="${this.editedItem.due_date}"
-                        label="Due Date"
-                        ?required
-                        fire-date-has-changed
-                        @date-has-changed="${(e: CustomEvent) => this._setSelectedDate(e.detail.date)}"
-                        selected-date-display-format="D MMM YYYY">
-                </datepicker-lite>
-              </div>
-            </div>
-
-            <div class="row-h group">
-              <div class="input-container checkbox-container input-container-l">
-                <paper-checkbox
-                        class="disabled-as-readonly required"
-                        ?checked="${this.editedItem.high_priority}">
-                        This action point is high priority
-                </paper-checkbox>
-              </div>
+          <div class="row-h group">
+            <div class="input-container input-container-ms">
+                
+              <etools-dropdown
+                      id="categoriesInput"
+                      class="disabled-as-readonly validate-input required fua-person"
+                      .selected="${this.editedItem.category}"
+                      label="Category"
+                      .options="${this.categories}"
+                      option-label="display_name"
+                      ?required
+                      option-value="value"
+                      trigger-value-change-event
+                      @etools-selected-item-changed="${this._setSelectedCategory}">
+              </etools-dropdown>
             </div>
           </div>
+
+          <div class="row-h group">
+            <div class="input-container input-container-l">
+                
+              <paper-textarea
+                      id="descriptionInput"
+                      class="validate-input required"
+                      ?required
+                      allowed-pattern="[\d\s]"
+                      value="${this.editedItem.description}"
+                      label="Description"
+                      .max-rows="4"
+                      @keyup="${this.captureInput}">
+              </paper-textarea>
+            </div>
+          </div>
+
+          <div class="row-h group">
+            <div class="input-container input-container-ms">
+                
+              <etools-dropdown
+                      id="assignedToInput"
+                      class="disabled-as-readonly validate-input required fua-person"
+                      .selected="${this.editedItem.assigned_to}"
+                      label="Assigned To"
+                      .options="${this.users}"
+                      option-label="name"
+                      ?required
+                      option-value="id"
+                      trigger-value-change-event
+                      @etools-selected-item-changed="${this._setSelectedAssignee}">
+              </etools-dropdown>
+            </div>
+
+            <div class="input-container input-container-ms">
+                
+              <etools-dropdown
+                      id="sectionInput"
+                      class="disabled-as-readonly validate-input required fua-person"
+                      .selected="${this.editedItem.section}"
+                      label="Section"
+                      .options="${this.sections}"
+                      option-label="name"
+                      ?required
+                      option-value="id"
+                      trigger-value-change-event
+                      @etools-selected-item-changed="${this._setSelectedSection}">
+              </etools-dropdown>
+            </div>
+          </div>
+
+          <div class="row-h group">
+            <div class="input-container input-container-ms">
+                
+
+              <etools-dropdown
+                      id="officeInput"
+                      class="disabled-as-readonly validate-input required fua-person"
+                      .selected="${this.editedItem.office}"
+                      label="Office"
+                      .options="${this.offices}"
+                      option-label="name"
+                      ?required
+                      option-value="id"
+                      trigger-value-change-event
+                      @etools-selected-item-changed="${this._setSelectedOffice}">
+              </etools-dropdown>
+            </div>
+
+            <div class="input-container input-container-40">
+                
+              <datepicker-lite
+                      id="dueDateInput"
+                      class="disabled-as-readonly validate-input required"
+                      value="${this.editedItem.due_date}"
+                      label="Due Date"
+                      ?required
+                      fire-date-has-changed
+                      @date-has-changed="${(e: CustomEvent) => this._setSelectedDate(e.detail.date)}"
+                      selected-date-display-format="D MMM YYYY">
+              </datepicker-lite>
+            </div>
+          </div>
+
+          <div class="row-h group">
+            <div class="input-container checkbox-container input-container-l">
+              <paper-checkbox
+                      class="disabled-as-readonly required"
+                      ?checked="${this.editedItem.high_priority}">
+                      This action point is high priority
+              </paper-checkbox>
+            </div>
+          </div>
+
         </div>
       </etools-dialog>
     `;
@@ -283,6 +296,9 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
   @property({type: Number})
   selectedAssessmentId: number = 1;
 
+  @property({type: Boolean})
+  watchForChanges: boolean = false;
+
   stateChanged(state: RootState) {
     if (state.commonData) {
       this.partners = [...state.commonData.partners];
@@ -294,7 +310,13 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
 
   connectedCallback() {
     super.connectedCallback();
-    this.getAssessmentsData(this.assessmentId)
+    this.getAssessmentsData(this.assessmentId);
+  }
+
+  updated(changedProperties: GenericObject) {
+    if (this.watchForChanges && changedProperties.get('editedItem')) {
+      debugger
+    }
   }
 
   getAssessmentsData(assessmentId: string) {
@@ -354,53 +376,75 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
     fireEvent(this.toastEventSource, 'toast', {text: formatServerErrorAsText(err)});
   }
 
+  // _handleChange(e: CustomEvent) {
+  //   if (!e.detail.selectedItem) { return; }
+
+  //   switch (e.detail.selectedItem) {
+  //     case 
+  //   }
+  // }
+
   _setSelectedAssessment(e: CustomEvent) {
     if (!e.detail.selectedItem) {
       return;
     }
-    this.editedItem.psea_assessment = e.detail.selectedItem.id;
+    let oldValue = cloneDeep(this.editedItem);
+    oldValue.psea_assessment = e.detail.selectedItem.id;
+    this.editedItem = oldValue;
   }
 
   _setSelectedAssignee(e: CustomEvent) {
     if (!e.detail.selectedItem) {
       return;
     }
-    this.editedItem.assigned_to = e.detail.selectedItem.id;
+    let oldValue = cloneDeep(this.editedItem);
+    oldValue.assigned_to = e.detail.selectedItem.id;
+    this.editedItem = oldValue;
   }
 
   _setSelectedCategory(e: CustomEvent) {
     if (!e.detail.selectedItem) {
       return;
     }
-    this.editedItem.category = e.detail.selectedItem.id;
+    let oldValue = cloneDeep(this.editedItem);
+    oldValue.category = e.detail.selectedItem.id;
+    this.editedItem = oldValue;
   }
 
   _setSelectedSection(e: CustomEvent) {
     if (!e.detail.selectedItem) {
       return;
     }
-    this.editedItem.section = e.detail.selectedItem.id;
+    let oldValue = cloneDeep(this.editedItem);
+    oldValue.section = e.detail.selectedItem.id;
+    this.editedItem = oldValue;
   }
 
   _setSelectedOffice(e: CustomEvent) {
     if (!e.detail.selectedItem) {
       return;
     }
-    this.editedItem.office = e.detail.selectedItem.id;
+    let oldValue = cloneDeep(this.editedItem);
+    oldValue.office = e.detail.selectedItem.id;
+    this.editedItem = oldValue;
   }
 
   _setSelectedDate(selDate: Date) {
     if (!selDate) {
       return;
     }
-    this.editedItem.due_date = formatDate(selDate, 'YYYY-MM-DD');
+    let oldValue = cloneDeep(this.editedItem);
+    oldValue.due_date = formatDate(selDate, 'YYYY-MM-DD');
+    this.editedItem = oldValue;
   }
 
   captureInput(event: any) {
     if (!event.target && !event.target.value) {
       return;
     }
-    this.editedItem.description = event.target.value;
+    let oldValue = cloneDeep(this.editedItem);
+    oldValue.description = event.target.value;
+    this.editedItem = oldValue;
   }
 
   private handleDialogClosed() {
