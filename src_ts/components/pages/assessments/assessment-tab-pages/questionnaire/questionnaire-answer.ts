@@ -42,9 +42,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
           padding-top: 6px;
           padding-bottom: 8px;
         }
-        .extra-padd {
-          padding-top: 32px;
-        }
+
         .invalid-color {
           color: var(--error-color);
         }
@@ -81,7 +79,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
           ?readonly="${!this.editMode}"></paper-input>
       </div>
 
-      <div class="row-padding-v extra-padd">
+      <div class="row-padding-v">
         <question-attachments id="attachmentsElement"
           .documentTypes="${this.question.document_types}"
           .editMode="${this.editMode}"

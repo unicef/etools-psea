@@ -10,12 +10,13 @@ import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {getFileNameFromURL} from '../../../../utils/utils';
 import {prettyDate} from '../../../../utils/date-utility';
 import {AnswerAttachment, UploadedFileInfo} from '../../../../../types/assessment';
+import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 
 @customElement('question-attachments')
 export class QuestionAttachmentsElement extends LitElement {
   render() {
     return html`
-      ${SharedStylesLit}${gridLayoutStylesLit}
+      ${SharedStylesLit}${gridLayoutStylesLit}${labelAndvalueStylesLit}
       <style>
         .container {
           background-color: var(--secondary-background-color);
@@ -23,6 +24,7 @@ export class QuestionAttachmentsElement extends LitElement {
           margin-right: -24px;
           padding: 16px 24px;
           margin-bottom: 6px;
+          color: black;
         }
         .header {
           font-size: 12px;
@@ -37,6 +39,10 @@ export class QuestionAttachmentsElement extends LitElement {
           padding-right: 16px;
         }
 
+        .extra-padd-right {
+          padding-right: 38px;
+        }
+
         .delete {
           color: var(--error-color);
         }
@@ -44,8 +50,18 @@ export class QuestionAttachmentsElement extends LitElement {
         div.att > div[class^="col-"] {
           box-sizing: border-box;
         }
+
         iron-icon[icon="file-download"] {
           color: var(--primary-color);
+          margin-left: -4px;
+        }
+
+        etools-upload-multi {
+          margin-left: -4px;
+        }
+
+        .padd-top {
+          padding-top: 16px;
         }
 
       </style>
@@ -53,8 +69,10 @@ export class QuestionAttachmentsElement extends LitElement {
       <div class="row-padding-v">
         <etools-upload-multi ?hidden="${!this.editMode}"
           .uploadEndpoint="${etoolsEndpoints.attachmentsUpload.url}"
-          @upload-finished="${this.handleUploadedFiles}">
+          @upload-finished="${this.handleUploadedFiles}"
+          class="padd-top">
         </etools-upload-multi>
+        <label class="paper-label" ?hidden="${this.editMode}">Files</label>
       </div>
       <div class="container">
         ${this._getAttachmentsHeaderTemplate(this.attachments)}
@@ -95,7 +113,7 @@ export class QuestionAttachmentsElement extends LitElement {
       return html`
         <div class="layout-horizontal row-padding-v align-items-center att">
           <div class="col-2 padd-right">${att.url ? prettyDate(att.created) : att.created}</div>
-          <div class="col-4 padd-right">
+          <div class="col-4 extra-padd-right">
             <etools-dropdown no-label-float
               .options="${this.documentTypes}"
               .selected="${att.file_type}"
