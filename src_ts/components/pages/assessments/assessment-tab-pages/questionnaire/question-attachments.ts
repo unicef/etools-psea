@@ -10,7 +10,6 @@ import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {getFileNameFromURL} from '../../../../utils/utils';
 import {prettyDate} from '../../../../utils/date-utility';
 import {AnswerAttachment, UploadedFileInfo} from '../../../../../types/assessment';
-import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 
 @customElement('question-attachments')
 export class QuestionAttachmentsElement extends LitElement {
@@ -45,6 +44,10 @@ export class QuestionAttachmentsElement extends LitElement {
         div.att > div[class^="col-"] {
           box-sizing: border-box;
         }
+        iron-icon[icon="file-download"] {
+          color: var(--primary-color);
+        }
+
       </style>
 
       <div class="row-padding-v">
@@ -56,7 +59,7 @@ export class QuestionAttachmentsElement extends LitElement {
       <div class="container">
         ${this._getAttachmentsHeaderTemplate(this.attachments)}
 
-        ${this._getAttachmentsTemplate(this.attachments)}
+        ${this._getAttachmentsTemplate(this.attachments, this.editMode)}
       </div>
     `;
   }
@@ -84,7 +87,7 @@ export class QuestionAttachmentsElement extends LitElement {
       </div>
     `;
   }
-  _getAttachmentsTemplate(attachments: any) {
+  _getAttachmentsTemplate(attachments: any, editMode: Boolean) {
     if (!attachments|| !attachments.length) {
       return html`<div class="row-padding-v">No attachments.</div>`;
     }
@@ -104,13 +107,29 @@ export class QuestionAttachmentsElement extends LitElement {
               @etools-selected-item-changed="${(e: CustomEvent) => this._setSelectedDocType(e, att)}">
             </etools-dropdown>
           </div>
-          <div class="col-5 padd-right"><iron-icon icon="file-download"></iron-icon> ${att._filename ? att._filename : getFileNameFromURL(att.url)}</div>
-          <div class="col-1 delete" ?hidden="${!this.editMode}">
-            <paper-button @tap="${(e:CustomEvent) => this.deleteAttachment(att.id!)}">DELETE</paper-button>
+          <div class="col-5 padd-right">
+            ${this._getAttachmentNameTemplate(att)}
+          </div>
+          <div class="col-1 delete" ?hidden="${!editMode}">
+            <paper-button @tap="${() => this.deleteAttachment(att.id!)}">DELETE</paper-button>
           </div>
         </div>
       `;
     })
+  }
+
+  _getAttachmentNameTemplate(att: AnswerAttachment) {
+    if (att.url) {
+      return html`
+        <a target="_blank" href="${att.url}"><iron-icon icon="file-download"></iron-icon>
+          ${getFileNameFromURL(att.url)}
+        </a>
+      `;
+    } else {
+      return html`
+        ${att._filename}
+      `;
+    }
   }
 
   _setSelectedDocType(e: CustomEvent, attachment: any) {

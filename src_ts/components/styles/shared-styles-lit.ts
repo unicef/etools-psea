@@ -29,7 +29,7 @@ export const SharedStylesLit = html`
 
   a {
     color: var(--primary-color);
-    text-underline: none;
+    text-decoration: none;
   }
 
   section {
