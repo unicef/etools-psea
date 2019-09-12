@@ -75,7 +75,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       <div class="row-padding-v" ?hidden="${!this.showOtherInput}">
         <paper-input id="otherEvidenceInput" label="Please specify other" always-float-label
           placeholder="—"
-          ?hidden="${!this.showOtherInput}"
+          value="${this._getOtherEvidenceInputValue(this.answer)}"
           ?readonly="${!this.editMode}"></paper-input>
       </div>
 
@@ -184,11 +184,12 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   _checkedEvidenceChanged(evidence: ProofOfEvidence, checked: boolean, answer: Answer) {
     if (evidence.requires_description) {
       this.showOtherInput = checked;
-      if (this.showOtherInput && answer.id) {
-        let otherEvidence = answer.evidences.filter((ev: AnswerEvidence) => Number(ev.evidence) === Number(evidence.id));
-        this.otherEvidenceInput.value = !!(otherEvidence && otherEvidence.length) ? otherEvidence[0].description : this.otherEvidenceInput.value;
-      }
     }
+  }
+
+  _getOtherEvidenceInputValue(answer: Answer) {
+    let otherEvidence = answer.evidences.filter((ev: AnswerEvidence) => !!ev.description)[0];
+    return otherEvidence ? otherEvidence.description : '';
   }
 
   getAnswerForSave() {
