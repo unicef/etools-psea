@@ -1,6 +1,6 @@
 import {Reducer} from 'redux';
 import {UPDATE_USER_DATA, UPDATE_USER_PERMISSIONS} from '../actions/user';
-import {EtoolsUserModel, EtoolsUserPermissions} from '../../components/user/user-model';
+import {EtoolsUserModel, EtoolsUserPermissions} from '../../types/user-model';
 import {RootAction} from '../store';
 
 export interface UserState {

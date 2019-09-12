@@ -4,7 +4,7 @@ import {PolymerElement} from '@polymer/polymer';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
-import {EtoolsStaffMemberModel} from '../../../../user/user-model';
+import {EtoolsStaffMemberModel} from '../../../../../types/user-model';
 import {PaperInputElement} from '@polymer/paper-input/paper-input';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest} from '../../../../utils/request-helper';
