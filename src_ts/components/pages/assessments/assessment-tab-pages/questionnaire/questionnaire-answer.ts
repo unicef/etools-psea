@@ -231,6 +231,11 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
 
   deleteAnswerAttachment(e: CustomEvent) {
     const attachmentId = e.detail.attachmentId;
+    if (e.detail.isNotSavedYet) {
+      this.answer = {...this.answer, attachments: this._filterOutDeletedAttachment(attachmentId)};
+      return;
+    }
+
     let url = getEndpoint(etoolsEndpoints.answerAttachment, {
       assessmentId: this.assessmentId,
       indicatorId: this.question.id

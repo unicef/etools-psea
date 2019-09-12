@@ -129,7 +129,7 @@ export class QuestionAttachmentsElement extends LitElement {
             ${this._getAttachmentNameTemplate(att)}
           </div>
           <div class="col-1 delete" ?hidden="${!editMode}">
-            <paper-button @tap="${() => this.deleteAttachment(att.id!)}">DELETE</paper-button>
+            <paper-button @tap="${() => this.deleteAttachment(att.id!, !att.url)}">DELETE</paper-button>
           </div>
         </div>
       `;
@@ -182,8 +182,8 @@ export class QuestionAttachmentsElement extends LitElement {
     return this.attachments;
   }
 
-  deleteAttachment(attId: string) {
-    fireEvent(this, 'delete-attachment', {attachmentId: attId});
+  deleteAttachment(attId: string, isNotSavedYet: boolean) {
+    fireEvent(this, 'delete-attachment', {attachmentId: attId, isNotSavedYet: isNotSavedYet});
   }
 }
 
