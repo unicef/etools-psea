@@ -15,23 +15,12 @@ import {elevationStyles} from '../../styles/lit-styles/elevation-styles';
 import {RouteDetails} from '../../../routing/router';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {Assessment} from '../../../types/assessment';
-import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
-import {makeRequest} from '../../utils/request-helper';
-import {updateAssessmentData} from '../../../redux/actions/page-data';
-import {isJsonStrMatch, cloneDeep} from '../../utils/utils';
-import {PageDataState} from '../../../redux/reducers/page-data';
+import {requestAssessmentData, updateAssessmentData} from '../../../redux/actions/page-data';
+import {cloneDeep, isJsonStrMatch} from '../../utils/utils';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
-import {buttonsStyles} from '../../styles/button-styles';
-
-import {
-  getAssessmentStatusesList,
-  assessmentStatusActionBtnsTmpl,
-  updateAssessmentStatus,
-  createStatusChangeConfirmationsDialog,
-  removeStatusChangeConfirmationsDialog,
-  canShowCancelAction,
-  canShowStatusActions, cancelAssessmentStatusActionTmpl, setStatusActionsModuleParentEl
-} from './assessment-status-actions';
+import {EtoolsStatusModel} from '../../common/layout/status/etools-status';
+import './assessment-status-transition-actions';
+import isNil from 'lodash-es/isNil';
 
 /**
  * @LitElement
@@ -48,27 +37,22 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     // main template
     // language=HTML
     return html`
-      ${SharedStylesLit} ${pageContentHeaderSlottedStyles} ${pageLayoutStyles} ${buttonsStyles}
+      ${SharedStylesLit} ${pageContentHeaderSlottedStyles} ${pageLayoutStyles}
       <style>
         etools-status {
           justify-content: center;
         }
       </style>
-      <etools-status .statuses="${getAssessmentStatusesList(this.assessment.status_list)}"
-                     .activeStatus="${this.assessment.status}"></etools-status>
-
+      ${(this.assessment && this.assessment.id) ? html`<etools-status 
+        .statuses="${this.getAssessmentStatusesList(this.assessment.status_list)}"
+        .activeStatus="${this.assessment.status}"></etools-status>` : ''}
+   
       <page-content-header with-tabs-visible>
 
-        <h1 slot="page-title">${this.pageTitle}</h1>
+        <h1 slot="page-title">${this.getPageTitle(this.assessment)}</h1>
 
         <div slot="title-row-actions" class="content-header-actions">
-          ${canShowCancelAction(this.assessment)
-            ? cancelAssessmentStatusActionTmpl(this.changeStatusAction.bind(this))
-            : ''}
-          
-          ${canShowStatusActions(this.assessment)
-            ? assessmentStatusActionBtnsTmpl(this.assessment.status, this.changeStatusAction.bind(this))
-            : ''}
+          <assessment-status-transition-actions></assessment-status-transition-actions>
         </div>
           
 
@@ -90,9 +74,6 @@ export class AssessmentTabs extends connect(store)(LitElement) {
 
   @property({type: Object})
   routeDetails!: RouteDetails;
-
-  @property({type: String})
-  pageTitle: string = '';
 
   @property({type: Array})
   pageTabs = [
@@ -122,17 +103,6 @@ export class AssessmentTabs extends connect(store)(LitElement) {
   @property({type: Object})
   assessment!: Assessment;
 
-  connectedCallback(): void {
-    super.connectedCallback();
-    createStatusChangeConfirmationsDialog();
-    setStatusActionsModuleParentEl(this);
-  }
-
-  disconnectedCallback(): void {
-    super.disconnectedCallback();
-    removeStatusChangeConfirmationsDialog();
-  }
-
   isActiveTab(tab: string, expectedTab: string): boolean {
     return tab === expectedTab;
   }
@@ -141,7 +111,6 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     // update page route data
     if (state.app!.routeDetails.routeName === 'assessments' &&
       state.app!.routeDetails.subRouteName !== 'list') {
-      this.routeDetails = state.app!.routeDetails;
 
       const stateActiveTab = state.app!.routeDetails.subRouteName as string;
       if (stateActiveTab !== this.activeTab) {
@@ -150,46 +119,57 @@ export class AssessmentTabs extends connect(store)(LitElement) {
         // this.tabChanged(this.activeTab, oldActiveTabValue);// Is this needed here?
       }
 
-      if (state.app!.routeDetails!.params) {
-        const assessmentId = state.app!.routeDetails.params.assessmentId;
-        this.setPageData(assessmentId, state.pageData!);
-        if (state.pageData && this.routeDetails.params) {
-          if (this.routeDetails.params.assessmentId !== 'new') {
-            this.enableTabs();
-          } else {
-            this.resetTabs();
-          }
+      // initialize assessment object from redux state
+      if (state.pageData!.currentAssessment) {
+        const newAssessment = state.pageData!.currentAssessment;
+        if (!isJsonStrMatch(this.assessment, newAssessment)) {
+          this.assessment = cloneDeep(newAssessment);
+        }
+      }
+
+      /**
+       * Get route assessment id and get assessment data
+       * Prevent multiple times execution by making sure store routeDetails data
+       * is different than the current routeDetails data
+       * (stateChanged can be triggered by many other store data updates)
+       */
+      if (!isJsonStrMatch(state.app!.routeDetails!, this.routeDetails)) {
+        this.routeDetails = cloneDeep(state.app!.routeDetails);
+        const routeAssessmentId = this.routeDetails!.params!.assessmentId;
+        if (isNil(this.assessment) || routeAssessmentId !== String(this.assessment.id)) {
+          /**
+           * on this level, make assessment get request or init new assessment only
+           * if route id is different than assessment.id or assessment is null
+           */
+          this.setAssessmentInfo(routeAssessmentId);
         }
 
+        // enable/disable tabs (new assessment has only details tab active until first save)
+        if (this.assessment !== null && routeAssessmentId) {
+          this.setActiveTabs(routeAssessmentId);
+        }
       }
     }
   }
 
-  setPageData(assessmnetId: string | number, pageData: PageDataState) {
-    this._getAssessmentInfo(assessmnetId)
-      .then(() => {
-        if (!pageData || !isJsonStrMatch(this.assessment, pageData.currentAssessment)) {
-          store.dispatch(updateAssessmentData(cloneDeep(this.assessment)));
-          this.pageTitle = this._getPageTitle();
-        }
-      });
+  setActiveTabs(assessmentId: string | number) {
+    if (assessmentId !== 'new') {
+      this.enableTabs();
+    } else {
+      this.resetTabs();
+    }
   }
 
-  _getAssessmentInfo(assessmentId: string | number) {
-    if (this.assessment && this.assessment.id == assessmentId) {
-      return Promise.resolve();
+  /**
+   * populate redux store currentAssessment (stateChanged will run again and set assessment object)
+   * @param assessmentId
+   */
+  setAssessmentInfo(assessmentId: string | number) {
+    if (assessmentId === 'new') {
+      store.dispatch(updateAssessmentData(new Assessment()));
+    } else {
+      store.dispatch(requestAssessmentData(Number(assessmentId), this.handleGetAssessmentError.bind(this)));
     }
-    if (!assessmentId || assessmentId === 'new') {
-      this.assessment = new Assessment();
-      return Promise.resolve();
-    }
-    const url = etoolsEndpoints.assessment.url! + assessmentId + '/';
-
-    return makeRequest({url: url})
-      .then((response) => {
-        this.assessment = response;
-      })
-      .catch(err => this.handleGetAssessmentError(err));
   }
 
   handleGetAssessmentError(err: any) {
@@ -199,12 +179,15 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     logError(err);
   }
 
-  _getPageTitle() {
-    if (!this.assessment.id) {
+  getPageTitle(assessment: Assessment) {
+    if (!assessment) {
+      return '';
+    }
+    if (!assessment.id) {
       return 'New PSEA Assessment';
     }
-    return this.assessment.reference_number
-      ? `${this.assessment.reference_number}: ${this.assessment.partner_name}`
+    return assessment.reference_number
+      ? `${assessment.reference_number}: ${assessment.partner_name}`
       : '';
   }
 
@@ -246,17 +229,12 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     }
   }
 
-  changeStatusAction(action: string) {
-    // let status = '';
-    // switch (action) {
-    //   case 'assign':
-    //     status = 'in_progress';
-    //     break;
-    //   case 'submit':
-    //     status = 'submitted';
-    //     break;
-    //   case ''
-    // }
-    updateAssessmentStatus(this.assessment, action);
+  getAssessmentStatusesList(statusesList: string[][]): EtoolsStatusModel[] {
+    if (statusesList.length === 0) return [];
+    return statusesList.map((s: string[]) => {
+      // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
+      return {status: s[0], label: s[1]} as EtoolsStatusModel;
+    });
   }
+
 }
