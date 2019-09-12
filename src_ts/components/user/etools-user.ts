@@ -73,3 +73,5 @@ export class EtoolsUser extends connect(store)(EtoolsAjaxRequestMixin(PolymerEle
 }
 
 window.customElements.define('etools-user', EtoolsUser);
+
+//todo: test branch2
