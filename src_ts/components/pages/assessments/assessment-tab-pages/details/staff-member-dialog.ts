@@ -173,7 +173,7 @@ export class StaffMemberDialog extends LitElement {
   @property({type: Object})
   toastEventSource!: LitElement;
 
-  private initialItem: EtoolsStaffMemberModel = this.defaultItem;
+  private initialItem!: EtoolsStaffMemberModel;
 
   public openDialog() {
     this.isNewRecord = !(parseInt(this.editedItem.id) > 0);
@@ -244,11 +244,11 @@ export class StaffMemberDialog extends LitElement {
 
     if (this._staffMemberDataHasChanged()) {
       makeRequest(options, this.editedItem)
-          .then((resp: any) => this._staffMemberDataUpdateComplete(resp))
-          .catch((err: any) => this._handleError(err));
+        .then((resp: any) => this._staffMemberDataUpdateComplete(resp))
+        .catch((err: any) => this._handleError(err));
     } else {
       if (this.initialItem.hasAccess !== this.editedItem.hasAccess) {
-        this._staffMemberDataUpdateComplete(this.editedItem, false);
+        this._staffMemberDataUpdateComplete(this.editedItem);
       } else {
         this.requestInProgress = false;
         fireEvent(this.toastEventSource, 'toast', {
@@ -263,17 +263,14 @@ export class StaffMemberDialog extends LitElement {
     return !isJsonStrMatch(this.initialItem.user, this.editedItem.user);
   }
 
-  _staffMemberDataUpdateComplete(resp: any, updated: boolean = true) {
+  _staffMemberDataUpdateComplete(resp: any) {
     this.requestInProgress = false;
-    fireEvent(this, 'staff-member-updated', {
-      item: {...resp, hasAccess: this.editedItem.hasAccess},
-      updated
-    });
+    fireEvent(this, 'staff-member-updated', {...resp, hasAccess: this.editedItem.hasAccess});
     this.handleDialogClosed();
   }
 
   _handleError(err: any) {
-    let msg = formatServerErrorAsText(err);
+    const msg = formatServerErrorAsText(err);
     logError(msg, 'staff-member', err);
     fireEvent(this.toastEventSource, 'toast', {text: msg});
   }

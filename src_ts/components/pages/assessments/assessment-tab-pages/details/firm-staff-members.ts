@@ -197,10 +197,8 @@ export class FirmStaffMembers extends LitElement {
   }
 
   onStaffMemberSaved(e: CustomEvent) {
-    const savedItem = e.detail.item;
-    if (e.detail.updated) {
-      this.updateItemData(savedItem);
-    }
+    const savedItem = e.detail;
+    this.updateItemData(savedItem);
     this.updateFirmAssessorStaffAccess(savedItem as EtoolsStaffMemberModel);
   }
 
