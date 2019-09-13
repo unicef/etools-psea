@@ -1,9 +1,11 @@
 export class Assessment {
   id?: number;
+  assessment_date: string | null = '';
+  assessor: string = '';
   reference_number?: string;
   partner_name?: string;
-  assessment_date: string | null = '';
   status: string = '';
+  status_list: string[][] = [];
   partner: string | null = '';
   focal_points?: string[] =[];
 }
@@ -36,6 +38,7 @@ export class Question {
   content: string = '';
   ratings: Rating[] = [];
   evidences: ProofOfEvidence[] = [];
+  document_types = [];
 }
 
 export class ProofOfEvidence {
@@ -56,6 +59,27 @@ export class Answer {
   indicator: string | null = null;
   rating: string | null = null;
   comments: string = '';
-  evidences: string[] = [];
-  attachments: string[] = [];
+  evidences: AnswerEvidence[] = [];
+  attachments: AnswerAttachment[] = [];
+}
+
+export class AnswerEvidence {
+  evidence!: string; // id
+  description?: string;
+}
+
+export class AnswerAttachment {
+  id?: string;
+  created: string = '';
+  file_type: string = ''; //id
+  url: string ='';
+  _filename: string = ''; //temp prop , used only on frontend
+}
+
+export interface UploadedFileInfo {
+  id: string;
+  filename: string;
+  created: string; // "11 Sep 2019"
+  file_link: string; //ex. '/api/v2/attachments/file/3482/'
+  uploaded_by: string; // it's the first last name of user
 }
