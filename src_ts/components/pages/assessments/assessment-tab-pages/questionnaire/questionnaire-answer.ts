@@ -189,7 +189,12 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
 
   _getOtherEvidenceInputValue(answer: Answer) {
     let otherEvidence = answer.evidences.filter((ev: AnswerEvidence) => !!ev.description)[0];
-    return otherEvidence ? otherEvidence.description : '';
+    const evidenceText = otherEvidence ? otherEvidence.description : '';
+    // fix for display Other text in no-edit mode
+    if (evidenceText && !this.editMode && !this.showOtherInput) {
+      this.updateComplete.then(() => {this.showOtherInput = true; this.requestUpdate();});
+    }
+    return evidenceText;
   }
 
   getAnswerForSave() {
@@ -256,5 +261,3 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
 
 
 }
-
-
