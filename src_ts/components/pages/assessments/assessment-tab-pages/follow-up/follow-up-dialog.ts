@@ -309,9 +309,6 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
   @property({type: Object})
   editedItem: GenericObject = cloneDeep(this.defaultItem);
 
-  // @property({type: Number})
-  // selectedPartnerId: number | null = null;
-
   @property({type: Array})
   categories: GenericObject[] = [];
 

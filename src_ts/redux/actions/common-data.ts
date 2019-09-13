@@ -35,8 +35,8 @@ export const setPartners = (partners: []) => {
   return {
     type: SET_PARTNERS,
     partners
-  }
-}
+  };
+};
 
 export const setOffices = (offices: []) => {
   return {
@@ -56,8 +56,8 @@ export const setExternalIndividuals = (externalIndividuals: []) => {
   return {
     type: SET_EXTERNAL_INDIVIDUALS,
     externalIndividuals
-  }
-}
+  };
+};
 
 export const loadSections = () => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.sections.url!))
@@ -73,20 +73,22 @@ export const setAssessingFirms = (assessingFirms: []) => {
   return {
     type: SET_ASSESSING_FIRMS,
     assessingFirms
-  }
-}
+  };
+};
 
 export const loadPartners = () => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.partners.url!))
     .then((resp: any) => dispatch(setPartners(resp)));
-}
+};
 
 export const loadExternalIndividuals = () => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.externalIndividuals.url!))
     .then((resp: any) => dispatch(setExternalIndividuals(resp)));
-}
+};
 
 export const loadAssessingFirms = () => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.auditorFirms.url!))
-    .then((resp: any) => {dispatch(setAssessingFirms(resp));});
-}
+    .then((resp: any) => {
+      dispatch(setAssessingFirms(resp));
+    });
+};

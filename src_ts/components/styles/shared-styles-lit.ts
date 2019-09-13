@@ -29,13 +29,13 @@ export const SharedStylesLit = html`
 
   a {
     color: var(--primary-color);
-    text-underline: none;
+    text-decoration: none;
   }
 
   section {
     background-color: var(--primary-background-color);
   }
-  
+
   .error {
     color: var(--error-color);
     font-size: 12px;
@@ -62,9 +62,11 @@ export const SharedStylesLit = html`
       };
   }
 
-  etools-dropdown[readonly], etools-dropdown-multi[readonly],
+  etools-dropdown[readonly],
+  etools-dropdown-multi[readonly],
   datepicker-lite[readonly],
-  paper-input[readonly] {
+  paper-input[readonly],
+  paper-textarea[readonly] {
     --paper-input-container-underline: {
       display: none;
     };
@@ -111,6 +113,7 @@ export const SharedStylesLit = html`
     }
 
     paper-input,
+    paper-textarea,
     paper-input-container,
     datepicker-lite,
     etools-dropdown,
@@ -126,6 +129,7 @@ export const SharedStylesLit = html`
     }
 
     paper-input[required][label],
+    paper-textarea[required][label],
     paper-input-container[required],
     datepicker-lite[required],
     etools-dropdown[required],
@@ -140,6 +144,20 @@ export const SharedStylesLit = html`
         @apply --required-star-style;
         color: var(--secondary-text-color, #737373);
       }
+    }
+
+    paper-textarea {
+      --paper-input-container-input: {
+        display: block;
+      }
+    }
+
+    label[required] {
+      @apply --required-star-style;
+    }
+
+    .readonly {
+      pointer-events: none;
     }
 </style>
 `;

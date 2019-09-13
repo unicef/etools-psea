@@ -30,6 +30,9 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   assessment: {
     url: '/api/psea/assessment/'
   },
+  assessmentStatusUpdate: {
+    template: '/api/psea/assessment/<%=id%>/<%=statusAction%>/'
+  },
   assessor: {
     template: '/api/psea/assessment/<%=id%>/assessor/'
   },
@@ -67,5 +70,16 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   },
   attachmentsUpload: {
     url: '/api/v2/attachments/upload/'
+  },
+  getQuestionnaireAnswers: {
+    template: '/api/psea/assessment/<%=assessmentId%>/answer/'
+  },
+  saveQuestionnaireAnswer: {
+    template: '/api/psea/assessment/<%=assessmentId%>/indicator/<%=indicatorId%>/'
+  },
+  answerAttachment: {
+    template: `/api/psea/assessment/<%=assessmentId%>/indicator/<%=indicatorId%>/attachments/`
   }
+
+
 };
