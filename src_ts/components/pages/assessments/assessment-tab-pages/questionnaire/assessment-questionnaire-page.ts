@@ -4,12 +4,16 @@ import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {Question} from '../../../../../types/assessment';
+import {Question, Answer} from '../../../../../types/assessment';
+import {connect} from 'pwa-helpers/connect-mixin';
+import {store, RootState} from '../../../../../redux/store';
+import {cloneDeep} from '../../../../utils/utils';
+import get from 'lodash-es/get';
 
 /**
  * @customElement
  */
-class AssessmentQuestionnairePage extends LitElement {
+class AssessmentQuestionnairePage extends connect(store)(LitElement) {
 
   render() {
     // language=HTML
@@ -42,20 +46,25 @@ class AssessmentQuestionnairePage extends LitElement {
         <div class="col-5 r-align">Overall Assessment:</div><div class="col-1"></div>
         <div class="col-6 l-align"> Positive</div>
       </div>
-      ${this._getQuestionnaireItemsTemplate(this.questionnaireItems)}
+      ${this._getQuestionnaireItemsTemplate(this.questionnaireItems, this.answers)}
     `;
   }
 
   @property({type: Array})
   questionnaireItems!: Question[];
 
-  _getQuestionnaireItemsTemplate(questionnaireItems: Question[]) {
-    if (!questionnaireItems || !questionnaireItems.length) {
-      return '';
-    }
+  @property({type: Array})
+  answers!: Answer[];
 
-    return this.questionnaireItems.map((question: Question) =>
-      html`<questionnaire-item .question="${question}"></questionnaire-item>`);
+  @property({type: String})
+  assessmentId!: string | number;
+
+  stateChanged(state: RootState) {
+    let newAssessmentId = get(state, 'app.routeDetails.params.assessmentId');
+    if (newAssessmentId && newAssessmentId !== this.assessmentId) {
+      this.assessmentId = newAssessmentId;
+      this.getAnswers();
+    }
   }
 
   connectedCallback() {
@@ -63,12 +72,45 @@ class AssessmentQuestionnairePage extends LitElement {
     this.getQuestionnaire();
   }
 
+
+  _getQuestionnaireItemsTemplate(questionnaireItems: Question[], answers: Answer[]) {
+    if (!questionnaireItems || !questionnaireItems.length) {
+      return '';
+    }
+
+    return this.questionnaireItems.map((question: Question) => {
+      let answer = this._getAnswerByQuestionId(question.id, answers);
+      return html`<questionnaire-item .question="${cloneDeep(question)}"
+       .answer="${answer}"
+       .editMode="${(!answer || !answer.id)}"
+       .assessmentId="${this.assessmentId}"></questionnaire-item>`
+      });
+  }
+
+  _getAnswerByQuestionId(questionId: string | number, answers: Answer[]) {
+     if (!answers || !answers.length) {
+       return new Answer();
+     }
+    let answer = answers.find(a => Number(a.indicator) === Number(questionId));
+
+    return answer ? cloneDeep(answer) : new Answer();
+  }
+
   getQuestionnaire() {
-    let url = getEndpoint(etoolsEndpoints.questionnaire).url!;
+    console.log('---GET questionnaire---');
+    let url = etoolsEndpoints.questionnaire.url!;
     makeRequest(new RequestEndpoint(url))
       .then((resp) => {
         this.questionnaireItems = resp;
       })
+  }
+
+  getAnswers() {
+    let url = getEndpoint(etoolsEndpoints.getQuestionnaireAnswers, {assessmentId: this.assessmentId}).url!;
+    makeRequest(new RequestEndpoint(url))
+    .then((resp) => {
+      this.answers = resp;
+    })
   }
 
 }
