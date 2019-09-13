@@ -173,7 +173,7 @@ export class StaffMemberDialog extends LitElement {
   @property({type: Object})
   toastEventSource!: LitElement;
 
-  private initialItem: {} = {};
+  private initialItem: EtoolsStaffMemberModel = this.defaultItem;
 
   public openDialog() {
     this.isNewRecord = !(parseInt(this.editedItem.id) > 0);
@@ -242,25 +242,28 @@ export class StaffMemberDialog extends LitElement {
       url: getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url + this.editedItem.id + '/'
     };
 
-    if (this._staffMemberHasChanged(this.initialItem, this.editedItem)) {
+    if (this._staffMemberDataHasChanged()) {
       makeRequest(options, this.editedItem)
-          .then((resp: any) => this._staffMemberDataComplete(resp))
+          .then((resp: any) => this._staffMemberDataUpdateComplete(resp))
           .catch((err: any) => this._handleError(err));
     } else {
-      this._staffMemberDataComplete(this.editedItem);
+      if (this.initialItem.hasAccess !== this.editedItem.hasAccess) {
+        this._staffMemberDataUpdateComplete(this.editedItem, false);
+      } else {
+        this.requestInProgress = false;
+        fireEvent(this.toastEventSource, 'toast', {
+          text: `No changes have been detected to ${this.editedItem.user.first_name} ${this.editedItem.user.last_name}.`
+        });
+
+      }
     }
   }
 
-  private _staffMemberHasChanged(initialItem, editedItem) {
-    let _initialItem = cloneDeep(initialItem);
-    let _editedItem = cloneDeep(editedItem);
-    delete _initialItem.hasAccess;
-    delete _editedItem.hasAccess;
-
-    return !isJsonStrMatch(_initialItem.user, _editedItem.user);
+  private _staffMemberDataHasChanged() {
+    return !isJsonStrMatch(this.initialItem.user, this.editedItem.user);
   }
 
-  _staffMemberDataComplete(resp: any, updated: boolean = true) {
+  _staffMemberDataUpdateComplete(resp: any, updated: boolean = true) {
     this.requestInProgress = false;
     fireEvent(this, 'staff-member-updated', {
       item: {...resp, hasAccess: this.editedItem.hasAccess},
