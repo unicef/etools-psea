@@ -187,7 +187,6 @@ export class AssessorInfo extends connect(store)(LitElement) {
       return;
     }
     const url = getEndpoint(etoolsEndpoints.assessor, {id: assessmentId}).url!;
-    if (this.assessor !== undefined) {
       makeRequest(new RequestEndpoint(url, 'GET'))
           .then((resp: any) => {
             this.assessor = resp;
@@ -202,7 +201,6 @@ export class AssessorInfo extends connect(store)(LitElement) {
             });
           })
           .catch((err: any) => this._handleErrorOnGetAssessor(err));
-    }
   }
 
   _handleErrorOnGetAssessor(err: any) {
