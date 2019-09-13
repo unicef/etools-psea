@@ -1,6 +1,7 @@
 import {Action, ActionCreator} from 'redux';
 import {makeRequest, RequestEndpoint} from '../../components/utils/request-helper';
 import {etoolsEndpoints} from '../../endpoints/endpoints-list';
+import {GenericObject} from "../../types/globals";
 
 export const UPDATE_UNICEF_USERS_DATA = 'UPDATE_UNICEF_USERS_DATA';
 export const SET_PARTNERS = 'SET_PARTNERS';
@@ -14,12 +15,12 @@ export interface CommonDataActionUpdateUnicefUsersData extends Action<'UPDATE_UN
 export type CommonDataAction = CommonDataActionUpdateUnicefUsersData;
 
 export const updateUnicefUsersData: ActionCreator<CommonDataActionUpdateUnicefUsersData> =
-  (unicefUsersData: object[]) => {
-    return {
-      type: UPDATE_UNICEF_USERS_DATA,
-      unicefUsersData
+    (unicefUsersData: object[]) => {
+      return {
+        type: UPDATE_UNICEF_USERS_DATA,
+        unicefUsersData
+      };
     };
-  };
 
 export const setPartners = (partners: []) => {
   return {
@@ -44,17 +45,29 @@ export const setAssessingFirms = (assessingFirms: []) => {
 
 export const loadPartners = () => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.partners.url!))
-    .then((resp: any) => dispatch(setPartners(resp)));
+      .then((resp: any) => dispatch(setPartners(resp)))
+      .catch((error: GenericObject) => {
+        console.error('[EtoolsUnicefUser]: loadPartners req error...', error);
+        throw error;
+      });
 };
 
 export const loadExternalIndividuals = () => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.externalIndividuals.url!))
-    .then((resp: any) => dispatch(setExternalIndividuals(resp)));
+      .then((resp: any) => dispatch(setExternalIndividuals(resp)))
+      .catch((error: GenericObject) => {
+        console.error('[EtoolsUnicefUser]: loadExternalIndividuals req error...', error);
+        throw error;
+      });
 };
 
 export const loadAssessingFirms = () => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.auditorFirms.url!))
-    .then((resp: any) => {
-      dispatch(setAssessingFirms(resp));
-    });
+      .then((resp: any) => {
+        dispatch(setAssessingFirms(resp));
+      })
+      .catch((error: GenericObject) => {
+        console.error('[EtoolsUnicefUser]: loadAssessingFirms req error...', error);
+        throw error;
+      });
 };
