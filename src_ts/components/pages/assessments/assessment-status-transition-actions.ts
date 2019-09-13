@@ -17,7 +17,7 @@ import {buttonsStyles} from '../../styles/button-styles';
 @customElement('assessment-status-transition-actions')
 export class AssessmentStatusTransitionActions extends connect(store)(LitElement) {
 
-  @property()
+  @property({type: Object})
   assessment!: Assessment;
 
   private statusChangeConfirmationDialog: EtoolsDialog | null = null;
