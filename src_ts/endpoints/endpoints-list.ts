@@ -49,14 +49,10 @@ export const etoolsEndpoints: EtoolsEndpoints = {
     template: '/api/v2/partners/<%=id%>/staff-members/'
   },
   offices: {
-    url: '/api/offices/',
-    exp: 23 * 60 * 60 * 1000, // 23h
-    cachingKey: 'offices'
+    url: '/api/offices/'
   },
   sections: {
-    url: '/api/reports/sectors/',
-    exp: 24 * 60 * 60 * 1000, // 24h
-    cachingKey: 'sections'
+    url: '/api/reports/sectors/'
   },
   // agreements: {
   //   template: '/api/v2/agreements/',

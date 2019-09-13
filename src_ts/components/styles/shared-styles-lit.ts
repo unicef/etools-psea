@@ -141,33 +141,5 @@ export const SharedStylesLit = html`
         color: var(--secondary-text-color, #737373);
       }
     }
-
-    .input-container.input-container-ms {
-      width: 50%;
-    }
-
-    .input-container.input-container-l {
-      width: 100%;
-    }
-
-    .input-container.input-container-40 {
-      width: 35%;
-    }
-
-    .group:after {
-      visibility: hidden;
-      display: block;
-      font-size: 0;
-      content: " ";
-      clear: both;
-      height: 0;
-    }
-
-    .input-container {
-      position: relative;
-      float: left;
-      margin-right: 0;
-      width: 33.33%;
-    }
 </style>
 `;

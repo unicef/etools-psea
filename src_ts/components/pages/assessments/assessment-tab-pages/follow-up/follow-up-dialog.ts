@@ -1,20 +1,21 @@
-import { LitElement, html, property, customElement } from 'lit-element';
-import { PolymerElement } from '@polymer/polymer/polymer-element';
-import { GenericObject, Constructor } from '../../../../../types/globals';
+import {LitElement, html, property, customElement} from 'lit-element';
+import {PolymerElement} from '@polymer/polymer/polymer-element.js';
+import {GenericObject, Constructor} from '../../../../../types/globals';
 import '@unicef-polymer/etools-dialog/etools-dialog.js';
 import '@unicef-polymer/etools-dropdown/etools-dropdown.js';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
-import { fireEvent } from '../../../../utils/fire-custom-event';
-import { getEndpoint } from '../../../../../endpoints/endpoints';
-import { makeRequest } from '../../../../utils/request-helper';
+import {fireEvent} from '../../../../utils/fire-custom-event';
+import {getEndpoint} from '../../../../../endpoints/endpoints';
+import {makeRequest} from '../../../../utils/request-helper';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 import {store, RootState} from '../../../../../redux/store';
-import { etoolsEndpoints } from '../../../../../endpoints/endpoints-list';
-import { cloneDeep } from '../../../../utils/utils';
+import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
+import {cloneDeep} from '../../../../utils/utils';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {formatDate} from '../../../../utils/date-utility';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
-import { gridLayoutStylesLit } from '../../../../styles/grid-layout-styles-lit';
+import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
+import isEqual from 'lodash-es/isEqual';
 
 @customElement('follow-up-dialog')
 class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement>) {
@@ -31,29 +32,34 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
           color: #212121;
           font-size: 15px;
         }
+
         etools-content-panel {
           --ecp-content: {
-                padding: 0;
-            };
+            padding: 0;
+          };
         }
+
         etools-dropdown.fua-category {
           --paper-listbox: {
-                max-height: 340px;
-                -ms-overflow-style: auto;
-            };
+            max-height: 340px;
+            -ms-overflow-style: auto;
+          };
         }
+
         etools-dropdown.fua-person {
           --paper-listbox: {
-                max-height: 140px;
-                -ms-overflow-style: auto;
-            };
+            max-height: 140px;
+            -ms-overflow-style: auto;
+          };
         }
+
         .checkbox-container {
           padding-left: 12px;
           box-sizing: border-box;
           height: 34px;
           padding-top: 6px;
         }
+
         .input-container paper-button {
           height: 34px;
           color: rgba(0, 0, 0, .54);
@@ -61,6 +67,34 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
           z-index: 5;
           border: 1px solid rgba(0, 0, 0, .54);
           padding: 6px 13px;
+        }
+
+        .input-container.input-container-ms {
+          width: 50%;
+        }
+    
+        .input-container.input-container-l {
+          width: 100%;
+        }
+    
+        .input-container.input-container-40 {
+          width: 35%;
+        }
+    
+        .group:after {
+          visibility: hidden;
+          display: block;
+          font-size: 0;
+          content: " ";
+          clear: both;
+          height: 0;
+        }
+    
+        .input-container {
+          position: relative;
+          float: left;
+          margin-right: 0;
+          width: 33.33%;
         }
       </style>
 
@@ -92,12 +126,12 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                         id="partnerInput"
                         class="disabled-as-readonly validate-input required fua-person"
                         ?required
-                        .selected="${this.selectedPartnerId}"
+                        .selected="${this.editedItem.partner}"
                         label="Partner"
                         .options="${this.partners}"
                         option-label="name"
                         option-value="id"
-                        ?readOnly="${this.selectedPartnerId}">
+                        ?readOnly="${this.editedItem.partner}">
                 </etools-dropdown>
               </div>
               <div class="input-container input-container-ms">
@@ -106,12 +140,12 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                         id="assessmentInput"
                         class="disabled-as-readonly validate-input required fua-person"
                         ?required
-                        .selected="${this.selectedAssessmentId}"
+                        .selected="${this.editedItem.psea_assessment}"
                         label="Assessment"
                         .options="${this._getAsArray(this.assessment.reference_number)}"
                         option-label="number"
                         option-value="id"
-                        ?readOnly="${this.assessmentId}">
+                        ?readOnly="${this.editedItem.psea_assessment}">
                 </etools-dropdown>
               </div>
             </div>
@@ -121,7 +155,7 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
             <div class="input-container input-container-ms">
                 
               <etools-dropdown
-                      id="categoriesInput"
+                      id="categoryInput"
                       class="disabled-as-readonly validate-input required fua-person"
                       .selected="${this.editedItem.category}"
                       label="Category"
@@ -130,7 +164,7 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                       ?required
                       option-value="value"
                       trigger-value-change-event
-                      @etools-selected-item-changed="${this._setSelectedCategory}">
+                      @etools-selected-item-changed="${this._handleChange}">
               </etools-dropdown>
             </div>
           </div>
@@ -146,14 +180,14 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                       value="${this.editedItem.description}"
                       label="Description"
                       .max-rows="4"
-                      @keyup="${this.captureInput}">
+                      @keyup="${this._handleChange}">
               </paper-textarea>
             </div>
           </div>
 
           <div class="row-h group">
             <div class="input-container input-container-ms">
-                
+
               <etools-dropdown
                       id="assignedToInput"
                       class="disabled-as-readonly validate-input required fua-person"
@@ -164,7 +198,7 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                       ?required
                       option-value="id"
                       trigger-value-change-event
-                      @etools-selected-item-changed="${this._setSelectedAssignee}">
+                      @etools-selected-item-changed="${this._handleChange}">
               </etools-dropdown>
             </div>
 
@@ -180,7 +214,7 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                       ?required
                       option-value="id"
                       trigger-value-change-event
-                      @etools-selected-item-changed="${this._setSelectedSection}">
+                      @etools-selected-item-changed="${this._handleChange}">
               </etools-dropdown>
             </div>
           </div>
@@ -199,7 +233,7 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
                       ?required
                       option-value="id"
                       trigger-value-change-event
-                      @etools-selected-item-changed="${this._setSelectedOffice}">
+                      @etools-selected-item-changed="${this._handleChange}">
               </etools-dropdown>
             </div>
 
@@ -275,8 +309,8 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
   @property({type: Object})
   editedItem: GenericObject = cloneDeep(this.defaultItem);
 
-  @property({type: Number})
-  selectedPartnerId: number | null = null;
+  // @property({type: Number})
+  // selectedPartnerId: number | null = null;
 
   @property({type: Array})
   categories: GenericObject[] = [];
@@ -314,8 +348,8 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
   }
 
   updated(changedProperties: GenericObject) {
-    if (this.watchForChanges && changedProperties.get('editedItem')) {
-      debugger
+    if (this.watchForChanges && !changedProperties.has('watchForChanges') && !isEqual(this.editedItem, changedProperties.get('editedItem'))) {
+      this.watchForChanges = !this.watchForChanges;
     }
   }
 
@@ -376,56 +410,27 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
     fireEvent(this.toastEventSource, 'toast', {text: formatServerErrorAsText(err)});
   }
 
-  // _handleChange(e: CustomEvent) {
-  //   if (!e.detail.selectedItem) { return; }
-
-  //   switch (e.detail.selectedItem) {
-  //     case 
-  //   }
-  // }
-
-  _setSelectedAssessment(e: CustomEvent) {
-    if (!e.detail.selectedItem) {
-      return;
-    }
+  _handleChange(e: GenericObject) {
+    if (!e.detail.selectedItem) {return; }
     let oldValue = cloneDeep(this.editedItem);
-    oldValue.psea_assessment = e.detail.selectedItem.id;
-    this.editedItem = oldValue;
-  }
 
-  _setSelectedAssignee(e: CustomEvent) {
-    if (!e.detail.selectedItem) {
-      return;
+    switch (e.target.id) {
+      case 'categoryInput':
+        oldValue.category = e.detail.selectedItem.id;
+        break;
+      case 'descriptionInput':
+        oldValue.description = e.target.value;
+        break;
+      case 'assignedToInput':
+        oldValue.assigned_to = e.detail.selectedItem.id;
+        break;
+      case 'sectionInput':
+        oldValue.section = e.detail.selectedItem.id;
+        break;
+      case 'officeInput':
+        oldValue.office = e.detail.selectedItem.id;
+        break;
     }
-    let oldValue = cloneDeep(this.editedItem);
-    oldValue.assigned_to = e.detail.selectedItem.id;
-    this.editedItem = oldValue;
-  }
-
-  _setSelectedCategory(e: CustomEvent) {
-    if (!e.detail.selectedItem) {
-      return;
-    }
-    let oldValue = cloneDeep(this.editedItem);
-    oldValue.category = e.detail.selectedItem.id;
-    this.editedItem = oldValue;
-  }
-
-  _setSelectedSection(e: CustomEvent) {
-    if (!e.detail.selectedItem) {
-      return;
-    }
-    let oldValue = cloneDeep(this.editedItem);
-    oldValue.section = e.detail.selectedItem.id;
-    this.editedItem = oldValue;
-  }
-
-  _setSelectedOffice(e: CustomEvent) {
-    if (!e.detail.selectedItem) {
-      return;
-    }
-    let oldValue = cloneDeep(this.editedItem);
-    oldValue.office = e.detail.selectedItem.id;
     this.editedItem = oldValue;
   }
 
@@ -435,15 +440,6 @@ class FollowUpDialog extends connect(store)(LitElement as Constructor<LitElement
     }
     let oldValue = cloneDeep(this.editedItem);
     oldValue.due_date = formatDate(selDate, 'YYYY-MM-DD');
-    this.editedItem = oldValue;
-  }
-
-  captureInput(event: any) {
-    if (!event.target && !event.target.value) {
-      return;
-    }
-    let oldValue = cloneDeep(this.editedItem);
-    oldValue.description = event.target.value;
     this.editedItem = oldValue;
   }
 

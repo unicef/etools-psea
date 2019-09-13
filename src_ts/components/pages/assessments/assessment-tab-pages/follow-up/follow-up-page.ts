@@ -1,27 +1,16 @@
 import {LitElement, html, property, customElement} from 'lit-element';
-import '@unicef-polymer/etools-content-panel/etools-content-panel';
+import '@unicef-polymer/etools-content-panel/etools-content-panel.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import './follow-up-dialog';
-import { FollowUpDialogEl } from './follow-up-dialog';
-
-import '@unicef-polymer/etools-date-time/datepicker-lite';
-import '@unicef-polymer/etools-dialog/etools-dialog.js';
-import '@polymer/paper-checkbox/paper-checkbox.js';
-import '@polymer/paper-input/paper-textarea.js';
-import '@polymer/paper-button/paper-button.js';
-import '@polymer/paper-tooltip/paper-tooltip.js';
+import {FollowUpDialogEl} from './follow-up-dialog';
 import {EtoolsTableColumn, EtoolsTableColumnType} from '../../../../common/layout/etools-table/etools-table'
-import '@unicef-polymer/etools-dropdown/etools-dropdown.js';
-import '@polymer/polymer/lib/elements/dom-if';
-import '@polymer/polymer/lib/elements/dom-repeat';
-
-import { GenericObject, Constructor } from '../../../../../types/globals';
-import { cloneDeep } from '../../../../utils/utils';
-import { makeRequest } from '../../../../utils/request-helper';
-import { etoolsEndpoints } from '../../../../../endpoints/endpoints-list';
-import { getEndpoint } from '../../../../../endpoints/endpoints';
-import { RootState, store } from '../../../../../redux/store';
-import { connect } from 'pwa-helpers/connect-mixin';
+import {GenericObject, Constructor} from '../../../../../types/globals';
+import {cloneDeep} from '../../../../utils/utils';
+import {makeRequest} from '../../../../utils/request-helper';
+import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
+import {getEndpoint} from '../../../../../endpoints/endpoints';
+import {RootState, store} from '../../../../../redux/store';
+import {connect} from 'pwa-helpers/connect-mixin';
 
 @customElement('follow-up-page')
 export class FollowUpPage extends connect(store)(LitElement as Constructor<LitElement>) {
@@ -35,7 +24,7 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
           </paper-icon-button>
         </div>
         
-        <etools-table .items="${this.hasItems ? this.dataItems : this.blankAPList}"
+        <etools-table .items="${  this.dataItems}"
                       .columns="${this.columns}"
                       ?showEdit="${this.hasItems}"
                       ?showCopy="${this.hasItems}">
@@ -46,11 +35,6 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
   
   @property({type: Array})
   dataItems: object[] = [];
-
-  @property({type: Array})
-  blankAPList: object[] = [
-    {reference_number: '', category: '', assigned_to: '', status: '', due_date: '', high_priority: ''}
-  ];
 
   @property({type: Array})
   columns: EtoolsTableColumn[] = [
@@ -111,7 +95,7 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
     if (state && state.pageData && state.pageData.currentAssessment && this.followUpDialog) {
       // @ts-ignore
       this.partnerId = state.pageData.currentAssessment.partner
-      this.followUpDialog.selectedPartnerId = this.partnerId;
+      // this.followUpDialog.selectedPartnerId = this.partnerId;
       this.followUpDialog.editedItem.partner = this.partnerId;
     }
   }
@@ -153,17 +137,18 @@ export class FollowUpPage extends connect(store)(LitElement as Constructor<LitEl
 
   copyActionPoint(event: GenericObject) {
     this.extractActionPointData(event.detail);
-    this.followUpDialog.editedItem.id = 0;
+    // this.followUpDialog.editedItem.id = 0;
     this.followUpDialog.watchForChanges = true;
     this.openFollowUpDialog();
   }
 
   extractActionPointData(item: GenericObject) {
-    let newEditedItem = {partner: null, category: null, assigned_to: null, section: '', office: null};
+    let newEditedItem = {partner: null, category: null, assigned_to: null, section: '', office: null, psea_assessment: null};
     newEditedItem.partner = item.partner.id;
     // newEditedItem.category = item.category.id;
     newEditedItem.assigned_to = item.assigned_to.id;
-    newEditedItem.section = item.section.id;
+    newEditedItem.section = item.section.id.toString();
+    newEditedItem.psea_assessment = item.psea_assessment;
     newEditedItem.office = item.office.id;
     this.followUpDialog.editedItem = newEditedItem;
   }
