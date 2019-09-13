@@ -166,7 +166,7 @@ export class EtoolsStatus extends LitElement {
   }
 
   isCompleted(index: number, activeStatusIndex: number): boolean {
-    return index < activeStatusIndex;
+    return index < activeStatusIndex || activeStatusIndex === this.statuses.length - 1;
   }
 
   getStatusClasses(index: number, activeStatusIndex: number): string {

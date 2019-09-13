@@ -187,20 +187,20 @@ export class AssessorInfo extends connect(store)(LitElement) {
       return;
     }
     const url = getEndpoint(etoolsEndpoints.assessor, {id: assessmentId}).url!;
-    makeRequest(new RequestEndpoint(url, 'GET'))
-      .then((resp: any) => {
-        this.assessor = resp;
-        this.isNew = false;
-        this.editMode = this.isNew;
-        this.originalAssessor = cloneDeep(this.assessor);
-        this.requestUpdate().then(() => {
-          // load staff members after staff members element is initialized
-          if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessor.auditor_firm) {
-            this.loadFirmStaffMembers(this.assessor.auditor_firm!);
-          }
-        });
-      })
-      .catch((err: any) => this._handleErrorOnGetAssessor(err));
+      makeRequest(new RequestEndpoint(url, 'GET'))
+          .then((resp: any) => {
+            this.assessor = resp;
+            this.isNew = false;
+            this.editMode = this.isNew;
+            this.originalAssessor = cloneDeep(this.assessor);
+            this.requestUpdate().then(() => {
+              // load staff members after staff members element is initialized
+              if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessor.auditor_firm) {
+                this.loadFirmStaffMembers(this.assessor.auditor_firm!);
+              }
+            });
+          })
+          .catch((err: any) => this._handleErrorOnGetAssessor(err));
   }
 
   _handleErrorOnGetAssessor(err: any) {

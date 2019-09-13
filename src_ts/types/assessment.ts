@@ -1,9 +1,11 @@
 export class Assessment {
   id?: number;
+  assessment_date: string | null = '';
+  assessor: string = '';
   reference_number?: string;
   partner_name?: string;
-  assessment_date: string | null = '';
   status: string = '';
+  status_list: string[][] = [];
   partner: string | null = '';
   focal_points?: string[] =[];
 }
