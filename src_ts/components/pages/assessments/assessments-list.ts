@@ -40,6 +40,7 @@ import {buttonsStyles} from '../../styles/button-styles';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
 import {makeRequest} from '../../utils/request-helper';
+import './export-data';
 
 /**
  * @LitElement
@@ -67,15 +68,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
 
         <div slot="title-row-actions" class="content-header-actions">
             <div class="action" ?hidden="${!this.canExport}" >
-              <paper-menu-button id="pdExportMenuBtn" close-on-activate horizontal-align="right">
-                <paper-button slot="dropdown-trigger" class="dropdown-trigger">
-                  <iron-icon icon="file-download"></iron-icon>
-                  Export
-                </paper-button>
-                <paper-listbox slot="dropdown-content">
-                  ${this.exportLinks.map(item => html`<paper-item @tap="${() => this.exportAssessments(item.type)}">${item.name}</paper-item>`)}
-                </paper-listbox>
-              </paper-menu-button>
+              <export-data .endpoint="${etoolsEndpoints.assessment.url!}" .params="${this.queryParams}"></export-data>
             </div>
             <div class="action" ?hidden="${!this.canAdd}" >
               <paper-button class="primary left-icon" raised @tap="${this.goToAddnewPage}">
@@ -138,6 +131,9 @@ export class AssessmentsList extends connect(store)(LitElement) {
   @property({type: Boolean})
   canExport: boolean = false;
 
+  @property({type: String})
+  queryParams: string = '';
+
   @property({type: Array})
   listColumns: EtoolsTableColumn[] = [
     {
@@ -178,15 +174,6 @@ export class AssessmentsList extends connect(store)(LitElement) {
 
   @property({type: Array})
   listData: GenericObject[] = [];
-
-  @property({type: Array})
-  exportLinks: GenericObject[] = [{
-    name: 'Export Excel',
-    type: 'xlsx'
-  }, {
-    name: 'Export CSV',
-    type: 'csv'
-  }];
 
   stateChanged(state: RootState) {
     if (state.app!.routeDetails.routeName === 'assessments' &&
@@ -241,6 +228,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
 
   updateUrlListQueryParams() {
     const qs = this.getParamsForQuery();
+    this.queryParams = qs;
     updateAppLocation(`${this.routeDetails.path}?${qs}`, true);
   }
 
@@ -301,11 +289,6 @@ export class AssessmentsList extends connect(store)(LitElement) {
       this.listData = [...response.results];
     })
       .catch((err: any) => console.error(err));
-  }
-
-  exportAssessments(type: string) {
-    let url = etoolsEndpoints.assessment.url + `export/${type}/?${this.getParamsForQuery()}`;
-    window.open(url, '_blank');
   }
 
   goToAddnewPage() {

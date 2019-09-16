@@ -13,19 +13,4 @@ export const pageContentHeaderSlottedStyles = html`
       @apply --layout-horizontal;
       @apply --layout-end;
     }
-    .content-header-actions .action {
-      @apply --layout-horizontal;
-      @apply --layout-end;
-    }
-    .content-header-actions paper-menu-button{
-      padding: 0px;
-    }
-    .content-header-actions paper-button{
-      padding: 0px;
-      margin-left: 10px;
-      font-weight: bold;
-    }
-    .content-header-actions paper-button iron-icon {
-      margin-right: 10px;
-    }
   </style>`;

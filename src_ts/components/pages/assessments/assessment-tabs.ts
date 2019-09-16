@@ -21,8 +21,6 @@ import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {EtoolsStatusModel} from '../../common/layout/status/etools-status';
 import './assessment-status-transition-actions';
 import isNil from 'lodash-es/isNil';
-import {GenericObject} from '../../../types/globals';
-import {getEndpoint} from '../../../endpoints/endpoints';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
 
 /**
@@ -56,17 +54,9 @@ export class AssessmentTabs extends connect(store)(LitElement) {
 
         <div slot="title-row-actions" class="content-header-actions">
 
-        ${(this.assessment && this.assessment.id && this.canExport) ? html`
-          <paper-menu-button id="pdExportMenuBtn" close-on-activate horizontal-align="right">
-            <paper-button slot="dropdown-trigger" class="dropdown-trigger">
-              <iron-icon icon="file-download"></iron-icon>
-              Export
-            </paper-button>
-            <paper-listbox slot="dropdown-content">
-              ${this.exportLinks.map(item => html`<paper-item @tap="${() => this.exportAssessment(item.type)}">${item.name}</paper-item>`)}
-            </paper-listbox>
-          </paper-menu-button>
-          `: ''}
+          ${(this.assessment && this.assessment.id && this.canExport) ? html`
+            <export-data .endpoint="${etoolsEndpoints.assessment.url!}${this.assessment.id}/"></export-data> ` : ''}
+
           <assessment-status-transition-actions></assessment-status-transition-actions>
         </div>
 
@@ -119,15 +109,6 @@ export class AssessmentTabs extends connect(store)(LitElement) {
 
   @property({type: Boolean})
   canExport: boolean = false;
-
-  @property({type: Array})
-  exportLinks: GenericObject[] = [{
-    name: 'Export Excel',
-    type: 'xlsx'
-  }, {
-    name: 'Export CSV',
-    type: 'csv'
-  }];
 
   isActiveTab(tab: string, expectedTab: string): boolean {
     return tab === expectedTab;
@@ -266,11 +247,6 @@ export class AssessmentTabs extends connect(store)(LitElement) {
       // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
       return {status: s[0], label: s[1]} as EtoolsStatusModel;
     });
-  }
-
-  exportAssessment(type: string) {
-    const url = `${etoolsEndpoints.assessment.url!}${this.assessment.id}/export/${type}/`;
-    window.open(url, '_blank');
   }
 
 }
