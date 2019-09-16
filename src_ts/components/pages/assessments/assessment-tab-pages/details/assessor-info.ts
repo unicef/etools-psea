@@ -5,7 +5,7 @@ import '@polymer/paper-button/paper-button.js';
 import './assessing-firm';
 import './external-individual';
 import './firm-staff-members';
-import {UnicefUser} from '../../../../../types/globals';
+import {UnicefUser} from '../../../../../types/user-model';
 import {LitElement, html, property, query, customElement} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {buttonsStyles} from '../../../../styles/button-styles';
@@ -137,7 +137,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
       return;
     }
     return html`<firm-staff-members id="firmStaffMembers"
-        ?hidden="${this.hideFirmStaffMembers(isNew, assessor)}"
+        ?hidden="${this.hideFirmStaffMembers(isNew, assessor, this.editMode)}"
         .assessorId="${this.assessor.id}"
         .assessmentId="${this.assessmentId}"
         .currentFirmAssessorStaffWithAccess="${this.assessor.auditor_firm_staff}">
@@ -187,20 +187,20 @@ export class AssessorInfo extends connect(store)(LitElement) {
       return;
     }
     const url = getEndpoint(etoolsEndpoints.assessor, {id: assessmentId}).url!;
-    makeRequest(new RequestEndpoint(url, 'GET'))
-      .then((resp: any) => {
-        this.assessor = resp;
-        this.isNew = false;
-        this.editMode = this.isNew;
-        this.originalAssessor = cloneDeep(this.assessor);
-        this.requestUpdate().then(() => {
-          // load staff members after staff members element is initialized
-          if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessor.auditor_firm) {
-            this.loadFirmStaffMembers(this.assessor.auditor_firm!);
-          }
-        });
-      })
-      .catch((err: any) => this._handleErrorOnGetAssessor(err));
+      makeRequest(new RequestEndpoint(url, 'GET'))
+          .then((resp: any) => {
+            this.assessor = resp;
+            this.isNew = false;
+            this.editMode = this.isNew;
+            this.originalAssessor = cloneDeep(this.assessor);
+            this.requestUpdate().then(() => {
+              // load staff members after staff members element is initialized
+              if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessor.auditor_firm) {
+                this.loadFirmStaffMembers(this.assessor.auditor_firm!);
+              }
+            });
+          })
+          .catch((err: any) => this._handleErrorOnGetAssessor(err));
   }
 
   _handleErrorOnGetAssessor(err: any) {
@@ -222,7 +222,11 @@ export class AssessorInfo extends connect(store)(LitElement) {
     firmStaffMembersEl.populateStaffMembersList(firmId);
   }
 
-  hideFirmStaffMembers(isNew: boolean, assessor: Assessor | null) {
+  hideFirmStaffMembers(isNew: boolean, assessor: Assessor | null, editMode: boolean) {
+    if (editMode) {
+      return true;
+    }
+
     if (!assessor || !assessor.assessor_type || isNew) {
       return true;
     }
