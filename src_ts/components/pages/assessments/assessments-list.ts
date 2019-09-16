@@ -37,7 +37,6 @@ import {
 import {RouteDetails, RouteQueryParams} from '../../../routing/router';
 import {updateAppLocation} from '../../../routing/routes';
 import {buttonsStyles} from '../../styles/button-styles';
-import {fireEvent} from '../../utils/fire-custom-event';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
 import {makeRequest} from '../../utils/request-helper';
@@ -67,7 +66,6 @@ export class AssessmentsList extends connect(store)(LitElement) {
         <h1 slot="page-title">Assessments list</h1>
 
         <div slot="title-row-actions" class="content-header-actions">
-
             <div class="action" ?hidden="${!this.canExport}" >
               <paper-menu-button id="pdExportMenuBtn" close-on-activate horizontal-align="right">
                 <paper-button slot="dropdown-trigger" class="dropdown-trigger">
@@ -84,7 +82,6 @@ export class AssessmentsList extends connect(store)(LitElement) {
                 <iron-icon icon="add"></iron-icon>Add new assessment
               </paper-button>
             </div>
-
         </div>
       </page-content-header>
 
