@@ -137,7 +137,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
       return;
     }
     return html`<firm-staff-members id="firmStaffMembers"
-        ?hidden="${this.hideFirmStaffMembers(isNew, assessor)}"
+        ?hidden="${this.hideFirmStaffMembers(isNew, assessor, this.editMode)}"
         .assessorId="${this.assessor.id}"
         .assessmentId="${this.assessmentId}"
         .currentFirmAssessorStaffWithAccess="${this.assessor.auditor_firm_staff}">
@@ -224,7 +224,11 @@ export class AssessorInfo extends connect(store)(LitElement) {
     firmStaffMembersEl.populateStaffMembersList(firmId);
   }
 
-  hideFirmStaffMembers(isNew: boolean, assessor: Assessor | null) {
+  hideFirmStaffMembers(isNew: boolean, assessor: Assessor | null, editMode: boolean) {
+    if (editMode) {
+      return true;
+    }
+
     if (!assessor || !assessor.assessor_type || isNew) {
       return true;
     }
