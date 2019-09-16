@@ -28,17 +28,17 @@ const commonData: Reducer<CommonDataState, RootAction> = (state = INITIAL_COMMON
       return {
         ...state,
         partners: action.partners
-      }
+      };
     case SET_EXTERNAL_INDIVIDUALS:
       return {
         ...state,
         externalIndividuals: action.externalIndividuals
-      }
-      case SET_ASSESSING_FIRMS:
-        return {
-          ...state,
-          assessingFirms: action.assessingFirms
-        }
+      };
+    case SET_ASSESSING_FIRMS:
+      return {
+        ...state,
+        assessingFirms: action.assessingFirms
+      };
     default:
       return state;
   }

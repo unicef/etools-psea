@@ -196,7 +196,7 @@ export class FirmStaffMembers extends LitElement {
     document.querySelector('body')!.appendChild(this.dialogStaffMember);
   }
 
-  onStaffMemberSaved(e: any) {
+  onStaffMemberSaved(e: CustomEvent) {
     const savedItem = e.detail;
     this.updateItemData(savedItem);
     this.updateFirmAssessorStaffAccess(savedItem as EtoolsStaffMemberModel);
