@@ -14,17 +14,16 @@ import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
-import {Assessor, AssessorTypes} from '../../../../../types/assessment';
+import {Assessment, Assessor, AssessorTypes} from '../../../../../types/assessment';
 import {AssessingFirm} from './assessing-firm';
 import {ExternalIndividual} from './external-individual';
-import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
-import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {FirmStaffMembers} from './firm-staff-members';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
-import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
+import {saveAssessorData} from '../../../../../redux/actions/page-data';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 /**
  * @customElement
@@ -57,17 +56,17 @@ export class AssessorInfo extends connect(store)(LitElement) {
         <div slot="panel-btns">
           <paper-icon-button
                 ?hidden="${this.hideEditIcon(this.isNew, this.editMode)}"
-                @tap="${this._allowEdit}"
+                @tap="${this.allowEdit}"
                 icon="create">
           </paper-icon-button>
         </div>
 
         <div class="row-padding-v">
           <label class="paper-label">Assessor is:</label>
-          <paper-radio-group .selected="${this._getAssessorType(this.assessor)}"
+          <paper-radio-group .selected="${this.getAssessorType(this.assessor)}"
               ?readonly="${this.isReadonly(this.editMode)}"
-              @selected-changed="${(e: CustomEvent) => this._setSelectedAssessorType(
-      (e.target as PaperRadioGroupElement)!.selected!)}">
+              @selected-changed="${(e: CustomEvent) =>
+                this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
             <paper-radio-button name="staff">Unicef Staff</paper-radio-button>
             <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
             <paper-radio-button name="external">External Individual</paper-radio-button>
@@ -78,10 +77,10 @@ export class AssessorInfo extends connect(store)(LitElement) {
 
         <div class="layout-horizontal right-align row-padding-v"
             ?hidden="${this.hideActionButtons(this.isNew, this.editMode)}">
-          <paper-button class="default" @tap="${this.cancelAssessor}">
+          <paper-button class="default" @tap="${this.cancelAssessorUpdate}">
             Cancel
           </paper-button>
-          <paper-button class="primary" @tap="${this.saveAssessor}">
+          <paper-button class="primary" @tap="${this.saveAssessorChanges}">
             Save
           </paper-button>
         </div>
@@ -103,7 +102,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
             .options="${this.unicefUsers}"
             .selected="${this.assessor.user}"
             trigger-value-change-event
-            @etools-selected-item-changed="${this._setSelectedUnicefUser}"
+            @etools-selected-item-changed="${this.setSelectedUnicefUser}"
             option-label="name"
             option-value="id"
             required
@@ -139,7 +138,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
     return html`<firm-staff-members id="firmStaffMembers"
         ?hidden="${this.hideFirmStaffMembers(isNew, assessor, this.editMode)}"
         .assessorId="${this.assessor.id}"
-        .assessmentId="${this.assessmentId}"
+        .assessmentId="${this.assessment.id}"
         .currentFirmAssessorStaffWithAccess="${this.assessor.auditor_firm_staff}">
       </firm-staff-members>`;
   }
@@ -151,7 +150,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
   unicefUsers!: UnicefUser[];
 
   @property({type: Object})
-  assessmentId!: string | number;
+  assessment!: Assessment;
 
   @property({type: Boolean})
   isNew: boolean = false;
@@ -172,48 +171,35 @@ export class AssessorInfo extends connect(store)(LitElement) {
     if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
     }
-    if (state.app!.routeDetails!.params) {
-      const assessmentId = state.app!.routeDetails.params.assessmentId;
-      if (this.assessmentId !== assessmentId) {
-        this.assessmentId = assessmentId;
-        this.getAssessorDetails(this.assessmentId);
+
+    // initialize assessment object from redux state
+    if (state.pageData!.currentAssessment) {
+      const newAssessment = state.pageData!.currentAssessment;
+      if (!isJsonStrMatch(this.assessment, newAssessment)) {
+        this.assessment = cloneDeep(newAssessment);
+      }
+    }
+
+    // initialize assessor object from redux state
+    if (state.pageData!.assessor) {
+      const newAssessor = state.pageData!.assessor;
+      if (!isJsonStrMatch(this.assessor, newAssessor)) {
+        this.assessor = cloneDeep(newAssessor);
+        this.initializeRelatedData();
       }
     }
   }
 
-  getAssessorDetails(assessmentId: string | number) {
-    if (!assessmentId || assessmentId === 'new') {
-      this.assessor = new Assessor();
-      return;
-    }
-    if (this.assessor !== undefined) {
-      const url = getEndpoint(etoolsEndpoints.assessor, {id: assessmentId}).url!;
-      makeRequest(new RequestEndpoint(url, 'GET'))
-          .then((resp: any) => {
-            this.assessor = resp;
-            this.isNew = false;
-            this.editMode = this.isNew;
-            this.originalAssessor = cloneDeep(this.assessor);
-            this.requestUpdate().then(() => {
-              // load staff members after staff members element is initialized
-              if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessor.auditor_firm) {
-                this.loadFirmStaffMembers(this.assessor.auditor_firm!);
-              }
-            });
-          })
-          .catch((err: any) => this._handleErrorOnGetAssessor(err));
-    }
-  }
-
-  _handleErrorOnGetAssessor(err: any) {
-    if (err.status === 404) {
-      this.assessor = new Assessor();
-      this.isNew = true;
-      this.editMode = this.isNew;
-    } else {
-      console.error(err);
-      fireEvent(this, 'toast', {text: 'Error on getting assessor data'});
-    }
+  protected initializeRelatedData(): void {
+    this.isNew = !this.assessor.id;
+    this.editMode = this.isNew;
+    this.originalAssessor = cloneDeep(this.assessor);
+    this.requestUpdate().then(() => {
+      // load staff members after staff members element is initialized
+      if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessor.auditor_firm) {
+        this.loadFirmStaffMembers(this.assessor.auditor_firm!);
+      }
+    });
   }
 
   loadFirmStaffMembers(firmId: string) {
@@ -228,7 +214,6 @@ export class AssessorInfo extends connect(store)(LitElement) {
     if (editMode) {
       return true;
     }
-
     if (!assessor || !assessor.assessor_type || isNew) {
       return true;
     }
@@ -243,23 +228,23 @@ export class AssessorInfo extends connect(store)(LitElement) {
     return true;
   }
 
-  _setSelectedAssessorType(selected: any) {
+  setSelectedAssessorType(assessorType: string | number) {
     if (!this.assessor) {
-      // @ts-ignore
-      this.assessor = {};
+      return;
     }
-    this.assessor.assessor_type = selected;
+    this.assessor.assessor_type = assessorType as AssessorTypes;
+    this.assessor.user = null;
     this.requestUpdate();
   }
 
-  _getAssessorType(assessor: Assessor | null) {
+  getAssessorType(assessor: Assessor | null) {
     if (!assessor) {
       return null;
     }
     return assessor.assessor_type;
   }
 
-  _setSelectedUnicefUser(event: CustomEvent) {
+  setSelectedUnicefUser(event: CustomEvent) {
     const selectedUser = event.detail.selectedItem;
     if (selectedUser) {
       this.assessor.user = selectedUser.id;
@@ -269,40 +254,18 @@ export class AssessorInfo extends connect(store)(LitElement) {
     this.requestUpdate();
   }
 
-  saveAssessor() {
+  saveAssessorChanges() {
     if (!this.validate()) {
       return;
     }
 
-    const endpointData = new RequestEndpoint(this._getUrl(), this._getMethod());
-
-    makeRequest(endpointData, this.collectAssessorData())
-      .then((resp) => {
-        this._handleAssessorSaved(resp);
-      })
-      .catch((err: any) =>
-        fireEvent(this, 'toast', {text: formatServerErrorAsText(err), showCloseBtn: true}));
+    store.dispatch(saveAssessorData(this.assessment.id as number,
+      this.assessor.id, this.collectAssessorData(), this.handleAssessorSaveError.bind(this)));
   }
 
-
-  _handleAssessorSaved(resp: any) {
-    this.assessor = resp;
-    this.originalAssessor = cloneDeep(this.assessor);
-    this.editMode = false;
-    this.isNew = false;
-
-    if (this.assessor.assessor_type === AssessorTypes.Firm) {
-      this.loadFirmStaffMembers(this.assessor.auditor_firm!);
-    }
-  }
-
-  _getMethod() {
-    return this.assessor.id ? 'PATCH' : 'POST';
-  }
-
-  _getUrl() {
-    const baseUrl = getEndpoint(etoolsEndpoints.assessor, {id: this.assessmentId}).url!;
-    return this.assessor.id ? baseUrl + this.assessor.id + '/' : baseUrl;
+  handleAssessorSaveError(error: any) {
+    logError(error);
+    fireEvent(this, 'toast', {text: formatServerErrorAsText(error), showCloseBtn: true});
   }
 
   collectAssessorData() {
@@ -365,16 +328,12 @@ export class AssessorInfo extends connect(store)(LitElement) {
   }
 
 
-  cancelAssessor() {
-    if (this.isNew) {
-      this.assessor = new Assessor();
-    } else {
-      this.assessor = cloneDeep(this.originalAssessor);
-      this.editMode = false;
-    }
+  cancelAssessorUpdate() {
+    this.assessor = cloneDeep(this.originalAssessor);
+    this.editMode = this.isNew;
   }
 
-  _allowEdit() {
+  allowEdit() {
     this.editMode = true;
   }
 
