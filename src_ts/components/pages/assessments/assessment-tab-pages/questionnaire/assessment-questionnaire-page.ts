@@ -123,7 +123,7 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   }
 
   _handleErrOnGetAssessment(err: any) {
-    fireEvent(this, 'toast', {test: formatServerErrorAsText(err)})
+    fireEvent(this, 'toast', {text: formatServerErrorAsText(err)})
   }
 
   _getAnswerByQuestionId(questionId: string | number, answers: Answer[]) {
