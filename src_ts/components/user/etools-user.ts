@@ -33,6 +33,9 @@ export class EtoolsUser extends connect(store)(EtoolsAjaxRequestMixin(PolymerEle
       store.dispatch(updateUserData(response));
       store.dispatch(updateUserPermissions(this.getUserPermissions(response)));
     }).catch((error: GenericObject) => {
+      if (error.status === 403) {
+        window.location.href = window.location.origin + '/login/';
+      }
       console.error('[EtoolsUser]: getUserData req error...', error);
       throw error;
     });
