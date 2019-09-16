@@ -71,7 +71,7 @@ export const saveAssessorData = (assessmentId: number,
       method: assessorId ? 'PATCH' : 'POST',
       url: assessorId ? (baseUrl + assessorId + '/') : baseUrl
     };
-    makeRequest(reqOptions, data)
+    return makeRequest(reqOptions, data)
       .then((response) => {
         dispatch(updateAssessorData(response));
       })
