@@ -18,3 +18,16 @@ export interface UnicefUser {
   name: string;
   email: string;
 }
+
+export interface ActionPoint {
+  partner: GenericObject | null;
+  // category: number;
+  assigned_to: GenericObject | null;
+  section: GenericObject | null;
+  psea_assessment: number | null;
+  office: GenericObject | null;
+  description: string;
+  due_date: string;
+  id: number | string | null;
+  high_priority: boolean;
+}
