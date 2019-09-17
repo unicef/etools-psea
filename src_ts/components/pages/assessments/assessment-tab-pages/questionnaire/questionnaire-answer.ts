@@ -128,6 +128,16 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
     if (get(state, 'app.routeDetails.params.assessmentId')) {
       let id = state.app!.routeDetails.params!.assessmentId;
       this.assessmentId = id === 'new' ? null : id;
+      this.clearControls();
+    }
+  }
+
+  clearControls() {
+    if (this.answer.id === null && this.ratingElement) {
+      this.ratingElement.selected = '';
+      this.commentsElement.value = '';
+      this.otherEvidenceInput.value = '';
+      this.checkedEvidenceBoxes.forEach(el => el.checked = false);
     }
   }
 
