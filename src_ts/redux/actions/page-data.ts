@@ -33,7 +33,6 @@ export const updateAssessorData: ActionCreator<AssessorActionUpdate> = (assessor
 };
 
 /**
- * Request assessor details
  * @param assessmentId
  */
 export const requestAssessorData = (assessmentId: number) => (dispatch: any) => {
@@ -52,7 +51,6 @@ export const requestAssessorData = (assessmentId: number) => (dispatch: any) => 
 };
 
 /**
- * Save assessment assessor data
  * @param assessmentId
  * @param assessorId
  * @param data

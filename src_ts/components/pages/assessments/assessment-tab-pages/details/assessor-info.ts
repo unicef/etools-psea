@@ -80,7 +80,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
           <paper-button class="default" @tap="${this.cancelAssessorUpdate}">
             Cancel
           </paper-button>
-          <paper-button class="primary" @tap="${this.saveAssessorChanges}">
+          <paper-button class="primary" @tap="${this.saveAssessor}">
             Save
           </paper-button>
         </div>
@@ -254,7 +254,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
     this.requestUpdate();
   }
 
-  saveAssessorChanges() {
+  saveAssessor() {
     if (!this.validate()) {
       return;
     }
