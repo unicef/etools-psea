@@ -40,3 +40,12 @@ export interface EtoolsStaffMemberProfileModel {
   job_title: string;
   phone_number: string;
 }
+
+export interface UnicefUser {
+  id: string;
+  first_name: string;
+  last_name: string;
+  middle_name: string;
+  name: string;
+  email: string;
+}

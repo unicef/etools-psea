@@ -10,15 +10,6 @@ export interface GenericObject {
   [key: string]: any;
 }
 
-export interface UnicefUser {
-  id: string,
-  first_name: string;
-  last_name: string;
-  middle_name: string;
-  name: string;
-  email: string;
-}
-
 export interface ActionPoint {
   partner: GenericObject | null;
   // category: number;

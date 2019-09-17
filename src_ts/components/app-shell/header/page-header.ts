@@ -13,7 +13,7 @@ import {connect} from 'pwa-helpers/connect-mixin.js';
 import {RootState, store} from '../../../redux/store';
 import {isProductionServer, isStagingServer, ROOT_PATH} from '../../../config/config';
 import {updateDrawerState} from '../../../redux/actions/app';
-import {EtoolsUserModel} from '../../user/user-model';
+import {EtoolsUserModel} from '../../../types/user-model';
 import {fireEvent} from '../../utils/fire-custom-event';
 import {updateCurrentUserData} from '../../user/user-actions';
 import {GenericObject} from '../../../types/globals';
