@@ -98,9 +98,7 @@ export class EtoolsErrorWarnBox extends LitElement {
   getHTML() {
     if (this.alertType === 'warning') {
       return html`
-      <div class="row-h">
         ${this.messages.map(msg => this.getWarningHTML(msg))}
-      </div>
       `;
     }
     if (this.alertType === 'error') {
