@@ -177,4 +177,8 @@ export class AssessingFirm extends LitElement {
     return !editMode;
   }
 
+  getFirmName() {
+    return this.assessor.auditor_firm_name;
+  }
+
 }

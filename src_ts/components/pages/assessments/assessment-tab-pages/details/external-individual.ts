@@ -10,6 +10,7 @@ import {store, RootState} from '../../../../../redux/store';
 import {isJsonStrMatch} from '../../../../utils/utils';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
 import {loadExternalIndividuals} from '../../../../../redux/actions/common-data';
+import {UnicefUser} from "../../../../../types/globals";
 
 /**
  * @customElement
@@ -129,6 +130,11 @@ export class ExternalIndividual extends connect(store)(LitElement) {
     return {user: this.assessor.user};
   }
 
+  getExternalIndividualName() {
+    const extIndivDropdown = this.shadowRoot!.querySelector('#externalIndiv') as EtoolsDropdownEl;
+    return extIndivDropdown ? (extIndivDropdown.selectedItem as UnicefUser).name : '';
+  }
+
 }
 
-export {ExternalIndividual as ExternalIndividualElement}
+export {ExternalIndividual as ExternalIndividualElement};

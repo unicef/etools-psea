@@ -12,8 +12,8 @@ import {buttonsStyles} from '../../../../styles/button-styles';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {connect} from 'pwa-helpers/connect-mixin';
-import {store, RootState} from '../../../../../redux/store';
-import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
+import {RootState, store} from '../../../../../redux/store';
+import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
 import {Assessment, Assessor, AssessorTypes} from '../../../../../types/assessment';
 import {AssessingFirm} from './assessing-firm';
 import {ExternalIndividual} from './external-individual';
@@ -22,7 +22,7 @@ import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {FirmStaffMembers} from './firm-staff-members';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
-import {saveAssessorData} from '../../../../../redux/actions/page-data';
+import {saveAssessorData, updateAssessmentData} from '../../../../../redux/actions/page-data';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 /**
@@ -260,7 +260,28 @@ export class AssessorInfo extends connect(store)(LitElement) {
     }
 
     store.dispatch(saveAssessorData(this.assessment.id as number,
-      this.assessor.id, this.collectAssessorData(), this.handleAssessorSaveError.bind(this)));
+      this.assessor.id, this.collectAssessorData(), this.handleAssessorSaveError.bind(this))).then(() => {
+      // update assessor in assessment object
+      const assessorName = this.getAssessorName();
+      if (assessorName) {
+        store.dispatch(updateAssessmentData({...this.assessment, assessor: assessorName}));
+      }
+    });
+  }
+
+  getAssessorName() {
+    let assessorField = null;
+    switch (this.assessor.assessor_type) {
+      case AssessorTypes.Staff:
+        assessorField = this.shadowRoot!.querySelector('#unicefUser') as EtoolsDropdownEl;
+        return assessorField ? (assessorField.selectedItem as UnicefUser).name : '';
+      case AssessorTypes.ExternalIndividual:
+        return this.externalIndividualElement.getExternalIndividualName();
+      case AssessorTypes.Firm:
+        return this.assessingFirmElement.getFirmName();
+      default:
+        return '';
+    }
   }
 
   handleAssessorSaveError(error: any) {
