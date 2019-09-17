@@ -16,15 +16,17 @@ export class ExportData extends LitElement {
     return html`
       <style>
         paper-menu-button{
-          padding: 0px 5px;
+          padding: 0px 24px;
         }
         paper-button{
           padding: 0px;
           margin-left: 10px;
           font-weight: bold;
+          color: var(--secondary-text-color);
         }
         paper-button iron-icon {
           margin-right: 10px;
+          color: var(--secondary-text-color);
         }
       </style>
       <paper-menu-button id="pdExportMenuBtn" close-on-activate horizontal-align="right">
