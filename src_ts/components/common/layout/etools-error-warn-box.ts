@@ -1,9 +1,7 @@
 import {LitElement, html, customElement, property} from 'lit-element';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@polymer/paper-button/paper-button.js';
-import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {buttonsStyles} from '../../styles/button-styles';
-import {gridLayoutStylesLit} from '../../styles/grid-layout-styles-lit';
 
 /**
  * @LitElement
@@ -15,8 +13,15 @@ export class EtoolsErrorWarnBox extends LitElement {
 
   public render() {
     // language=HTML
+
+    if (this.messages.length === 0) {
+      this.setAttribute('hidden', '');
+    } else {
+      this.removeAttribute('hidden');
+    }
+
     return html`
-      ${SharedStylesLit} ${gridLayoutStylesLit} ${buttonsStyles}
+      ${buttonsStyles}
       <style>
         :host {
           width: 100%;
