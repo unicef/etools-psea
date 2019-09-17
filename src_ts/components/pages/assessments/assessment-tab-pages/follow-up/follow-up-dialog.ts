@@ -85,12 +85,12 @@ export class FollowUpDialog extends connect(store)(LitElement) {
             <etools-dropdown
                     id="assessmentInput"
                     required
-                    .selected="${this.editedItem.psea_assessment}"
+                    .selected="${this.assessment.id}"
                     label="Assessment"
                     .options="${[this.assessment]}"
                     option-label="reference_number"
                     option-value="id"
-                    ?readOnly="${this.editedItem.psea_assessment}">
+                    ?readOnly="${this.assessment.id}">
             </etools-dropdown>
           </div>
         </div>
@@ -260,6 +260,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
     if (!isJsonStrMatch(this.assessment, state.pageData!.currentAssessment)) {
       // initialize assessment object
      this.assessment = cloneDeep(state.pageData!.currentAssessment);
+     this.resetEditedItem();
     }
   }
 
@@ -331,14 +332,16 @@ export class FollowUpDialog extends connect(store)(LitElement) {
     this.dialogOpened = false;
   }
 
+  resetEditedItem() {
+    this.editedItem = cloneDeep(this.defaultItem);
+    this.editedItem.psea_assessment = this.assessment.id;
+    // @ts-ignore
+    this.editedItem.partner = this.assessment.partner;
+  }
+
   public openDialog() {
     this.isNewRecord = !this.editedItem.id || this.editedItem.id == 'new';
-    if (this.isNewRecord) {
-      this.editedItem = cloneDeep(this.defaultItem);
-      this.editedItem.psea_assessment = this.assessment.id;
-      // @ts-ignore
-      this.editedItem.partner = this.assessment.partner;
-    }
+    if (this.isNewRecord) {this.resetEditedItem()}
     this.dialogTitle = this.isNewRecord ? 'Add Action Point' : 'Edit Action Point';
     this.confirmBtnTxt = this.isNewRecord ? 'Add' : 'Save';
     this.dialogOpened = true;

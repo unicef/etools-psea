@@ -79,7 +79,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
   assessment!: Assessment;
 
   stateChanged(state: RootState) {
-    if (state.app && state.app!.routeDetails!.params!.assessmentId !== 'new') {
+    if (state.app && state.app!.routeDetails!.params && state.app!.routeDetails!.params!.assessmentId! !== 'new') {
       if (this.assessmentId !== state.app!.routeDetails!.params!.assessmentId) {
         this.assessmentId = state.app!.routeDetails!.params!.assessmentId;
         this.getFollowUpData();
