@@ -180,13 +180,9 @@ export class AssessmentsList extends connect(store)(LitElement) {
       state.app!.routeDetails.subRouteName === 'list') {
 
       const stateRouteDetails = {...state.app!.routeDetails};
+
       if (JSON.stringify(stateRouteDetails) !== JSON.stringify(this.routeDetails)) {
         this.routeDetails = stateRouteDetails;
-
-        if (state.user && state.user.permissions) {
-          this.canAdd = state.user.permissions.canAddAssessment;
-          this.canExport = state.user.permissions.canExportAssessment;
-        }
 
         if (!this.routeDetails.queryParams || Object.keys(this.routeDetails.queryParams).length === 0) {
           // update url with params
@@ -195,22 +191,26 @@ export class AssessmentsList extends connect(store)(LitElement) {
         } else {
           // init selectedFilters, sort, page, page_size from url params
           this.updateListParamsFromRouteDetails(this.routeDetails.queryParams);
-
-          // do other initialization after route changes are complete
-          // init filters using default defined filters (including options)
-          let updatedFilters = [...assessmentsFilters];
-          if (state.commonData) {
-            // update dropdowns filters options from redux
-            updatedFilters = [...this.updateDropdownFiltersOptionsFromCommonData(state.commonData, updatedFilters)];
-          }
-          // update filter selection and assign the result to main filters object(trigger render)
-          this.filters = updateFiltersSelectedValues(this.selectedFilters, updatedFilters);
           // get assessments based on filters, sort and pagination
           this.getAssessmentsData();
         }
-
       }
     }
+    if (state.user && state.user.permissions) {
+      this.canAdd = state.user.permissions.canAddAssessment;
+      this.canExport = state.user.permissions.canExportAssessment;
+    }
+
+    // do other initialization after route changes are complete
+    // init filters using default defined filters (including options)
+    let updatedFilters = [...assessmentsFilters];
+    if (state.commonData) {
+      // update dropdowns filters options from redux
+      updatedFilters = [...this.updateDropdownFiltersOptionsFromCommonData(state.commonData, updatedFilters)];
+    }
+    // update filter selection and assign the result to main filters object(trigger render)
+    this.filters = updateFiltersSelectedValues(this.selectedFilters, updatedFilters);
+
   }
 
   updateDropdownFiltersOptionsFromCommonData(commonData: any, currentFilters: EtoolsFilter[]): EtoolsFilter[] {
