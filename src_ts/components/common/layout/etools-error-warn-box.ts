@@ -55,7 +55,7 @@ export class EtoolsErrorWarnBox extends LitElement {
           --ecp-content: {
             color: var(--error-box-text-color);
             background-color: var(--error-box-bg-color);
-            border: solid 1px var(--error-box-border-color);
+            border: 1px solid var(--error-box-border-color);
           };
         }
         ul {
