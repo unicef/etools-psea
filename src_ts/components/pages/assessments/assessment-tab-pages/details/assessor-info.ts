@@ -5,7 +5,7 @@ import '@polymer/paper-button/paper-button.js';
 import './assessing-firm';
 import './external-individual';
 import './firm-staff-members';
-import {UnicefUser} from '../../../../../types/globals';
+import {UnicefUser} from '../../../../../types/user-model';
 import {LitElement, html, property, query, customElement} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {buttonsStyles} from '../../../../styles/button-styles';
