@@ -152,7 +152,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
            </paper-radio-button>`);
   }
 
-  _getRatingRadioClass(index: number)  {
+  _getRatingRadioClass(index: number) {
     switch (index) {
       case 0:
         return 'move-left red';
@@ -170,7 +170,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       return false;
     }
     let checked = false;
-    selectedEvidences.forEach(ev => { if (Number(ev.evidence) === Number(evidenceId)) {checked = true;} });
+    selectedEvidences.forEach(ev => {if (Number(ev.evidence) === Number(evidenceId)) {checked = true;} });
     return checked;
   }
 
@@ -184,17 +184,14 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   _checkedEvidenceChanged(evidence: ProofOfEvidence, checked: boolean, answer: Answer) {
     if (evidence.requires_description) {
       this.showOtherInput = checked;
+      // fix for display Other text in no-edit mode
+      this.updateComplete.then(() => {this.showOtherInput = checked; this.requestUpdate();});
     }
   }
 
   _getOtherEvidenceInputValue(answer: Answer) {
     let otherEvidence = answer.evidences.filter((ev: AnswerEvidence) => !!ev.description)[0];
-    const evidenceText = otherEvidence ? otherEvidence.description : '';
-    // fix for display Other text in no-edit mode
-    if (evidenceText && !this.editMode && !this.showOtherInput) {
-      this.updateComplete.then(() => {this.showOtherInput = true; this.requestUpdate();});
-    }
-    return evidenceText;
+    return otherEvidence ? otherEvidence.description : '';
   }
 
   getAnswerForSave() {
@@ -245,7 +242,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       assessmentId: this.assessmentId,
       indicatorId: this.question.id
     }).url!;
-    url = url + attachmentId +'/';
+    url = url + attachmentId + '/';
 
     return makeRequest(new RequestEndpoint(url, 'DELETE'))
       .then(() => {
