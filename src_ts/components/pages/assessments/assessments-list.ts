@@ -160,7 +160,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
     },
     {
       label: 'Rating',
-      name: 'rating',
+      name: 'overall_rating.display',
       type: EtoolsTableColumnType.Text
     }
   ];
