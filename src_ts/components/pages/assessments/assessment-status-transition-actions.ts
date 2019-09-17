@@ -1,6 +1,7 @@
 import {
   LitElement, html, customElement, property
 } from 'lit-element';
+import '@polymer/paper-input/paper-textarea.js';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import EtoolsDialog from '@unicef-polymer/etools-dialog/etools-dialog';
 import {ConfigObj, createDynamicDialog, removeDialog} from '@unicef-polymer/etools-dialog/dynamic-dialog';
@@ -13,6 +14,8 @@ import {RootState, store} from '../../../redux/store';
 import {updateAssessmentData} from '../../../redux/actions/page-data';
 import {parseRequestErrorsAndShowAsToastMsgs} from '../../utils/ajax-error-parser';
 import {buttonsStyles} from '../../styles/button-styles';
+import './assessment-rejection-dialog';
+import {AssessmentRejectionDialog} from './assessment-rejection-dialog';
 
 @customElement('assessment-status-transition-actions')
 export class AssessmentStatusTransitionActions extends connect(store)(LitElement) {
@@ -20,8 +23,12 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   @property({type: Object})
   assessment!: Assessment;
 
+  @property({type: Object})
+  rejectionDialog!: AssessmentRejectionDialog;
+
   private statusChangeConfirmationDialog: EtoolsDialog | null = null;
   private confirmationMSg: HTMLSpanElement = document.createElement('span');
+  // private rejectionReason: PaperTextareaElement = document.createElement('paper-textarea');
   private currentStatusAction = '';
 
   render() {
@@ -66,6 +73,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
       `;
       case 'submitted':
         return html`
+       
         <paper-button class="error right-icon" raised @tap="${() => this.updateAssessmentStatus('reject')}">
           Reject
           <iron-icon icon="assignment-return"></iron-icon>
@@ -82,12 +90,17 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   connectedCallback(): void {
     super.connectedCallback();
+    this.onStatusChangeConfirmation = this.onStatusChangeConfirmation.bind(this);
     this.createStatusChangeConfirmationsDialog();
+    this.createRejectionDialog();
+    // @ts-ignore
+    this.addEventListener('someEvent', this.onStatusChangeConfirmation);
   }
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
     this.removeStatusChangeConfirmationsDialog();
+    this.removeRejectionDialog();
   }
 
   public stateChanged(state: RootState) {
@@ -128,6 +141,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   }
 
   updateAssessmentStatus(action: string) {
+    // console.log('action', action);
     this.currentStatusAction = action;
     if (!this.validateStatusChange()) {
       // TODO: show a toast message explaining why status change cannot be made
@@ -135,11 +149,16 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
       return;
     }
 
-    this.updateConfirmationMsgAction(this.currentStatusAction);
-    if (!this.statusChangeConfirmationDialog) {
-      throw new Error('statusChangeConfirmationDialog is not created!');
+    if (this.currentStatusAction === 'reject') {
+      this.rejectionDialog.dialogOpened = true;
+    } else {
+      this.updateConfirmationMsgAction(this.currentStatusAction);
+      if (!this.statusChangeConfirmationDialog) {
+        throw new Error('statusChangeConfirmationDialog is not created!');
+      }
+      this.statusChangeConfirmationDialog.opened = true;
     }
-    this.statusChangeConfirmationDialog.opened = true;
+
   }
 
   updateConfirmationMsgAction(action: string) {
@@ -147,6 +166,10 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   }
 
   onStatusChangeConfirmation(e: CustomEvent) {
+    // console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&& am intrat aici");
+    console.log(e.detail);
+    return;
+
     if (!e.detail.confirmed) {
       // cancel status update action
       this.currentStatusAction = '';
@@ -176,7 +199,6 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   createStatusChangeConfirmationsDialog() {
     if (!this.statusChangeConfirmationDialog) {
-      this.onStatusChangeConfirmation = this.onStatusChangeConfirmation.bind(this);
       const confirmationDialogConf: ConfigObj = {
         title: 'Assessment status update',
         size: 'md',
@@ -190,9 +212,48 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     }
   }
 
+  createRejectionDialog() {
+    if (!this.rejectionDialog) {
+      this.rejectionDialog =
+          document.createElement('assessment-rejection-dialog') as AssessmentRejectionDialog;
+      this.rejectionDialog.fireEventSource = this;
+      document.querySelector('body')!.appendChild(this.rejectionDialog);
+    }
+
+
+      // const dialogContent = document.createElement('div');
+      // const dialogQuestion = document.createElement('div');
+      // dialogQuestion.innerHTML = 'Are you sure you want to reject this assessment?';
+      // const dialogMessage = document.createElement('div');
+      // dialogMessage.innerHTML = 'Please provide a rejection reason for this assessment.';
+      // const rejectionMessage = this.rejectionReason;
+      // dialogContent.appendChild(dialogQuestion);
+      // dialogContent.appendChild(dialogMessage);
+      // dialogContent.appendChild(rejectionMessage);
+      // this.onStatusChangeConfirmation = this.onStatusChangeConfirmation.bind(this);
+      // const rejectionDialogConf: ConfigObj = {
+      //   title: 'Assessment status update',
+      //   size: 'md',
+      //   okBtnText: 'Yes',
+      //   cancelBtnText: 'No',
+      //   closeCallback: this.onStatusChangeConfirmation,
+      //   content: dialogContent
+      // };
+      // this.rejectionDialog = createDynamicDialog(rejectionDialogConf);
+      // this.rejectionDialog.updateStyles({'--etools-dialog-confirm-btn-bg': 'var(--primary-color)'});
+
+  }
+
   removeStatusChangeConfirmationsDialog() {
     if (this.statusChangeConfirmationDialog !== null) {
       removeDialog(this.statusChangeConfirmationDialog);
+    }
+  }
+
+  removeRejectionDialog() {
+    // const dialog = document.querySelector('assessmentRejectionDialog');
+    if (this.rejectionDialog) {
+      document.querySelector('body')!.removeChild(this.rejectionDialog);
     }
   }
 }
