@@ -15,7 +15,7 @@ export interface ActionPoint {
   // category: number;
   assigned_to: GenericObject | null;
   section: GenericObject | null;
-  psea_assessment: number | null;
+  psea_assessment: number | null | undefined;
   office: GenericObject | null;
   description: string;
   due_date: string;

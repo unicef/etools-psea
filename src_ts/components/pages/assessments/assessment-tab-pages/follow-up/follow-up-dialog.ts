@@ -72,7 +72,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
           <div class="col col-6">
             <etools-dropdown
                     id="partnerInput"
-                    ?required
+                    required
                     .selected="${this.editedItem.partner}"
                     label="Partner"
                     .options="${this.partners}"
@@ -84,7 +84,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
           <div class="col col-6">
             <etools-dropdown
                     id="assessmentInput"
-                    ?required
+                    required
                     .selected="${this.editedItem.psea_assessment}"
                     label="Assessment"
                     .options="${[this.assessment]}"
@@ -104,7 +104,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
                     label="Category"
                     .options="${this.categories}"
                     option-label="display_name"
-                    ?required
+                    required
                     option-value="value">
             </etools-dropdown>
           </div>
@@ -113,11 +113,11 @@ export class FollowUpDialog extends connect(store)(LitElement) {
         <div class="layout-horizontal">
           <paper-textarea
                   id="descriptionInput"
-                  ?required
+                  required
                   allowed-pattern="[\d\s]"
                   value="${this.editedItem.description}"
                   label="Description"
-                  .max-rows="4">
+                  max-rows="4">
           </paper-textarea>
         </div>
 
@@ -129,7 +129,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
                     label="Assigned To"
                     .options="${this.users}"
                     option-label="name"
-                    ?required
+                    required
                     option-value="id">
             </etools-dropdown>
           </div>
@@ -141,7 +141,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
                     label="Section"
                     .options="${this.sections}"
                     option-label="name"
-                    ?required
+                    required
                     option-value="id">
             </etools-dropdown>
           </div>
@@ -155,7 +155,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
                     label="Office"
                     .options="${this.offices}"
                     option-label="name"
-                    ?required
+                    required
                     option-value="id">
             </etools-dropdown>
           </div>
@@ -165,7 +165,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
                     id="dueDateInput"
                     value="${this.editedItem.due_date}"
                     label="Due Date"
-                    ?required
+                    required
                     selected-date-display-format="D MMM YYYY">
             </datepicker-lite>
           </div>
@@ -193,11 +193,6 @@ export class FollowUpDialog extends connect(store)(LitElement) {
     due_date: '',
     high_priority: false
   };
-  
-  constructor() {
-    super();
-    this.editedItem = cloneDeep(this.defaultItem);
-  }
 
   private validationSelectors: string[] = ['#categoryInput', '#assignedToInput', '#sectionInput', '#officeInput', '#dateInput'];
 
@@ -248,16 +243,16 @@ export class FollowUpDialog extends connect(store)(LitElement) {
 
   stateChanged(state: RootState) {
     if (state.commonData) {
-      if (this.partners !== state.commonData.partners) {
+      if (!isJsonStrMatch(this.partners, state.commonData.partners)) {
         this.partners = [...state.commonData.partners];
       }
-      if (this.users !== state.commonData.unicefUsers) {
+      if (!isJsonStrMatch(this.users, state.commonData.unicefUsers)) {
         this.users = [...state.commonData.unicefUsers];
       }
-      if (this.offices !== state.commonData.offices) {
+      if (!isJsonStrMatch(this.offices, state.commonData.offices)) {
         this.offices = [...state.commonData.offices];
       }
-      if (this.sections !== state.commonData.sections) {
+      if (!isJsonStrMatch(this.sections, state.commonData.sections)) {
         this.sections = [...state.commonData.sections];
       }
     }
@@ -265,10 +260,6 @@ export class FollowUpDialog extends connect(store)(LitElement) {
     if (!isJsonStrMatch(this.assessment, state.pageData!.currentAssessment)) {
       // initialize assessment object
      this.assessment = cloneDeep(state.pageData!.currentAssessment);
-     // @ts-ignore
-     this.editedItem.psea_assessment = state.pageData!.currentAssessment!.id;
-     // @ts-ignore
-     this.editedItem.partner = state.pageData!.currentAssessment!.partner;
     }
   }
 
@@ -338,19 +329,16 @@ export class FollowUpDialog extends connect(store)(LitElement) {
 
   private handleDialogClosed() {
     this.dialogOpened = false;
-    this.resetFields();
-  }
-
-  private resetFields() {
-    this.editedItem = cloneDeep(this.defaultItem);
-    // @ts-ignore
-    this.editedItem.partner = this.assessment.partner;
-    // @ts-ignore
-    this.editedItem.psea_assessment = this.assessment.id;
   }
 
   public openDialog() {
     this.isNewRecord = !this.editedItem.id || this.editedItem.id == 'new';
+    if (this.isNewRecord) {
+      this.editedItem = cloneDeep(this.defaultItem);
+      this.editedItem.psea_assessment = this.assessment.id;
+      // @ts-ignore
+      this.editedItem.partner = this.assessment.partner;
+    }
     this.dialogTitle = this.isNewRecord ? 'Add Action Point' : 'Edit Action Point';
     this.confirmBtnTxt = this.isNewRecord ? 'Add' : 'Save';
     this.dialogOpened = true;

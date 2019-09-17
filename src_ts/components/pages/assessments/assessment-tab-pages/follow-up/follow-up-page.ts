@@ -97,8 +97,9 @@ export class FollowUpPage extends connect(store)(LitElement) {
   disconnectedCallback() {
     super.disconnectedCallback();
     document.removeEventListener('action-point-updated', this.updateActionPoints);
-    let followUpDialog = document.getElementById('followUpDialog');
-    followUpDialog!.parentNode!.removeChild(followUpDialog!);
+    if (this.followUpDialog) {
+      document.querySelector('body')!.removeChild(this.followUpDialog);
+    }
   }
 
   updateActionPoints(event: GenericObject) {
@@ -135,15 +136,11 @@ export class FollowUpPage extends connect(store)(LitElement) {
 
   extractActionPointData(item: ActionPoint) {
     let newEditedItem: ActionPoint = {
-      // @ts-ignore
-      partner: item.partner.id,
+      partner: item.partner!.id,
       // category: item.category.id,
-      // @ts-ignore
-      assigned_to: item.assigned_to.id,
-      // @ts-ignore
-      section: item.section.id.toString(),
-      // @ts-ignore
-      office: item.office.id,
+      assigned_to: item.assigned_to!.id,
+      section: item.section!.id.toString(),
+      office: item.office!.id,
       psea_assessment: item.psea_assessment,
       description: item.description,
       id: item.id,
