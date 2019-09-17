@@ -25,21 +25,18 @@ export class EtoolsErrorWarnBox extends LitElement {
           display: none;
         }
 
-        .warning {
+        .warning-container {
           display: flex;
           flex-direction: column;
           flex: 1;
           padding: 16px 24px;
-          background-color: var(--lightest-info-color);
+          background-color: var(--warning-background-color);
+          color: var(--warning-color);
+          border:1px solid var(--warning-border-color);
         }
-        .warning p {
-          margin: 0;
+        .warning-item {
+          @apply --layout-horizontal;
         }
-        .warning p + p {
-          margin-top: 12px;
-        }
-
-
         etools-content-panel {
           width: 100%;
         }
@@ -58,12 +55,13 @@ export class EtoolsErrorWarnBox extends LitElement {
           --ecp-content: {
             color: var(--error-box-text-color);
             background-color: var(--error-box-bg-color);
-            border-color: var(--error-box-border-color);
+            border: solid 1px var(--error-box-border-color);
           };
         }
         ul {
           padding: 0 0 0 20px;
           margin: 0;
+          padding-inline-start: 0px;
         }
         .errors-box-actions {
           margin-top: 20px;
@@ -83,24 +81,15 @@ export class EtoolsErrorWarnBox extends LitElement {
   }
 
   @property({type: String})
-  alertType: string = '';
+  alertType: string = 'warning';
 
   @property({type: String})
-  title!: string;
+  title: string = 'Error messages';
 
   @property({type: Array})
   messages: string[] = [];
 
-  startsWithEmptySpace(val: string) {
-    return val.startsWith(' ');
-  }
-
   getHTML() {
-    if (this.alertType === 'warning') {
-      return html`
-        ${this.messages.map(msg => this.getWarningHTML(msg))}
-      `;
-    }
     if (this.alertType === 'error') {
       return html`
       <etools-content-panel class="errors-box" panel-title="${this.title}">
@@ -108,29 +97,32 @@ export class EtoolsErrorWarnBox extends LitElement {
             ${this.messages.map(msg => this.getErrorHTML(msg))}
           </ul>
           <div class="errors-box-actions">
-            <paper-button class="primary-btn danger-btn"
+            <paper-button raised class="error"
                           @tap="${this.resetErrors}">
-              Ok
+              Dismiss
             </paper-button>
           </div>
       </etools-content-panel>
       `;
+    } else {
+      return html`
+       <div class="warning-container">
+          ${this.messages.map(msg => this.getWarningHTML(msg))}
+       </div>
+      `;
     }
-    return html``;
   }
 
   getWarningHTML(msg: string) {
     return html`
-    <div class="warning">
-      <p>${msg}</p>
+    <div class="warning-item">
+      ${msg}
     </div>
     `;
   }
 
   getErrorHTML(msg: string) {
-    return html`
-    ${this.startsWithEmptySpace(msg) ? html`<li>${msg}</li>` : html`<li class="cancel-li-display">${msg}</li>`}
-    `;
+    return html`<li class="cancel-li-display">${msg}</li>`;
   }
 
   resetErrors() {

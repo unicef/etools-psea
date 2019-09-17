@@ -34,7 +34,9 @@ documentContainer.innerHTML = `
 
         --info-color: #cebc06;
         --light-info-color: #fff176;
-        --lightest-info-color: #fef9cd;
+        --warning-background-color: #fff3cd;
+        --warning-color: #856404;
+        --warning-border-color: #ffeeba;
 
         --error-box-heading-color: var(--error-color);
         --error-box-bg-color: #f2dede;
