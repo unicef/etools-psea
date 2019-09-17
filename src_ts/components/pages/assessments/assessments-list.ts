@@ -201,7 +201,6 @@ export class AssessmentsList extends connect(store)(LitElement) {
       this.canExport = state.user.permissions.canExportAssessment;
     }
 
-    // do other initialization after route changes are complete
     // init filters using default defined filters (including options)
     let updatedFilters = [...assessmentsFilters];
     if (state.commonData) {
