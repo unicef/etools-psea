@@ -142,6 +142,7 @@ export class QuestionnaireItemElement extends LitElement {
       .then((resp) => {
         this.answer = resp;
         this.editMode = false;
+        fireEvent(this, 'answer-saved', this.answer);
       })
       .catch((err:any) => fireEvent(this, 'toast', {text: formatServerErrorAsText(err)}));
   }

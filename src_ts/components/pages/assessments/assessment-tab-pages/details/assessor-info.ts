@@ -5,8 +5,8 @@ import '@polymer/paper-button/paper-button.js';
 import './assessing-firm';
 import './external-individual';
 import './firm-staff-members';
-import {UnicefUser} from '../../../../../types/globals';
-import {customElement, html, LitElement, property, query} from 'lit-element';
+import {UnicefUser} from '../../../../../types/user-model';
+import {LitElement, html, property, query, customElement} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {buttonsStyles} from '../../../../styles/button-styles';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
@@ -80,7 +80,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
           <paper-button class="default" @tap="${this.cancelAssessorUpdate}">
             Cancel
           </paper-button>
-          <paper-button class="primary" @tap="${this.saveAssessorChanges}">
+          <paper-button class="primary" @tap="${this.saveAssessor}">
             Save
           </paper-button>
         </div>
@@ -254,7 +254,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
     this.requestUpdate();
   }
 
-  saveAssessorChanges() {
+  saveAssessor() {
     if (!this.validate()) {
       return;
     }
