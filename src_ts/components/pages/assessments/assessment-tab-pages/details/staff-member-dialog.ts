@@ -239,13 +239,14 @@ export class StaffMemberDialog extends LitElement {
 
     const options = {
       method: this.isNewRecord ? 'POST' : 'PATCH',
-      url: getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url + this.editedItem.id + '/'
+      url: getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url! + this.editedItem.id + '/'
     };
 
     if (this._staffMemberDataHasChanged()) {
       makeRequest(options, this.editedItem)
         .then((resp: any) => this._staffMemberDataUpdateComplete(resp))
-        .catch((err: any) => this._handleError(err));
+        .catch((err: any) => this._handleError(err))
+        .then(() => this.requestInProgress = false);
     } else {
       if (this.initialItem.hasAccess !== this.editedItem.hasAccess) {
         this._staffMemberDataUpdateComplete(this.editedItem);
