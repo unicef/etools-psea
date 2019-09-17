@@ -37,10 +37,10 @@ import {
 import {RouteDetails, RouteQueryParams} from '../../../routing/router';
 import {updateAppLocation} from '../../../routing/routes';
 import {buttonsStyles} from '../../styles/button-styles';
-import {fireEvent} from '../../utils/fire-custom-event';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
 import {makeRequest} from '../../utils/request-helper';
+import './export-data';
 
 /**
  * @LitElement
@@ -67,13 +67,14 @@ export class AssessmentsList extends connect(store)(LitElement) {
         <h1 slot="page-title">Assessments list</h1>
 
         <div slot="title-row-actions" class="content-header-actions">
-          <paper-button class="default left-icon" raised @tap="${this.exportAssessments}">
-            <iron-icon icon="file-download"></iron-icon>Export
-          </paper-button>
-
-          <paper-button class="primary left-icon" ?hidden="${!this.canAdd}" raised @tap="${this.goToAddnewPage}">
-            <iron-icon icon="add"></iron-icon>Add new assessment
-          </paper-button>
+            <div class="action" ?hidden="${!this.canExport}" >
+              <export-data .endpoint="${etoolsEndpoints.assessment.url!}" .params="${this.queryParams}"></export-data>
+            </div>
+            <div class="action" ?hidden="${!this.canAdd}" >
+              <paper-button class="primary left-icon" raised @tap="${this.goToAddnewPage}">
+                <iron-icon icon="add"></iron-icon>Add new assessment
+              </paper-button>
+            </div>
         </div>
       </page-content-header>
 
@@ -127,6 +128,12 @@ export class AssessmentsList extends connect(store)(LitElement) {
   @property({type: Boolean})
   canAdd: boolean = false;
 
+  @property({type: Boolean})
+  canExport: boolean = false;
+
+  @property({type: String})
+  queryParams: string = '';
+
   @property({type: Array})
   listColumns: EtoolsTableColumn[] = [
     {
@@ -160,7 +167,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
     },
     {
       label: 'Rating',
-      name: 'rating',
+      name: 'overall_rating.display',
       type: EtoolsTableColumnType.Text
     }
   ];
@@ -173,12 +180,9 @@ export class AssessmentsList extends connect(store)(LitElement) {
       state.app!.routeDetails.subRouteName === 'list') {
 
       const stateRouteDetails = {...state.app!.routeDetails};
+
       if (JSON.stringify(stateRouteDetails) !== JSON.stringify(this.routeDetails)) {
         this.routeDetails = stateRouteDetails;
-
-        if (state.user && state.user.permissions) {
-          this.canAdd = state.user.permissions.canAddAssessment;
-        }
 
         if (!this.routeDetails.queryParams || Object.keys(this.routeDetails.queryParams).length === 0) {
           // update url with params
@@ -187,22 +191,25 @@ export class AssessmentsList extends connect(store)(LitElement) {
         } else {
           // init selectedFilters, sort, page, page_size from url params
           this.updateListParamsFromRouteDetails(this.routeDetails.queryParams);
-
-          // do other initialization after route changes are complete
-          // init filters using default defined filters (including options)
-          let updatedFilters = [...assessmentsFilters];
-          if (state.commonData) {
-            // update dropdowns filters options from redux
-            updatedFilters = [...this.updateDropdownFiltersOptionsFromCommonData(state.commonData, updatedFilters)];
-          }
-          // update filter selection and assign the result to main filters object(trigger render)
-          this.filters = updateFiltersSelectedValues(this.selectedFilters, updatedFilters);
           // get assessments based on filters, sort and pagination
           this.getAssessmentsData();
         }
-
       }
     }
+    if (state.user && state.user.permissions) {
+      this.canAdd = state.user.permissions.canAddAssessment;
+      this.canExport = state.user.permissions.canExportAssessment;
+    }
+
+    // init filters using default defined filters (including options)
+    let updatedFilters = [...assessmentsFilters];
+    if (state.commonData) {
+      // update dropdowns filters options from redux
+      updatedFilters = [...this.updateDropdownFiltersOptionsFromCommonData(state.commonData, updatedFilters)];
+    }
+    // update filter selection and assign the result to main filters object(trigger render)
+    this.filters = updateFiltersSelectedValues(this.selectedFilters, updatedFilters);
+
   }
 
   updateDropdownFiltersOptionsFromCommonData(commonData: any, currentFilters: EtoolsFilter[]): EtoolsFilter[] {
@@ -220,6 +227,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
 
   updateUrlListQueryParams() {
     const qs = this.getParamsForQuery();
+    this.queryParams = qs;
     updateAppLocation(`${this.routeDetails.path}?${qs}`, true);
   }
 
@@ -282,16 +290,8 @@ export class AssessmentsList extends connect(store)(LitElement) {
       .catch((err: any) => console.error(err));
   }
 
-  exportAssessments() {
-    // const exportParams = {
-    //   ...this.selectedFilters
-    // };
-
-    // TODO: implement export using API endpoint
-    fireEvent(this, 'toast', {text: 'Not implemented... waiting for API...'});
-  }
-
   goToAddnewPage() {
     updateAppLocation('/assessments/new/details', true);
   }
+
 }

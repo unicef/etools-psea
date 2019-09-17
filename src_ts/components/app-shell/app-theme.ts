@@ -32,6 +32,17 @@ documentContainer.innerHTML = `
         --primary-shade-of-green: #1A9251;
         --primary-shade-of-red: #E32526;
 
+        --info-color: #cebc06;
+        --light-info-color: #fff176;
+        --warning-background-color: #fff3cd;
+        --warning-color: #856404;
+        --warning-border-color: #ffeeba;
+
+        --error-box-heading-color: var(--error-color);
+        --error-box-bg-color: #f2dede;
+        --error-box-border-color: #ebccd1;
+        --error-box-text-color: var(--error-color);
+
         --epc-header: {
           background-color: var( --primary-background-color);
           border-bottom: 1px groove var(--dark-divider-color);

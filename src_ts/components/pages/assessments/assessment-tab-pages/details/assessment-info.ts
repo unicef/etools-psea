@@ -8,7 +8,7 @@ import '@unicef-polymer/etools-dropdown/etools-dropdown-multi';
 import '@unicef-polymer/etools-date-time/datepicker-lite';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {buttonsStyles} from '../../../../styles/button-styles';
-import {GenericObject, UnicefUser} from '../../../../../types/globals';
+import {GenericObject, UnicefUser} from '../../../../../types/user-model';
 import './partner-details';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {connect} from 'pwa-helpers/connect-mixin';
