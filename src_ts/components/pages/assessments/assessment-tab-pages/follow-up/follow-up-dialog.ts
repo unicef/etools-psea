@@ -59,14 +59,10 @@ export class FollowUpDialog extends connect(store)(LitElement) {
                      @confirm-btn-clicked="${this.onConfirmBtnClick}"
                      @close="${this.handleDialogClosed}">
         <!-- TODO: The following warning may be replaced -->
-        ${this.watchForChanges ? 
-          html`
+        ${this.watchForChanges ? html`
             <div class="copy-warning">
                 It is required to change at least one of the fields below.
-            </div>
-          ` :
-          html``
-        }
+            </div>` : ''}
 
         <div class="layout-horizontal">
           <div class="col col-6">
@@ -194,7 +190,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
     high_priority: false
   };
 
-  private validationSelectors: string[] = ['#categoryInput', '#assignedToInput', '#sectionInput', '#officeInput', '#dateInput'];
+  private validationSelectors: string[] = ['#categoryInput', '#assignedToInput',
+    '#sectionInput', '#officeInput', '#dateInput'];
 
   @property({type: Array})
   users: GenericObject[] = [];
@@ -259,13 +256,14 @@ export class FollowUpDialog extends connect(store)(LitElement) {
 
     if (!isJsonStrMatch(this.assessment, state.pageData!.currentAssessment)) {
       // initialize assessment object
-     this.assessment = cloneDeep(state.pageData!.currentAssessment);
-     this.resetEditedItem();
+      this.assessment = cloneDeep(state.pageData!.currentAssessment);
+      this.resetEditedItem();
     }
   }
 
   updated(changedProperties: GenericObject) {
-    if (this.watchForChanges && !changedProperties.has('watchForChanges') && !isEqual(this.editedItem, changedProperties.get('editedItem'))) {
+    if (this.watchForChanges && !changedProperties.has('watchForChanges') &&
+        !isEqual(this.editedItem, changedProperties.get('editedItem'))) {
       this.watchForChanges = !this.watchForChanges;
     }
   }
@@ -279,7 +277,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   private validate() {
     let isValid = true;
     this.validationSelectors.forEach((selector: string) => {
-      const el = this.shadowRoot!.querySelector(selector) as PolymerElement & {validate(): boolean};
+      const el = this.shadowRoot!.querySelector(selector) as PolymerElement & { validate(): boolean };
       if (el && !el.validate()) {
         isValid = false;
       }
@@ -341,7 +339,9 @@ export class FollowUpDialog extends connect(store)(LitElement) {
 
   public openDialog() {
     this.isNewRecord = !this.editedItem.id || this.editedItem.id == 'new';
-    if (this.isNewRecord) {this.resetEditedItem()}
+    if (this.isNewRecord) {
+      this.resetEditedItem();
+    }
     this.dialogTitle = this.isNewRecord ? 'Add Action Point' : 'Edit Action Point';
     this.confirmBtnTxt = this.isNewRecord ? 'Add' : 'Save';
     this.dialogOpened = true;

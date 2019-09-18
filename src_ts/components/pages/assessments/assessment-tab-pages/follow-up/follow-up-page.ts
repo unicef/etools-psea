@@ -35,7 +35,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
       </etools-content-panel>
     `;
   }
-  
+
   @property({type: Array})
   dataItems: object[] = [];
 
@@ -103,8 +103,9 @@ export class FollowUpPage extends connect(store)(LitElement) {
   }
 
   updateActionPoints(event: GenericObject) {
-    let oldActionPointsData = cloneDeep(this.dataItems);
-    let existingActionPointIndex: number = this.dataItems.findIndex((ap: GenericObject) => ap.id === event.detail.id);
+    const oldActionPointsData = cloneDeep(this.dataItems);
+    const existingActionPointIndex: number = this.dataItems.findIndex(
+      (ap: GenericObject) => ap.id === event.detail.id);
     if (existingActionPointIndex > -1) {
       oldActionPointsData.splice(existingActionPointIndex, 1, event.detail);
     } else {
@@ -115,7 +116,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
   }
 
   getFollowUpData() {
-    let endpoint = getEndpoint(etoolsEndpoints.actionPoints, {id: this.assessmentId})
+    const endpoint = getEndpoint(etoolsEndpoints.actionPoints, {id: this.assessmentId});
     // @ts-ignore
     makeRequest(endpoint).then((response: any) => {
       this.dataItems = response;
@@ -135,7 +136,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
   }
 
   extractActionPointData(item: ActionPoint) {
-    let newEditedItem: ActionPoint = {
+    const newEditedItem: ActionPoint = {
       partner: item.partner!.id,
       // category: item.category.id,
       assigned_to: item.assigned_to!.id,
