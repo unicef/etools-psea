@@ -260,12 +260,13 @@ export class AssessorInfo extends connect(store)(LitElement) {
     }
 
     store.dispatch(saveAssessorData(this.assessment.id as number,
-      this.assessor.id, this.collectAssessorData(), this.handleAssessorSaveError.bind(this))).then(() => {
-      // update assessor in assessment object
-      const assessorName = this.getAssessorName();
-      if (assessorName) {
-        store.dispatch(updateAssessmentData({...this.assessment, assessor: assessorName}));
-      }
+      this.assessor.id, this.collectAssessorData(), this.handleAssessorSaveError.bind(this)))
+        .then(() => {
+        // update assessor in assessment object
+        const assessorName = this.getAssessorName();
+        if (assessorName) {
+          store.dispatch(updateAssessmentData({...this.assessment, assessor: assessorName}));
+        }
     });
   }
 
@@ -287,6 +288,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
   handleAssessorSaveError(error: any) {
     logError(error);
     fireEvent(this, 'toast', {text: formatServerErrorAsText(error), showCloseBtn: true});
+    throw new Error(error.message);
   }
 
   collectAssessorData() {
