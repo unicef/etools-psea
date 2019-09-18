@@ -14,7 +14,7 @@ import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../../../redux/store';
 import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
-import {Assessment, Assessor, AssessorTypes} from '../../../../../types/assessment';
+import {Assessment, Assessor, AssessorTypes, AssessmentPermissions} from '../../../../../types/assessment';
 import {AssessingFirm} from './assessing-firm';
 import {ExternalIndividual} from './external-individual';
 import {fireEvent} from '../../../../utils/fire-custom-event';
@@ -55,7 +55,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
       <etools-content-panel panel-title="Primary Assessor">
         <div slot="panel-btns">
           <paper-icon-button
-                ?hidden="${this.hideEditIcon(this.isNew, this.editMode)}"
+                ?hidden="${this.hideEditIcon(this.isNew, this.editMode, this.canEditAssessorInfo)}"
                 @tap="${this.allowEdit}"
                 icon="create">
           </paper-icon-button>
@@ -167,6 +167,9 @@ export class AssessorInfo extends connect(store)(LitElement) {
   @query('#externalIndividual')
   externalIndividualElement!: ExternalIndividual;
 
+  @property({type: Boolean})
+  canEditAssessorInfo!: boolean;
+
   stateChanged(state: RootState) {
     if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
@@ -177,6 +180,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
       const newAssessment = state.pageData!.currentAssessment;
       if (!isJsonStrMatch(this.assessment, newAssessment)) {
         this.assessment = cloneDeep(newAssessment);
+        this.setEditAssessorPermissions(this.assessment.permissions);
       }
     }
 
@@ -188,6 +192,10 @@ export class AssessorInfo extends connect(store)(LitElement) {
         this.initializeRelatedData();
       }
     }
+  }
+
+  setEditAssessorPermissions(permissions: AssessmentPermissions) {
+    this.canEditAssessorInfo = permissions.edit.assessor;
   }
 
   protected initializeRelatedData(): void {

@@ -18,21 +18,23 @@ import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
-import {Assessment, AssessmentInvalidator} from '../../../../../types/assessment';
+import {Assessment, AssessmentInvalidator, AssessmentPermissions} from '../../../../../types/assessment';
 import {updateAppLocation} from '../../../../../routing/routes';
 import {formatDate} from '../../../../utils/date-utility';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import DatePickerLite from '@unicef-polymer/etools-date-time/datepicker-lite';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
 import {UnicefUser} from '../../../../../types/user-model';
-import {updateAssessorData, updateAssessmentData} from '../../../../../redux/actions/page-data';
+import {updateAssessmentData} from '../../../../../redux/actions/page-data';
+import PermissionsMixin from '../../../mixins/permissions-mixins';
+import get from 'lodash-es/get';
 
 /**
  * @customElement
  * @LitElement
  */
 @customElement('assessment-info')
-export class AssessmentInfo extends connect(store)(LitElement) {
+export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement)) {
 
   render() {
     // language=HTML
@@ -47,7 +49,7 @@ export class AssessmentInfo extends connect(store)(LitElement) {
       <etools-content-panel panel-title="Assessment Information">
         <div slot="panel-btns">
           <paper-icon-button
-                ?hidden="${this.hideEditIcon(this.isNew, this.editMode)}"
+                ?hidden="${this.hideEditIcon(this.isNew, this.editMode, this.canEditAssessmentInfo)}"
                 @tap="${this._allowEdit}"
                 icon="create">
           </paper-icon-button>
@@ -94,7 +96,7 @@ export class AssessmentInfo extends connect(store)(LitElement) {
         </datepicker-lite>
 
         <div class="layout-horizontal right-align row-padding-v"
-          ?hidden="${this.hideActionButtons(this.isNew, this.editMode)}">
+          ?hidden="${this.hideActionButtons(this.isNew, this.editMode, this.canEditAssessmentInfo)}">
           <paper-button class="default" @tap="${this.cancelAssessment}">
             Cancel
           </paper-button>
@@ -134,6 +136,9 @@ export class AssessmentInfo extends connect(store)(LitElement) {
   @property({type: Object})
   invalid = new AssessmentInvalidator();
 
+  @property({type: Boolean})
+  canEditAssessmentInfo!: boolean;
+
   stateChanged(state: RootState) {
     if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
@@ -141,13 +146,23 @@ export class AssessmentInfo extends connect(store)(LitElement) {
     if (state.commonData && !isJsonStrMatch(this.partners, state.commonData!.partners)) {
       this.partners = [...state.commonData!.partners];
     }
-    if (state.pageData && !isJsonStrMatch(this.assessment, state.pageData!.currentAssessment)) {
-      this.assessment = {...state.pageData!.currentAssessment} as Assessment;
+
+    let currentAssessment = get(state, 'pageData.currentAssessment')
+    if (currentAssessment && Object.keys(currentAssessment).length &&
+       !isJsonStrMatch(this.assessment, currentAssessment)) {
+
+      this.assessment = {...currentAssessment} as Assessment;
       this.originalAssessment = cloneDeep(this.assessment);
       this.isNew = !this.assessment.id;
       this.editMode = this.isNew;
-      setTimeout(() => this.resetValidations(), 100);
+      this.setAssessmentInfoPermissions(this.assessment.permissions);
+      setTimeout(() => this.resetValidations(), 10);
     }
+  }
+
+  setAssessmentInfoPermissions(permissions: AssessmentPermissions) {
+    this.canEditAssessmentInfo = permissions.edit.partner || permissions.edit.focal_points ||
+                                 permissions.edit.assessment_date;
   }
 
   _allowEdit() {
@@ -254,14 +269,6 @@ export class AssessmentInfo extends connect(store)(LitElement) {
       return url;
     }
     return url! + this.assessment.id + '/';
-  }
-
-  hideEditIcon(isNew: boolean, editMode: boolean) {
-    return isNew || editMode;
-  }
-
-  hideActionButtons(isNew: boolean, editMode: boolean) {
-   return !(isNew || editMode);
   }
 
 }
