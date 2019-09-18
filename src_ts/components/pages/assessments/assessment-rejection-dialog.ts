@@ -72,7 +72,7 @@ export class AssessmentRejectionDialog extends LitElement {
   private onConfirm() {
     if (this.rejectionCommentEl.validate()) {
       const reason = this.rejectionCommentEl.value;
-      fireEvent(this.fireEventSource, 'someEvent', {confirmed: true, reason});
+      fireEvent(this.fireEventSource, 'rejection-confirmed', {confirmed: true, reason});
     }
 
   }

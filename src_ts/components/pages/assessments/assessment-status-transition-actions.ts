@@ -100,6 +100,8 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     super.disconnectedCallback();
     this.removeStatusChangeConfirmationsDialog();
     this.removeRejectionDialog();
+    // @ts-ignore
+    this.removeEventListener('rejection-confirmed', this.onStatusChangeConfirmation);
   }
 
   public stateChanged(state: RootState) {
