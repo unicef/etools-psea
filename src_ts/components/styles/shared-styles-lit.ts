@@ -159,6 +159,5 @@ export const SharedStylesLit = html`
     .readonly {
       pointer-events: none;
     }
-
 </style>
 `;

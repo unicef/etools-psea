@@ -51,6 +51,23 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   partnerStaffMembers: {
     template: '/api/v2/partners/<%=id%>/staff-members/'
   },
+  offices: {
+    url: '/api/offices/'
+  },
+  sections: {
+    url: '/api/reports/sectors/'
+  },
+  // agreements: {
+  //   template: '/api/v2/agreements/',
+  //   exp: 30 * 60 * 1000, // 30min
+  //   cacheTableName: 'agreements'
+  // },
+  actionPoints: {
+    template: '/api/psea/assessment/<%=id%>/action-points/'
+  },
+  editActionPoint: {
+    template: '/api/psea/assessment/<%=id%>/action-points/<%=actionPoint%>/'
+  },
   attachmentsUpload: {
     url: '/api/v2/attachments/upload/'
   },

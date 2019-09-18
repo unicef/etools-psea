@@ -40,7 +40,8 @@ export interface EtoolsTableColumn {
 
 export enum EtoolsTableActionType {
   Edit,
-  Delete
+  Delete,
+  Copy
 }
 
 /**
@@ -78,6 +79,9 @@ export class EtoolsTable extends LitElement {
 
   @property({type: Boolean, reflect: true})
   showDelete!: boolean;
+
+  @property({type: Boolean, reflect: true})
+  showCopy!: boolean;
 
   @property({type: String})
   caption: string = '';
@@ -150,6 +154,8 @@ export class EtoolsTable extends LitElement {
           icon="create" @tap="${() => this.triggerAction(EtoolsTableActionType.Edit, item)}"></paper-icon-button>
         <paper-icon-button ?hidden="${!this.showDelete}"
           icon="delete" @tap="${() => this.triggerAction(EtoolsTableActionType.Delete, item)}"></paper-icon-button>
+        <paper-icon-button ?hidden="${!this.showCopy}"
+          icon="content-copy" @tap="${() => this.triggerAction(EtoolsTableActionType.Copy, item)}"></paper-icon-button>
       </div>
     `;
   }
@@ -272,6 +278,9 @@ export class EtoolsTable extends LitElement {
         break;
       case EtoolsTableActionType.Delete:
         fireEvent(this, 'delete-item', item);
+        break;
+      case EtoolsTableActionType.Copy:
+        fireEvent(this, 'copy-item', item);
         break;
     }
   }
