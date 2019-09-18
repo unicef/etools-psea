@@ -48,8 +48,8 @@ TBD
              proxy_pass http://psea:8080/;
            }
       
-           location /psea/ {
-             proxy_pass http://psea:8080/psea/;
+           location /psea_build/ {
+             proxy_pass http://psea_build:8080/psea_build/;
            }
         ```
 * requirements: `node`, `npm`, `polymer-cli`, `typescript`, `gulp`

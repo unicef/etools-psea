@@ -18,7 +18,7 @@ function getSourcesPath(request) {
   }
 }
 
-app.use('/psea/', (req, res, next) => {
+app.use('/psea_build/', (req, res, next) => {
   express.static(getSourcesPath(req))(req, res, next);
 });
 
