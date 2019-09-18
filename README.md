@@ -5,7 +5,7 @@ TBD
 ## Install
 * Part of `etools-infra`
     * `http://localhost:8082/psea/`
-    * `docker-compose.dev.yml`:
+    * `docker-compose.dev.yml` (`psea_build` is only built version dev setup):
         ```
             proxy:
                 build:
@@ -20,6 +20,7 @@ TBD
                   - pmp
                   - ...
                   - psea
+                  - psea_build
         ```
         ```
             psea:
@@ -31,11 +32,24 @@ TBD
                volumes:
                  - "./psea:/code"
                command: ${FE_COMMAND:-sh -c "npm run start"}
+      
+            psea_build:
+                build:
+                  context: ./psea
+                  dockerfile: ./Dockerfile
+                image: etoolsdev/etools-psea_build:dev
+                container_name: etoolsinfra_psea_build
+                volumes:
+                  - "./psea:/code"
         ```
     * `nginx.conf`:
         ```
            location /psea/ {
              proxy_pass http://psea:8080/;
+           }
+      
+           location /psea/ {
+             proxy_pass http://psea:8080/psea/;
            }
         ```
 * requirements: `node`, `npm`, `polymer-cli`, `typescript`, `gulp`
