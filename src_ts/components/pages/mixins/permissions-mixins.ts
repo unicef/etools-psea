@@ -11,10 +11,18 @@ function PermissionsMixin<T extends Constructor<LitElement>>(baseClass: T) {
     }
 
     hideActionButtons(isNew: boolean, editMode: boolean, canEdit: boolean) {
+      if (!canEdit) {
+        return true;
+      }
       if (isNew) {
         return false;
       }
-     return !(canEdit|| editMode);
+
+      return !editMode;
+    }
+
+    isReadonly(editMode: boolean, canEdit: boolean) {
+      return !(editMode && canEdit);
     }
 
   }

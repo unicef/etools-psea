@@ -24,13 +24,14 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
 import {saveAssessorData, updateAssessmentData} from '../../../../../redux/actions/page-data';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+import PermissionsMixin from '../../../mixins/permissions-mixins';
 
 /**
  * @customElement
  * @LitElement
  */
 @customElement('assessor-info')
-export class AssessorInfo extends connect(store)(LitElement) {
+export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
 
   render() {
     // language=HTML
@@ -63,20 +64,13 @@ export class AssessorInfo extends connect(store)(LitElement) {
 
         <div class="row-padding-v">
           <label class="paper-label">Assessor is:</label>
-          <paper-radio-group .selected="${this.getAssessorType(this.assessor)}"
-              ?readonly="${this.isReadonly(this.editMode)}"
-              @selected-changed="${(e: CustomEvent) =>
-                this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
-            <paper-radio-button name="staff">Unicef Staff</paper-radio-button>
-            <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
-            <paper-radio-button name="external">External Individual</paper-radio-button>
-          </paper-radio-group>
+          ${this._getAssessorTypeTemplate(this.canEditAssessorInfo, this.isNew, this.editMode, this.assessor)}
         </div>
 
         ${this._getTemplateByAssessorType(this.assessor, this.editMode, this.isNew)}
 
         <div class="layout-horizontal right-align row-padding-v"
-            ?hidden="${this.hideActionButtons(this.isNew, this.editMode)}">
+            ?hidden="${this.hideActionButtons(this.isNew, this.editMode, this.canEditAssessorInfo)}">
           <paper-button class="default" @tap="${this.cancelAssessorUpdate}">
             Cancel
           </paper-button>
@@ -87,6 +81,23 @@ export class AssessorInfo extends connect(store)(LitElement) {
       </etools-content-panel>
 
       ${this.getFirmStaffMembersHtml(this.isNew, this.assessor)}
+    `;
+  }
+
+  _getAssessorTypeTemplate(canEditAssessorInfo: boolean, isNew: boolean, editMode: boolean, assessor: Assessor) {
+    if (!canEditAssessorInfo && isNew) {
+      return '—';
+    }
+
+    return html`
+      <paper-radio-group .selected="${this.getAssessorType(assessor)}"
+          ?readonly="${!editMode}"
+          @selected-changed="${(e: CustomEvent) =>
+            this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
+        <paper-radio-button name="staff">Unicef Staff</paper-radio-button>
+        <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
+        <paper-radio-button name="external">External Individual</paper-radio-button>
+      </paper-radio-group>
     `;
   }
 
@@ -107,7 +118,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
             option-value="id"
             required
             auto-validate
-            ?readonly="${this.isReadonly(this.editMode)}">
+            ?readonly="${!this.editMode}">
           </etools-dropdown>
         `;
       case 'firm':
@@ -123,7 +134,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
         return html`
           <external-individual id="externalIndividual"
            .assessor="${cloneDeep(this.assessor)}"
-           .editMode="${this.editMode}">
+           .editMode="${editMode}">
           </external-individual>
         `;
       default:
@@ -200,7 +211,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
 
   protected initializeRelatedData(): void {
     this.isNew = !this.assessor.id;
-    this.editMode = this.isNew;
+    this.editMode = this.isNew && this.canEditAssessorInfo;
     this.originalAssessor = cloneDeep(this.assessor);
     this.requestUpdate().then(() => {
       // load staff members after staff members element is initialized
@@ -366,18 +377,6 @@ export class AssessorInfo extends connect(store)(LitElement) {
 
   allowEdit() {
     this.editMode = true;
-  }
-
-  hideEditIcon(isNew: boolean, editMode: boolean) {
-    return isNew || editMode;
-  }
-
-  hideActionButtons(isNew: boolean, editMode: boolean) {
-    return !(isNew || editMode);
-  }
-
-  isReadonly(editMode: boolean) {
-    return !editMode;
   }
 
 }

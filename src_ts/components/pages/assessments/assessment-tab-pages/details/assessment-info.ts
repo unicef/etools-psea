@@ -63,7 +63,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           option-label="name"
           trigger-value-change-event
           @etools-selected-item-changed="${this._setSelectedPartner}"
-          ?readonly="${!this.editMode}"
+          ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.partner)}"
           required
           ?invalid="${this.invalid.partner}"
           auto-validate>
@@ -80,7 +80,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           enable-none-option
           trigger-value-change-event
           @etools-selected-items-changed="${this._setSelectedFocalPoints}"
-          ?readonly="${!this.editMode}">
+          ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.focal_points)}">
         </etools-dropdown-multi>
 
         <datepicker-lite id="assessmentDate" label="Assessment Date"
@@ -89,7 +89,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           selected-date-display-format="D MMM YYYY"
           fire-date-has-changed
           @date-has-changed="${(e: CustomEvent) => this._setSelectedDate(e.detail.date)}"
-          ?readonly="${!this.editMode}"
+          ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.assessment_date)}"
           required
           ?invalid="${this.invalid.assessment_date}"
           auto-validate>
