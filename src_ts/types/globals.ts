@@ -10,4 +10,15 @@ export interface GenericObject {
   [key: string]: any;
 }
 
-
+export interface ActionPoint {
+  partner: GenericObject | null;
+  // category: number;
+  assigned_to: GenericObject | null;
+  section: GenericObject | null;
+  psea_assessment: number | null | undefined;
+  office: GenericObject | null;
+  description: string;
+  due_date: string;
+  id: number | string | null;
+  high_priority: boolean;
+}
