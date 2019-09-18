@@ -28,7 +28,6 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   private statusChangeConfirmationDialog: EtoolsDialog | null = null;
   private confirmationMSg: HTMLSpanElement = document.createElement('span');
-  // private rejectionReason: PaperTextareaElement = document.createElement('paper-textarea');
   private currentStatusAction = '';
 
   render() {
@@ -94,7 +93,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     this.createStatusChangeConfirmationsDialog();
     this.createRejectionDialog();
     // @ts-ignore
-    this.addEventListener('someEvent', this.onStatusChangeConfirmation);
+    this.addEventListener('rejection-confirmed', this.onStatusChangeConfirmation);
   }
 
   disconnectedCallback(): void {
@@ -165,10 +164,14 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     this.confirmationMSg.innerText = `Are you sure you want to ${action} this assessment`;
   }
 
+  updateStoreAssessmentStatus(newStatus: string) {
+    const updatedAssessment = Object.assign({}, this.assessment, {status: newStatus});
+    console.log('success on status change...', newStatus, updatedAssessment);
+    store.dispatch(updateAssessmentData(updatedAssessment));
+  }
+
   onStatusChangeConfirmation(e: CustomEvent) {
-    // console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&& am intrat aici");
     console.log(e.detail);
-    return;
 
     if (!e.detail.confirmed) {
       // cancel status update action
@@ -181,20 +184,44 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     const url = getEndpoint(etoolsEndpoints.assessmentStatusUpdate,
       {id: this.assessment.id, statusAction: this.currentStatusAction}).url!;
     console.log('update status: PATCH', url);
-    return makeRequest({url: url, method: 'PATCH'})
-      .then((response) => {
-        // update assessment data in redux store
-        const updatedAssessment = Object.assign({}, this.assessment, {status: response.status});
-        console.log('success on status change...', response, updatedAssessment);
-        store.dispatch(updateAssessmentData(updatedAssessment));
-      })
-      .catch((err: any) => {
-        logError(err);
-        parseRequestErrorsAndShowAsToastMsgs(err, this);
-      }).then(() => {
-        // req finalized... reset data
-        this.currentStatusAction = '';
-      });
+
+    if ( this.currentStatusAction === 'reject' ) {
+      this.rejectAssessment(url, e.detail.reason);
+    } else {
+      this.requestStatusUpdate(url);
+    }
+  }
+
+  requestStatusUpdate(url: string) {
+    makeRequest({url: url, method: 'PATCH'})
+        .then((response) => {
+          // update assessment data in redux store
+          this.updateStoreAssessmentStatus(response.status);
+        }).catch((err: any) => {
+          logError(err);
+          parseRequestErrorsAndShowAsToastMsgs(err, this);
+        }).then(() => {
+          // req finalized... reset data
+          this.currentStatusAction = '';
+        });
+  }
+
+  rejectAssessment(url: string, reason: string) {
+    const reqPayloadData = {comment: reason};
+    this.rejectionDialog.spinnerLoading = true;
+    makeRequest({url: url, method: 'PATCH'}, reqPayloadData)
+        .then((response) => {
+          // update assessment data in redux store
+          this.updateStoreAssessmentStatus(response.status);
+          this.rejectionDialog.dialogClosed();
+          this.currentStatusAction = '';
+        }).catch((err: any) => {
+          logError(err);
+          parseRequestErrorsAndShowAsToastMsgs(err, this);
+        }).then(() => {
+          // req finalized...
+          this.rejectionDialog.spinnerLoading = false;
+        });
   }
 
   createStatusChangeConfirmationsDialog() {
@@ -219,29 +246,6 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
       this.rejectionDialog.fireEventSource = this;
       document.querySelector('body')!.appendChild(this.rejectionDialog);
     }
-
-
-      // const dialogContent = document.createElement('div');
-      // const dialogQuestion = document.createElement('div');
-      // dialogQuestion.innerHTML = 'Are you sure you want to reject this assessment?';
-      // const dialogMessage = document.createElement('div');
-      // dialogMessage.innerHTML = 'Please provide a rejection reason for this assessment.';
-      // const rejectionMessage = this.rejectionReason;
-      // dialogContent.appendChild(dialogQuestion);
-      // dialogContent.appendChild(dialogMessage);
-      // dialogContent.appendChild(rejectionMessage);
-      // this.onStatusChangeConfirmation = this.onStatusChangeConfirmation.bind(this);
-      // const rejectionDialogConf: ConfigObj = {
-      //   title: 'Assessment status update',
-      //   size: 'md',
-      //   okBtnText: 'Yes',
-      //   cancelBtnText: 'No',
-      //   closeCallback: this.onStatusChangeConfirmation,
-      //   content: dialogContent
-      // };
-      // this.rejectionDialog = createDynamicDialog(rejectionDialogConf);
-      // this.rejectionDialog.updateStyles({'--etools-dialog-confirm-btn-bg': 'var(--primary-color)'});
-
   }
 
   removeStatusChangeConfirmationsDialog() {
@@ -251,11 +255,8 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   }
 
   removeRejectionDialog() {
-    // const dialog = document.querySelector('assessmentRejectionDialog');
     if (this.rejectionDialog) {
       document.querySelector('body')!.removeChild(this.rejectionDialog);
     }
   }
 }
-
-
