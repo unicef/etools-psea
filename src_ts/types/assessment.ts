@@ -8,8 +8,26 @@ export class Assessment {
   status_list: string[][] = [];
   partner: string | null = '';
   focal_points?: string[] =[];
-  permissions: {edit: {answers: boolean}, required: {}} | null= null;
   rejected_comment: string = '';
+  permissions =  new AssessmentPermissions();
+}
+
+export class AssessmentPermissions {
+  edit = {
+    partner: true,
+    focal_points: true,
+    assessment_date: true,
+    answers: false,
+    assessor: false
+  };
+  required = {
+    partner: true,
+    focal_points: true,
+    assessment_date: false,
+    answers: false,
+    assessor: false
+  };
+
 }
 
 export class AssessmentInvalidator {

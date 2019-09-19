@@ -64,7 +64,7 @@ export class EtoolsTable extends LitElement {
           </tr>
         </thead>
         <tbody>
-          ${this.items.map((item: any) => this.getRowDataHtml(item))}
+          ${this.items.map((item: any) => this.getRowDataHtml(item, this.showEdit))}
           ${this.paginator ? this.paginationHtml : ''}
         </tbody>
       </table>
@@ -135,12 +135,12 @@ export class EtoolsTable extends LitElement {
     `;
   }
 
-  getRowDataHtml(item: any) {
+  getRowDataHtml(item: any, showEdit: boolean) {
     const columnsKeys = this.getColumnsKeys();
     return html`
       <tr>
         ${columnsKeys.map((k: string) => html`<td class="${this.getRowDataColumnClassList(k)}">
-          ${this.getItemValue(item, k)}</td>`)}
+          ${this.getItemValue(item, k, showEdit)}</td>`)}
 
         ${this.showRowActions() ? html`<td class="row-actions">${this.getRowActionsTmpl(item)}` : ''}
       </tr>
@@ -220,7 +220,7 @@ export class EtoolsTable extends LitElement {
     return this.columns.map((c: EtoolsTableColumn) => c.name);
   }
 
-  getItemValue(item: any, key: string) {
+  getItemValue(item: any, key: string, showEdit: boolean) {
     // get column object to determine how data should be displayed (date, string, link, number...)
     const column: EtoolsTableColumn = this.getColumnDetails(key);
     switch (column.type) {
@@ -230,16 +230,17 @@ export class EtoolsTable extends LitElement {
         return this.getLinkTmpl(column.link_tmpl, item, key);
       case EtoolsTableColumnType.Number:
       case EtoolsTableColumnType.Checkbox:
-        return this._getCheckbox(item, key);
+        return this._getCheckbox(item, key, showEdit);
       default:
         return this._getValueByKey(item, key, column.placeholder);
 
     }
   }
 
-  _getCheckbox(item: any, key: string) {
+  _getCheckbox(item: any, key: string, showEdit: boolean) {
     return html`
       <paper-checkbox ?checked="${this._getValueByKey(item, key, '', true)}"
+        ?readonly="${!showEdit}"
         @change="${(e: CustomEvent) => this.triggerItemChanged(item, key, (e.currentTarget as any).checked)}">
       </paper-checkbox>`;
 
