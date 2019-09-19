@@ -80,7 +80,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
         </div>
       </etools-content-panel>
 
-      ${this.getFirmStaffMembersHtml(this.isNew, this.assessor)}
+      ${this.getFirmStaffMembersHtml(this.isNew, this.assessor, this.canEditAssessorInfo)}
     `;
   }
 
@@ -142,12 +142,13 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     }
   }
 
-  getFirmStaffMembersHtml(isNew: boolean, assessor: Assessor) {
+  getFirmStaffMembersHtml(isNew: boolean, assessor: Assessor, canEditAssessorInfo: boolean) {
     if (!assessor) {
-      return;
+      return '';
     }
     return html`<firm-staff-members id="firmStaffMembers"
         ?hidden="${this.hideFirmStaffMembers(isNew, assessor, this.editMode)}"
+        .canEdit="${canEditAssessorInfo}"
         .assessorId="${this.assessor.id}"
         .assessmentId="${this.assessment.id}"
         .currentFirmAssessorStaffWithAccess="${this.assessor.auditor_firm_staff}">
@@ -211,9 +212,11 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
 
   protected initializeRelatedData(): void {
     this.isNew = !this.assessor.id;
-    this.editMode = this.isNew && this.canEditAssessorInfo;
     this.originalAssessor = cloneDeep(this.assessor);
     this.requestUpdate().then(() => {
+      //Make sure isNew and canEditAssessorInfo are set before computing editMode
+      this.editMode = this.isNew && this.canEditAssessorInfo;
+
       // load staff members after staff members element is initialized
       if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessor.auditor_firm) {
         this.loadFirmStaffMembers(this.assessor.auditor_firm!);

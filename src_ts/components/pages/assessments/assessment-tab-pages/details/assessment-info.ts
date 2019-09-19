@@ -28,6 +28,7 @@ import {UnicefUser} from '../../../../../types/user-model';
 import {updateAssessmentData} from '../../../../../redux/actions/page-data';
 import PermissionsMixin from '../../../mixins/permissions-mixins';
 import get from 'lodash-es/get';
+import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 
 /**
  * @customElement
@@ -233,7 +234,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           store.dispatch(updateAssessmentData(response));
         }
       })
-      .catch(_err => fireEvent(this, 'toast', {text: 'Error saving Assessment Info.'}));
+      .catch(err => fireEvent(this, 'toast', {text: formatServerErrorAsText(err)}));
   }
 
   resetValidations() {
