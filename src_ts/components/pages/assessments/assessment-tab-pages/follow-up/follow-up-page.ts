@@ -17,6 +17,14 @@ import {connect} from 'pwa-helpers/connect-mixin';
 export class FollowUpPage extends connect(store)(LitElement) {
   render() {
     return html`
+      <style>
+        :host {
+          --ecp-content: {
+            padding-right: 0;
+            padding-left: 0;
+          }
+        }
+      </style>
       <etools-content-panel panel-title="Action Points">
         <div slot="panel-btns">
           <paper-icon-button
