@@ -48,7 +48,7 @@ export class QuestionnaireItemElement extends LitElement {
           <paper-icon-button
                 icon="create"
                 @tap="${this._allowEdit}"
-                ?hidden="${this.hideEditIcon(this.answer, this.editMode)}">
+                ?hidden="${this.hideEditIcon(this.answer, this.editMode, this.canEditAnswers)}">
           </paper-icon-button>
         </div>
         <div class="description">
@@ -56,13 +56,14 @@ export class QuestionnaireItemElement extends LitElement {
         </div>
         <div class="row-padding-v">
           <questionnaire-answer id="questionnaireAnswerElement"
+            ?hidden="${this.hideAnswer(this.answer, this.canEditAnswers)}"
             .question="${this.question}"
             .answer="${this.answer}"
-            .editMode="${this.editMode}">
+            .editMode="${this.editMode && this.canEditAnswers}">
           </questionnaire-answer>
         </div>
 
-        <div class="layout-horizontal right-align row-padding-v" ?hidden="${this.hideActionButtons(this.answer, this.editMode)}">
+        <div class="layout-horizontal right-align row-padding-v" ?hidden="${this.hideActionButtons(this.answer, this.editMode, this.canEditAnswers)}">
           <paper-button class="default" @tap="${this.cancel}">
             Cancel
           </paper-button>
@@ -89,6 +90,9 @@ export class QuestionnaireItemElement extends LitElement {
 
   @property({type: String})
   assessmentId!: string;
+
+  @property({type: Boolean})
+  canEditAnswers!: boolean;
 
   @query('#questionnaireAnswerElement')
   questionnaireAnswerElement!: QuestionnaireAnswerElement;
@@ -162,14 +166,20 @@ export class QuestionnaireItemElement extends LitElement {
     return this.questionnaireAnswerElement.validate();
   }
 
-  hideActionButtons(answer: Answer, editMode: boolean) {
+  hideActionButtons(answer: Answer, editMode: boolean, canEditAnswers: boolean) {
+    if (!canEditAnswers) {
+      return true;
+    }
     if (!answer || !answer.id) {
       return false;
     }
     return !editMode;
   }
 
-  hideEditIcon(answer: Answer, editMode: boolean) {
+  hideEditIcon(answer: Answer, editMode: boolean, canEditAnswers: boolean) {
+    if (!canEditAnswers) {
+      return true;
+    }
     if (!answer || !answer.id) {
       return true;
     }
@@ -182,6 +192,14 @@ export class QuestionnaireItemElement extends LitElement {
   _allowEdit() {
     this.editMode = true;
     this.open = true;
+  }
+
+  hideAnswer(answer: Answer, canEditAnswers: boolean) {
+    if (canEditAnswers) {
+      return false;
+    } else {
+      return (!answer || !answer.id);
+    }
   }
 
 }

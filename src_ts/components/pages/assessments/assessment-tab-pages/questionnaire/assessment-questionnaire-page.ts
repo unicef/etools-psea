@@ -50,7 +50,7 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
         <div class="col-5 r-align">Overall Assessment:</div><div class="col-1"></div>
         <div class="col-6 l-align"> ${this.overallRatingDisplay}</div>
       </div>
-      ${this._getQuestionnaireItemsTemplate(this.questionnaireItems, this.answers)}
+      ${this._getQuestionnaireItemsTemplate(this.questionnaireItems, this.answers, this.canEditAnswers)}
     `;
   }
 
@@ -66,6 +66,9 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   @property({type: String})
   overallRatingDisplay!: string;
 
+  @property({type: Boolean})
+  canEditAnswers!: boolean;
+
   stateChanged(state: RootState) {
     let newAssessmentId = get(state, 'app.routeDetails.params.assessmentId');
     if (newAssessmentId && newAssessmentId !== this.assessmentId) {
@@ -74,11 +77,8 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     }
     let currentAssessment = get(state, 'pageData.currentAssessment');
     if (currentAssessment) {
-      if (currentAssessment.overall_rating && currentAssessment.overall_rating.display === 'Unknown') {
-        this.overallRatingDisplay = '';
-      } else {
-        this.overallRatingDisplay = currentAssessment.overall_rating.display;
-      }
+      this.setOverallRatingDisplay(currentAssessment.overall_rating);
+      this.setAnswersEditPermision(get(currentAssessment, 'permissions.edit.answers'));
     }
   }
 
@@ -87,17 +87,30 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     this.getQuestionnaire();
   }
 
+  setAnswersEditPermision(canEdit: boolean | undefined) {
+    this.canEditAnswers = !!canEdit;
+  }
 
-  _getQuestionnaireItemsTemplate(questionnaireItems: Question[], answers: Answer[]) {
+  setOverallRatingDisplay(overall_rating: {rating: number, display: string}) {
+    if (overall_rating && overall_rating.display !== 'Unknown') {
+      this.overallRatingDisplay = overall_rating.display;
+    } else {
+      this.overallRatingDisplay = '';
+    }
+  }
+
+  _getQuestionnaireItemsTemplate(questionnaireItems: Question[], answers: Answer[], canEditAnswers: boolean) {
     if (!questionnaireItems || !questionnaireItems.length) {
       return '';
     }
 
     return this.questionnaireItems.map((question: Question) => {
       let answer = this._getAnswerByQuestionId(question.id, answers);
+
       return html`<questionnaire-item .question="${cloneDeep(question)}"
         .answer="${answer}"
-        .editMode="${(!answer || !answer.id)}"
+        .editMode="${canEditAnswers && (!answer || !answer.id)}"
+        .canEditAnswers="${this.canEditAnswers}"
         .assessmentId="${this.assessmentId}"
         @answer-saved="${this.checkOverallRating}">
        </questionnaire-item>`
