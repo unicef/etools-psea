@@ -8,6 +8,7 @@ export class Assessment {
   status_list: string[][] = [];
   partner: string | null = '';
   focal_points?: string[] =[];
+  rejected_comment: string = '';
 }
 
 export class AssessmentInvalidator {

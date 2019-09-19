@@ -22,6 +22,7 @@ import {EtoolsStatusModel} from '../../common/layout/status/etools-status';
 import './assessment-status-transition-actions';
 import isNil from 'lodash-es/isNil';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
+import '../../common/layout/etools-error-warn-box';
 
 /**
  * @LitElement
@@ -67,6 +68,10 @@ export class AssessmentTabs extends connect(store)(LitElement) {
       </page-content-header>
 
       <div class="page-content">
+        <section class="elevation page-content no-padding" elevation="1">
+          <etools-error-warn-box .messages="${[this.assessment.rejected_comment]}">                     
+          </etools-error-warn-box>
+        </section>
         <assessment-details-page ?hidden="${!this.isActiveTab(this.activeTab, 'details')}">
         </assessment-details-page>
         <assessment-questionnaire-page ?hidden="${!this.isActiveTab(this.activeTab, 'questionnaire')}">
