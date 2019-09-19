@@ -4,7 +4,7 @@ const DEV_DOMAIN = 'etools-dev.unicef.org';
 const DEMO_DOMAIN = 'etools-demo.unicef.org';
 
 export const SMALL_MENU_ACTIVE_LOCALSTORAGE_KEY = 'etoolsAppSmallMenuIsActive';
-export const ROOT_PATH = '/psea_build/';
+export const ROOT_PATH = '/psea/';
 
 export const isProductionServer = () => {
   const location = window.location.href;
