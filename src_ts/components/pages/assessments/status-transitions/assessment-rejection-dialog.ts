@@ -39,7 +39,6 @@ export class AssessmentRejectionDialog extends LitElement {
                     <paper-textarea id="rejectionReason"
                         label="Reason for rejection"
                         type="text"
-                        .value="${this.rejectionCommentEl.value}"
                         required auto-validate
                         error-message="Please provide a rejection reason."
                         placeholder="&#8212;"></paper-textarea>
