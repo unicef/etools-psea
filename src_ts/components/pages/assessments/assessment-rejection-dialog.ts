@@ -40,7 +40,7 @@ export class AssessmentRejectionDialog extends LitElement {
                     <paper-textarea id="rejectionReason"
                         label="Reason for rejection"
                         type="text"
-                        .value="${this.reason}"
+                        .value="${this.rejectionCommentEl.value}"
                         required auto-validate
                         error-message="Please provide a rejection reason."
                         placeholder="&#8212;"></paper-textarea>
@@ -56,9 +56,6 @@ export class AssessmentRejectionDialog extends LitElement {
   @property({type: Boolean})
   spinnerLoading: boolean = false;
 
-  @property({type: String})
-  reason!: string;
-
   @property({type: Object})
   fireEventSource!: HTMLElement;
 
@@ -66,7 +63,6 @@ export class AssessmentRejectionDialog extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    // console.log('this.dialogOpened', this.dialogOpened);
   }
 
   private onConfirm() {
