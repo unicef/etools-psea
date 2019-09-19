@@ -254,9 +254,12 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     if (!this.assessor) {
       return;
     }
-    this.assessor.assessor_type = assessorType as AssessorTypes;
-    this.assessor.user = null;
-    this.requestUpdate();
+    const newAssessorType = assessorType as AssessorTypes;
+    if (this.assessor.assessor_type != newAssessorType) {
+      this.assessor.assessor_type = newAssessorType;
+      this.assessor.user = null;
+      this.requestUpdate();
+    }
   }
 
   getAssessorType(assessor: Assessor | null) {
@@ -283,13 +286,13 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
 
     store.dispatch(saveAssessorData(this.assessment.id as number,
       this.assessor.id, this.collectAssessorData(), this.handleAssessorSaveError.bind(this)))
-        .then(() => {
+      .then(() => {
         // update assessor in assessment object
         const assessorName = this.getAssessorName();
         if (assessorName) {
           store.dispatch(updateAssessmentData({...this.assessment, assessor: assessorName}));
         }
-    });
+      });
   }
 
   getAssessorName() {
