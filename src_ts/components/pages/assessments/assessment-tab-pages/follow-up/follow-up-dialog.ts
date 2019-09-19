@@ -328,6 +328,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
 
   private handleDialogClosed() {
     this.dialogOpened = false;
+    this.resetEditedItem();
   }
 
   resetEditedItem() {
