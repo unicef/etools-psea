@@ -1,11 +1,10 @@
-import {customElement, LitElement, html, property, query} from "lit-element";
+import {customElement, LitElement, html, property, query} from 'lit-element';
 import '@unicef-polymer/etools-dialog/etools-dialog.js';
 import '@polymer/paper-input/paper-textarea.js';
 
-import {SharedStylesLit} from "../../styles/shared-styles-lit";
-import {fireEvent} from "../../utils/fire-custom-event";
-import {PaperTextareaElement} from "@polymer/paper-input/paper-textarea";
-
+import {SharedStylesLit} from '../../../styles/shared-styles-lit';
+import {fireEvent} from '../../../utils/fire-custom-event';
+import {PaperTextareaElement} from '@polymer/paper-input/paper-textarea';
 
 /**
  * @customElement
@@ -64,11 +63,6 @@ export class AssessmentRejectionDialog extends LitElement {
 
   @query('#rejectionReason') private rejectionCommentEl!: PaperTextareaElement;
 
-  connectedCallback(): void {
-    super.connectedCallback();
-    // console.log('this.dialogOpened', this.dialogOpened);
-  }
-
   private onConfirm() {
     if (this.rejectionCommentEl.validate()) {
       const reason = this.rejectionCommentEl.value;
@@ -77,11 +71,10 @@ export class AssessmentRejectionDialog extends LitElement {
 
   }
 
-  public dialogClosed() {
+  public closeDialog() {
     this.dialogOpened = false;
     this.rejectionCommentEl.value = '';
     this.rejectionCommentEl.invalid = false;
   }
-
 
 }
