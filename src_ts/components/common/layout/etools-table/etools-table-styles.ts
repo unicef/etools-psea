@@ -119,5 +119,9 @@ export const etoolsTableStyles = html`
     .capitalize {
       text-transform: capitalize;
     }
+
+    paper-checkbox[readonly] {
+      pointer-events: none;
+    }
   </style>
 `;

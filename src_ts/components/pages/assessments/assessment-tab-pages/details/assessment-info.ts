@@ -18,21 +18,24 @@ import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
-import {Assessment, AssessmentInvalidator} from '../../../../../types/assessment';
+import {Assessment, AssessmentInvalidator, AssessmentPermissions} from '../../../../../types/assessment';
 import {updateAppLocation} from '../../../../../routing/routes';
 import {formatDate} from '../../../../utils/date-utility';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import DatePickerLite from '@unicef-polymer/etools-date-time/datepicker-lite';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
 import {UnicefUser} from '../../../../../types/user-model';
-import {updateAssessorData, updateAssessmentData} from '../../../../../redux/actions/page-data';
+import {updateAssessmentData} from '../../../../../redux/actions/page-data';
+import PermissionsMixin from '../../../mixins/permissions-mixins';
+import get from 'lodash-es/get';
+import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 
 /**
  * @customElement
  * @LitElement
  */
 @customElement('assessment-info')
-export class AssessmentInfo extends connect(store)(LitElement) {
+export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement)) {
 
   render() {
     // language=HTML
@@ -47,7 +50,7 @@ export class AssessmentInfo extends connect(store)(LitElement) {
       <etools-content-panel panel-title="Assessment Information">
         <div slot="panel-btns">
           <paper-icon-button
-                ?hidden="${this.hideEditIcon(this.isNew, this.editMode)}"
+                ?hidden="${this.hideEditIcon(this.isNew, this.editMode, this.canEditAssessmentInfo)}"
                 @tap="${this._allowEdit}"
                 icon="create">
           </paper-icon-button>
@@ -61,7 +64,7 @@ export class AssessmentInfo extends connect(store)(LitElement) {
           option-label="name"
           trigger-value-change-event
           @etools-selected-item-changed="${this._setSelectedPartner}"
-          ?readonly="${!this.editMode}"
+          ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.partner)}"
           required
           ?invalid="${this.invalid.partner}"
           auto-validate>
@@ -78,7 +81,7 @@ export class AssessmentInfo extends connect(store)(LitElement) {
           enable-none-option
           trigger-value-change-event
           @etools-selected-items-changed="${this._setSelectedFocalPoints}"
-          ?readonly="${!this.editMode}">
+          ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.focal_points)}">
         </etools-dropdown-multi>
 
         <datepicker-lite id="assessmentDate" label="Assessment Date"
@@ -87,14 +90,14 @@ export class AssessmentInfo extends connect(store)(LitElement) {
           selected-date-display-format="D MMM YYYY"
           fire-date-has-changed
           @date-has-changed="${(e: CustomEvent) => this._setSelectedDate(e.detail.date)}"
-          ?readonly="${!this.editMode}"
+          ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.assessment_date)}"
           required
           ?invalid="${this.invalid.assessment_date}"
           auto-validate>
         </datepicker-lite>
 
         <div class="layout-horizontal right-align row-padding-v"
-          ?hidden="${this.hideActionButtons(this.isNew, this.editMode)}">
+          ?hidden="${this.hideActionButtons(this.isNew, this.editMode, this.canEditAssessmentInfo)}">
           <paper-button class="default" @tap="${this.cancelAssessment}">
             Cancel
           </paper-button>
@@ -134,6 +137,9 @@ export class AssessmentInfo extends connect(store)(LitElement) {
   @property({type: Object})
   invalid = new AssessmentInvalidator();
 
+  @property({type: Boolean})
+  canEditAssessmentInfo!: boolean;
+
   stateChanged(state: RootState) {
     if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
@@ -141,13 +147,23 @@ export class AssessmentInfo extends connect(store)(LitElement) {
     if (state.commonData && !isJsonStrMatch(this.partners, state.commonData!.partners)) {
       this.partners = [...state.commonData!.partners];
     }
-    if (state.pageData && !isJsonStrMatch(this.assessment, state.pageData!.currentAssessment)) {
-      this.assessment = {...state.pageData!.currentAssessment} as Assessment;
+
+    let currentAssessment = get(state, 'pageData.currentAssessment')
+    if (currentAssessment && Object.keys(currentAssessment).length &&
+       !isJsonStrMatch(this.assessment, currentAssessment)) {
+
+      this.assessment = {...currentAssessment} as Assessment;
       this.originalAssessment = cloneDeep(this.assessment);
       this.isNew = !this.assessment.id;
       this.editMode = this.isNew;
-      setTimeout(() => this.resetValidations(), 100);
+      this.setAssessmentInfoPermissions(this.assessment.permissions);
+      setTimeout(() => this.resetValidations(), 10);
     }
+  }
+
+  setAssessmentInfoPermissions(permissions: AssessmentPermissions) {
+    this.canEditAssessmentInfo = permissions.edit.partner || permissions.edit.focal_points ||
+                                 permissions.edit.assessment_date;
   }
 
   _allowEdit() {
@@ -218,7 +234,7 @@ export class AssessmentInfo extends connect(store)(LitElement) {
           store.dispatch(updateAssessmentData(response));
         }
       })
-      .catch(_err => fireEvent(this, 'toast', {text: 'Error saving Assessment Info.'}));
+      .catch(err => fireEvent(this, 'toast', {text: formatServerErrorAsText(err)}));
   }
 
   resetValidations() {
@@ -254,14 +270,6 @@ export class AssessmentInfo extends connect(store)(LitElement) {
       return url;
     }
     return url! + this.assessment.id + '/';
-  }
-
-  hideEditIcon(isNew: boolean, editMode: boolean) {
-    return isNew || editMode;
-  }
-
-  hideActionButtons(isNew: boolean, editMode: boolean) {
-   return !(isNew || editMode);
   }
 
 }
