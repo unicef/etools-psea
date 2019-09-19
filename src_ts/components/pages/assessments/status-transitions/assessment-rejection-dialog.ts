@@ -34,7 +34,7 @@ export class AssessmentRejectionDialog extends LitElement {
                     cancel-btn-text="Cancel"
                     keep-dialog-open 
                     ?show-spinner="${this.spinnerLoading}"
-                    @close="${() => this.dialogClosed()}"
+                    @close="${() => this.closeDialog()}"
                     @confirm-btn-clicked="${this.onConfirm}">
                     <paper-textarea id="rejectionReason"
                         label="Reason for rejection"
@@ -68,7 +68,6 @@ export class AssessmentRejectionDialog extends LitElement {
       const reason = this.rejectionCommentEl.value;
       fireEvent(this.fireEventSource, 'rejection-confirmed', {confirmed: true, reason});
     }
-
   }
 
   public closeDialog() {

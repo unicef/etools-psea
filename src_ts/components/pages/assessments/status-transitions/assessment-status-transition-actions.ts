@@ -166,12 +166,6 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     this.confirmationMSg.innerText = `Are you sure you want to ${action} this assessment`;
   }
 
-  updateStoreAssessmentStatus(newStatus: string) {
-    const updatedAssessment = Object.assign({}, this.assessment, {status: newStatus});
-    console.log('success on status change...', newStatus, updatedAssessment);
-    store.dispatch(updateAssessmentData(updatedAssessment));
-  }
-
   onStatusChangeConfirmation(e: CustomEvent) {
     if (!e.detail.confirmed) {
       // cancel status update action
@@ -195,7 +189,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     makeRequest({url: url, method: 'PATCH'})
       .then((response) => {
         // update assessment data in redux store
-        this.updateStoreAssessmentStatus(response.status);
+        store.dispatch(updateAssessmentData(response));
       }).catch((err: any) => {
         logError(err);
         parseRequestErrorsAndShowAsToastMsgs(err, this);
@@ -211,7 +205,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     makeRequest({url: url, method: 'PATCH'}, reqPayloadData)
       .then((response) => {
         // update assessment data in redux store
-        this.updateStoreAssessmentStatus(response.status);
+        store.dispatch(updateAssessmentData(response));
         this.rejectionDialog.closeDialog();
         this.currentStatusAction = '';
       }).catch((err: any) => {
