@@ -19,7 +19,7 @@ import {requestAssessmentData, updateAssessmentData} from '../../../redux/action
 import {cloneDeep, isJsonStrMatch} from '../../utils/utils';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {EtoolsStatusModel} from '../../common/layout/status/etools-status';
-import './assessment-status-transition-actions';
+import './status-transitions/assessment-status-transition-actions';
 import isNil from 'lodash-es/isNil';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
 
