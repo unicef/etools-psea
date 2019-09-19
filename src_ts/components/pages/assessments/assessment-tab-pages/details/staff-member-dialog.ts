@@ -4,13 +4,13 @@ import {PolymerElement} from '@polymer/polymer';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
-import {EtoolsStaffMemberModel} from '../../../../user/user-model';
+import {EtoolsStaffMemberModel} from '../../../../../types/user-model';
 import {PaperInputElement} from '@polymer/paper-input/paper-input';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest} from '../../../../utils/request-helper';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {fireEvent} from '../../../../utils/fire-custom-event';
-import {cloneDeep} from '../../../../utils/utils';
+import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 
@@ -173,11 +173,14 @@ export class StaffMemberDialog extends LitElement {
   @property({type: Object})
   toastEventSource!: LitElement;
 
+  private initialItem!: EtoolsStaffMemberModel;
+
   public openDialog() {
     this.isNewRecord = !(parseInt(this.editedItem.id) > 0);
     this.dialogTitle = this.isNewRecord ? 'Add New Firm Staff Member' : 'Edit Firm Staff Member';
     this.confirmBtnText = this.isNewRecord ? 'Add' : 'Save';
     this.dialogOpened = true;
+    this.initialItem = cloneDeep(this.editedItem);
   }
 
   private handleDialogClosed() {
@@ -236,22 +239,39 @@ export class StaffMemberDialog extends LitElement {
 
     const options = {
       method: this.isNewRecord ? 'POST' : 'PATCH',
-      url: getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url + this.editedItem.id + '/'
+      url: getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url! + this.editedItem.id + '/'
     };
 
-    makeRequest(options, this.editedItem)
-      .then((resp: any) => this._handleResponse(resp))
-      .catch((err: any) => this._handleError(err))
-      .then(() => this.requestInProgress = false);
+    if (this._staffMemberDataHasChanged()) {
+      makeRequest(options, this.editedItem)
+        .then((resp: any) => this._staffMemberDataUpdateComplete(resp))
+        .catch((err: any) => this._handleError(err))
+        .then(() => this.requestInProgress = false);
+    } else {
+      if (this.initialItem.hasAccess !== this.editedItem.hasAccess) {
+        this._staffMemberDataUpdateComplete(this.editedItem);
+      } else {
+        this.requestInProgress = false;
+        fireEvent(this.toastEventSource, 'toast', {
+          text: `No changes have been detected to ${this.editedItem.user.first_name} ${this.editedItem.user.last_name}.`
+        });
+
+      }
+    }
   }
 
-  _handleResponse(resp: any) {
+  private _staffMemberDataHasChanged() {
+    return !isJsonStrMatch(this.initialItem.user, this.editedItem.user);
+  }
+
+  _staffMemberDataUpdateComplete(resp: any) {
+    this.requestInProgress = false;
     fireEvent(this, 'staff-member-updated', {...resp, hasAccess: this.editedItem.hasAccess});
     this.handleDialogClosed();
   }
 
   _handleError(err: any) {
-    let msg = formatServerErrorAsText(err);
+    const msg = formatServerErrorAsText(err);
     logError(msg, 'staff-member', err);
     fireEvent(this.toastEventSource, 'toast', {text: msg});
   }

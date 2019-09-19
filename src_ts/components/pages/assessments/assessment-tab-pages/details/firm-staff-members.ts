@@ -17,7 +17,7 @@ import './staff-member-dialog';
 import {StaffMemberDialog} from './staff-member-dialog';
 import {cloneDeep} from '../../../../utils/utils';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
-import {EtoolsStaffMemberModel} from '../../../../user/user-model';
+import {EtoolsStaffMemberModel} from '../../../../../types/user-model';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 
@@ -196,7 +196,7 @@ export class FirmStaffMembers extends LitElement {
     document.querySelector('body')!.appendChild(this.dialogStaffMember);
   }
 
-  onStaffMemberSaved(e: any) {
+  onStaffMemberSaved(e: CustomEvent) {
     const savedItem = e.detail;
     this.updateItemData(savedItem);
     this.updateFirmAssessorStaffAccess(savedItem as EtoolsStaffMemberModel);

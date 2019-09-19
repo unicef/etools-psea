@@ -24,6 +24,7 @@ export interface EtoolsUserModel {
 }
 export interface EtoolsUserPermissions{
   canAddAssessment: boolean;
+  canExportAssessment: boolean;
 }
 export interface EtoolsStaffMemberModel {
   id: number;
@@ -39,4 +40,13 @@ export interface EtoolsStaffUserModel {
 export interface EtoolsStaffMemberProfileModel {
   job_title: string;
   phone_number: string;
+}
+
+export interface UnicefUser {
+  id: string;
+  first_name: string;
+  last_name: string;
+  middle_name: string;
+  name: string;
+  email: string;
 }

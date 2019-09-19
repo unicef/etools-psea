@@ -8,7 +8,7 @@ import '@unicef-polymer/etools-dropdown/etools-dropdown-multi';
 import '@unicef-polymer/etools-date-time/datepicker-lite';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {buttonsStyles} from '../../../../styles/button-styles';
-import {GenericObject, UnicefUser} from '../../../../../types/globals';
+import {GenericObject} from '../../../../../types/globals';
 import './partner-details';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {connect} from 'pwa-helpers/connect-mixin';
@@ -24,6 +24,8 @@ import {formatDate} from '../../../../utils/date-utility';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import DatePickerLite from '@unicef-polymer/etools-date-time/datepicker-lite';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
+import {UnicefUser} from '../../../../../types/user-model';
+import {updateAssessorData, updateAssessmentData} from '../../../../../redux/actions/page-data';
 
 /**
  * @customElement
@@ -140,7 +142,7 @@ export class AssessmentInfo extends connect(store)(LitElement) {
       this.partners = [...state.commonData!.partners];
     }
     if (state.pageData && !isJsonStrMatch(this.assessment, state.pageData!.currentAssessment)) {
-      this.assessment = {...state.pageData!.currentAssessment};
+      this.assessment = {...state.pageData!.currentAssessment} as Assessment;
       this.originalAssessment = cloneDeep(this.assessment);
       this.isNew = !this.assessment.id;
       this.editMode = this.isNew;
@@ -209,9 +211,13 @@ export class AssessmentInfo extends connect(store)(LitElement) {
     const body = this.assessment;
 
     makeRequest(options, body)
-      .then((response: any) =>
-        updateAppLocation(`/assessments/${response.id}/details`, true)
-      )
+      .then((response: any) => {
+        if (this.isNew) {
+          updateAppLocation(`/assessments/${response.id}/details`, true);
+        } else {
+          store.dispatch(updateAssessmentData(response));
+        }
+      })
       .catch(_err => fireEvent(this, 'toast', {text: 'Error saving Assessment Info.'}));
   }
 

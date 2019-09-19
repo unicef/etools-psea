@@ -5,6 +5,8 @@ import {GenericObject} from "../../types/globals";
 
 export const UPDATE_UNICEF_USERS_DATA = 'UPDATE_UNICEF_USERS_DATA';
 export const SET_PARTNERS = 'SET_PARTNERS';
+export const SET_OFFICES = 'SET_OFFICES';
+export const SET_SECTIONS = 'SET_SECTIONS';
 export const SET_EXTERNAL_INDIVIDUALS = 'SET_EXTERNAL_INDIVIDUALS';
 export const SET_ASSESSING_FIRMS = 'SET_ASSESSING_FIRMS';
 
@@ -12,7 +14,15 @@ export interface CommonDataActionUpdateUnicefUsersData extends Action<'UPDATE_UN
   unicefUsersData: object[];
 }
 
-export type CommonDataAction = CommonDataActionUpdateUnicefUsersData;
+export interface CommonDataActionSetOffices extends Action<'SET_OFFICES'> {
+  offices: object[];
+}
+
+export interface CommonDataActionSetSections extends Action<'SET_SECTIONS'> {
+  sections: object[];
+}
+
+export type CommonDataAction = CommonDataActionUpdateUnicefUsersData | CommonDataActionSetOffices | CommonDataActionSetSections;
 
 export const updateUnicefUsersData: ActionCreator<CommonDataActionUpdateUnicefUsersData> =
     (unicefUsersData: object[]) => {
@@ -29,12 +39,36 @@ export const setPartners = (partners: []) => {
   };
 };
 
+export const setOffices = (offices: []) => {
+  return {
+    type: SET_OFFICES,
+    offices
+  }
+}
+
+export const setSections = (sections: []) => {
+  return {
+    type: SET_SECTIONS,
+    sections
+  }
+}
+
 export const setExternalIndividuals = (externalIndividuals: []) => {
   return {
     type: SET_EXTERNAL_INDIVIDUALS,
     externalIndividuals
   };
 };
+
+export const loadSections = () => (dispatch: any) => {
+  makeRequest(new RequestEndpoint(etoolsEndpoints.sections.url!))
+       .then((resp: any) => dispatch(setSections(resp)))
+}
+
+export const loadOffices = () => (dispatch: any) => {
+  makeRequest(new RequestEndpoint(etoolsEndpoints.offices.url!))
+       .then((resp: any) => dispatch(setOffices(resp)))
+}
 
 export const setAssessingFirms = (assessingFirms: []) => {
   return {

@@ -9,6 +9,10 @@ import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {cloneDeep} from '../../../../utils/utils';
 import get from 'lodash-es/get';
+import {requestAssessmentData} from '../../../../../redux/actions/page-data';
+import {fireEvent} from '../../../../utils/fire-custom-event';
+import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 
 /**
  * @customElement
@@ -18,7 +22,7 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   render() {
     // language=HTML
     return html`
-      ${gridLayoutStylesLit}
+      ${gridLayoutStylesLit} ${SharedStylesLit}
       <style>
         :host {
           display: block;
@@ -42,11 +46,11 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
         }
       </style>
 
-      <div class="overall layout-horizontal">
+      <div class="overall layout-horizontal" ?hidden="${!this.overallRatingDisplay}">
         <div class="col-5 r-align">Overall Assessment:</div><div class="col-1"></div>
-        <div class="col-6 l-align"> Positive</div>
+        <div class="col-6 l-align"> ${this.overallRatingDisplay}</div>
       </div>
-      ${this._getQuestionnaireItemsTemplate(this.questionnaireItems, this.answers)}
+      ${this._getQuestionnaireItemsTemplate(this.questionnaireItems, this.answers, this.canEditAnswers)}
     `;
   }
 
@@ -59,11 +63,22 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   @property({type: String})
   assessmentId!: string | number;
 
+  @property({type: String})
+  overallRatingDisplay!: string;
+
+  @property({type: Boolean})
+  canEditAnswers!: boolean;
+
   stateChanged(state: RootState) {
     let newAssessmentId = get(state, 'app.routeDetails.params.assessmentId');
     if (newAssessmentId && newAssessmentId !== this.assessmentId) {
       this.assessmentId = newAssessmentId;
       this.getAnswers();
+    }
+    let currentAssessment = get(state, 'pageData.currentAssessment');
+    if (currentAssessment) {
+      this.setOverallRatingDisplay(currentAssessment.overall_rating);
+      this.setAnswersEditPermision(get(currentAssessment, 'permissions.edit.answers'));
     }
   }
 
@@ -72,19 +87,56 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     this.getQuestionnaire();
   }
 
+  setAnswersEditPermision(canEdit: boolean | undefined) {
+    this.canEditAnswers = !!canEdit;
+  }
 
-  _getQuestionnaireItemsTemplate(questionnaireItems: Question[], answers: Answer[]) {
+  setOverallRatingDisplay(overall_rating: {rating: number, display: string}) {
+    if (overall_rating && overall_rating.display !== 'Unknown') {
+      this.overallRatingDisplay = overall_rating.display;
+    } else {
+      this.overallRatingDisplay = '';
+    }
+  }
+
+  _getQuestionnaireItemsTemplate(questionnaireItems: Question[], answers: Answer[], canEditAnswers: boolean) {
     if (!questionnaireItems || !questionnaireItems.length) {
       return '';
     }
 
     return this.questionnaireItems.map((question: Question) => {
       let answer = this._getAnswerByQuestionId(question.id, answers);
+
       return html`<questionnaire-item .question="${cloneDeep(question)}"
-       .answer="${answer}"
-       .editMode="${(!answer || !answer.id)}"
-       .assessmentId="${this.assessmentId}"></questionnaire-item>`
+        .answer="${answer}"
+        .editMode="${canEditAnswers && (!answer || !answer.id)}"
+        .canEditAnswers="${this.canEditAnswers}"
+        .assessmentId="${this.assessmentId}"
+        @answer-saved="${this.checkOverallRating}">
+       </questionnaire-item>`
       });
+  }
+
+  checkOverallRating(e: CustomEvent) {
+    const updatedAnswer = e.detail;
+    if (!updatedAnswer) {
+      return;
+    }
+
+    let index = this.answers.findIndex(a => Number(a.id) === Number(updatedAnswer.id));
+    if (index > -1) {
+      this.answers.splice(index, 0, updatedAnswer);
+    } else {
+      this.answers.push(updatedAnswer);
+    }
+
+    if (this.answers.length === this.questionnaireItems.length) {
+      store.dispatch(requestAssessmentData(Number(this.assessmentId), this._handleErrOnGetAssessment.bind(this)));
+    }
+  }
+
+  _handleErrOnGetAssessment(err: any) {
+    fireEvent(this, 'toast', {text: formatServerErrorAsText(err)})
   }
 
   _getAnswerByQuestionId(questionId: string | number, answers: Answer[]) {
