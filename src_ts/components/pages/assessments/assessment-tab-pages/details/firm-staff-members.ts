@@ -65,7 +65,7 @@ export class FirmStaffMembers extends LitElement {
           </paper-icon-button>
         </div>
 
-        <div class="mdc-data-table w100">
+        <div class="w100">
           <etools-table .columns="${this.listColumns}"
             .items="${this.staffMembers}"
             .paginator="${this.paginator}"
@@ -139,7 +139,7 @@ export class FirmStaffMembers extends LitElement {
 
   removeListeners() {
     if (this.dialogStaffMember) {
-      this.dialogStaffMember.removeEventListener('staff-member-updated', this.onStaffMemberSaved);
+      this.dialogStaffMember.removeEventListener('staff-member-updated', this.onStaffMemberSaved as any);
       document.querySelector('body')!.removeChild(this.dialogStaffMember);
     }
   }
@@ -192,7 +192,7 @@ export class FirmStaffMembers extends LitElement {
     this.dialogStaffMember.setAttribute('id', 'dialogStaffMember');
     this.dialogStaffMember.toastEventSource = this;
     this.onStaffMemberSaved = this.onStaffMemberSaved.bind(this);
-    this.dialogStaffMember.addEventListener('staff-member-updated', this.onStaffMemberSaved);
+    this.dialogStaffMember.addEventListener('staff-member-updated', this.onStaffMemberSaved as any);
     document.querySelector('body')!.appendChild(this.dialogStaffMember);
   }
 
