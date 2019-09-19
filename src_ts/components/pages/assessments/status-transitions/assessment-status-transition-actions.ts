@@ -64,6 +64,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
         </paper-button>
       `;
       case 'in_progress':
+      case 'rejected':
         return html`
         <paper-button class="primary right-icon" raised @tap="${() => this.updateAssessmentStatus('submit')}">
           Submit
