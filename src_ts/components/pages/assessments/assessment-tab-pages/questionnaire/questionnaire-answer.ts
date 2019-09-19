@@ -128,6 +128,11 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
     if (get(state, 'app.routeDetails.params.assessmentId')) {
       let id = state.app!.routeDetails.params!.assessmentId;
       this.assessmentId = id === 'new' ? null : id;
+    }
+  }
+
+  updated(changedProperties: any) {
+    if (this.answer.id === null && changedProperties.has('answer')) {
       this.clearControls();
     }
   }
