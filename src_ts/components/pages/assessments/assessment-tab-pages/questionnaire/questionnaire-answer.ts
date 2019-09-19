@@ -191,7 +191,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
     this.hideRatingRequiredMsg = !!target.name;
   }
 
-  _checkedEvidenceChanged(evidence: ProofOfEvidence, checked: boolean, answer: Answer) {
+  _checkedEvidenceChanged(evidence: ProofOfEvidence, checked: boolean, _answer: Answer) {
     if (evidence.requires_description) {
       this.showOtherInput = checked;
       // fix for display Other text in no-edit mode
