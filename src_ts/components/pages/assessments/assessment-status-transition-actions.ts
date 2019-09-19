@@ -143,7 +143,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   }
 
   updateConfirmationMsgAction(action: string) {
-    this.confirmationMSg.innerText = `Are you sure you want to ${action} this assessment?`;
+    this.confirmationMSg.innerText = `Are you sure you want to ${action} this assessment`;
   }
 
   onStatusChangeConfirmation(e: CustomEvent) {
