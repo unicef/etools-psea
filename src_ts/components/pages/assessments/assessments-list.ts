@@ -285,7 +285,13 @@ export class AssessmentsList extends connect(store)(LitElement) {
     let endpoint = {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`};
     return makeRequest(endpoint).then((response: GenericObject) => {
       this.paginator = getPaginator(this.paginator, response);
-      this.listData = [...response.results];
+      const assessments = response.results;
+      assessments.map( (assessment) => {
+        if (assessment.status === 'in_progress') {
+          assessment.status = 'in progress';
+        }
+      });
+      this.listData = [...assessments];
     })
       .catch((err: any) => console.error(err));
   }
