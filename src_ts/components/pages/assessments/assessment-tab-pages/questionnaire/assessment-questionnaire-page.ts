@@ -13,6 +13,7 @@ import {requestAssessmentData} from '../../../../../redux/actions/page-data';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
+import { QuestionnaireItemElement } from './questionnaire-item';
 
 /**
  * @customElement
@@ -109,15 +110,16 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
 
       return html`<questionnaire-item .question="${cloneDeep(question)}"
         .answer="${answer}"
-        .editMode="${canEditAnswers && (!answer || !answer.id)}"
         .canEditAnswers="${this.canEditAnswers}"
         .assessmentId="${this.assessmentId}"
-        @answer-saved="${this.checkOverallRating}">
+        @answer-saved="${this.checkOverallRating}"
+        @answer-cancelled="${this.answerCancelled}">
        </questionnaire-item>`
       });
   }
 
   checkOverallRating(e: CustomEvent) {
+    console.log("event recieved for saving")
     const updatedAnswer = e.detail;
     if (!updatedAnswer) {
       return;
@@ -133,6 +135,14 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     if (this.answers.length === this.questionnaireItems.length) {
       store.dispatch(requestAssessmentData(Number(this.assessmentId), this._handleErrOnGetAssessment.bind(this)));
     }
+  }
+
+  answerCancelled(e: CustomEvent) {
+    let questionId = e.detail.id
+    let oldAnswer = this._getAnswerByQuestionId(questionId, this.answers);
+    let questionItem = e.target as QuestionnaireItemElement
+    questionItem.answer = oldAnswer
+    questionItem.questionnaireAnswerElement.requestUpdate("answer", oldAnswer)
   }
 
   _handleErrOnGetAssessment(err: any) {
