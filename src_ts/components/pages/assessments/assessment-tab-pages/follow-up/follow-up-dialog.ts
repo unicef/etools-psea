@@ -18,6 +18,7 @@ import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import isEqual from 'lodash-es/isEqual';
+import '../../../../common/layout/etools-error-warn-box';
 
 @customElement('follow-up-dialog')
 export class FollowUpDialog extends connect(store)(LitElement) {
@@ -26,14 +27,6 @@ export class FollowUpDialog extends connect(store)(LitElement) {
       ${gridLayoutStylesLit}
       ${SharedStylesLit}
       <style>
-        :host .copy-warning {
-          position: relative;
-          margin-bottom: 10px;
-          padding: 20px 24px;
-          background-color: var(--secondary-background-color);
-          font-size: 15px;
-        }
-
         etools-dropdown {
           --esmm-external-wrapper: {
             width: 100%;
@@ -59,10 +52,9 @@ export class FollowUpDialog extends connect(store)(LitElement) {
                      @confirm-btn-clicked="${this.onConfirmBtnClick}"
                      @close="${this.handleDialogClosed}">
         <!-- TODO: The following warning may be replaced -->
-        ${this.watchForChanges ? html`
-            <div class="copy-warning">
-                It is required to change at least one of the fields below.
-            </div>` : ''}
+        
+        <etools-error-warn-box .messages="${this.warningMessages}">
+        </etools-error-warn-box>
 
         <div class="layout-horizontal">
           <div class="col col-6">
@@ -235,8 +227,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   @property({type: Object})
   toastEventSource!: LitElement;
 
-  @property({type: Boolean})
-  watchForChanges: boolean = false;
+  @property({type: Array, reflect: true})
+  warningMessages: string[] = [];
 
   stateChanged(state: RootState) {
     if (state.commonData) {
@@ -262,9 +254,9 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   }
 
   updated(changedProperties: GenericObject) {
-    if (this.watchForChanges && !changedProperties.has('watchForChanges') &&
+    if (this.warningMessages.length && !changedProperties.has('warningMessages') && 
         !isEqual(this.editedItem, changedProperties.get('editedItem'))) {
-      this.watchForChanges = !this.watchForChanges;
+        this.warningMessages.pop();
     }
   }
 
@@ -339,10 +331,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   }
 
   public openDialog() {
+    if (!this.editedItem.id) {this.resetEditedItem();}
     this.isNewRecord = !this.editedItem.id || this.editedItem.id == 'new';
-    if (this.isNewRecord) {
-      this.resetEditedItem();
-    }
     this.dialogTitle = this.isNewRecord ? 'Add Action Point' : 'Edit Action Point';
     this.confirmBtnTxt = this.isNewRecord ? 'Add' : 'Save';
     this.dialogOpened = true;
