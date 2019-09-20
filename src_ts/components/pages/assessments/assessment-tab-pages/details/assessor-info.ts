@@ -14,7 +14,7 @@ import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../../../redux/store';
 import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
-import {Assessment, Assessor, AssessorTypes} from '../../../../../types/assessment';
+import {Assessment, Assessor, AssessorTypes, AssessmentPermissions} from '../../../../../types/assessment';
 import {AssessingFirm} from './assessing-firm';
 import {ExternalIndividual} from './external-individual';
 import {fireEvent} from '../../../../utils/fire-custom-event';
@@ -24,13 +24,14 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
 import {saveAssessorData, updateAssessmentData} from '../../../../../redux/actions/page-data';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+import PermissionsMixin from '../../../mixins/permissions-mixins';
 
 /**
  * @customElement
  * @LitElement
  */
 @customElement('assessor-info')
-export class AssessorInfo extends connect(store)(LitElement) {
+export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
 
   render() {
     // language=HTML
@@ -55,7 +56,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
       <etools-content-panel panel-title="Primary Assessor">
         <div slot="panel-btns">
           <paper-icon-button
-                ?hidden="${this.hideEditIcon(this.isNew, this.editMode)}"
+                ?hidden="${this.hideEditIcon(this.isNew, this.editMode, this.canEditAssessorInfo)}"
                 @tap="${this.allowEdit}"
                 icon="create">
           </paper-icon-button>
@@ -63,20 +64,13 @@ export class AssessorInfo extends connect(store)(LitElement) {
 
         <div class="row-padding-v">
           <label class="paper-label">Assessor is:</label>
-          <paper-radio-group .selected="${this.getAssessorType(this.assessor)}"
-              ?readonly="${this.isReadonly(this.editMode)}"
-              @selected-changed="${(e: CustomEvent) =>
-                this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
-            <paper-radio-button name="staff">Unicef Staff</paper-radio-button>
-            <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
-            <paper-radio-button name="external">External Individual</paper-radio-button>
-          </paper-radio-group>
+          ${this._getAssessorTypeTemplate(this.canEditAssessorInfo, this.isNew, this.editMode, this.assessor)}
         </div>
 
         ${this._getTemplateByAssessorType(this.assessor, this.editMode, this.isNew)}
 
         <div class="layout-horizontal right-align row-padding-v"
-            ?hidden="${this.hideActionButtons(this.isNew, this.editMode)}">
+            ?hidden="${this.hideActionButtons(this.isNew, this.editMode, this.canEditAssessorInfo)}">
           <paper-button class="default" @tap="${this.cancelAssessorUpdate}">
             Cancel
           </paper-button>
@@ -86,7 +80,24 @@ export class AssessorInfo extends connect(store)(LitElement) {
         </div>
       </etools-content-panel>
 
-      ${this.getFirmStaffMembersHtml(this.isNew, this.assessor)}
+      ${this.getFirmStaffMembersHtml(this.isNew, this.assessor, this.canEditAssessorInfo)}
+    `;
+  }
+
+  _getAssessorTypeTemplate(canEditAssessorInfo: boolean, isNew: boolean, editMode: boolean, assessor: Assessor) {
+    if (!canEditAssessorInfo && isNew) {
+      return '—';
+    }
+
+    return html`
+      <paper-radio-group .selected="${this.getAssessorType(assessor)}"
+          ?readonly="${!editMode}"
+          @selected-changed="${(e: CustomEvent) =>
+            this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
+        <paper-radio-button name="staff">Unicef Staff</paper-radio-button>
+        <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
+        <paper-radio-button name="external">External Individual</paper-radio-button>
+      </paper-radio-group>
     `;
   }
 
@@ -107,7 +118,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
             option-value="id"
             required
             auto-validate
-            ?readonly="${this.isReadonly(this.editMode)}">
+            ?readonly="${!this.editMode}">
           </etools-dropdown>
         `;
       case 'firm':
@@ -123,7 +134,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
         return html`
           <external-individual id="externalIndividual"
            .assessor="${cloneDeep(this.assessor)}"
-           .editMode="${this.editMode}">
+           .editMode="${editMode}">
           </external-individual>
         `;
       default:
@@ -131,12 +142,13 @@ export class AssessorInfo extends connect(store)(LitElement) {
     }
   }
 
-  getFirmStaffMembersHtml(isNew: boolean, assessor: Assessor) {
+  getFirmStaffMembersHtml(isNew: boolean, assessor: Assessor, canEditAssessorInfo: boolean) {
     if (!assessor) {
-      return;
+      return '';
     }
     return html`<firm-staff-members id="firmStaffMembers"
         ?hidden="${this.hideFirmStaffMembers(isNew, assessor, this.editMode)}"
+        .canEdit="${canEditAssessorInfo}"
         .assessorId="${this.assessor.id}"
         .assessmentId="${this.assessment.id}"
         .currentFirmAssessorStaffWithAccess="${this.assessor.auditor_firm_staff}">
@@ -167,6 +179,9 @@ export class AssessorInfo extends connect(store)(LitElement) {
   @query('#externalIndividual')
   externalIndividualElement!: ExternalIndividual;
 
+  @property({type: Boolean})
+  canEditAssessorInfo!: boolean;
+
   stateChanged(state: RootState) {
     if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
@@ -177,6 +192,7 @@ export class AssessorInfo extends connect(store)(LitElement) {
       const newAssessment = state.pageData!.currentAssessment;
       if (!isJsonStrMatch(this.assessment, newAssessment)) {
         this.assessment = cloneDeep(newAssessment);
+        this.setEditAssessorPermissions(this.assessment.permissions);
       }
     }
 
@@ -190,11 +206,17 @@ export class AssessorInfo extends connect(store)(LitElement) {
     }
   }
 
+  setEditAssessorPermissions(permissions: AssessmentPermissions) {
+    this.canEditAssessorInfo = permissions.edit.assessor;
+  }
+
   protected initializeRelatedData(): void {
     this.isNew = !this.assessor.id;
-    this.editMode = this.isNew;
     this.originalAssessor = cloneDeep(this.assessor);
     this.requestUpdate().then(() => {
+      //Make sure isNew and canEditAssessorInfo are set before computing editMode
+      this.editMode = this.isNew && this.canEditAssessorInfo;
+
       // load staff members after staff members element is initialized
       if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessor.auditor_firm) {
         this.loadFirmStaffMembers(this.assessor.auditor_firm!);
@@ -232,9 +254,12 @@ export class AssessorInfo extends connect(store)(LitElement) {
     if (!this.assessor) {
       return;
     }
-    this.assessor.assessor_type = assessorType as AssessorTypes;
-    this.assessor.user = null;
-    this.requestUpdate();
+    const newAssessorType = assessorType as AssessorTypes;
+    if (this.assessor.assessor_type != newAssessorType) {
+      this.assessor.assessor_type = newAssessorType;
+      this.assessor.user = null;
+      this.requestUpdate();
+    }
   }
 
   getAssessorType(assessor: Assessor | null) {
@@ -261,13 +286,13 @@ export class AssessorInfo extends connect(store)(LitElement) {
 
     store.dispatch(saveAssessorData(this.assessment.id as number,
       this.assessor.id, this.collectAssessorData(), this.handleAssessorSaveError.bind(this)))
-        .then(() => {
+      .then(() => {
         // update assessor in assessment object
         const assessorName = this.getAssessorName();
         if (assessorName) {
           store.dispatch(updateAssessmentData({...this.assessment, assessor: assessorName}));
         }
-    });
+      });
   }
 
   getAssessorName() {
@@ -358,18 +383,6 @@ export class AssessorInfo extends connect(store)(LitElement) {
 
   allowEdit() {
     this.editMode = true;
-  }
-
-  hideEditIcon(isNew: boolean, editMode: boolean) {
-    return isNew || editMode;
-  }
-
-  hideActionButtons(isNew: boolean, editMode: boolean) {
-    return !(isNew || editMode);
-  }
-
-  isReadonly(editMode: boolean) {
-    return !editMode;
   }
 
 }

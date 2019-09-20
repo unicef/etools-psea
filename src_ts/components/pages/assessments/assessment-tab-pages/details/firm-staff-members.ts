@@ -20,6 +20,7 @@ import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {EtoolsStaffMemberModel} from '../../../../../types/user-model';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 
 /**
  * @customElement
@@ -31,7 +32,7 @@ export class FirmStaffMembers extends LitElement {
   render() {
     // language=HTML
     return html`
-      ${gridLayoutStylesLit}
+      ${gridLayoutStylesLit}${SharedStylesLit}
       <style>
         :host {
           display: block;
@@ -60,17 +61,18 @@ export class FirmStaffMembers extends LitElement {
       <etools-content-panel panel-title="Firm Staff Members with Access">
         <div slot="panel-btns">
           <paper-icon-button
+                ?hidden="${!this.canEdit}"
                 @tap="${() => this.openStaffMemberDialog()}"
                 icon="add">
           </paper-icon-button>
         </div>
 
-        <div class="mdc-data-table w100">
+        <div class="w100">
           <etools-table .columns="${this.listColumns}"
             .items="${this.staffMembers}"
             .paginator="${this.paginator}"
             @paginator-change="${this.paginatorChange}"
-            showEdit
+            .showEdit="${this.canEdit}"
             @edit-item="${this.openStaffMemberDialog}"
             @item-changed="${this.itemChanged}">
           </etools-table>
@@ -127,6 +129,10 @@ export class FirmStaffMembers extends LitElement {
       type: EtoolsTableColumnType.Text
     }
   ];
+
+  @property({type: Boolean})
+  canEdit!: boolean;
+
   private dialogStaffMember!: StaffMemberDialog;
 
   @property({type: String})
@@ -139,7 +145,7 @@ export class FirmStaffMembers extends LitElement {
 
   removeListeners() {
     if (this.dialogStaffMember) {
-      this.dialogStaffMember.removeEventListener('staff-member-updated', this.onStaffMemberSaved);
+      this.dialogStaffMember.removeEventListener('staff-member-updated', this.onStaffMemberSaved as any);
       document.querySelector('body')!.removeChild(this.dialogStaffMember);
     }
   }
@@ -192,7 +198,7 @@ export class FirmStaffMembers extends LitElement {
     this.dialogStaffMember.setAttribute('id', 'dialogStaffMember');
     this.dialogStaffMember.toastEventSource = this;
     this.onStaffMemberSaved = this.onStaffMemberSaved.bind(this);
-    this.dialogStaffMember.addEventListener('staff-member-updated', this.onStaffMemberSaved);
+    this.dialogStaffMember.addEventListener('staff-member-updated', this.onStaffMemberSaved as any);
     document.querySelector('body')!.appendChild(this.dialogStaffMember);
   }
 
