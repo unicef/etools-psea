@@ -49,7 +49,7 @@ export const etoolsEndpoints: EtoolsEndpoints = {
     template: '/api/audit/audit-firms/<%=id%>/staff-members/'
   },
   partnerStaffMembers: {
-    template: '/api/v2/partners/<%=id%>/staff-members/'
+    template: '/api/v2/partners/<%=id%>/staff-members/?externals_module=psea'
   },
   offices: {
     url: '/api/offices/'
