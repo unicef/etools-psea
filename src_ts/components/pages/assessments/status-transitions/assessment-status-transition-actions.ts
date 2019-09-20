@@ -39,10 +39,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     `;
   }
 
-  cancelAssessmentStatusActionTmpl(assessment: Assessment) {
-    if (!this.canShowCancelAction(assessment)) {
-      return;
-    }
+  cancelBtnHtml() {
     return html`
       <paper-button class="default right-icon" raised @tap="${() => this.updateAssessmentStatus('cancel')}">
         Cancel
@@ -51,38 +48,76 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     `;
   }
 
+  assignBtnHtml() {
+    return html`
+      <paper-button class="primary right-icon" 
+          raised @tap="${() => this.updateAssessmentStatus('assign')}">
+        Assign
+        <iron-icon icon="assignment-ind"></iron-icon>
+      </paper-button>
+    `;
+  }
+
+  submitBtnHtml() {
+    return html`
+      <paper-button class="primary right-icon" 
+          raised @tap="${() => this.updateAssessmentStatus('submit')}">
+        Submit
+        <iron-icon icon="chevron-right"></iron-icon>
+      </paper-button>
+    `;
+  }
+
+  rejectBtnHtml() {
+    return html`
+      <paper-button class="error right-icon"
+        raised @tap="${() => this.updateAssessmentStatus('reject')}">
+        Reject
+        <iron-icon icon="assignment-return"></iron-icon>
+      </paper-button>
+    `;
+  }
+
+  finalizeBtnHtml() {
+    return html`
+      <paper-button class="success right-icon"
+          raised @tap="${() => this.updateAssessmentStatus('finalize')}">
+        Finalize
+        <iron-icon icon="chevron-right"></iron-icon>
+      </paper-button>
+    `;
+  }
+
+  cancelAssessmentStatusActionTmpl(assessment: Assessment) {
+    if (!this.canShowActionBtn(assessment.available_actions, 'cancel')) {
+      return;
+    }
+    return this.cancelBtnHtml();
+  }
+
   assessmentStatusActionBtnsTmpl(assessment: Assessment) {
     if (!this.canShowStatusActions(assessment)) {
       return;
     }
     switch (assessment.status) {
       case 'draft':
-        return html`
-        <paper-button class="primary right-icon" raised @tap="${() => this.updateAssessmentStatus('assign')}">
-          Assign
-          <iron-icon icon="assignment-ind"></iron-icon>
-        </paper-button>
-      `;
+        return this.canShowActionBtn(assessment.available_actions, 'assign')
+          ? this.assignBtnHtml()
+          : '';
       case 'in_progress':
       case 'rejected':
-        return html`
-        <paper-button class="primary right-icon" raised @tap="${() => this.updateAssessmentStatus('submit')}">
-          Submit
-          <iron-icon icon="chevron-right"></iron-icon>
-        </paper-button>
-      `;
+        return this.canShowActionBtn(assessment.available_actions, 'submit')
+          ? this.submitBtnHtml()
+          : '';
       case 'submitted':
         return html`
-       
-        <paper-button class="error right-icon" raised @tap="${() => this.updateAssessmentStatus('reject')}">
-          Reject
-          <iron-icon icon="assignment-return"></iron-icon>
-        </paper-button>
-        <paper-button class="success right-icon" raised @tap="${() => this.updateAssessmentStatus('finalize')}">
-          Finalize
-          <iron-icon icon="chevron-right"></iron-icon>
-        </paper-button>
-      `;
+          ${this.canShowActionBtn(assessment.available_actions, 'reject')
+            ? this.rejectBtnHtml()
+            : ''}
+          ${this.canShowActionBtn(assessment.available_actions, 'finalize')
+            ? this.finalizeBtnHtml()
+            : ''}
+          `;
       default:
         return '';
     }
@@ -112,9 +147,12 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     }
   }
 
-  canShowCancelAction(assessment: Assessment): boolean {
-    // TODO: include user group validation here, only for unicef users/unicef focal point can cancel
-    return assessment && !!assessment.id && ['submitted', 'final'].indexOf(this.assessment.status) === -1;
+  /**
+   * @param assessmentActionsList (assessment.available_actions will contain allowed actions)
+   * @param btnActionName
+   */
+  canShowActionBtn(assessmentActionsList: string[], btnActionName: string): boolean {
+    return assessmentActionsList.indexOf(btnActionName) > -1;
   }
 
   canShowStatusActions(assessment: Assessment) {
@@ -136,7 +174,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
         break;
       case 'cancel':
         // TODO: determine cancel validations by user group and add it to this condition
-        valid = this.assessment !== null && this.canShowCancelAction(this.assessment);
+        valid = this.assessment !== null;
         break;
     }
     return valid;
