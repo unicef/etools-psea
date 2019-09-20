@@ -109,6 +109,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
         <div class="layout-horizontal">
           <paper-textarea
                   id="descriptionInput"
+                  always-float-label
+                  placeholder="—"
                   required
                   allowed-pattern="[\d\s]"
                   value="${this.editedItem.description}"
