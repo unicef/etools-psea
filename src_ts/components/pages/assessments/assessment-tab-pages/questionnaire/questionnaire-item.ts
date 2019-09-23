@@ -133,6 +133,7 @@ export class QuestionnaireItemElement extends LitElement {
     } else {
       this.answer = new Answer();
     }
+    fireEvent(this, 'cancel-unsaved-changes', this.question.id);
   }
 
   saveAnswer() {
