@@ -127,12 +127,7 @@ export class QuestionnaireItemElement extends LitElement {
   }
 
   cancel() {
-    if (this.answer && this.answer.id) {
-      this.answer = cloneDeep(this.answer);
-      this.editMode = false;
-    } else {
-      this.answer = new Answer();
-    }
+    fireEvent(this, 'cancel-answer', this.question.id);
   }
 
   saveAnswer() {
