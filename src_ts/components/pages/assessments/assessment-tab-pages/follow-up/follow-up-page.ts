@@ -17,6 +17,14 @@ import {connect} from 'pwa-helpers/connect-mixin';
 export class FollowUpPage extends connect(store)(LitElement) {
   render() {
     return html`
+      <style>
+        :host {
+          --ecp-content: {
+            padding-right: 0;
+            padding-left: 0;
+          }
+        }
+      </style>
       <etools-content-panel panel-title="Action Points">
         <div slot="panel-btns">
           <paper-icon-button
@@ -130,7 +138,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
 
   copyActionPoint(event: GenericObject) {
     this.extractActionPointData(event.detail);
-    this.followUpDialog.watchForChanges = true;
+    this.followUpDialog.warningMessages = [...this.followUpDialog.warningMessages, "It is required to change at least one of the fields below."];
     this.followUpDialog.editedItem.id = 'new';
     this.openFollowUpDialog();
   }
