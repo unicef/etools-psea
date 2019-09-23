@@ -9,6 +9,7 @@ import {pageContentHeaderSlottedStyles} from '../../common/layout/page-content-h
 import {pageLayoutStyles} from '../../styles/page-layout-styles';
 
 import {GenericObject} from '../../../types/globals';
+import {Assessment} from '../../../types/assessment';
 import '../../common/layout/filters/etools-filters';
 import {
   assessmentsFilters,
@@ -286,7 +287,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
     return makeRequest(endpoint).then((response: GenericObject) => {
       this.paginator = getPaginator(this.paginator, response);
       const assessments = response.results;
-      assessments.map( (assessment) => {
+      assessments.forEach( (assessment: Assessment) => {
         if (assessment.status === 'in_progress') {
           assessment.status = 'in progress';
         }
