@@ -115,7 +115,7 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
         .canEditAnswers="${this.canEditAnswers}"
         .assessmentId="${this.assessmentId}"
         @answer-saved="${this.checkOverallRating}"
-        @cancel-unsaved-changes="${this.cancelUnsavedChanges}">
+        @cancel-answer="${this.cancelUnsavedChanges}">
        </questionnaire-item>`
       });
   }
