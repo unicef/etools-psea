@@ -67,11 +67,12 @@ export class AssessmentTabs extends connect(store)(LitElement) {
                      @iron-select="${this.handleTabChange}"></etools-tabs>
       </page-content-header>
 
+      <section class="elevation page-content no-padding" elevation="1">
+        <etools-error-warn-box .messages="${[this.assessment.rejected_comment]}">                     
+        </etools-error-warn-box>
+      </section>
+
       <div class="page-content">
-        <section class="elevation page-content no-padding" elevation="1">
-          <etools-error-warn-box .messages="${[this.assessment.rejected_comment]}">                     
-          </etools-error-warn-box>
-        </section>
         <assessment-details-page ?hidden="${!this.isActiveTab(this.activeTab, 'details')}">
         </assessment-details-page>
         <assessment-questionnaire-page ?hidden="${!this.isActiveTab(this.activeTab, 'questionnaire')}">
