@@ -105,18 +105,16 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
       return '';
     }
 
-
     return repeat(questionnaireItems, question => question.stamp, (question: Question) => {
       let answer = this._getAnswerByQuestionId(question.id, answers);
 
       return html`<questionnaire-item .question="${cloneDeep(question)}"
         .answer="${cloneDeep(answer)}"
-        .editMode="${canEditAnswers && (!answer || !answer.id)}"
         .canEditAnswers="${this.canEditAnswers}"
         .assessmentId="${this.assessmentId}"
         @answer-saved="${this.checkOverallRating}"
         @cancel-answer="${this.cancelUnsavedChanges}">
-       </questionnaire-item>`
+       </questionnaire-item>`;
       });
   }
 
@@ -163,7 +161,7 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
       .then((resp) => {
         resp.map(r => r.stamp = Date.now());
         this.questionnaireItems = resp;
-      })
+      });
   }
 
   getAnswers() {
@@ -171,7 +169,7 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     makeRequest(new RequestEndpoint(url))
     .then((resp) => {
       this.answers = resp;
-    })
+    });
   }
 
 }
