@@ -159,5 +159,8 @@ export const SharedStylesLit = html`
     .readonly {
       pointer-events: none;
     }
+    .font-bold{
+      font-weight: bold;
+    }
 </style>
 `;
