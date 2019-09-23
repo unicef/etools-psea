@@ -62,7 +62,6 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       <paper-textarea id="commentsElement" label="Comments" always-float-label class="row-padding-v"
         placeholder="—"
         .value="${this.answer.comments}"
-        @input="${this.changeValue}"
         ?readonly="${!this.editMode}">
       </paper-textarea>
       <div class="layout-vertical row-padding-v">
@@ -132,18 +131,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       this.clearControls();
     }
   }
-  changeValue(e: CustomEvent) {
-    let target = e.target as HTMLInputElement
-    let newValue = target.value;
-    switch (target.id) {
-      case ("commentsElement"):
-        this.answer.comments = newValue;
-        break;
-      // other cases can be handled here, the rating is already handled
-    }
-    this.answer.comments = newValue;
-    this.requestUpdate("answer")
-  }
+
   clearControls() {
     if (this.answer.id === null && this.ratingElement) {
       this.ratingElement.selected = '';
