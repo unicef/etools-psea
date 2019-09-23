@@ -110,7 +110,6 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
 
       return html`<questionnaire-item .question="${cloneDeep(question)}"
         .answer="${cloneDeep(answer)}"
-        .editMode="${canEditAnswers && (!answer || !answer.id)}"
         .canEditAnswers="${this.canEditAnswers}"
         .assessmentId="${this.assessmentId}"
         @answer-saved="${this.checkOverallRating}"
