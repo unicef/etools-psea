@@ -57,6 +57,7 @@ export class Question {
   ratings: Rating[] = [];
   evidences: ProofOfEvidence[] = [];
   document_types = [];
+  stamp = Date.now();
 }
 
 export class ProofOfEvidence {

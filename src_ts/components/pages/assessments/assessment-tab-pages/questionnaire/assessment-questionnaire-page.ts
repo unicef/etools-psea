@@ -1,4 +1,5 @@
 import {LitElement, html, property} from 'lit-element';
+import {repeat} from 'lit-html/directives/repeat';
 import './questionnaire-item';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
@@ -13,7 +14,6 @@ import {requestAssessmentData} from '../../../../../redux/actions/page-data';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
-import { QuestionnaireItemElement } from './questionnaire-item';
 
 /**
  * @customElement
@@ -105,21 +105,27 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
       return '';
     }
 
-    return this.questionnaireItems.map((question: Question) => {
+
+    return repeat(questionnaireItems, question => question.stamp, (question: Question) => {
       let answer = this._getAnswerByQuestionId(question.id, answers);
 
       return html`<questionnaire-item .question="${cloneDeep(question)}"
-        .answer="${answer}"
+        .answer="${cloneDeep(answer)}"
         .canEditAnswers="${this.canEditAnswers}"
         .assessmentId="${this.assessmentId}"
         @answer-saved="${this.checkOverallRating}"
-        @answer-cancelled="${this.answerCancelled}">
+        @cancel-answer="${this.cancelUnsavedChanges}">
        </questionnaire-item>`
       });
   }
 
+  cancelUnsavedChanges(e: CustomEvent) {
+    let q = this.questionnaireItems.find(q=> q.id == e.detail)!;
+    q.stamp = Date.now();
+    this.requestUpdate();
+  }
+
   checkOverallRating(e: CustomEvent) {
-    console.log("event recieved for saving")
     const updatedAnswer = e.detail;
     if (!updatedAnswer) {
       return;
@@ -137,14 +143,6 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     }
   }
 
-  answerCancelled(e: CustomEvent) {
-    let questionId = e.detail.id
-    let oldAnswer = this._getAnswerByQuestionId(questionId, this.answers);
-    let questionItem = e.target as QuestionnaireItemElement
-    questionItem.answer = oldAnswer
-    questionItem.questionnaireAnswerElement.requestUpdate("answer", oldAnswer)
-  }
-
   _handleErrOnGetAssessment(err: any) {
     fireEvent(this, 'toast', {text: formatServerErrorAsText(err)})
   }
@@ -159,10 +157,10 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   }
 
   getQuestionnaire() {
-    console.log('---GET questionnaire---');
     let url = etoolsEndpoints.questionnaire.url!;
     makeRequest(new RequestEndpoint(url))
       .then((resp) => {
+        resp.map(r => r.stamp = Date.now());
         this.questionnaireItems = resp;
       })
   }

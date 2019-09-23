@@ -127,7 +127,7 @@ export class QuestionnaireItemElement extends LitElement {
   }
 
   cancel() {
-    fireEvent(this, 'answer-cancelled', this.question);
+    fireEvent(this, 'cancel-answer', this.question.id);
     this.editMode = false;
     this.open = false;
   }
