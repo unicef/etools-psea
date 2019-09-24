@@ -27,7 +27,6 @@ export class QuestionnaireItemElement extends LitElement {
           --ecp-header-height: auto;
           --ecp-title-white-space: normal;
         }
-
         .description {
           white-space: pre-line;
           margin-left: -24px;
@@ -39,7 +38,26 @@ export class QuestionnaireItemElement extends LitElement {
           background-color: var(--secondary-background-color);
           color: black;
         }
-
+        .ratingInfoPnl{
+          padding: 6px;
+          margin: 10px 0px;
+          width: 100%;
+        }
+        .ratingTooltip {
+          --paper-tooltip-background: #FFFFFF;
+          width: 80%;
+          box-shadow: var(--paper-material-elevation-1_-_box-shadow);
+        }
+        .ratingTooltip span{
+          font-size: 16px;
+          color: var(--primary-text-color);
+          line-height:20px;
+        }
+        #rating-icon{
+          float: right;
+          padding-right: 0px;
+          color: var(--info-color);
+        }
       </style>
       <etools-content-panel panel-title="${this.question.subject}" ?show-expand-btn=${!this.editMode} .open="${this.open}">
         <div slot="panel-btns">
@@ -56,6 +74,12 @@ export class QuestionnaireItemElement extends LitElement {
         <div class="description">
           ${this.question.content}
         </div>
+
+        <paper-icon-button id="rating-icon" icon="info"></paper-icon-button>
+        <paper-tooltip for="rating-icon" class="ratingTooltip" position="left">
+            ${this.getRatingInfoHtml(this.question.rating_instructions)}
+        </paper-tooltip>
+
         <div class="row-padding-v">
           <questionnaire-answer id="questionnaireAnswerElement"
             ?hidden="${this.hideAnswer(this.answer, this.canEditAnswers)}"
@@ -117,7 +141,7 @@ export class QuestionnaireItemElement extends LitElement {
     if (!answer || !answer.id) {
       return ''; //it should be hidden in this case
     }
-    let ratingObj =  this.question.ratings.find((r: Rating) => Number(r.id) === Number(this.answer.rating));
+    let ratingObj = this.question.ratings.find((r: Rating) => Number(r.id) === Number(this.answer.rating));
     return ratingObj ? ratingObj.label : '';
   }
 
@@ -148,7 +172,7 @@ export class QuestionnaireItemElement extends LitElement {
         this.open = false;
         fireEvent(this, 'answer-saved', this.answer);
       })
-      .catch((err:any) => {
+      .catch((err: any) => {
         fireEvent(this, 'toast', {text: formatServerErrorAsText(err)});
       });
   }
@@ -156,7 +180,8 @@ export class QuestionnaireItemElement extends LitElement {
   _getUrl() {
     let url = getEndpoint(etoolsEndpoints.saveQuestionnaireAnswer, {
       assessmentId: this.assessmentId,
-      indicatorId: this.question.id}).url!;
+      indicatorId: this.question.id
+    }).url!;
     return url;
   }
 
@@ -199,6 +224,30 @@ export class QuestionnaireItemElement extends LitElement {
     } else {
       return (!answer || !answer.id);
     }
+  }
+
+  getRatingInfoHtml(instructions?: string) {
+    if (instructions) {
+      const dataToDisplay = JSON.parse(instructions);
+      // TO BE DONE
+    }
+    return html`
+      <div class='row-padding'>
+        <div class="layout-vertical col-12 ratingInfoPnl red-border">
+            <span class="paper-label font-bold">1- Absent: The organization is not working towards this standard</span>
+            <span class="paper-label">Give this score if the organization meets one of the criteria</span>
+        </div>
+        <div class="layout-vertical col-12 ratingInfoPnl orange-border">
+          <span class="paper-label font-bold">2-Progressing: The organization has made some progress towards applying this standard, but certain
+          aspecs need to be improved</span>
+            <span class="paper-label">Give this score if the organization meets one or two of the three criteria</span>
+        </div>
+        <div class="layout-vertical col-12 ratingInfoPnl green-border">
+          <span class="paper-label font-bold">3- Adequate: The organization fully meets this standard</span>
+          <span class="paper-label">Give this score if the organization meets all of the three criteria</span>
+        </div>
+      </div>
+    `;
   }
 
 }
