@@ -140,6 +140,9 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
   @property({type: Boolean})
   canEditAssessmentInfo!: boolean;
 
+  @property({type: Boolean})
+  isUnicefUser: boolean = false;
+
   stateChanged(state: RootState) {
     if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
@@ -147,10 +150,12 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     if (state.commonData && !isJsonStrMatch(this.partners, state.commonData!.partners)) {
       this.partners = [...state.commonData!.partners];
     }
-
+    if (state.user && state.user.data) {
+      this.isUnicefUser = state.user.data.is_unicef_user;
+    }
     let currentAssessment = get(state, 'pageData.currentAssessment')
     if (currentAssessment && Object.keys(currentAssessment).length &&
-       !isJsonStrMatch(this.assessment, currentAssessment)) {
+      !isJsonStrMatch(this.assessment, currentAssessment)) {
 
       this.assessment = {...currentAssessment} as Assessment;
       this.originalAssessment = cloneDeep(this.assessment);
@@ -163,7 +168,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
 
   setAssessmentInfoPermissions(permissions: AssessmentPermissions) {
     this.canEditAssessmentInfo = permissions.edit.partner || permissions.edit.focal_points ||
-                                 permissions.edit.assessment_date;
+      permissions.edit.assessment_date;
   }
 
   _allowEdit() {
@@ -179,18 +184,22 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     this.selectedPartner = event.detail.selectedItem;
 
     if (this.selectedPartner) {
-      this.assessment.partner = this.selectedPartner.id;
-      makeRequest(getEndpoint(etoolsEndpoints.partnerStaffMembers, {id: this.selectedPartner.id}) as RequestEndpoint)
-        .then((resp: any[]) => {
-          this.staffMembers = resp;
-          this.requestUpdate();
-        })
-        .catch((err: any) => {
-          this.staffMembers = [];
-          logError(err);
-        });
+      if (this.isUnicefUser) {
+        this.assessment.partner = this.selectedPartner.id;
+        makeRequest(getEndpoint(etoolsEndpoints.partnerStaffMembers, {id: this.selectedPartner.id}) as RequestEndpoint)
+          .then((resp: any[]) => {
+            this.staffMembers = resp;
+            this.requestUpdate();
+          })
+          .catch((err: any) => {
+            this.staffMembers = [];
+            logError(err);
+          });
+      } else {
+        this.staffMembers = this.assessment.partner_details ? this.assessment.partner_details.staff_members : [];
+        this.requestUpdate();
+      }
     }
-
   }
 
   _setSelectedDate(selDate: Date) {
