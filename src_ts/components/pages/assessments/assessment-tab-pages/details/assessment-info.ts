@@ -14,9 +14,7 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
-import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
-import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+import {makeRequest} from '../../../../utils/request-helper';
 import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
 import {Assessment, AssessmentInvalidator, AssessmentPermissions} from '../../../../../types/assessment';
 import {updateAppLocation} from '../../../../../routing/routes';
@@ -78,7 +76,6 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           .options="${this.unicefUsers}"
           option-label="name"
           option-value="id"
-          enable-none-option
           trigger-value-change-event
           @etools-selected-items-changed="${this._setSelectedFocalPoints}"
           ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.focal_points)}">
@@ -91,7 +88,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           fire-date-has-changed
           @date-has-changed="${(e: CustomEvent) => this._setSelectedDate(e.detail.date)}"
           ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.assessment_date)}"
-          required
+          ?required="${this.assessment.permissions.required.assessment_date}"
           ?invalid="${this.invalid.assessment_date}"
           auto-validate>
         </datepicker-lite>
@@ -148,22 +145,25 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
       this.partners = [...state.commonData!.partners];
     }
 
-    let currentAssessment = get(state, 'pageData.currentAssessment')
+    const currentAssessment = get(state, 'pageData.currentAssessment');
     if (currentAssessment && Object.keys(currentAssessment).length &&
-       !isJsonStrMatch(this.assessment, currentAssessment)) {
+      !isJsonStrMatch(this.assessment, currentAssessment)) {
 
       this.assessment = {...currentAssessment} as Assessment;
       this.originalAssessment = cloneDeep(this.assessment);
       this.isNew = !this.assessment.id;
       this.editMode = this.isNew;
       this.setAssessmentInfoPermissions(this.assessment.permissions);
+      this.staffMembers = (this.assessment && this.assessment.partner_details)
+        ? this.assessment.partner_details.staff_members
+        : [];
       setTimeout(() => this.resetValidations(), 10);
     }
   }
 
   setAssessmentInfoPermissions(permissions: AssessmentPermissions) {
     this.canEditAssessmentInfo = permissions.edit.partner || permissions.edit.focal_points ||
-                                 permissions.edit.assessment_date;
+      permissions.edit.assessment_date;
   }
 
   _allowEdit() {
@@ -179,18 +179,12 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     this.selectedPartner = event.detail.selectedItem;
 
     if (this.selectedPartner) {
+      if (this.assessment.partner != this.selectedPartner.id && this.staffMembers.length > 0) {
+        this.staffMembers = [];
+        this.requestUpdate();
+      }
       this.assessment.partner = this.selectedPartner.id;
-      makeRequest(getEndpoint(etoolsEndpoints.partnerStaffMembers, {id: this.selectedPartner.id}) as RequestEndpoint)
-        .then((resp: any[]) => {
-          this.staffMembers = resp;
-          this.requestUpdate();
-        })
-        .catch((err: any) => {
-          this.staffMembers = [];
-          logError(err);
-        });
     }
-
   }
 
   _setSelectedDate(selDate: Date) {
@@ -254,10 +248,6 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     if (!this.assessment.partner) {
       valid = false;
       invalid.partner = true;
-    }
-    if (!this.assessment.assessment_date) {
-      valid = false;
-      invalid.assessment_date = true;
     }
 
     this.invalid = cloneDeep(invalid);
