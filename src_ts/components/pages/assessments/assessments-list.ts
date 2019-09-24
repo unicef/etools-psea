@@ -131,6 +131,12 @@ export class AssessmentsList extends connect(store)(LitElement) {
   @property({type: Boolean})
   canExport: boolean = false;
 
+  @property({type: Boolean})
+  isUnicefUser: boolean = false;
+
+  @property({type: Array})
+  unicefFilters: string[] = ['assessor_staff', 'assessor_firm', 'assessor_external', 'staff_member'];
+
   @property({type: String})
   queryParams: string = '';
 
@@ -196,13 +202,17 @@ export class AssessmentsList extends connect(store)(LitElement) {
         }
       }
     }
-    if (state.user && state.user.permissions) {
-      this.canAdd = state.user.permissions.canAddAssessment;
-      this.canExport = state.user.permissions.canExportAssessment;
+    if (state.user) {
+      if (state.user.data) {
+        this.isUnicefUser = state.user.data.is_unicef_user;
+      }
+      if (state.user.permissions) {
+        this.canAdd = state.user.permissions.canAddAssessment;
+        this.canExport = state.user.permissions.canExportAssessment;
+      }
     }
-
     // init filters using default defined filters (including options)
-    let updatedFilters = [...assessmentsFilters];
+    let updatedFilters = this.isUnicefUser ? [...assessmentsFilters] : [...assessmentsFilters.filter(x => this.unicefFilters.indexOf(x.filterKey) < 0)];
     if (state.commonData) {
       // update dropdowns filters options from redux
       updatedFilters = [...this.updateDropdownFiltersOptionsFromCommonData(state.commonData, updatedFilters)];
@@ -213,15 +223,13 @@ export class AssessmentsList extends connect(store)(LitElement) {
   }
 
   updateDropdownFiltersOptionsFromCommonData(commonData: any, currentFilters: EtoolsFilter[]): EtoolsFilter[] {
-    let updatedFilters = updateFilterSelectionOptions(currentFilters,
-      'unicef_focal_point', commonData.unicefUsers);
+    let updatedFilters = updateFilterSelectionOptions(currentFilters, 'unicef_focal_point', commonData.unicefUsers);
     updatedFilters = updateFilterSelectionOptions(updatedFilters, 'partner', commonData.partners);
-    updatedFilters = updateFilterSelectionOptions(updatedFilters,
-      'assessor_external', commonData.externalIndividuals);
-    updatedFilters = updateFilterSelectionOptions(updatedFilters,
-      'assessor_staff', commonData.unicefUsers);
-    updatedFilters = updateFilterSelectionOptions(updatedFilters,
-      'assessor_firm', commonData.assessingFirms);
+    if (this.isUnicefUser) {
+      updatedFilters = updateFilterSelectionOptions(updatedFilters, 'assessor_external', commonData.externalIndividuals);
+      updatedFilters = updateFilterSelectionOptions(updatedFilters, 'assessor_staff', commonData.unicefUsers);
+      updatedFilters = updateFilterSelectionOptions(updatedFilters, 'assessor_firm', commonData.assessingFirms);
+    }
     return updatedFilters;
   }
 
