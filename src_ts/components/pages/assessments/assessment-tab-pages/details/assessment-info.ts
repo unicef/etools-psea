@@ -184,8 +184,8 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
         this.staffMembers = [];
         this.requestUpdate();
       }
+      this.assessment.partner = this.selectedPartner.id;
     }
-    this.assessment.partner = this.selectedPartner.id;
   }
 
   _setSelectedDate(selDate: Date) {
