@@ -78,7 +78,6 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           .options="${this.unicefUsers}"
           option-label="name"
           option-value="id"
-          enable-none-option
           trigger-value-change-event
           @etools-selected-items-changed="${this._setSelectedFocalPoints}"
           ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.focal_points)}">
