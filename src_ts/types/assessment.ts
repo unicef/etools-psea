@@ -1,3 +1,5 @@
+import {GenericObject} from './globals';
+
 export class Assessment {
   id?: number;
   assessment_date: string | null = '';
@@ -8,7 +10,9 @@ export class Assessment {
   status_list: string[][] = [];
   partner: string | null = '';
   focal_points?: string[] =[];
+  rejected_comment: string = '';
   permissions =  new AssessmentPermissions();
+  partner_details?: GenericObject;
 }
 
 export class AssessmentPermissions {
@@ -26,6 +30,7 @@ export class AssessmentPermissions {
     answers: false,
     assessor: false
   };
+
 }
 
 export class AssessmentInvalidator {
@@ -57,6 +62,7 @@ export class Question {
   ratings: Rating[] = [];
   evidences: ProofOfEvidence[] = [];
   document_types = [];
+  stamp = Date.now();
 }
 
 export class ProofOfEvidence {

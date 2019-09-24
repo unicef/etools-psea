@@ -24,6 +24,8 @@ export class QuestionnaireItemElement extends LitElement {
         :host {
           display: block;
           margin-bottom: 24px;
+          --ecp-header-height: auto;
+          --ecp-title-white-space: normal;
         }
         .description {
           white-space: pre-line;
@@ -57,7 +59,7 @@ export class QuestionnaireItemElement extends LitElement {
           color: var(--info-color);
         }
       </style>
-      <etools-content-panel panel-title="${this.question.subject}" show-expand-btn .open="${this.open}">
+      <etools-content-panel panel-title="${this.question.subject}" ?show-expand-btn=${!this.editMode} .open="${this.open}">
         <div slot="panel-btns">
           <paper-radio-button checked class="${this._getRadioBtnClass(this.answer)} readonly"
               ?hidden="${!this._answerIsSaved(this.answer)}">
@@ -66,7 +68,7 @@ export class QuestionnaireItemElement extends LitElement {
           <paper-icon-button
                 icon="create"
                 @tap="${this._allowEdit}"
-                ?hidden="${this.hideEditIcon(this.answer, this.editMode, this.canEditAnswers)}">
+                ?hidden="${this.hideEditIcon(this.editMode, this.canEditAnswers)}">
           </paper-icon-button>
         </div>
         <div class="description">
@@ -151,12 +153,9 @@ export class QuestionnaireItemElement extends LitElement {
   }
 
   cancel() {
-    if (this.answer && this.answer.id) {
-      this.answer = cloneDeep(this.answer);
-      this.editMode = false;
-    } else {
-      this.answer = new Answer();
-    }
+    fireEvent(this, 'cancel-answer', this.question.id);
+    this.editMode = false;
+    this.open = false;
   }
 
   saveAnswer() {
@@ -170,9 +169,12 @@ export class QuestionnaireItemElement extends LitElement {
       .then((resp) => {
         this.answer = resp;
         this.editMode = false;
+        this.open = false;
         fireEvent(this, 'answer-saved', this.answer);
       })
-      .catch((err: any) => fireEvent(this, 'toast', {text: formatServerErrorAsText(err)}));
+      .catch((err: any) => {
+        fireEvent(this, 'toast', {text: formatServerErrorAsText(err)});
+      });
   }
 
   _getUrl() {
@@ -200,11 +202,8 @@ export class QuestionnaireItemElement extends LitElement {
     return !editMode;
   }
 
-  hideEditIcon(answer: Answer, editMode: boolean, canEditAnswers: boolean) {
+  hideEditIcon(editMode: boolean, canEditAnswers: boolean) {
     if (!canEditAnswers) {
-      return true;
-    }
-    if (!answer || !answer.id) {
       return true;
     }
     if (editMode) {

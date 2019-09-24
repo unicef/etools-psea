@@ -12,7 +12,7 @@ export const defaultSelectedFilters: GenericObject = {
 
 export const assessmentsFilters: EtoolsFilter[] = [
   {
-    filterName: 'Search assesment',
+    filterName: 'Search assessment',
     filterKey: 'q',
     type: EtoolsFilterTypes.Search,
     selectedValue: '',
