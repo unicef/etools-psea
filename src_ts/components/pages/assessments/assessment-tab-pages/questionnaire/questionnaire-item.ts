@@ -180,7 +180,8 @@ export class QuestionnaireItemElement extends LitElement {
   _getUrl() {
     let url = getEndpoint(etoolsEndpoints.saveQuestionnaireAnswer, {
       assessmentId: this.assessmentId,
-      indicatorId: this.question.id}).url!;
+      indicatorId: this.question.id
+    }).url!;
     return url;
   }
 
@@ -232,19 +233,19 @@ export class QuestionnaireItemElement extends LitElement {
     }
     return html`
       <div class='row-padding'>
-      <div class="layout-vertical col-12 ratingInfoPnl red-border">
+        <div class="layout-vertical col-12 ratingInfoPnl red-border">
             <span class="paper-label font-bold">1- Absent: The organization is not working towards this standard</span>
             <span class="paper-label">Give this score if the organization meets one of the criteria</span>
-          </div>
-          <div class="layout-vertical col-12 ratingInfoPnl orange-border">
+        </div>
+        <div class="layout-vertical col-12 ratingInfoPnl orange-border">
           <span class="paper-label font-bold">2-Progressing: The organization has made some progress towards applying this standard, but certain
           aspecs need to be improved</span>
             <span class="paper-label">Give this score if the organization meets one or two of the three criteria</span>
-          </div>
-          <div class="layout-vertical col-12 ratingInfoPnl green-border">
+        </div>
+        <div class="layout-vertical col-12 ratingInfoPnl green-border">
           <span class="paper-label font-bold">3- Adequate: The organization fully meets this standard</span>
-            <span class="paper-label">Give this score if the organization meets all of the three criteria</span>
-          </div>
+          <span class="paper-label">Give this score if the organization meets all of the three criteria</span>
+        </div>
       </div>
     `;
   }
