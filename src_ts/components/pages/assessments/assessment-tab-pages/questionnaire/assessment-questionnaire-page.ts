@@ -48,7 +48,7 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
       </style>
 
       <div class="overall layout-horizontal" ?hidden="${!this.overallRatingDisplay}">
-        <div class="col-5 r-align">Overall Assessment:</div><div class="col-1"></div>
+        <div class="col-5 r-align">SEA Risk Rating:</div><div class="col-1"></div>
         <div class="col-6 l-align"> ${this.overallRatingDisplay}</div>
       </div>
       ${this._getQuestionnaireItemsTemplate(this.questionnaireItems, this.answers, this.canEditAnswers)}
