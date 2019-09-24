@@ -140,9 +140,6 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
   @property({type: Boolean})
   canEditAssessmentInfo!: boolean;
 
-  @property({type: Boolean})
-  isUnicefUser: boolean = false;
-
   stateChanged(state: RootState) {
     if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
@@ -150,9 +147,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     if (state.commonData && !isJsonStrMatch(this.partners, state.commonData!.partners)) {
       this.partners = [...state.commonData!.partners];
     }
-    if (state.user && state.user.data) {
-      this.isUnicefUser = state.user.data.is_unicef_user;
-    }
+
     let currentAssessment = get(state, 'pageData.currentAssessment')
     if (currentAssessment && Object.keys(currentAssessment).length &&
       !isJsonStrMatch(this.assessment, currentAssessment)) {
@@ -162,6 +157,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
       this.isNew = !this.assessment.id;
       this.editMode = this.isNew;
       this.setAssessmentInfoPermissions(this.assessment.permissions);
+      this.staffMembers = this.assessment.partner_details ? this.assessment.partner_details.staff_members : [];
       setTimeout(() => this.resetValidations(), 10);
     }
   }
@@ -184,22 +180,12 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     this.selectedPartner = event.detail.selectedItem;
 
     if (this.selectedPartner) {
-      if (this.isUnicefUser) {
-        this.assessment.partner = this.selectedPartner.id;
-        makeRequest(getEndpoint(etoolsEndpoints.partnerStaffMembers, {id: this.selectedPartner.id}) as RequestEndpoint)
-          .then((resp: any[]) => {
-            this.staffMembers = resp;
-            this.requestUpdate();
-          })
-          .catch((err: any) => {
-            this.staffMembers = [];
-            logError(err);
-          });
-      } else {
-        this.staffMembers = this.assessment.partner_details ? this.assessment.partner_details.staff_members : [];
+      if (this.assessment.partner != this.selectedPartner.id && this.staffMembers.length > 0) {
+        this.staffMembers = [];
         this.requestUpdate();
       }
     }
+    this.assessment.partner = this.selectedPartner.id;
   }
 
   _setSelectedDate(selDate: Date) {
