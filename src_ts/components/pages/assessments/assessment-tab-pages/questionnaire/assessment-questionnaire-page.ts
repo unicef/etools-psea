@@ -1,4 +1,5 @@
 import {LitElement, html, property} from 'lit-element';
+import {repeat} from 'lit-html/directives/repeat';
 import './questionnaire-item';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
@@ -47,7 +48,7 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
       </style>
 
       <div class="overall layout-horizontal" ?hidden="${!this.overallRatingDisplay}">
-        <div class="col-5 r-align">Overall Assessment:</div><div class="col-1"></div>
+        <div class="col-5 r-align">SEA Risk Rating:</div><div class="col-1"></div>
         <div class="col-6 l-align"> ${this.overallRatingDisplay}</div>
       </div>
       ${this._getQuestionnaireItemsTemplate(this.questionnaireItems, this.answers, this.canEditAnswers)}
@@ -104,17 +105,23 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
       return '';
     }
 
-    return this.questionnaireItems.map((question: Question) => {
+    return repeat(questionnaireItems, question => question.stamp, (question: Question) => {
       let answer = this._getAnswerByQuestionId(question.id, answers);
 
       return html`<questionnaire-item .question="${cloneDeep(question)}"
-        .answer="${answer}"
-        .editMode="${canEditAnswers && (!answer || !answer.id)}"
+        .answer="${cloneDeep(answer)}"
         .canEditAnswers="${this.canEditAnswers}"
         .assessmentId="${this.assessmentId}"
-        @answer-saved="${this.checkOverallRating}">
-       </questionnaire-item>`
+        @answer-saved="${this.checkOverallRating}"
+        @cancel-answer="${this.cancelUnsavedChanges}">
+       </questionnaire-item>`;
       });
+  }
+
+  cancelUnsavedChanges(e: CustomEvent) {
+    let q = this.questionnaireItems.find(q=> q.id == e.detail)!;
+    q.stamp = Date.now();
+    this.requestUpdate();
   }
 
   checkOverallRating(e: CustomEvent) {
@@ -149,12 +156,12 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   }
 
   getQuestionnaire() {
-    console.log('---GET questionnaire---');
     let url = etoolsEndpoints.questionnaire.url!;
     makeRequest(new RequestEndpoint(url))
       .then((resp) => {
+        resp.map(r => r.stamp = Date.now());
         this.questionnaireItems = resp;
-      })
+      });
   }
 
   getAnswers() {
@@ -162,7 +169,7 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     makeRequest(new RequestEndpoint(url))
     .then((resp) => {
       this.answers = resp;
-    })
+    });
   }
 
 }
