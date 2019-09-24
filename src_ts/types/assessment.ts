@@ -10,6 +10,7 @@ export class Assessment {
   status_list: string[][] = [];
   partner: string | null = '';
   focal_points?: string[] =[];
+  rejected_comment: string = '';
   permissions =  new AssessmentPermissions();
   partner_details?: GenericObject;
 }
@@ -29,6 +30,7 @@ export class AssessmentPermissions {
     answers: false,
     assessor: false
   };
+
 }
 
 export class AssessmentInvalidator {
