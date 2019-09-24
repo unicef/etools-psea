@@ -24,6 +24,8 @@ export class QuestionnaireItemElement extends LitElement {
         :host {
           display: block;
           margin-bottom: 24px;
+          --ecp-header-height: auto;
+          --ecp-title-white-space: normal;
         }
 
         .description {
