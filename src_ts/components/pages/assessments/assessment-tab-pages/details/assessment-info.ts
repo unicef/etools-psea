@@ -90,7 +90,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           fire-date-has-changed
           @date-has-changed="${(e: CustomEvent) => this._setSelectedDate(e.detail.date)}"
           ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.assessment_date)}"
-          required
+          ?required="${this.assessment.permissions.required.assessment_date}"
           ?invalid="${this.invalid.assessment_date}"
           auto-validate>
         </datepicker-lite>
@@ -253,10 +253,6 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     if (!this.assessment.partner) {
       valid = false;
       invalid.partner = true;
-    }
-    if (!this.assessment.assessment_date) {
-      valid = false;
-      invalid.assessment_date = true;
     }
 
     this.invalid = cloneDeep(invalid);
