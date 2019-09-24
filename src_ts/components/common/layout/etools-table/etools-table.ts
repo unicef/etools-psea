@@ -225,7 +225,9 @@ export class EtoolsTable extends LitElement {
     const column: EtoolsTableColumn = this.getColumnDetails(key);
     switch (column.type) {
       case EtoolsTableColumnType.Date:
-        return prettyDate(item[key], this.dateFormat);
+        return item[key]
+          ? prettyDate(item[key], this.dateFormat)
+          : (column.placeholder ? column.placeholder : this.defaultPlaceholder);
       case EtoolsTableColumnType.Link:
         return this.getLinkTmpl(column.link_tmpl, item, key);
       case EtoolsTableColumnType.Number:

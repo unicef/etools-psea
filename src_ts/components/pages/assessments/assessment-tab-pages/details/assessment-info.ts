@@ -14,9 +14,7 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
-import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
-import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+import {makeRequest} from '../../../../utils/request-helper';
 import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
 import {Assessment, AssessmentInvalidator, AssessmentPermissions} from '../../../../../types/assessment';
 import {updateAppLocation} from '../../../../../routing/routes';
@@ -147,7 +145,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
       this.partners = [...state.commonData!.partners];
     }
 
-    let currentAssessment = get(state, 'pageData.currentAssessment')
+    const currentAssessment = get(state, 'pageData.currentAssessment');
     if (currentAssessment && Object.keys(currentAssessment).length &&
       !isJsonStrMatch(this.assessment, currentAssessment)) {
 
@@ -156,7 +154,9 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
       this.isNew = !this.assessment.id;
       this.editMode = this.isNew;
       this.setAssessmentInfoPermissions(this.assessment.permissions);
-      this.staffMembers = this.assessment.partner_details ? this.assessment.partner_details.staff_members : [];
+      this.staffMembers = (this.assessment && this.assessment.partner_details)
+        ? this.assessment.partner_details.staff_members
+        : [];
       setTimeout(() => this.resetValidations(), 10);
     }
   }
