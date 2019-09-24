@@ -32,9 +32,9 @@ export class PartnerDetails extends LitElement {
 
       <div class="layout-horizontal row-padding-v">
         <div class="layout-vertical col-4">
-          <span class="paper-label">Authorized Officers</span>
+          <span class="paper-label">Staff Members</span>
           <span class="input-label" ?empty="${this.staffMembers.length === 0}">
-            ${this.staffMembers.map(i => html`<p>${i.first_name} ${i.last_name}</p>`)}
+            ${this.staffMembers.map(i => html`<p>${i}</p>`)}
           </span>
         </div>
         <div class="layout-vertical col-4">
@@ -49,6 +49,6 @@ export class PartnerDetails extends LitElement {
   partner: GenericObject = {};
 
   @property({type: Array})
-  staffMembers: GenericObject[] = [];
+  staffMembers: string[] = [];
 
 }

@@ -1,3 +1,5 @@
+import {GenericObject} from './globals';
+
 export class Assessment {
   id?: number;
   assessment_date: string | null = '';
@@ -10,6 +12,7 @@ export class Assessment {
   focal_points?: string[] =[];
   rejected_comment: string = '';
   permissions =  new AssessmentPermissions();
+  partner_details?: GenericObject;
 }
 
 export class AssessmentPermissions {
