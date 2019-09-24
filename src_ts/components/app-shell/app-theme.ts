@@ -49,7 +49,7 @@ documentContainer.innerHTML = `
         }
         --epc-header-color: var(--primary-text-color);
         --ecp-header-title: {
-          padding: 0 0;
+          padding: 0 24px 0 0;
           text-align: left;
           font-size: 18px;
           font-weight: 500;
