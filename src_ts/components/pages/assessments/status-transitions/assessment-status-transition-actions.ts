@@ -159,36 +159,9 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     return assessment && assessment.id && !!assessment.assessor;
   }
 
-  // validateStatusChange(): boolean {
-  //   let valid = false;
-  //   switch (this.currentStatusAction) {
-  //     case 'assign':
-  //       // assessment should be added
-  //       valid = this.assessment !== null && !!this.assessment.id && !!this.assessment.assessor;
-  //       break;
-  //     case 'submit':
-  //     case 'reject':
-  //     case 'finalize':
-  //       // use only validation of status transition of the API
-  //       valid = true;
-  //       break;
-  //     case 'cancel':
-  //       // TODO: determine cancel validations by user group and add it to this condition
-  //       valid = this.assessment !== null;
-  //       break;
-  //   }
-  //   return valid;
-  // }
-
   updateAssessmentStatus(action: string) {
     // console.log('action', action);
     this.currentStatusAction = action;
-
-    // if (!this.validateStatusChange()) {
-    //   // TODO: show a toast message explaining why status change cannot be made
-    //   this.currentStatusAction = '';
-    //   return;
-    // }
 
     if (this.currentStatusAction === 'reject') {
       this.rejectionDialog.dialogOpened = true;
