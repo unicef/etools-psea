@@ -167,7 +167,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
       type: EtoolsTableColumnType.Text
     },
     {
-      label: 'Rating',
+      label: 'SEA Risk Rating',
       name: 'overall_rating.display',
       type: EtoolsTableColumnType.Text
     }
