@@ -1,4 +1,5 @@
 import {LitElement, html, property, customElement, query} from 'lit-element';
+import {styleMap} from 'lit-html/directives/style-map.js';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import './questionnaire-answer';
@@ -8,7 +9,6 @@ import {radioButtonStyles} from '../../../../styles/radio-button-styles';
 import {Question, Answer, Rating} from '../../../../../types/assessment';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {QuestionnaireAnswerElement} from './questionnaire-answer';
-import {cloneDeep} from '../../../../utils/utils';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {fireEvent} from '../../../../utils/fire-custom-event';
@@ -61,26 +61,27 @@ export class QuestionnaireItemElement extends LitElement {
       </style>
       <etools-content-panel panel-title="${this.question.subject}" ?show-expand-btn=${!this.editMode} .open="${this.open}">
         <div slot="panel-btns">
-          <paper-radio-button checked class="${this._getRadioBtnClass(this.answer)} readonly"
+          <paper-radio-button checked class="header-title-button ${this._getRadioBtnClass(this.answer)} readonly"
               ?hidden="${!this._answerIsSaved(this.answer)}">
             ${this._getSelectedRating(this.answer)}
           </paper-radio-button>
           <paper-icon-button
                 icon="create"
                 @tap="${this._allowEdit}"
-                ?hidden="${this.hideEditIcon(this.editMode, this.canEditAnswers)}">
+                style=${styleMap(this.hideEditIcon(this.editMode, this.canEditAnswers) ? {visibility: 'hidden'} : {visibility: ''})}>
           </paper-icon-button>
         </div>
         <div class="description">
           ${this.question.content}
         </div>
 
-        <paper-icon-button id="rating-icon" icon="info"></paper-icon-button>
-        <paper-tooltip for="rating-icon" class="ratingTooltip" position="left">
-            ${this.getRatingInfoHtml(this.question.rating_instructions)}
-        </paper-tooltip>
-
         <div class="row-padding-v">
+          <paper-icon-button id="rating-icon" icon="info" ?hidden="${this.hideAnswer(this.answer, this.canEditAnswers)}">
+          </paper-icon-button>
+          <paper-tooltip for="rating-icon" class="ratingTooltip" position="left">
+              ${this.getRatingInfoHtml(this.question.rating_instructions)}
+          </paper-tooltip>
+
           <questionnaire-answer id="questionnaireAnswerElement"
             ?hidden="${this.hideAnswer(this.answer, this.canEditAnswers)}"
             .question="${this.question}"
