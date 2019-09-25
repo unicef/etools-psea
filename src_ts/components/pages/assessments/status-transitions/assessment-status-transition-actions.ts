@@ -143,7 +143,6 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   }
 
   updateAssessmentStatus(action: string) {
-    // console.log('action', action);
     this.currentStatusAction = action;
     if (!this.validateStatusChange()) {
       // TODO: show a toast message explaining why status change cannot be made
@@ -165,6 +164,11 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   updateConfirmationMsgAction(action: string) {
     this.confirmationMSg.innerText = `Are you sure you want to ${action} this assessment`;
+    if (action === 'finalize') {
+      this.confirmationMSg.innerText = 'Your finalisation of this Assessment confirms that you are satisfied that' +
+          ' the process followed by the Assessor is in line with expected procedure, and that the Proof of Evidence' +
+          ' provided by the Partner supports the rating against each Core Standard.'
+    }
   }
 
   onStatusChangeConfirmation(e: CustomEvent) {
