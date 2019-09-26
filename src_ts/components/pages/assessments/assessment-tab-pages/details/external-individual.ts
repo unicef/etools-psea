@@ -27,6 +27,10 @@ export class ExternalIndividual extends connect(store)(LitElement) {
           cursor: pointer;
         }
 
+        .larger-font {
+          font-size: 16px !important;
+        }
+
         .padd-bottom {
           padding-bottom: 12px;
         }
@@ -46,7 +50,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
           trigger-value-change-event
           @etools-selected-item-changed="${this._setSelectedExternalIndividual}">
         </etools-dropdown>
-        <span ?hidden="${!this.editMode}" class="paper-label">
+        <span ?hidden="${!this.editMode}" class="larger-font paper-label">
           User not yet in the system? Add them <a @tap="${this.openAddDialog}">here</a>
         </span>
       </div>
