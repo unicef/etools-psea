@@ -104,7 +104,7 @@ export const SharedStylesLit = html`
 
   :host > * {
       --required-star-style: {
-        background: url('./images/required.svg') no-repeat 99% 20%/6px;
+        background: url('./images/required.svg') no-repeat 99% 20%/8px;
         width: auto !important;
         max-width: 100%;
         right: auto;
@@ -154,6 +154,7 @@ export const SharedStylesLit = html`
 
     label[required] {
       @apply --required-star-style;
+      background: url('./images/required.svg') no-repeat 87% 40%/6px;
     }
 
     .readonly {
