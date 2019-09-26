@@ -90,7 +90,7 @@ export class QuestionnaireItemElement extends LitElement {
           </questionnaire-answer>
         </div>
 
-        <div class="layout-horizontal right-align row-padding-v" ?hidden="${this.hideActionButtons(this.answer, this.editMode, this.canEditAnswers)}">
+        <div class="layout-horizontal right-align row-padding-v" ?hidden="${!this.editMode}">
           <paper-button class="default" @tap="${this.cancel}">
             Cancel
           </paper-button>
@@ -195,19 +195,6 @@ export class QuestionnaireItemElement extends LitElement {
 
   validate() {
     return this.questionnaireAnswerElement.validate();
-  }
-
-  hideActionButtons(answer: Answer, editMode: boolean, canEditAnswers: boolean) {
-    if (!canEditAnswers) {
-      return true;
-    }
-    if (!this.isUnicefUser && !editMode) {
-      return true;
-    }
-    if (!answer || !answer.id) {
-      return false;
-    }
-    return !editMode;
   }
 
   hideEditIcon(editMode: boolean, canEditAnswers: boolean) {
