@@ -136,7 +136,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
   isUnicefUser: boolean = false;
 
   @property({type: Array})
-  unicefFilters: string[] = ['assessor_staff', 'assessor_firm', 'assessor_external', 'staff_member'];
+  unicefFilters: string[] = ['assessor_staff', 'assessor_firm', 'assessor_external'];
 
   @property({type: String})
   queryParams: string = '';

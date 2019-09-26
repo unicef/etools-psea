@@ -121,6 +121,9 @@ export class QuestionnaireItemElement extends LitElement {
   @property({type: Boolean})
   canEditAnswers!: boolean;
 
+  @property({type: Boolean})
+  isUnicefUser!: boolean;
+
   @query('#questionnaireAnswerElement')
   questionnaireAnswerElement!: QuestionnaireAnswerElement;
 
@@ -196,6 +199,9 @@ export class QuestionnaireItemElement extends LitElement {
 
   hideActionButtons(answer: Answer, editMode: boolean, canEditAnswers: boolean) {
     if (!canEditAnswers) {
+      return true;
+    }
+    if (!this.isUnicefUser && !editMode) {
       return true;
     }
     if (!answer || !answer.id) {

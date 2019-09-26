@@ -70,6 +70,9 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   @property({type: Boolean})
   canEditAnswers!: boolean;
 
+  @property({type: Boolean})
+  isUnicefUser: boolean = false;
+
   stateChanged(state: RootState) {
     let newAssessmentId = get(state, 'app.routeDetails.params.assessmentId');
     if (newAssessmentId && newAssessmentId !== this.assessmentId) {
@@ -80,6 +83,9 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     if (currentAssessment) {
       this.setOverallRatingDisplay(currentAssessment.overall_rating);
       this.setAnswersEditPermision(get(currentAssessment, 'permissions.edit.answers'));
+    }
+    if (state.user && state.user.data) {
+      this.isUnicefUser = state.user.data.is_unicef_user;
     }
   }
 
@@ -112,14 +118,15 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
         .answer="${cloneDeep(answer)}"
         .canEditAnswers="${this.canEditAnswers}"
         .assessmentId="${this.assessmentId}"
+        .isUnicefUser="${this.isUnicefUser}"
         @answer-saved="${this.checkOverallRating}"
         @cancel-answer="${this.cancelUnsavedChanges}">
        </questionnaire-item>`;
-      });
+    });
   }
 
   cancelUnsavedChanges(e: CustomEvent) {
-    let q = this.questionnaireItems.find(q=> q.id == e.detail)!;
+    let q = this.questionnaireItems.find(q => q.id == e.detail)!;
     q.stamp = Date.now();
     this.requestUpdate();
   }
@@ -147,9 +154,9 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   }
 
   _getAnswerByQuestionId(questionId: string | number, answers: Answer[]) {
-     if (!answers || !answers.length) {
-       return new Answer();
-     }
+    if (!answers || !answers.length) {
+      return new Answer();
+    }
     let answer = answers.find(a => Number(a.indicator) === Number(questionId));
 
     return answer ? cloneDeep(answer) : new Answer();
@@ -167,9 +174,9 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   getAnswers() {
     let url = getEndpoint(etoolsEndpoints.getQuestionnaireAnswers, {assessmentId: this.assessmentId}).url!;
     makeRequest(new RequestEndpoint(url))
-    .then((resp) => {
-      this.answers = resp;
-    });
+      .then((resp) => {
+        this.answers = resp;
+      });
   }
 
 }
