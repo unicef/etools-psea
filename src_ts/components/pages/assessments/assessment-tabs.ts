@@ -122,7 +122,17 @@ export class AssessmentTabs extends connect(store)(LitElement) {
   }
 
   public stateChanged(state: RootState) {
-    this.toggleFollowUp(state);
+
+    // hide follow-up tab from non unicef users
+    this.pageTabs.forEach((tab) => {
+      if (tab.tab =='followup') {
+        if (tab.hidden !== !state.user.data.is_unicef_user) {
+          tab.hidden = !tab.hidden;
+        }
+      }
+      this.pageTabs = [...this.pageTabs];
+    });
+
     // update page route data
     if (state.app!.routeDetails.routeName === 'assessments' &&
       state.app!.routeDetails.subRouteName !== 'list') {
@@ -178,15 +188,6 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     } else {
       this.resetTabs();
     }
-  }
-
-  toggleFollowUp(state: RootState) {
-    this.pageTabs.forEach((tab) => {
-      if (tab.tab =='followup') {
-        tab.hidden = !state.user.data.is_unicef_user;
-      }
-    });
-    this.pageTabs = [...this.pageTabs];
   }
 
   /**
