@@ -15,7 +15,8 @@ export enum EtoolsTableColumnType {
   Date,
   Link,
   Number,
-  Checkbox
+  Checkbox,
+  Custom
 }
 
 export enum EtoolsTableColumnSort {
@@ -36,6 +37,7 @@ export interface EtoolsTableColumn {
   link_tmpl?: string;
   capitalize?: boolean;
   placeholder?: string;
+  customMethod?: Function;
 }
 
 export enum EtoolsTableActionType {
@@ -233,9 +235,10 @@ export class EtoolsTable extends LitElement {
       case EtoolsTableColumnType.Number:
       case EtoolsTableColumnType.Checkbox:
         return this._getCheckbox(item, key, showEdit);
+      case EtoolsTableColumnType.Custom:
+        return (column.customMethod ? column.customMethod(item, key) : this._getValueByKey(item, key, column.placeholder)) ||  this.defaultPlaceholder;
       default:
         return this._getValueByKey(item, key, column.placeholder);
-
     }
   }
 
