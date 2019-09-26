@@ -41,7 +41,7 @@ import {buttonsStyles} from '../../styles/button-styles';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
 import {makeRequest} from '../../utils/request-helper';
-import './export-data';
+import '../../common/layout/export-data';
 
 /**
  * @LitElement
