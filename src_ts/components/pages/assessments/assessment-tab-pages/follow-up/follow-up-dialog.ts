@@ -27,6 +27,10 @@ export class FollowUpDialog extends connect(store)(LitElement) {
       ${gridLayoutStylesLit}
       ${SharedStylesLit}
       <style>
+        :root {
+          --etools-dialog-content_-_overflow-y: hidden;
+        }
+
         etools-dropdown {
           --esmm-external-wrapper: {
             width: 100%;
