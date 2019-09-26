@@ -138,7 +138,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
 
   copyActionPoint(event: GenericObject) {
     this.extractActionPointData(event.detail);
-    this.followUpDialog.watchForChanges = true;
+    this.followUpDialog.warningMessages = [...this.followUpDialog.warningMessages, "It is required to change at least one of the fields below."];
     this.followUpDialog.editedItem.id = 'new';
     this.openFollowUpDialog();
   }
