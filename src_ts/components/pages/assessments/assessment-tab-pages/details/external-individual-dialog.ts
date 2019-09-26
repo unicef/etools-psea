@@ -1,4 +1,4 @@
-import {LitElement, html, property, customElement} from 'lit-element';
+import {LitElement, html, property, customElement, query} from 'lit-element';
 import '@unicef-polymer/etools-dialog/etools-dialog.js';
 import {PolymerElement} from '@polymer/polymer';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
@@ -99,6 +99,15 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
   private defaultItem = {email: '', first_name: '', last_name: ''};
   private validationSelectors: string[] = ['#emailInput', '#firstNameInput', '#lastNameInput'];
 
+  @query('#emailInput')
+  emailInputEl!: HTMLInputElement;
+
+  @query('#firstNameInput')
+  firstNameInputEl!: HTMLInputElement;
+
+  @query('#lastNameInput')
+  lastNameInputEl!: HTMLInputElement;
+
   @property({type: Boolean, reflect: true})
   dialogOpened: boolean = false;
 
@@ -189,9 +198,9 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
   }
 
   private getControlsData() {
-    this.editedItem.email = this.getEl('#emailInput').value;
-    this.editedItem.first_name = this.getEl('#firstNameInput').value;
-    this.editedItem.last_name = this.getEl('#lastNameInput').value;
+    this.editedItem.email = this.emailInputEl.value;
+    this.editedItem.first_name = this.firstNameInputEl.value;
+    this.editedItem.last_name = this.lastNameInputEl.value;
   }
 
   private saveDialogData() {
@@ -215,10 +224,6 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
     logError(msg, 'external-individual-dialog', err);
     fireEvent(this.toastEventSource, 'toast', {text: msg});
   }
-
-  getEl(elName: string): HTMLInputElement {
-    return this.shadowRoot!.querySelector(elName)! as HTMLInputElement;
-  };
 
 }
 
