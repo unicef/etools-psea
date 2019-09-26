@@ -23,6 +23,7 @@ import './status-transitions/assessment-status-transition-actions';
 import isNil from 'lodash-es/isNil';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
 import '../../common/layout/etools-error-warn-box';
+import '../../common/layout/export-data';
 
 /**
  * @LitElement
