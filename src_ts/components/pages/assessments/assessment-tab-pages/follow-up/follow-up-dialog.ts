@@ -230,6 +230,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   @property({type: Array, reflect: true})
   warningMessages: string[] = [];
 
+  private initialItem!: ActionPoint;
+
   stateChanged(state: RootState) {
     if (state.commonData) {
       if (!isJsonStrMatch(this.partners, state.commonData.partners)) {
@@ -290,7 +292,15 @@ export class FollowUpDialog extends connect(store)(LitElement) {
     this.editedItem.high_priority = this.getEl('#highPriorityInput').checked;
   }
 
+  private _editedItemHasChanged() {
+    return !isJsonStrMatch(this.initialItem.id, this.editedItem.id);
+  }
+
   private saveDialogData() {
+    if (!this._editedItemHasChanged()) {
+      this.handleDialogClosed();
+      return;
+    }
     this.getControlsData();
     this.requestInProcess = true;
     const options: any = {
@@ -335,6 +345,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
     this.isNewRecord = !this.editedItem.id || this.editedItem.id == 'new';
     this.dialogTitle = this.isNewRecord ? 'Add Action Point' : 'Edit Action Point';
     this.confirmBtnTxt = this.isNewRecord ? 'Add' : 'Save';
+    this.initialItem = cloneDeep(this.editedItem);
     this.dialogOpened = true;
   }
 
