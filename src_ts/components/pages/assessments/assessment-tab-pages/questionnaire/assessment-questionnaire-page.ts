@@ -15,6 +15,7 @@ import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import '../../../../common/layout/etools-error-warn-box';
+import { green } from 'chalk';
 
 
 /**
@@ -36,10 +37,18 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
           margin-bottom: 32px;
           font-size: 24px;
           color: white;
-          background-color: var(--primary-shade-of-green);
           box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
                     0 1px 5px 0 rgba(0, 0, 0, 0.12),
                     0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        }
+        .red {
+          background-color: var(--primary-shade-of-red);
+        }
+        .orange {
+          background-color: var(--primary-shade-of-orange);
+        }
+        .green {
+          background-color: var(--primary-shade-of-green);
         }
         .r-align {
           text-align: right;
@@ -49,7 +58,7 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
         }
       </style>
 
-      <div class="overall layout-horizontal" ?hidden="${!this.overallRatingDisplay}">
+      <div class="overall ${this._getColorClass(this.overallRatingDisplay)} layout-horizontal" ?hidden="${!this.overallRatingDisplay}">
         <div class="col-5 r-align">SEA Risk Rating:</div><div class="col-1"></div>
         <div class="col-6 l-align"> ${this.overallRatingDisplay}</div>
       </div>
@@ -101,30 +110,16 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   }
 
   setOverallRatingDisplay(overall_rating: {rating: number, display: string}) {
-    if (overall_rating && overall_rating.display !== 'Unknown') {
+    if (overall_rating && overall_rating.display !== '-') {
       this.overallRatingDisplay = overall_rating.display;
     } else {
       this.overallRatingDisplay = '';
     }
   }
 
-  noQuestionnaireHtml() {
-    const message = 'There are no questionnaire items entered in the system right now.';
-    return html`
-      <section class="elevation page-content no-padding" elevation="1">
-        <etools-error-warn-box
-          .messages="${[message]}">
-        </etools-error-warn-box>
-      </section>
-    `;
-  }
-
   _getQuestionnaireItemsTemplate(questionnaireItems: Question[], answers: Answer[], canEditAnswers: boolean) {
     if (!questionnaireItems) {
       return;
-    }
-    if (questionnaireItems.length === 0) {
-      return this.noQuestionnaireHtml();
     }
 
     return repeat(questionnaireItems, question => question.stamp, (question: Question) => {
@@ -139,6 +134,19 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
         @cancel-answer="${this.cancelUnsavedChanges}">
        </questionnaire-item>`;
     });
+  }
+
+  _getColorClass(overallRatingDisplay: string) {
+    if (overallRatingDisplay && overallRatingDisplay !== '-') {
+      if (overallRatingDisplay === "High") {
+        return "red";
+      } else if (overallRatingDisplay === "Moderate") {
+        return "orange";
+      } else {
+        return "green";
+      }
+    }
+    return "";
   }
 
   cancelUnsavedChanges(e: CustomEvent) {
