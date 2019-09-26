@@ -49,9 +49,34 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
         .block {
           display: block;
         }
+        .ratingInfoPnl{
+          padding: 6px;
+          margin: 10px 0px;
+          width: 100%;
+        }
+        .ratingTooltip {
+          --paper-tooltip-background: #FFFFFF;
+          width: 80%;
+          box-shadow: var(--paper-material-elevation-1_-_box-shadow);
+        }
+        .ratingTooltip span{
+          font-size: 16px;
+          color: var(--primary-text-color);
+          line-height:20px;
+        }
+        #rating-icon{
+          color: var(--info-color);
+        }
+        .noanimation {
+        }
       </style>
       <div class="row-padding-v" ?hidden="${!this.editMode}">
-        <label class="paper-label" required>Rating</label> <br/>
+        <label class="paper-label" required>Rating</label> 
+        <paper-icon-button id="rating-icon" icon="info">
+        </paper-icon-button>
+        <paper-tooltip for="rating-icon" class="ratingTooltip" animation-entry="noanimation" position="right">
+            ${this.getRatingInfoHtml()}
+        </paper-tooltip> <br/>
         <paper-radio-group id="ratingElement"
             .selected="${this.answer.rating}"
             @change="${((e: CustomEvent) => this._selectedRatingChanged(e.target as PaperRadioButtonElement))}">
@@ -263,6 +288,25 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
 
   _filterOutDeletedAttachment(attachmentId: string) {
     return this.answer.attachments.filter(att => Number(att.id) !== Number(attachmentId));
+  }
+  getRatingInfoHtml() {
+    return html`
+      <div class='row-padding'>
+        <div class="layout-vertical col-12 ratingInfoPnl red-border">
+            <span class="paper-label font-bold">1- Absent: The organization is not working towards this standard</span>
+            <span class="paper-label">Give this score if the organization meets one of the criteria</span>
+        </div>
+        <div class="layout-vertical col-12 ratingInfoPnl orange-border">
+          <span class="paper-label font-bold">2-Progressing: The organization has made some progress towards applying this standard, but certain
+          aspecs need to be improved</span>
+            <span class="paper-label">Give this score if the organization meets one or two of the three criteria</span>
+        </div>
+        <div class="layout-vertical col-12 ratingInfoPnl green-border">
+          <span class="paper-label font-bold">3- Adequate: The organization fully meets this standard</span>
+          <span class="paper-label">Give this score if the organization meets all of the three criteria</span>
+        </div>
+      </div>
+    `;
   }
 
 
