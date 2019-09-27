@@ -119,15 +119,13 @@ export class AssessmentTabs extends connect(store)(LitElement) {
   @property({type: Boolean})
   canExport: boolean = false;
 
-  private isUnicefUser: boolean = false;
-
   isActiveTab(tab: string, expectedTab: string): boolean {
     return tab === expectedTab;
   }
 
   public stateChanged(state: RootState) {
 
-    if ((state.user && state.user.data) && (this.isUnicefUser !== state.user.data.is_unicef_user)) {
+    if (state.user && state.user.data && !state.user.data.is_unicef_user) {
       const followupTab = this.pageTabs.find((elem: GenericObject) => elem.tab === 'followup');
       if (followupTab) {
         followupTab.hidden = true;
