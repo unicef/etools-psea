@@ -118,21 +118,21 @@ export class AssessmentTabs extends connect(store)(LitElement) {
   @property({type: Boolean})
   canExport: boolean = false;
 
+  private isUnicefUser: boolean = true;
+
   isActiveTab(tab: string, expectedTab: string): boolean {
     return tab === expectedTab;
   }
 
   public stateChanged(state: RootState) {
 
-    // hide follow-up tab from non unicef users
-    this.pageTabs.forEach((tab) => {
-      if (tab.tab =='followup') {
-        if (tab.hidden !== !state.user.data.is_unicef_user) {
-          tab.hidden = !tab.hidden;
-        }
+    if ((state.user && state.user.data) && (this.isUnicefUser !== state.user.data.is_unicef_user)) {
+      const followupTab = this.pageTabs.find((elem) => elem.tab === 'followup');
+      if (followupTab) {
+        followupTab.hidden = true;
       }
-      this.pageTabs = [...this.pageTabs];
-    });
+    }
+    this.pageTabs = [...this.pageTabs];
 
     // update page route data
     if (state.app!.routeDetails.routeName === 'assessments' &&
