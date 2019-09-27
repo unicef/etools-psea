@@ -36,7 +36,7 @@ export class FirmStaffMembers extends LitElement {
       <style>
         :host {
           display: block;
-          --ecp-content: {
+          --ecp-content-padding: {
             padding: 0 0;
           }
         }

@@ -19,7 +19,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
     return html`
       <style>
         :host {
-          --ecp-content: {
+          --ecp-content-padding: {
             padding-right: 0;
             padding-left: 0;
           }
