@@ -119,7 +119,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
   @property({type: Boolean})
   canExport: boolean = false;
 
-  private isUnicefUser: boolean = true;
+  private isUnicefUser: boolean = false;
 
   isActiveTab(tab: string, expectedTab: string): boolean {
     return tab === expectedTab;
