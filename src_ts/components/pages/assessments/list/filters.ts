@@ -19,19 +19,6 @@ export const assessmentsFilters: EtoolsFilter[] = [
     selected: true
   },
   {
-    filterName: 'Staff Member',
-    filterKey: 'staff_member',
-    type: EtoolsFilterTypes.DropdownMulti,
-    selectionOptions: [],
-    selectedValue: [],
-    selected: false,
-    minWidth: '350px',
-    hideSearch: true,
-    disabled: false,
-    optionValue: 'id',
-    optionLabel: 'name'
-  },
-  {
     filterName: 'Status',
     filterKey: 'status',
     type: EtoolsFilterTypes.DropdownMulti,
@@ -57,8 +44,8 @@ export const assessmentsFilters: EtoolsFilter[] = [
         name: 'Final'
       },
       {
-        id: 'canceled',
-        name: 'Canceled'
+        id: 'cancelled',
+        name: 'Cancelled'
       }
     ],
     optionValue: 'id',
