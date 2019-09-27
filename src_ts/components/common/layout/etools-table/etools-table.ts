@@ -236,9 +236,7 @@ export class EtoolsTable extends LitElement {
       case EtoolsTableColumnType.Checkbox:
         return this._getCheckbox(item, key, showEdit);
       case EtoolsTableColumnType.Custom:
-        return column.customMethod
-          ? column.customMethod(item, key)
-          : this._getValueByKey(item, key, column.placeholder);
+        return (column.customMethod ? column.customMethod(item, key) : this._getValueByKey(item, key, column.placeholder)) ||  this.defaultPlaceholder;
       default:
         return this._getValueByKey(item, key, column.placeholder);
     }

@@ -193,7 +193,4 @@ export class QuestionnaireItemElement extends LitElement {
       return (!answer || !answer.id);
     }
   }
-
-  
-
 }
