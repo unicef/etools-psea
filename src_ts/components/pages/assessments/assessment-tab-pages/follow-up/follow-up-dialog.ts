@@ -256,7 +256,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   }
 
   updated(changedProperties: GenericObject) {
-    if (this.warningMessages.length && !changedProperties.has('warningMessages') && 
+    if (this.warningMessages.length && !changedProperties.has('warningMessages') &&
         !isEqual(this.editedItem, changedProperties.get('editedItem'))) {
         this.warningMessages.pop();
     }

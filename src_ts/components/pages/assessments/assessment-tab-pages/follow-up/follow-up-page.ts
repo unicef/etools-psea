@@ -19,10 +19,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
     return html`
       <style>
         :host {
-          --ecp-content-padding: {
-            padding-right: 0;
-            padding-left: 0;
-          }
+          --ecp-content-padding: 0
         }
       </style>
       <etools-content-panel panel-title="Action Points">
