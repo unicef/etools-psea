@@ -14,6 +14,8 @@ import {requestAssessmentData} from '../../../../../redux/actions/page-data';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
+import '../../../../common/layout/etools-error-warn-box';
+
 
 /**
  * @customElement
@@ -100,9 +102,23 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     }
   }
 
+  noQuestionnaireHtml() {
+    const message = 'There are no questionnaire items entered in the system right now.';
+    return html`
+      <section class="elevation page-content no-padding" elevation="1">
+        <etools-error-warn-box
+          .messages="${[message]}">
+        </etools-error-warn-box>
+      </section>
+    `;
+  }
+
   _getQuestionnaireItemsTemplate(questionnaireItems: Question[], answers: Answer[], canEditAnswers: boolean) {
-    if (!questionnaireItems || !questionnaireItems.length) {
-      return '';
+    if (!questionnaireItems) {
+      return;
+    }
+    if (questionnaireItems.length === 0) {
+      return this.noQuestionnaireHtml();
     }
 
     return repeat(questionnaireItems, question => question.stamp, (question: Question) => {
@@ -110,7 +126,7 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
 
       return html`<questionnaire-item .question="${cloneDeep(question)}"
         .answer="${cloneDeep(answer)}"
-        .canEditAnswers="${this.canEditAnswers}"
+        .canEditAnswers="${canEditAnswers}"
         .assessmentId="${this.assessmentId}"
         @answer-saved="${this.checkOverallRating}"
         @cancel-answer="${this.cancelUnsavedChanges}">

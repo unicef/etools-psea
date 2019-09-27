@@ -1,4 +1,4 @@
-import {LitElement, html, property, customElement} from 'lit-element';
+import {LitElement, html, property, customElement, query} from 'lit-element';
 import '@unicef-polymer/etools-dialog/etools-dialog.js';
 import {PolymerElement} from '@polymer/polymer';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
@@ -146,6 +146,24 @@ export class StaffMemberDialog extends LitElement {
   };
   private validationSelectors: string[] = ['#emailInput', '#firstNameInput', '#lastNameInput'];
 
+  @query('#emailInput')
+  emailInputEl!: HTMLInputElement;
+
+  @query('#firstNameInput')
+  firstNameInputEl!: HTMLInputElement;
+
+  @query('#lastNameInput')
+  lastNameInputEl!: HTMLInputElement;
+
+  @query('#positionInput')
+  positionInputEl!: HTMLInputElement;
+
+  @query('#phoneInput')
+  phoneInputEl!: HTMLInputElement;
+
+  @query('#hasAccessInput')
+  hasAccessInputEl!: HTMLInputElement;
+
   @property({type: Boolean, reflect: true})
   dialogOpened: boolean = false;
 
@@ -200,9 +218,9 @@ export class StaffMemberDialog extends LitElement {
       el.invalid = false;
       el.value = '';
     });
-    this.getEl('#positionInput').value = '';
-    this.getEl('#phoneInput').value = '';
-    this.getEl('#hasAccessInput').checked = false;
+    this.positionInputEl.value = '';
+    this.phoneInputEl.value = '';
+    this.hasAccessInputEl.checked = false;
     this.editedItem = cloneDeep(this.defaultItem);
   }
 
@@ -225,12 +243,12 @@ export class StaffMemberDialog extends LitElement {
   }
 
   private getControlsData() {
-    this.editedItem.user.email = this.getEl('#emailInput').value;
-    this.editedItem.user.first_name = this.getEl('#firstNameInput').value;
-    this.editedItem.user.last_name = this.getEl('#lastNameInput').value;
-    this.editedItem.user.profile.phone_number = this.getEl('#phoneInput').value;
-    this.editedItem.hasAccess = this.getEl('#hasAccessInput').checked;
-    this.editedItem.user.profile.job_title = this.getEl('#positionInput').value;
+    this.editedItem.user.email = this.emailInputEl.value;
+    this.editedItem.user.first_name = this.firstNameInputEl.value;
+    this.editedItem.user.last_name = this.lastNameInputEl.value;
+    this.editedItem.hasAccess = this.hasAccessInputEl.checked;
+    this.editedItem.user.profile.phone_number = this.phoneInputEl.value;
+    this.editedItem.user.profile.job_title = this.positionInputEl.value;
   }
 
   private saveDialogData() {
@@ -274,10 +292,6 @@ export class StaffMemberDialog extends LitElement {
     const msg = formatServerErrorAsText(err);
     logError(msg, 'staff-member', err);
     fireEvent(this.toastEventSource, 'toast', {text: msg});
-  }
-
-  getEl(elName: string): HTMLInputElement {
-    return this.shadowRoot!.querySelector(elName)! as HTMLInputElement;
   }
 
 }

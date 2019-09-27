@@ -14,6 +14,7 @@ export class Assessment {
   rejected_comment: string = '';
   permissions =  new AssessmentPermissions();
   partner_details?: GenericObject;
+  focal_points_details: GenericObject[] = [];
 }
 
 export class AssessmentPermissions {
