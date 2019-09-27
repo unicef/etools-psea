@@ -2,8 +2,8 @@ import {html} from 'lit-element';
 // language=HTML
 export const radioButtonStyles = html`
   <style>
-    .header-title-button {
-      min-width: 90px;
+    .epc-header-radio-button {
+      min-width: 120px;
     }
     paper-radio-button.red {
       --paper-radio-button-checked-color: var(--primary-shade-of-red);
