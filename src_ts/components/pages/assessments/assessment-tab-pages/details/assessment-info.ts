@@ -140,20 +140,12 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
   @property({type: Boolean})
   isUnicefUser: boolean = false;
 
-  @property({type: Boolean})
-  unicefUsersUpdated: boolean = false;
-
   stateChanged(state: RootState) {
     if (state.commonData && !isJsonStrMatch(this.partners, state.commonData!.partners)) {
       this.partners = [...state.commonData!.partners];
     }
     if (state.user && state.user.data) {
       this.isUnicefUser = state.user.data.is_unicef_user;
-    }
-    if (this.isUnicefUser && !this.unicefUsersUpdated) {
-      if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
-        this.unicefUsers = [...state.commonData!.unicefUsers];
-      }
     }
 
     const currentAssessment = get(state, 'pageData.currentAssessment');
@@ -169,30 +161,32 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
         ? this.assessment.partner_details.staff_members
         : [];
 
-      if (!this.isUnicefUser) {
-        this.unicefUsers = [...this.assessment.focal_points_details];
-      } else {
-        this.updateUnicefUsers();
-      }
+      this.updateUnicefUsers([...state.commonData!.unicefUsers]);
+
       setTimeout(() => this.resetValidations(), 10);
     }
   }
 
-  updateUnicefUsers() {
-    // for unicef user check if saved focal points exists in unicefUsers, if not, add them
-    if (this.isUnicefUser && this.assessment && this.assessment.focal_points_details) {
-      let changed = false;
-      this.assessment.focal_points_details.forEach(fp => {
-        if (this.unicefUsers.findIndex(user => user.id === fp.id) < 0) {
-          this.unicefUsers.push(fp);
-          changed = true;
+  updateUnicefUsers(defaultUnicefUsers: any[]) {
+
+    if (this.assessment && this.assessment.focal_points_details) {
+
+      if (!this.isUnicefUser) {
+        this.unicefUsers = [...this.assessment.focal_points_details];
+      } else {
+        this.unicefUsers = defaultUnicefUsers;
+        // for unicef user check if saved focal points exists in unicefUsers, if not, add them
+        let changed = false;
+        this.assessment.focal_points_details.forEach(fp => {
+          if (this.unicefUsers.findIndex(user => user.id === fp.id) < 0) {
+            this.unicefUsers.push(fp);
+            changed = true;
+          }
+        });
+        if (changed) {
+          this.unicefUsers.sort((a, b) => (a.name < b.name) ? -1 : 1);
         }
       }
-      );
-      if (changed) {
-        this.unicefUsers.sort((a, b) => (a.name < b.name) ? -1 : 1);
-      }
-      this.unicefUsersUpdated = true;
     }
   }
 
