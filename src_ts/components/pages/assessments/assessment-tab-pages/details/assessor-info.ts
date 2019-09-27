@@ -53,7 +53,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       </style>
       ${SharedStylesLit}${gridLayoutStylesLit}${buttonsStyles}${labelAndvalueStylesLit}
 
-      <etools-content-panel panel-title="Primary Assessor">
+      <etools-content-panel panel-title="Assessor">
         <div slot="panel-btns">
           <paper-icon-button
                 ?hidden="${this.hideEditIcon(this.isNew, this.editMode, this.canEditAssessorInfo)}"

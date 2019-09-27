@@ -1,4 +1,5 @@
-import {LitElement, html, property} from 'lit-element';
+import {LitElement, html, property, customElement} from 'lit-element';
+import {repeat} from 'lit-html/directives/repeat';
 import './questionnaire-item';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
@@ -13,11 +14,20 @@ import {requestAssessmentData} from '../../../../../redux/actions/page-data';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
+import '../../../../common/layout/etools-error-warn-box';
+
+export enum EtoolsPseaOverallRating {
+  Low = 'Low',
+  Moderate = 'Moderate',
+  High = 'High'
+}
 
 /**
  * @customElement
+ * @LitElement
  */
-class AssessmentQuestionnairePage extends connect(store)(LitElement) {
+@customElement('assessment-questionnaire-page')
+export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
 
   render() {
     // language=HTML
@@ -33,10 +43,19 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
           margin-bottom: 32px;
           font-size: 24px;
           color: white;
-          background-color: var(--primary-shade-of-green);
+          background-color: var(--primary-color); /* fallback color */
           box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
                     0 1px 5px 0 rgba(0, 0, 0, 0.12),
                     0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        }
+        .red {
+          background-color: var(--primary-shade-of-red);
+        }
+        .orange {
+          background-color: var(--primary-shade-of-orange);
+        }
+        .green {
+          background-color: var(--primary-shade-of-green);
         }
         .r-align {
           text-align: right;
@@ -46,8 +65,9 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
         }
       </style>
 
-      <div class="overall layout-horizontal" ?hidden="${!this.overallRatingDisplay}">
-        <div class="col-5 r-align">Overall Assessment:</div><div class="col-1"></div>
+      <div class="overall layout-horizontal ${this._getColorClass(this.overallRatingDisplay)}"
+          ?hidden="${!this.overallRatingDisplay}">
+        <div class="col-5 r-align">SEA Risk Rating:</div><div class="col-1"></div>
         <div class="col-6 l-align"> ${this.overallRatingDisplay}</div>
       </div>
       ${this._getQuestionnaireItemsTemplate(this.questionnaireItems, this.answers, this.canEditAnswers)}
@@ -69,16 +89,22 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   @property({type: Boolean})
   canEditAnswers!: boolean;
 
+  @property({type: Boolean})
+  isUnicefUser: boolean = false;
+
   stateChanged(state: RootState) {
-    let newAssessmentId = get(state, 'app.routeDetails.params.assessmentId');
+    const newAssessmentId = get(state, 'app.routeDetails.params.assessmentId');
     if (newAssessmentId && newAssessmentId !== this.assessmentId) {
       this.assessmentId = newAssessmentId;
       this.getAnswers();
     }
-    let currentAssessment = get(state, 'pageData.currentAssessment');
+    const currentAssessment = get(state, 'pageData.currentAssessment');
     if (currentAssessment) {
       this.setOverallRatingDisplay(currentAssessment.overall_rating);
       this.setAnswersEditPermision(get(currentAssessment, 'permissions.edit.answers'));
+    }
+    if (state.user && state.user.data) {
+      this.isUnicefUser = state.user.data.is_unicef_user;
     }
   }
 
@@ -92,7 +118,7 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   }
 
   setOverallRatingDisplay(overall_rating: {rating: number, display: string}) {
-    if (overall_rating && overall_rating.display !== 'Unknown') {
+    if (overall_rating && overall_rating.display !== '-') {
       this.overallRatingDisplay = overall_rating.display;
     } else {
       this.overallRatingDisplay = '';
@@ -100,21 +126,41 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   }
 
   _getQuestionnaireItemsTemplate(questionnaireItems: Question[], answers: Answer[], canEditAnswers: boolean) {
-    if (!questionnaireItems || !questionnaireItems.length) {
-      return '';
+    if (!questionnaireItems) {
+      return;
     }
 
-    return this.questionnaireItems.map((question: Question) => {
-      let answer = this._getAnswerByQuestionId(question.id, answers);
+    return repeat(questionnaireItems, question => question.stamp, (question: Question) => {
+      const answer = this._getAnswerByQuestionId(question.id, answers);
 
       return html`<questionnaire-item .question="${cloneDeep(question)}"
-        .answer="${answer}"
-        .editMode="${canEditAnswers && (!answer || !answer.id)}"
-        .canEditAnswers="${this.canEditAnswers}"
+        .answer="${cloneDeep(answer)}"
+        .canEditAnswers="${canEditAnswers}"
         .assessmentId="${this.assessmentId}"
-        @answer-saved="${this.checkOverallRating}">
-       </questionnaire-item>`
-      });
+        .isUnicefUser="${this.isUnicefUser}"
+        @answer-saved="${this.checkOverallRating}"
+        @cancel-answer="${this.cancelUnsavedChanges}">
+       </questionnaire-item>`;
+    });
+  }
+
+  _getColorClass(overallRatingDisplay: string) {
+    switch (overallRatingDisplay) {
+      case EtoolsPseaOverallRating.High:
+        return 'red';
+      case EtoolsPseaOverallRating.Moderate:
+        return 'orange';
+      case EtoolsPseaOverallRating.Low:
+        return 'green';
+      default:
+        return '';
+    }
+  }
+
+  cancelUnsavedChanges(e: CustomEvent) {
+    const q = this.questionnaireItems.find(q => q.id == e.detail)!;
+    q.stamp = Date.now();
+    this.requestUpdate();
   }
 
   checkOverallRating(e: CustomEvent) {
@@ -123,7 +169,7 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
       return;
     }
 
-    let index = this.answers.findIndex(a => Number(a.id) === Number(updatedAnswer.id));
+    const index = this.answers.findIndex(a => Number(a.id) === Number(updatedAnswer.id));
     if (index > -1) {
       this.answers.splice(index, 0, updatedAnswer);
     } else {
@@ -136,35 +182,33 @@ class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   }
 
   _handleErrOnGetAssessment(err: any) {
-    fireEvent(this, 'toast', {text: formatServerErrorAsText(err)})
+    fireEvent(this, 'toast', {text: formatServerErrorAsText(err)});
   }
 
   _getAnswerByQuestionId(questionId: string | number, answers: Answer[]) {
-     if (!answers || !answers.length) {
-       return new Answer();
-     }
-    let answer = answers.find(a => Number(a.indicator) === Number(questionId));
+    if (!answers || !answers.length) {
+      return new Answer();
+    }
+    const answer = answers.find(a => Number(a.indicator) === Number(questionId));
 
     return answer ? cloneDeep(answer) : new Answer();
   }
 
   getQuestionnaire() {
-    console.log('---GET questionnaire---');
-    let url = etoolsEndpoints.questionnaire.url!;
+    const url = etoolsEndpoints.questionnaire.url!;
     makeRequest(new RequestEndpoint(url))
       .then((resp) => {
+        resp.map((r: any) => r.stamp = Date.now());
         this.questionnaireItems = resp;
-      })
+      });
   }
 
   getAnswers() {
-    let url = getEndpoint(etoolsEndpoints.getQuestionnaireAnswers, {assessmentId: this.assessmentId}).url!;
+    const url = getEndpoint(etoolsEndpoints.getQuestionnaireAnswers, {assessmentId: this.assessmentId}).url!;
     makeRequest(new RequestEndpoint(url))
-    .then((resp) => {
-      this.answers = resp;
-    })
+      .then((resp) => {
+        this.answers = resp;
+      });
   }
 
 }
-
-window.customElements.define('assessment-questionnaire-page', AssessmentQuestionnairePage);

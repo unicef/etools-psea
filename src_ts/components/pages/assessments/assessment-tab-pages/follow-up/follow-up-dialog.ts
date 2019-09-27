@@ -101,6 +101,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
         <div class="layout-horizontal">
           <paper-textarea
                   id="descriptionInput"
+                  always-float-label
+                  placeholder="—"
                   required
                   allowed-pattern="[\d\s]"
                   value="${this.editedItem.description}"
@@ -254,7 +256,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   }
 
   updated(changedProperties: GenericObject) {
-    if (this.warningMessages.length && !changedProperties.has('warningMessages') && 
+    if (this.warningMessages.length && !changedProperties.has('warningMessages') &&
         !isEqual(this.editedItem, changedProperties.get('editedItem'))) {
         this.warningMessages.pop();
     }

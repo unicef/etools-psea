@@ -20,7 +20,7 @@ export const etoolsEndpoints: EtoolsEndpoints = {
     url: '/api/v3/users/external/'
   },
   partners: {
-    url: '/api/v2/partners/?hidden=false'
+    url: '/api/v2/partners/?hidden=false&externals_module=psea'
   },
   unicefUsers: {
     url: '/api/v3/users/?verbosity=minimal',
@@ -49,7 +49,7 @@ export const etoolsEndpoints: EtoolsEndpoints = {
     template: '/api/audit/audit-firms/<%=id%>/staff-members/'
   },
   partnerStaffMembers: {
-    template: '/api/v2/partners/<%=id%>/staff-members/'
+    template: '/api/v2/partners/<%=id%>/staff-members/?externals_module=psea'
   },
   offices: {
     url: '/api/offices/'

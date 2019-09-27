@@ -12,24 +12,11 @@ export const defaultSelectedFilters: GenericObject = {
 
 export const assessmentsFilters: EtoolsFilter[] = [
   {
-    filterName: 'Search assesment',
+    filterName: 'Search assessment',
     filterKey: 'q',
     type: EtoolsFilterTypes.Search,
     selectedValue: '',
     selected: true
-  },
-  {
-    filterName: 'Staff Member',
-    filterKey: 'staff_member',
-    type: EtoolsFilterTypes.DropdownMulti,
-    selectionOptions: [],
-    selectedValue: [],
-    selected: false,
-    minWidth: '350px',
-    hideSearch: true,
-    disabled: false,
-    optionValue: 'id',
-    optionLabel: 'name'
   },
   {
     filterName: 'Status',
@@ -57,8 +44,8 @@ export const assessmentsFilters: EtoolsFilter[] = [
         name: 'Final'
       },
       {
-        id: 'canceled',
-        name: 'Canceled'
+        id: 'cancelled',
+        name: 'Cancelled'
       }
     ],
     optionValue: 'id',

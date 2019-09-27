@@ -10,7 +10,7 @@ import {store, RootState} from '../../../../../redux/store';
 import {isJsonStrMatch} from '../../../../utils/utils';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
 import {loadExternalIndividuals} from '../../../../../redux/actions/common-data';
-import {UnicefUser} from "../../../../../types/globals";
+import {UnicefUser} from '../../../../../types/user-model';
 
 /**
  * @customElement
@@ -26,7 +26,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
         a {
           cursor: pointer;
         }
-
+        
         .padd-bottom {
           padding-bottom: 12px;
         }
@@ -46,7 +46,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
           trigger-value-change-event
           @etools-selected-item-changed="${this._setSelectedExternalIndividual}">
         </etools-dropdown>
-        <span ?hidden="${!this.editMode}" class="paper-label">
+        <span ?hidden="${!this.editMode}">
           User not yet in the system? Add them <a @tap="${this.openAddDialog}">here</a>
         </span>
       </div>
