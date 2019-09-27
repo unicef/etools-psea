@@ -24,6 +24,7 @@ import isNil from 'lodash-es/isNil';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
 import '../../common/layout/etools-error-warn-box';
 import '../../common/layout/export-data';
+import {GenericObject} from '../../../types/globals';
 
 /**
  * @LitElement
@@ -123,6 +124,15 @@ export class AssessmentTabs extends connect(store)(LitElement) {
   }
 
   public stateChanged(state: RootState) {
+
+    if (state.user && state.user.data && !state.user.data.is_unicef_user) {
+      const followupTab = this.pageTabs.find((elem: GenericObject) => elem.tab === 'followup');
+      if (followupTab) {
+        followupTab.hidden = true;
+        this.pageTabs = [...this.pageTabs];
+      }
+    }
+
     // update page route data
     if (state.app!.routeDetails.routeName === 'assessments' &&
       state.app!.routeDetails.subRouteName !== 'list') {
