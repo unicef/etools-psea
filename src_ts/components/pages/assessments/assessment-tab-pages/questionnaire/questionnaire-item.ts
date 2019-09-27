@@ -41,7 +41,7 @@ export class QuestionnaireItemElement extends LitElement {
       </style>
       <etools-content-panel panel-title="${this.question.subject}" ?show-expand-btn=${!this.editMode} .open="${this.open}">
         <div slot="panel-btns">
-          <paper-radio-button checked class="header-title-button ${this._getRadioBtnClass(this.answer)} readonly"
+          <paper-radio-button checked class="epc-header-radio-button ${this._getRadioBtnClass(this.answer)} readonly"
               ?hidden="${!this._answerIsSaved(this.answer)}">
             ${this._getSelectedRating(this.answer)}
           </paper-radio-button>

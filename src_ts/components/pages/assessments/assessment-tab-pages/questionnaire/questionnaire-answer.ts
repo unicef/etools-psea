@@ -24,6 +24,7 @@ import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import './answer-instructions';
 
 @customElement('questionnaire-answer')
 export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
@@ -45,44 +46,22 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
 
         .invalid-color {
           color: var(--error-color);
-        }
-        .block {
           display: block;
-        }
-        .ratingInfoPnl{
-          padding: 6px;
-          margin: 10px 0px;
-          width: 100%;
-        }
-        .ratingTooltip {
-          --paper-tooltip-background: #FFFFFF;
-          width: 80%;
-          box-shadow: var(--paper-material-elevation-1_-_box-shadow);
-        }
-        .ratingTooltip span{
-          font-size: 16px;
-          color: var(--primary-text-color);
-          line-height:20px;
-        }
-        #rating-icon{
-          color: var(--info-color);
-        }
-        .noanimation {
         }
       </style>
       <div class="row-padding-v" ?hidden="${!this.editMode}">
-        <label class="paper-label" required>Rating</label> 
-        <paper-icon-button id="rating-icon" icon="info">
-        </paper-icon-button>
-        <paper-tooltip for="rating-icon" class="ratingTooltip" animation-entry="noanimation" position="right">
-            ${this.getRatingInfoHtml()}
-        </paper-tooltip> <br/>
-        <paper-radio-group id="ratingElement"
-            .selected="${this.answer.rating}"
-            @change="${((e: CustomEvent) => this._selectedRatingChanged(e.target as PaperRadioButtonElement))}">
-          ${this._getRatingRadioButtonsTemplate(this.question)}
-        </paper-radio-group>
-        <span class="invalid-color block" ?hidden="${this.hideRatingRequiredMsg}">Please select Rating</span>
+        <div>
+          <label class="paper-label" required>Rating</label>
+          <answer-instructions></answer-instructions>
+        </div> 
+        <div>
+          <paper-radio-group id="ratingElement"
+              .selected="${this.answer.rating}"
+              @change="${((e: CustomEvent) => this._selectedRatingChanged(e.target as PaperRadioButtonElement))}">
+            ${this._getRatingRadioButtonsTemplate(this.question)}
+          </paper-radio-group>
+          <span class="invalid-color" ?hidden="${this.hideRatingRequiredMsg}">Please select Rating</span>
+        </div>
       </div>
       <paper-textarea id="commentsElement" label="Comments" always-float-label class="row-padding-v"
         placeholder="—"
@@ -151,7 +130,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
 
   stateChanged(state: RootState) {
     if (get(state, 'app.routeDetails.params.assessmentId')) {
-      let id = state.app!.routeDetails.params!.assessmentId;
+      const id = state.app!.routeDetails.params!.assessmentId;
       this.assessmentId = id === 'new' ? null : id;
       this.clearControls();
     }
@@ -205,7 +184,11 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       return false;
     }
     let checked = false;
-    selectedEvidences.forEach(ev => {if (Number(ev.evidence) === Number(evidenceId)) {checked = true;} });
+    selectedEvidences.forEach((ev: any) => {
+      if (Number(ev.evidence) === Number(evidenceId)) {
+        checked = true;
+      }
+    });
     return checked;
   }
 
@@ -225,12 +208,12 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   }
 
   _getOtherEvidenceInputValue(answer: Answer) {
-    let otherEvidence = answer.evidences.filter((ev: AnswerEvidence) => !!ev.description)[0];
+    const otherEvidence = answer.evidences.filter((ev: AnswerEvidence) => !!ev.description)[0];
     return otherEvidence ? otherEvidence.description : '';
   }
 
   getAnswerForSave() {
-    let answer: GenericObject = {};
+    const answer: GenericObject = {};
     answer.assessment = this.assessmentId;
     answer.indicator = this.question.id;
     answer.rating = this.answer.rating;
@@ -245,24 +228,23 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       return [];
     }
 
-    let evidences: AnswerEvidence[] = [];
-    this.checkedEvidenceBoxes.forEach((checkboxEl => {
-      let ev: AnswerEvidence = {evidence: checkboxEl.getAttribute('evidenceid')!};
+    const evidences: AnswerEvidence[] = [];
+    this.checkedEvidenceBoxes.forEach((checkboxEl: HTMLElement) => {
+      const ev: AnswerEvidence = {evidence: checkboxEl.getAttribute('evidenceid')!};
       if (checkboxEl.hasAttribute('requires-description')) {
         ev.description = this.otherEvidenceInput.value!;
       }
       evidences.push(ev);
-    }));
+    });
     return evidences;
   }
-
 
   validate() {
     this.hideRatingRequiredMsg = !!this.ratingElement.selected;
     return this.hideRatingRequiredMsg;
   }
 
-  _getReadonlyStyle(editMode: Boolean) {
+  _getReadonlyStyle(editMode: boolean) {
     return editMode ? '' : 'readonly';
   }
 
@@ -283,32 +265,11 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       .then(() => {
         this.answer = {...this.answer, attachments: this._filterOutDeletedAttachment(attachmentId)};
       })
-      .catch((err) => fireEvent(this, 'toast', formatServerErrorAsText(err)));
+      .catch((err: any) => fireEvent(this, 'toast', formatServerErrorAsText(err)));
   }
 
   _filterOutDeletedAttachment(attachmentId: string) {
     return this.answer.attachments.filter(att => Number(att.id) !== Number(attachmentId));
   }
-  getRatingInfoHtml() {
-    return html`
-      <div class='row-padding'>
-        <div class="layout-vertical col-12 ratingInfoPnl red-border">
-            <span class="paper-label font-bold">1- Absent: The organization is not working towards this standard</span>
-            <span class="paper-label">Give this score if the organization meets one of the criteria</span>
-        </div>
-        <div class="layout-vertical col-12 ratingInfoPnl orange-border">
-          <span class="paper-label font-bold">2-Progressing: The organization has made some progress towards applying this standard, but certain
-          aspecs need to be improved</span>
-            <span class="paper-label">Give this score if the organization meets one or two of the three criteria</span>
-        </div>
-        <div class="layout-vertical col-12 ratingInfoPnl green-border">
-          <span class="paper-label font-bold">3- Adequate: The organization fully meets this standard</span>
-          <span class="paper-label">Give this score if the organization meets all of the three criteria</span>
-        </div>
-      </div>
-    `;
-  }
-
-
 
 }

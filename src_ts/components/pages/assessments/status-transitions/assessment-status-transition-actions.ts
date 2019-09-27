@@ -156,7 +156,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   }
 
   canShowStatusActions(assessment: Assessment) {
-    return assessment && assessment.id && !!assessment.assessor;
+    return assessment && assessment.id && !!assessment.assessor && assessment.available_actions;
   }
 
   updateAssessmentStatus(action: string) {
@@ -179,7 +179,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     if (action === 'finalize') {
       warnMsg = 'Your finalisation of this Assessment confirms that you are satisfied that' +
           ' the process followed by the Assessor is in line with expected procedure, and that the Proof of Evidence' +
-          ' provided by the Partner supports the rating against each Core Standard.'
+          ' provided by the Partner supports the rating against each Core Standard.';
     }
     this.confirmationMSg.innerText = warnMsg;
   }
