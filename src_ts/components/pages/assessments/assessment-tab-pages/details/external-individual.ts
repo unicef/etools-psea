@@ -90,6 +90,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
 
   onDialogIndividualSaved(e: any) {
     this.assessor.user = e.detail.id;
+    this.assessor.assessor_type = AssessorTypes.ExternalIndividual;
     setTimeout(() => {
       store.dispatch(updateAssessorData({...this.assessor}));
     }, 400);
