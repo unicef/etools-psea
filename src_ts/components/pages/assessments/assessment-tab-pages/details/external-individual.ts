@@ -66,7 +66,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   editMode!: boolean;
 
   @property({type: String})
-  extIndId!: string;
+  extIndId: string = '';
 
   private dialogExtIndividual!: ExternalIndividualDialog;
 
