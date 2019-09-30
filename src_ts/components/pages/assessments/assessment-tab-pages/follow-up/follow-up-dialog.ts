@@ -28,7 +28,9 @@ export class FollowUpDialog extends connect(store)(LitElement) {
       ${SharedStylesLit}
       <style>
         :root {
-          --etools-dialog-content_-_overflow-y: hidden;
+          --etools-dialog-content: {
+            overflow-y: hidden;
+          }
         }
 
         etools-dropdown {
@@ -43,6 +45,11 @@ export class FollowUpDialog extends connect(store)(LitElement) {
 
         paper-checkbox {
           margin-top: 20px;
+        }
+
+        .layout-horizontal {
+          padding-left: 16px;
+          padding-right: 16px;
         }
       </style>
 
