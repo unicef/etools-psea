@@ -15,6 +15,7 @@ import {GenericObject} from '../../../../../types/globals';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../../../redux/store';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import {loadExternalIndividuals} from '../../../../../redux/actions/common-data';
 
 /**
  * @customElement
@@ -161,7 +162,6 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
       return false;
     }
     this.getControlsData();
-
     // check if email is unique
     let isValid = !this.externalIndividuals.find(x => x.email === this.editedItem.email);
     if (!isValid) {
@@ -215,6 +215,7 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
   }
 
   _handleResponse(resp: any) {
+    store.dispatch(loadExternalIndividuals());
     fireEvent(this, 'external-individual-updated', resp);
     this.handleDialogClosed();
   }

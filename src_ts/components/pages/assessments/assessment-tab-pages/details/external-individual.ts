@@ -9,8 +9,9 @@ import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {isJsonStrMatch} from '../../../../utils/utils';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
-import {loadExternalIndividuals} from '../../../../../redux/actions/common-data';
 import {UnicefUser} from '../../../../../types/user-model';
+import {Assessor, AssessorTypes} from '../../../../../types/assessment';
+import {updateAssessorData} from '../../../../../redux/actions/page-data';
 
 /**
  * @customElement
@@ -26,7 +27,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
         a {
           cursor: pointer;
         }
-        
+
         .padd-bottom {
           padding-bottom: 12px;
         }
@@ -54,7 +55,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   }
 
   @property({type: Object})
-  assessor: { user?: string | number | null } = {};
+  assessor!: Assessor;
 
   @property({type: Array})
   externalIndividuals!: any[];
@@ -88,8 +89,10 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   }
 
   onDialogIndividualSaved(e: any) {
-    store.dispatch(loadExternalIndividuals());
     this.assessor.user = e.detail.id;
+    setTimeout(() => {
+      store.dispatch(updateAssessorData({...this.assessor}));
+    }, 300);
   }
 
   disconnectedCallback() {
