@@ -39,10 +39,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     `;
   }
 
-  cancelAssessmentStatusActionTmpl(assessment: Assessment) {
-    if (!this.canShowCancelAction(assessment)) {
-      return;
-    }
+  cancelBtnHtml() {
     return html`
       <paper-button class="default right-icon" raised @tap="${() => this.updateAssessmentStatus('cancel')}">
         Cancel
@@ -51,38 +48,76 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     `;
   }
 
+  assignBtnHtml() {
+    return html`
+      <paper-button class="primary right-icon" 
+          raised @tap="${() => this.updateAssessmentStatus('assign')}">
+        Assign
+        <iron-icon icon="assignment-ind"></iron-icon>
+      </paper-button>
+    `;
+  }
+
+  submitBtnHtml() {
+    return html`
+      <paper-button class="primary right-icon" 
+          raised @tap="${() => this.updateAssessmentStatus('submit')}">
+        Submit
+        <iron-icon icon="chevron-right"></iron-icon>
+      </paper-button>
+    `;
+  }
+
+  rejectBtnHtml() {
+    return html`
+      <paper-button class="error right-icon"
+        raised @tap="${() => this.updateAssessmentStatus('reject')}">
+        Reject
+        <iron-icon icon="assignment-return"></iron-icon>
+      </paper-button>
+    `;
+  }
+
+  finalizeBtnHtml() {
+    return html`
+      <paper-button class="success right-icon"
+          raised @tap="${() => this.updateAssessmentStatus('finalize')}">
+        Finalize
+        <iron-icon icon="chevron-right"></iron-icon>
+      </paper-button>
+    `;
+  }
+
+  cancelAssessmentStatusActionTmpl(assessment: Assessment) {
+    if (!this.canShowActionBtn(assessment.available_actions, 'cancel')) {
+      return;
+    }
+    return this.cancelBtnHtml();
+  }
+
   assessmentStatusActionBtnsTmpl(assessment: Assessment) {
     if (!this.canShowStatusActions(assessment)) {
       return;
     }
     switch (assessment.status) {
       case 'draft':
-        return html`
-        <paper-button class="primary right-icon" raised @tap="${() => this.updateAssessmentStatus('assign')}">
-          Assign
-          <iron-icon icon="assignment-ind"></iron-icon>
-        </paper-button>
-      `;
+        return this.canShowActionBtn(assessment.available_actions, 'assign')
+          ? this.assignBtnHtml()
+          : '';
       case 'in_progress':
       case 'rejected':
-        return html`
-        <paper-button class="primary right-icon" raised @tap="${() => this.updateAssessmentStatus('submit')}">
-          Submit
-          <iron-icon icon="chevron-right"></iron-icon>
-        </paper-button>
-      `;
+        return this.canShowActionBtn(assessment.available_actions, 'submit')
+          ? this.submitBtnHtml()
+          : '';
       case 'submitted':
         return html`
-       
-        <paper-button class="error right-icon" raised @tap="${() => this.updateAssessmentStatus('reject')}">
-          Reject
-          <iron-icon icon="assignment-return"></iron-icon>
-        </paper-button>
-        <paper-button class="success right-icon" raised @tap="${() => this.updateAssessmentStatus('finalize')}">
-          Finalize
-          <iron-icon icon="chevron-right"></iron-icon>
-        </paper-button>
-      `;
+          ${this.canShowActionBtn(assessment.available_actions, 'reject')
+            ? this.rejectBtnHtml()
+            : ''}
+          ${this.canShowActionBtn(assessment.available_actions, 'finalize')
+            ? this.finalizeBtnHtml()
+            : ''}
+          `;
       default:
         return '';
     }
@@ -112,44 +147,20 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     }
   }
 
-  canShowCancelAction(assessment: Assessment): boolean {
-    // TODO: include user group validation here, only for unicef users/unicef focal point can cancel
-    return assessment && !!assessment.id && ['submitted', 'final'].indexOf(this.assessment.status) === -1;
+  /**
+   * @param assessmentActionsList (assessment.available_actions will contain allowed actions)
+   * @param btnActionName
+   */
+  canShowActionBtn(assessmentActionsList: string[], btnActionName: string): boolean {
+    return assessmentActionsList.indexOf(btnActionName) > -1;
   }
 
   canShowStatusActions(assessment: Assessment) {
-    return assessment && assessment.id && !!assessment.assessor;
-  }
-
-  validateStatusChange(): boolean {
-    let valid = false;
-    switch (this.currentStatusAction) {
-      case 'assign':
-        // assessment should be added
-        valid = this.assessment !== null && !!this.assessment.id && !!this.assessment.assessor;
-        break;
-      case 'submit':
-      case 'reject':
-      case 'finalize':
-        // use only validation of status transition of the API
-        valid = true;
-        break;
-      case 'cancel':
-        // TODO: determine cancel validations by user group and add it to this condition
-        valid = this.assessment !== null && this.canShowCancelAction(this.assessment);
-        break;
-    }
-    return valid;
+    return assessment && assessment.id && !!assessment.assessor && assessment.available_actions;
   }
 
   updateAssessmentStatus(action: string) {
-    // console.log('action', action);
     this.currentStatusAction = action;
-    if (!this.validateStatusChange()) {
-      // TODO: show a toast message explaining why status change cannot be made
-      this.currentStatusAction = '';
-      return;
-    }
 
     if (this.currentStatusAction === 'reject') {
       this.rejectionDialog.dialogOpened = true;
@@ -164,7 +175,13 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   }
 
   updateConfirmationMsgAction(action: string) {
-    this.confirmationMSg.innerText = `Are you sure you want to ${action} this assessment`;
+    let warnMsg = `Are you sure you want to ${action} this assessment`;
+    if (action === 'finalize') {
+      warnMsg = 'Your finalisation of this Assessment confirms that you are satisfied that' +
+          ' the process followed by the Assessor is in line with expected procedure, and that the Proof of Evidence' +
+          ' provided by the Partner supports the rating against each Core Standard.';
+    }
+    this.confirmationMSg.innerText = warnMsg;
   }
 
   onStatusChangeConfirmation(e: CustomEvent) {

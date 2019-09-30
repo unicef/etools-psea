@@ -9,6 +9,7 @@ import {pageContentHeaderSlottedStyles} from '../../common/layout/page-content-h
 import {pageLayoutStyles} from '../../styles/page-layout-styles';
 
 import {GenericObject} from '../../../types/globals';
+import {Assessment} from '../../../types/assessment';
 import '../../common/layout/filters/etools-filters';
 import {
   assessmentsFilters,
@@ -40,7 +41,7 @@ import {buttonsStyles} from '../../styles/button-styles';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
 import {makeRequest} from '../../utils/request-helper';
-import './export-data';
+import '../../common/layout/export-data';
 
 /**
  * @LitElement
@@ -131,6 +132,12 @@ export class AssessmentsList extends connect(store)(LitElement) {
   @property({type: Boolean})
   canExport: boolean = false;
 
+  @property({type: Boolean})
+  isUnicefUser: boolean = false;
+
+  @property({type: Array})
+  unicefFilters: string[] = ['assessor_staff', 'assessor_firm', 'assessor_external'];
+
   @property({type: String})
   queryParams: string = '';
 
@@ -166,7 +173,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
       type: EtoolsTableColumnType.Text
     },
     {
-      label: 'Rating',
+      label: 'SEA Risk Rating',
       name: 'overall_rating.display',
       type: EtoolsTableColumnType.Text
     }
@@ -196,13 +203,17 @@ export class AssessmentsList extends connect(store)(LitElement) {
         }
       }
     }
-    if (state.user && state.user.permissions) {
-      this.canAdd = state.user.permissions.canAddAssessment;
-      this.canExport = state.user.permissions.canExportAssessment;
+    if (state.user) {
+      if (state.user.data) {
+        this.isUnicefUser = state.user.data.is_unicef_user;
+      }
+      if (state.user.permissions) {
+        this.canAdd = state.user.permissions.canAddAssessment;
+        this.canExport = state.user.permissions.canExportAssessment;
+      }
     }
-
     // init filters using default defined filters (including options)
-    let updatedFilters = [...assessmentsFilters];
+    let updatedFilters = this.isUnicefUser ? [...assessmentsFilters] : [...assessmentsFilters.filter(x => this.unicefFilters.indexOf(x.filterKey) < 0)];
     if (state.commonData) {
       // update dropdowns filters options from redux
       updatedFilters = [...this.updateDropdownFiltersOptionsFromCommonData(state.commonData, updatedFilters)];
@@ -213,15 +224,13 @@ export class AssessmentsList extends connect(store)(LitElement) {
   }
 
   updateDropdownFiltersOptionsFromCommonData(commonData: any, currentFilters: EtoolsFilter[]): EtoolsFilter[] {
-    let updatedFilters = updateFilterSelectionOptions(currentFilters,
-      'unicef_focal_point', commonData.unicefUsers);
+    let updatedFilters = updateFilterSelectionOptions(currentFilters, 'unicef_focal_point', commonData.unicefUsers);
     updatedFilters = updateFilterSelectionOptions(updatedFilters, 'partner', commonData.partners);
-    updatedFilters = updateFilterSelectionOptions(updatedFilters,
-      'assessor_external', commonData.externalIndividuals);
-    updatedFilters = updateFilterSelectionOptions(updatedFilters,
-      'assessor_staff', commonData.unicefUsers);
-    updatedFilters = updateFilterSelectionOptions(updatedFilters,
-      'assessor_firm', commonData.assessingFirms);
+    if (this.isUnicefUser) {
+      updatedFilters = updateFilterSelectionOptions(updatedFilters, 'assessor_external', commonData.externalIndividuals);
+      updatedFilters = updateFilterSelectionOptions(updatedFilters, 'assessor_staff', commonData.unicefUsers);
+      updatedFilters = updateFilterSelectionOptions(updatedFilters, 'assessor_firm', commonData.assessingFirms);
+    }
     return updatedFilters;
   }
 
@@ -285,7 +294,13 @@ export class AssessmentsList extends connect(store)(LitElement) {
     let endpoint = {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`};
     return makeRequest(endpoint).then((response: GenericObject) => {
       this.paginator = getPaginator(this.paginator, response);
-      this.listData = [...response.results];
+      const assessments = response.results;
+      assessments.forEach( (assessment: Assessment) => {
+        if (assessment.status === 'in_progress') {
+          assessment.status = 'in progress';
+        }
+      });
+      this.listData = [...assessments];
     })
       .catch((err: any) => console.error(err));
   }

@@ -154,10 +154,14 @@ export const SharedStylesLit = html`
 
     label[required] {
       @apply --required-star-style;
+      background: url('./images/required.svg') no-repeat 87% 40%/6px;
     }
 
     .readonly {
       pointer-events: none;
+    }
+    .font-bold{
+      font-weight: bold;
     }
 </style>
 `;

@@ -19,10 +19,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
     return html`
       <style>
         :host {
-          --ecp-content: {
-            padding-right: 0;
-            padding-left: 0;
-          }
+          --ecp-content-padding: 0
         }
       </style>
       <etools-content-panel panel-title="Action Points">
@@ -32,7 +29,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
                 icon="add">
           </paper-icon-button>
         </div>
-        
+
         <etools-table .items="${this.dataItems}"
                       .columns="${this.columns}"
                       @edit-item="${this.editActionPoint}"
@@ -56,8 +53,9 @@ export class FollowUpPage extends connect(store)(LitElement) {
       link_tmpl: `/apd/action-points/detail/:id`
     }, {
       label: 'Action Point Category',
-      name: 'category',
-      type: EtoolsTableColumnType.Text
+      name: 'url',
+      type: EtoolsTableColumnType.Custom,
+      customMethod: this.displayAPCategory,
     }, {
       label: 'Assignee (Section / Office)',
       name: 'assigned_to.name',
@@ -73,7 +71,8 @@ export class FollowUpPage extends connect(store)(LitElement) {
     }, {
       label: 'Priority',
       name: 'high_priority',
-      type: EtoolsTableColumnType.Text
+      type: EtoolsTableColumnType.Custom,
+      customMethod: this.displayPriority,
     }
   ];
 
@@ -171,5 +170,15 @@ export class FollowUpPage extends connect(store)(LitElement) {
       this.followUpDialog.editedItem = cloneDeep(event.detail);
     }
     this.followUpDialog.openDialog();
+  }
+
+  displayPriority(item: any) {
+    return item.high_priority ? 'High' : '';
+  }
+
+  displayAPCategory(item: any) {
+    return html`
+     <a class="" href="${item.url}">Action Point</a>
+   `;
   }
 }

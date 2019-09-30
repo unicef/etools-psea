@@ -31,6 +31,7 @@ documentContainer.innerHTML = `
 
         --primary-shade-of-green: #1A9251;
         --primary-shade-of-red: #E32526;
+        --primary-shade-of-orange: orange;
 
         --info-color: #cebc06;
         --light-info-color: #fff176;
@@ -49,7 +50,7 @@ documentContainer.innerHTML = `
         }
         --epc-header-color: var(--primary-text-color);
         --ecp-header-title: {
-          padding: 0 0;
+          padding: 0 24px 0 0;
           text-align: left;
           font-size: 18px;
           font-weight: 500;
