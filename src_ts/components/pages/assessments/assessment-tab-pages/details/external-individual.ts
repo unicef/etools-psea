@@ -44,6 +44,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
           option-label="name"
           required
           auto-validate
+          enable-none-option
           ?readonly="${this.isReadonly(this.editMode)}"
           trigger-value-change-event
           @etools-selected-item-changed="${this._setSelectedExternalIndividual}">

@@ -118,7 +118,6 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
             option-value="id"
             required
             auto-validate
-            enable-none-option
             ?readonly="${!this.editMode}">
           </etools-dropdown>
         `;
