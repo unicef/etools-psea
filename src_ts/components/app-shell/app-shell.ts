@@ -47,6 +47,12 @@ import {EtoolsRouter} from '../../routing/routes';
 import {RouteDetails} from '../../routing/router';
 import {getUnicefUsersData} from '../common-data/common-data-actions';
 import {loadPartners, loadOffices, loadSections, loadExternalIndividuals, loadAssessingFirms} from '../../redux/actions/common-data';
+import {makeRequest, RequestEndpoint} from '../utils/request-helper';
+import {etoolsEndpoints} from '../../endpoints/endpoints-list';
+import {getEndpoint} from '../../endpoints/endpoints';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+import {EtoolsErrorWarnBox} from '../common/layout/etools-error-warn-box';
+import '../common/layout/etools-error-warn-box';
 
 store.addReducers({
   user,
@@ -147,6 +153,7 @@ export class AppShell extends connect(store)(LitElement) {
       this.smallMenu = !!parseInt(menuTypeStoredVal, 10);
     }
 
+    this.checkEnvFlags();
     getCurrentUserData();
     getUnicefUsersData();
     store.dispatch(loadPartners());
@@ -184,6 +191,26 @@ export class AppShell extends connect(store)(LitElement) {
     this.mainPage = state.app!.routeDetails!.routeName;
     this.subPage = state.app!.routeDetails!.subRouteName;
     this.drawerOpened = state.app!.drawerOpened;
+  }
+
+  checkEnvFlags() {
+    makeRequest(getEndpoint(etoolsEndpoints.environmentFlags) as RequestEndpoint)
+      .then((response: any) => {
+        this.handleEnvFlagsReceived(response);
+      })
+      .catch((err: any) => {logError('[AppShell]', 'checkEnvFlags', err)});
+  }
+
+  handleEnvFlagsReceived(envFlags: any) {
+    if (!envFlags || !envFlags['psea_enabled']) {
+      const bodyEl = document.querySelector('body');
+      if (bodyEl) {
+        bodyEl.querySelectorAll('*').forEach(el => el.remove());
+        const warnBox = document.createElement('etools-error-warn-box') as EtoolsErrorWarnBox;
+        warnBox.messages = ['You are not authorized to use this application'];
+        bodyEl.appendChild(warnBox);
+      }
+    }
   }
 
   // TODO: just for testing...
