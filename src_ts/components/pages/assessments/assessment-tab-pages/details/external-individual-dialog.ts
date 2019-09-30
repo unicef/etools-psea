@@ -163,7 +163,7 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
     this.getControlsData();
 
     // check if email is unique
-    let isValid = !this.externalIndividuals.find(x => x.email === this.editedItem.email);
+    const isValid = !this.externalIndividuals.find(x => x.email === this.editedItem.email);
     if (!isValid) {
       fireEvent(this.toastEventSource, 'toast', {text: 'This email address is already being used!'});
     }
@@ -220,11 +220,11 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
   }
 
   _handleError(err: any) {
-    let msg = formatServerErrorAsText(err);
+    const msg = formatServerErrorAsText(err);
     logError(msg, 'external-individual-dialog', err);
     fireEvent(this.toastEventSource, 'toast', {text: msg});
   }
 
 }
 
-export {ExternalIndividualDialog as ExternalIndividualDialogEl}
+export {ExternalIndividualDialog as ExternalIndividualDialogEl};

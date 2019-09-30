@@ -102,7 +102,7 @@ export class QuestionnaireItemElement extends LitElement {
   questionnaireAnswerElement!: QuestionnaireAnswerElement;
 
   _getRadioBtnClass(answer: Answer) {
-    //TODO
+    // TODO
     switch (Number(answer.rating)) { // This is kind of hardcoded, see if this approach is reliable
       case 1:
         return 'red';
@@ -117,9 +117,9 @@ export class QuestionnaireItemElement extends LitElement {
 
   _getSelectedRating(answer: Answer) {
     if (!answer || !answer.id) {
-      return ''; //it should be hidden in this case
+      return ''; // it should be hidden in this case
     }
-    let ratingObj = this.question.ratings.find((r: Rating) => Number(r.id) === Number(this.answer.rating));
+    const ratingObj = this.question.ratings.find((r: Rating) => Number(r.id) === Number(this.answer.rating));
     return ratingObj ? ratingObj.label : '';
   }
 
@@ -141,8 +141,8 @@ export class QuestionnaireItemElement extends LitElement {
       return;
     }
 
-    let endpointData = new RequestEndpoint(this._getUrl(), this._getMethod());
-    let answerBody = this.questionnaireAnswerElement.getAnswerForSave();
+    const endpointData = new RequestEndpoint(this._getUrl(), this._getMethod());
+    const answerBody = this.questionnaireAnswerElement.getAnswerForSave();
     makeRequest(endpointData, answerBody)
       .then((resp) => {
         this.answer = resp;
@@ -156,7 +156,7 @@ export class QuestionnaireItemElement extends LitElement {
   }
 
   _getUrl() {
-    let url = getEndpoint(etoolsEndpoints.saveQuestionnaireAnswer, {
+    const url = getEndpoint(etoolsEndpoints.saveQuestionnaireAnswer, {
       assessmentId: this.assessmentId,
       indicatorId: this.question.id
     }).url!;

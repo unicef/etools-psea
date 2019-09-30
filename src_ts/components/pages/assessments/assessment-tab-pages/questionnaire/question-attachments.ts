@@ -105,7 +105,7 @@ export class QuestionAttachmentsElement extends LitElement {
       </div>
     `;
   }
-  _getAttachmentsTemplate(attachments: any, editMode: Boolean) {
+  _getAttachmentsTemplate(attachments: any, editMode: boolean) {
     if (!attachments|| !attachments.length) {
       return html`<div class="row-padding-v">No attachments.</div>`;
     }
@@ -133,7 +133,7 @@ export class QuestionAttachmentsElement extends LitElement {
           </div>
         </div>
       `;
-    })
+    });
   }
 
   _getAttachmentNameTemplate(att: AnswerAttachment) {
@@ -154,11 +154,11 @@ export class QuestionAttachmentsElement extends LitElement {
     attachment.file_type = e.detail.selectedItem && e.detail.selectedItem.id;
   }
 
-  handleUploadedFiles(e:CustomEvent) {
-    if (!!(e.detail.error && e.detail.error.length)) {
+  handleUploadedFiles(e: CustomEvent) {
+    if (e.detail.error && e.detail.error.length) {
       fireEvent(this, 'toast', {text: formatServerErrorAsText(e.detail.error)});
     }
-    let uploadedFiles = e.detail.success;
+    const uploadedFiles = e.detail.success;
     if (!uploadedFiles || !uploadedFiles.length) {
       return;
     }
@@ -174,7 +174,7 @@ export class QuestionAttachmentsElement extends LitElement {
       id: response.id,
       _filename: response.filename,
       created: response.created
-    } as AnswerAttachment;
+    } as any as AnswerAttachment;
   }
 
   getAttachmentsForSave() {

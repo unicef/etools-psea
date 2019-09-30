@@ -14,9 +14,11 @@
     "node": true
   },
   "plugins": [
-    "html"
+    "html",
+    "lit"
   ],
   "rules": {
+    "lit/rule-name": "error",
     "linebreak-style": "off",
     "padded-blocks": "off",
     "brace-style": "off",

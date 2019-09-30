@@ -12,7 +12,7 @@ export class Assessment {
   partner: string | null = '';
   focal_points?: string[] =[];
   rejected_comment: string = '';
-  permissions =  new AssessmentPermissions();
+  permissions = new AssessmentPermissions();
   partner_details?: GenericObject;
   focal_points_details: GenericObject[] = [];
 }
@@ -97,15 +97,15 @@ export class AnswerEvidence {
 export class AnswerAttachment {
   id?: string;
   created: string = '';
-  file_type: string = ''; //id
+  file_type: string = ''; // id
   url: string ='';
-  _filename: string = ''; //temp prop , used only on frontend
+  _filename: string = ''; // temp prop , used only on frontend
 }
 
 export interface UploadedFileInfo {
   id: string;
   filename: string;
   created: string; // "11 Sep 2019"
-  file_link: string; //ex. '/api/v2/attachments/file/3482/'
+  file_link: string; // ex. '/api/v2/attachments/file/3482/'
   uploaded_by: string; // it's the first last name of user
 }

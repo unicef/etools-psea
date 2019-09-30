@@ -30,25 +30,25 @@ export class RequestEndpoint {
 }
 
 const createIronRequestElement = () => {
-  let ironRequestElem = document.createElement('iron-request');
+  const ironRequestElem = document.createElement('iron-request');
   return ironRequestElem;
 };
 
 const generateRequestConfigOptions = (endpoint: RequestEndpoint, body: any) => {
-  let config = {
+  const config = {
     url: endpoint.url,
     method: endpoint.method || 'GET',
     handleAs: endpoint.handleAs || 'json',
     headers: _getRequestHeaders({}),
-    body: body,
+    body: body
   };
   return config;
 };
 
 export const makeRequest = (endpoint: RequestEndpoint, data = {}) => {
 
-  let reqConfig = generateRequestConfigOptions(endpoint, data);
-  let requestElem = createIronRequestElement();
+  const reqConfig = generateRequestConfigOptions(endpoint, data);
+  const requestElem = createIronRequestElement();
 
   requestElem.send(reqConfig);
   return requestElem!.completes!.then((result) => {
@@ -61,12 +61,12 @@ export const makeRequest = (endpoint: RequestEndpoint, data = {}) => {
 
 const _getCSRFCookie = () => {
   // check for a csrftoken cookie and return its value
-  let csrfCookieName = 'csrftoken';
+  const csrfCookieName = 'csrftoken';
   let csrfToken = null;
   if (document.cookie && document.cookie !== '') {
-    let cookies = document.cookie.split(';');
+    const cookies = document.cookie.split(';');
     for (let i = 0; i < cookies.length; i++) {
-      let cookie = cookies[i].trim();
+      const cookie = cookies[i].trim();
       // Does this cookie string begin with the name we want?
       if (cookie.substring(0, csrfCookieName.length + 1) === (csrfCookieName + '=')) {
         csrfToken = decodeURIComponent(cookie.substring(csrfCookieName.length + 1));
@@ -78,9 +78,9 @@ const _getCSRFCookie = () => {
 };
 
 const _getCsrfHeader = (csrfCheck: any) => {
-  let csrfHeaders: any = {};
+  const csrfHeaders: any = {};
   if (csrfCheck !== 'disabled') {
-    let csrfToken = _getCSRFCookie();
+    const csrfToken = _getCSRFCookie();
 
     if (csrfToken) {
       csrfHeaders['x-csrftoken'] = csrfToken;
@@ -95,7 +95,7 @@ const _getRequestHeaders = (reqConfig: any) => {
 
   headers['content-type'] = 'application/json';
 
-  let clientConfiguredHeaders = _getClientConfiguredHeaders(reqConfig.headers);
+  const clientConfiguredHeaders = _getClientConfiguredHeaders(reqConfig.headers);
 
   let csrfHeaders = {};
   if (!_csrfSafeMethod(reqConfig.method)) {
@@ -109,7 +109,7 @@ const _getRequestHeaders = (reqConfig: any) => {
 
 const _getClientConfiguredHeaders = (additionalHeaders: any) => {
   let header;
-  let clientHeaders: any = {};
+  const clientHeaders: any = {};
   if (additionalHeaders && additionalHeaders instanceof Object) {
     /* eslint-disable guard-for-in */
     for (header in additionalHeaders) {

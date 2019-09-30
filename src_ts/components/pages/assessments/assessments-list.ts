@@ -147,7 +147,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
       label: 'Reference No.',
       name: 'reference_number',
       link_tmpl: `${ROOT_PATH}assessments/:id/details`,
-      type: EtoolsTableColumnType.Link,
+      type: EtoolsTableColumnType.Link
     },
     {
       label: 'Assessment Date',
@@ -291,7 +291,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
    * (sort, filters, paginator init/change)
    */
   getAssessmentsData() {
-    let endpoint = {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`};
+    const endpoint = {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`};
     return makeRequest(endpoint).then((response: GenericObject) => {
       this.paginator = getPaginator(this.paginator, response);
       const assessments = response.results;

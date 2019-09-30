@@ -112,11 +112,11 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
       case 'submitted':
         return html`
           ${this.canShowActionBtn(assessment.available_actions, 'reject')
-            ? this.rejectBtnHtml()
-            : ''}
+    ? this.rejectBtnHtml()
+    : ''}
           ${this.canShowActionBtn(assessment.available_actions, 'finalize')
-            ? this.finalizeBtnHtml()
-            : ''}
+    ? this.finalizeBtnHtml()
+    : ''}
           `;
       default:
         return '';

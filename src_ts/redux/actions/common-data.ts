@@ -1,7 +1,7 @@
 import {Action, ActionCreator} from 'redux';
 import {makeRequest, RequestEndpoint} from '../../components/utils/request-helper';
 import {etoolsEndpoints} from '../../endpoints/endpoints-list';
-import {GenericObject} from "../../types/globals";
+import {GenericObject} from '../../types/globals';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 export const UPDATE_UNICEF_USERS_DATA = 'UPDATE_UNICEF_USERS_DATA';
