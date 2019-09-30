@@ -4,7 +4,7 @@ import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import './external-individual-dialog';
-import {ExternalIndividualDialogEl} from './external-individual-dialog';
+import {ExternalIndividualDialog} from './external-individual-dialog';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {isJsonStrMatch} from '../../../../utils/utils';
@@ -12,6 +12,7 @@ import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown'
 import {UnicefUser} from '../../../../../types/user-model';
 import {Assessor, AssessorTypes} from '../../../../../types/assessment';
 import {updateAssessorData} from '../../../../../redux/actions/page-data';
+import {loadExternalIndividuals} from '../../../../../redux/actions/common-data';
 
 /**
  * @customElement
@@ -63,12 +64,22 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   @property({type: Boolean})
   editMode!: boolean;
 
-  private dialogExtIndividual!: ExternalIndividualDialogEl;
+  @property({type: String})
+  extIndId!: string;
+
+  private dialogExtIndividual!: ExternalIndividualDialog;
 
   stateChanged(state: RootState) {
     const stateExternalIndivs = state.commonData!.externalIndividuals;
     if (stateExternalIndivs && !isJsonStrMatch(stateExternalIndivs, this.externalIndividuals)) {
       this.externalIndividuals = [...stateExternalIndivs];
+
+      if (this.extIndId != '') {
+        this.assessor.user = this.extIndId;
+        this.assessor.assessor_type = AssessorTypes.ExternalIndividual;
+        this.extIndId = '';
+        store.dispatch(updateAssessorData(this.assessor));
+      }
     }
   }
 
@@ -76,11 +87,12 @@ export class ExternalIndividual extends connect(store)(LitElement) {
     if (!this.dialogExtIndividual) {
       this.createExternalIndividualDialog();
     }
+    this.extIndId = '';
     this.dialogExtIndividual.openDialog();
   }
 
   createExternalIndividualDialog() {
-    this.dialogExtIndividual = document.createElement('external-individual-dialog') as ExternalIndividualDialogEl;
+    this.dialogExtIndividual = document.createElement('external-individual-dialog') as ExternalIndividualDialog;
     this.dialogExtIndividual.setAttribute('id', 'externalIndividualDialog');
     this.dialogExtIndividual.toastEventSource = this;
     this.onDialogIndividualSaved = this.onDialogIndividualSaved.bind(this);
@@ -89,11 +101,8 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   }
 
   onDialogIndividualSaved(e: any) {
-    this.assessor.user = e.detail.id;
-    this.assessor.assessor_type = AssessorTypes.ExternalIndividual;
-    setTimeout(() => {
-      store.dispatch(updateAssessorData({...this.assessor}));
-    }, 400);
+    this.extIndId = e.detail.id;
+    store.dispatch(loadExternalIndividuals());
   }
 
   disconnectedCallback() {

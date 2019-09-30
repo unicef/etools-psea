@@ -99,7 +99,7 @@ export const loadPartners = () => (dispatch: any) => {
 };
 
 export const loadExternalIndividuals = () => (dispatch: any) => {
-  makeRequest(new RequestEndpoint(etoolsEndpoints.externalIndividuals.url!))
+  return makeRequest(new RequestEndpoint(etoolsEndpoints.externalIndividuals.url!))
     .then((resp: any) => dispatch(setExternalIndividuals(resp)))
     .catch((error: GenericObject) => {
       logError('[EtoolsUnicefUser]: loadExternalIndividuals req error...', error);

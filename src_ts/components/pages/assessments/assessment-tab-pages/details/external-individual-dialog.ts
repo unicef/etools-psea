@@ -15,14 +15,13 @@ import {GenericObject} from '../../../../../types/globals';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../../../redux/store';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
-import {loadExternalIndividuals} from '../../../../../redux/actions/common-data';
 
 /**
  * @customElement
  *  @LitElement
  */
 @customElement('external-individual-dialog')
-class ExternalIndividualDialog extends connect(store)(LitElement) {
+export class ExternalIndividualDialog extends connect(store)(LitElement) {
   render() {
     // language=HTML
     return html`
@@ -215,7 +214,6 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
   }
 
   _handleResponse(resp: any) {
-    store.dispatch(loadExternalIndividuals());
     fireEvent(this, 'external-individual-updated', resp);
     this.handleDialogClosed();
   }
@@ -227,5 +225,3 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
   }
 
 }
-
-export {ExternalIndividualDialog as ExternalIndividualDialogEl}
