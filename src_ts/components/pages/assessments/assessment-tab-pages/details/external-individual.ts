@@ -92,7 +92,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
     this.assessor.user = e.detail.id;
     setTimeout(() => {
       store.dispatch(updateAssessorData({...this.assessor}));
-    }, 300);
+    }, 400);
   }
 
   disconnectedCallback() {
