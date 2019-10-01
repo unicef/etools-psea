@@ -188,8 +188,6 @@ export class AppShell extends connect(store)(LitElement) {
     this.drawerOpened = state.app!.drawerOpened;
   }
 
-
-
   // TODO: just for testing...
   public getState() {
     console.log(store.getState());
