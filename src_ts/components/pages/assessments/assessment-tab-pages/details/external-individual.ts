@@ -74,13 +74,13 @@ export class ExternalIndividual extends connect(store)(LitElement) {
     const stateExternalIndivs = state.commonData!.externalIndividuals;
     if (stateExternalIndivs && !isJsonStrMatch(stateExternalIndivs, this.externalIndividuals)) {
       this.externalIndividuals = [...stateExternalIndivs];
-
-      if (this.extIndId != '') {
-        this.assessor.user = this.extIndId;
-        this.assessor.assessor_type = AssessorTypes.ExternalIndividual;
-        this.extIndId = '';
-        store.dispatch(updateAssessorData(this.assessor));
-      }
+      console.log('externalIndividuals state changed...');
+      // if (this.extIndId != '') {
+      //   this.assessor.user = this.extIndId;
+      //   this.assessor.assessor_type = AssessorTypes.ExternalIndividual;
+      //   this.extIndId = '';
+      //   store.dispatch(updateAssessorData(this.assessor));
+      // }
     }
   }
 
@@ -103,7 +103,14 @@ export class ExternalIndividual extends connect(store)(LitElement) {
 
   onDialogIndividualSaved(e: any) {
     this.extIndId = e.detail.id;
-    store.dispatch(loadExternalIndividuals());
+     loadExternalIndividuals();//.then(() => {
+    //   this.assessor.user = e.detail.id;
+    //   this.assessor.assessor_type = AssessorTypes.ExternalIndividual;
+    //   console.log('dispatch...');
+    //   console.log(this.assessor);
+    //   store.dispatch(updateAssessorData(this.assessor));
+    // }
+    //);
   }
 
   disconnectedCallback() {
