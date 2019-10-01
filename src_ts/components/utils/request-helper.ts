@@ -34,29 +34,22 @@ const createIronRequestElement = () => {
   return ironRequestElem;
 };
 
-const generateRequestConfigOptions = (endpoint: RequestEndpoint, body: any) => {
-  const config = {
-    url: endpoint.url,
-    method: endpoint.method || 'GET',
-    handleAs: endpoint.handleAs || 'json',
-    headers: _getRequestHeaders({}),
-    body: body
-  };
-  return config;
+const _getClientConfiguredHeaders = (additionalHeaders: any) => {
+  let header;
+  const clientHeaders: any = {};
+  if (additionalHeaders && additionalHeaders instanceof Object) {
+    /* eslint-disable guard-for-in */
+    for (header in additionalHeaders) {
+      clientHeaders[header] = additionalHeaders[header].toString();
+    }
+    /* eslint-enable guard-for-in */
+  }
+  return clientHeaders;
 };
 
-export const makeRequest = (endpoint: RequestEndpoint, data = {}) => {
-
-  const reqConfig = generateRequestConfigOptions(endpoint, data);
-  const requestElem = createIronRequestElement();
-
-  requestElem.send(reqConfig);
-  return requestElem!.completes!.then((result) => {
-    return result.response;
-  }).catch((error) => {
-    throw new RequestError(error, requestElem!.xhr!.status, requestElem!.xhr!.statusText,
-      requestElem!.xhr!.response);
-  });
+const _csrfSafeMethod = (method: string) => {
+  // these HTTP methods do not require CSRF protection
+  return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 };
 
 const _getCSRFCookie = () => {
@@ -89,7 +82,6 @@ const _getCsrfHeader = (csrfCheck: any) => {
   return csrfHeaders;
 };
 
-
 const _getRequestHeaders = (reqConfig: any) => {
   let headers: any = {};
 
@@ -107,23 +99,27 @@ const _getRequestHeaders = (reqConfig: any) => {
   return headers;
 };
 
-const _getClientConfiguredHeaders = (additionalHeaders: any) => {
-  let header;
-  const clientHeaders: any = {};
-  if (additionalHeaders && additionalHeaders instanceof Object) {
-    /* eslint-disable guard-for-in */
-    for (header in additionalHeaders) {
-      clientHeaders[header] = additionalHeaders[header].toString();
-    }
-    /* eslint-enable guard-for-in */
-  }
-  return clientHeaders;
+const generateRequestConfigOptions = (endpoint: RequestEndpoint, body: any) => {
+  const config = {
+    url: endpoint.url,
+    method: endpoint.method || 'GET',
+    handleAs: endpoint.handleAs || 'json',
+    headers: _getRequestHeaders({}),
+    body: body
+  };
+  return config;
 };
 
+export const makeRequest = (endpoint: RequestEndpoint, data = {}) => {
 
-const _csrfSafeMethod = (method: string) => {
-  // these HTTP methods do not require CSRF protection
-  return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+  const reqConfig = generateRequestConfigOptions(endpoint, data);
+  const requestElem = createIronRequestElement();
+
+  requestElem.send(reqConfig);
+  return requestElem!.completes!.then((result) => {
+    return result.response;
+  }).catch((error) => {
+    throw new RequestError(error, requestElem!.xhr!.status, requestElem!.xhr!.statusText,
+      requestElem!.xhr!.response);
+  });
 };
-
-

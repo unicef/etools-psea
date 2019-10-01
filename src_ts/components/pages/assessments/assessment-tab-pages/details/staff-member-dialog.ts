@@ -180,7 +180,7 @@ export class StaffMemberDialog extends LitElement {
   requiredMessage: string = 'This field is required';
 
   @property({type: Object})
-  editedItem: EtoolsStaffMemberModel = cloneDeep(this.defaultItem);
+  editedItem!: EtoolsStaffMemberModel;
 
   @property({type: Boolean})
   isNewRecord!: boolean;
@@ -192,6 +192,11 @@ export class StaffMemberDialog extends LitElement {
   toastEventSource!: LitElement;
 
   private initialItem!: EtoolsStaffMemberModel;
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.editedItem= cloneDeep(this.defaultItem);
+  }
 
   public openDialog() {
     this.isNewRecord = !(parseInt(this.editedItem.id) > 0);

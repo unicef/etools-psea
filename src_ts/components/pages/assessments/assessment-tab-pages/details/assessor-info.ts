@@ -367,6 +367,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
         return false;
     }
   }
+
   _validateUnicefStaff() {
     if (!this.assessor.user) {
       (this.shadowRoot!.querySelector('#unicefUser') as EtoolsDropdownEl).invalid = true;

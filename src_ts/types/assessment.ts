@@ -1,22 +1,5 @@
 import {GenericObject} from './globals';
 
-export class Assessment {
-  id?: number;
-  assessment_date: string | null = '';
-  assessor: string = '';
-  reference_number?: string;
-  partner_name?: string;
-  status: string = '';
-  status_list: string[][] = [];
-  available_actions: string[] = [];
-  partner: string | null = '';
-  focal_points?: string[] =[];
-  rejected_comment: string = '';
-  permissions = new AssessmentPermissions();
-  partner_details?: GenericObject;
-  focal_points_details: GenericObject[] = [];
-}
-
 export class AssessmentPermissions {
   edit = {
     partner: true,
@@ -32,7 +15,23 @@ export class AssessmentPermissions {
     answers: false,
     assessor: false
   };
+}
 
+export class Assessment {
+  id?: number;
+  assessment_date: string | null = '';
+  assessor: string = '';
+  reference_number?: string;
+  partner_name?: string;
+  status: string = '';
+  status_list: string[][] = [];
+  available_actions: string[] = [];
+  partner: string | null = '';
+  focal_points?: string[] =[];
+  rejected_comment: string = '';
+  permissions = new AssessmentPermissions();
+  partner_details?: GenericObject;
+  focal_points_details: GenericObject[] = [];
 }
 
 export class AssessmentInvalidator {

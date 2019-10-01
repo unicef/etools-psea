@@ -83,21 +83,6 @@ export class FollowUpDialog extends connect(store)(LitElement) {
           </div>
         </div>
 
-        <!-- <div class="layout-horizontal">
-          <div class="col col-6">
-            <etools-dropdown
-                    id="categoryInput"
-                    // @ts-ignore
-                    .selected="${this.editedItem.category}"
-                    label="Category"
-                    .options="${this.categories}"
-                    option-label="display_name"
-                    required
-                    option-value="value">
-            </etools-dropdown>
-          </div>
-        </div> -->
-
         <div class="layout-horizontal">
           <paper-textarea
                   id="descriptionInput"

@@ -39,7 +39,8 @@ export class QuestionnaireItemElement extends LitElement {
           color: black;
         }
       </style>
-      <etools-content-panel panel-title="${this.question.subject}" ?show-expand-btn=${!this.editMode} .open="${this.open}">
+      <etools-content-panel panel-title="${this.question.subject}" 
+                            ?show-expand-btn=${!this.editMode} .open="${this.open}">
         <div slot="panel-btns">
           <paper-radio-button checked class="epc-header-radio-button ${this._getRadioBtnClass(this.answer)} readonly"
               ?hidden="${!this._answerIsSaved(this.answer)}">
@@ -48,7 +49,8 @@ export class QuestionnaireItemElement extends LitElement {
           <paper-icon-button
                 icon="create"
                 @tap="${this._allowEdit}"
-                style=${styleMap(this.hideEditIcon(this.editMode, this.canEditAnswers) ? {visibility: 'hidden'} : {visibility: ''})}>
+                style=${styleMap(this.hideEditIcon(this.editMode, this.canEditAnswers) ?
+    {visibility: 'hidden'} : {visibility: ''})}>
           </paper-icon-button>
         </div>
         <div class="description">

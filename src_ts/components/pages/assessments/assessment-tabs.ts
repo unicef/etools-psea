@@ -71,7 +71,8 @@ export class AssessmentTabs extends connect(store)(LitElement) {
 
       <section class="elevation page-content no-padding" elevation="1">
         <etools-error-warn-box
-          .messages="${(this.assessment && this.assessment.rejected_comment) ? [this.assessment.rejected_comment] : []}">
+          .messages="${(this.assessment && this.assessment.rejected_comment) ?
+    [this.assessment.rejected_comment] : []}">
         </etools-error-warn-box>
       </section>
 

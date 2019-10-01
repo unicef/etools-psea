@@ -53,7 +53,8 @@ export function updateUserData(profile: GenericObject) {
 
 private function getUserPermissions(user: GenericObject): EtoolsUserPermissions {
   const permissions: EtoolsUserPermissions = {
-    canAddAssessment: user && user.groups && Boolean(user.groups.find((group: any) => group.name === 'UNICEF User' || group.name === 'UNICEF Audit Focal Point')),
+    canAddAssessment: user && user.groups && Boolean(user.groups.find((group: any) => group.name === 'UNICEF User' ||
+                                                                          group.name === 'UNICEF Audit Focal Point')),
     canExportAssessment: user && user.groups
   };
   return permissions;

@@ -124,7 +124,7 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
   requiredMessage: string = 'This field is required';
 
   @property({type: Object})
-  editedItem: GenericObject = cloneDeep(this.defaultItem);
+  editedItem!: GenericObject;
 
   @property({type: Object})
   toastEventSource!: LitElement;
@@ -139,6 +139,11 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
         this.externalIndividuals = state.commonData!.externalIndividuals;
       }
     }
+  }
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.editedItem = cloneDeep(this.defaultItem);
   }
 
   public openDialog() {
