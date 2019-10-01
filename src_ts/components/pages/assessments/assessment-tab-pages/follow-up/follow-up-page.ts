@@ -56,6 +56,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
       name: 'url',
       type: EtoolsTableColumnType.Custom,
       customMethod: this.displayAPCategory
+      // customMethod: (item: any) => {return html`<a class="" href="${item.url}">Action Point</a>`;}
     }, {
       label: 'Assignee (Section / Office)',
       name: 'assigned_to.name',
@@ -73,6 +74,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
       name: 'high_priority',
       type: EtoolsTableColumnType.Custom,
       customMethod: this.displayPriority
+      // customMethod: (item: any) => {return item.high_priority ? 'High' : '';}
     }
   ];
 
