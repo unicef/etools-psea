@@ -111,6 +111,7 @@ export class PageHeader extends connect(store)(LitElement) {
   public stateChanged(state: RootState) {
     if (state) {
       this.profile = state.user!.data as EtoolsUserModel;
+      this._profileChanged(this.profile);
     }
   }
 
@@ -181,5 +182,14 @@ export class PageHeader extends connect(store)(LitElement) {
 
   protected clearLocalStorage() {
     localStorage.clear();
+  }
+
+  protected _profileChanged(profile: EtoolsUserModel | null) {
+    if (profile) {
+      const appSelector: any = this.shadowRoot!.querySelector('#selector');
+      if (appSelector) {
+        appSelector.user = profile;
+      }
+    }
   }
 }
