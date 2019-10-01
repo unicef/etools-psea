@@ -55,8 +55,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
       label: 'Action Point Category',
       name: 'url',
       type: EtoolsTableColumnType.Custom,
-      customMethod: this.displayAPCategory
-      // customMethod: (item: any) => {return html`<a class="" href="${item.url}">Action Point</a>`;}
+      customMethod: (item: any) => {return html`<a class="" href="${item.url}">Action Point</a>`;}
     }, {
       label: 'Assignee (Section / Office)',
       name: 'assigned_to.name',
@@ -73,8 +72,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
       label: 'Priority',
       name: 'high_priority',
       type: EtoolsTableColumnType.Custom,
-      customMethod: this.displayPriority
-      // customMethod: (item: any) => {return item.high_priority ? 'High' : '';}
+      customMethod: (item: any) => {return item.high_priority ? 'High' : '';}
     }
   ];
 
@@ -173,15 +171,5 @@ export class FollowUpPage extends connect(store)(LitElement) {
       this.followUpDialog.editedItem = cloneDeep(event.detail);
     }
     this.followUpDialog.openDialog();
-  }
-
-  displayPriority(item: any) {
-    return item.high_priority ? 'High' : '';
-  }
-
-  displayAPCategory(item: any) {
-    return html`
-     <a class="" href="${item.url}">Action Point</a>
-   `;
   }
 }
