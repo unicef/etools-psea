@@ -15,7 +15,7 @@ export function checkEnvFlags() {
 }
 
 function handleEnvFlagsReceived(envFlags: any) {
-  if (envFlags && envFlags['psea_enabled'] === true) {
+  if (envFlags && envFlags['psea_disabled'] === true) {
     const bodyEl = document.querySelector('body');
     if (bodyEl) {
       bodyEl.querySelectorAll('*').forEach(el => el.remove());
