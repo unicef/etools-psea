@@ -14,8 +14,8 @@ export function checkEnvFlags() {
     .catch((err: any) => {logError('[AppShell]', 'checkEnvFlags', err)});
 }
 
-function handleEnvFlagsReceived(envFlags: any) {
-  if (envFlags && envFlags['psea_disabled'] === true) {
+function handleEnvFlagsReceived(envFlags: string[]) {
+  if (envFlags && envFlags.includes('psea_disabled')) {
     const bodyEl = document.querySelector('body');
     if (bodyEl) {
       bodyEl.querySelectorAll('*').forEach(el => el.remove());
