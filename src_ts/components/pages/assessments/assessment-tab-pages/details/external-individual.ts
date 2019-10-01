@@ -13,6 +13,7 @@ import {UnicefUser} from '../../../../../types/user-model';
 import {Assessor, AssessorTypes} from '../../../../../types/assessment';
 import {updateAssessorData} from '../../../../../redux/actions/page-data';
 import {loadExternalIndividuals} from '../../../../../redux/actions/common-data';
+import {cloneDeep} from 'lodash-es';
 
 /**
  * @customElement
@@ -65,22 +66,12 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   @property({type: Boolean})
   editMode!: boolean;
 
-  @property({type: String})
-  extIndId: string = '';
-
   private dialogExtIndividual!: ExternalIndividualDialog;
 
   stateChanged(state: RootState) {
     const stateExternalIndivs = state.commonData!.externalIndividuals;
     if (stateExternalIndivs && !isJsonStrMatch(stateExternalIndivs, this.externalIndividuals)) {
       this.externalIndividuals = [...stateExternalIndivs];
-      console.log('externalIndividuals state changed...');
-      // if (this.extIndId != '') {
-      //   this.assessor.user = this.extIndId;
-      //   this.assessor.assessor_type = AssessorTypes.ExternalIndividual;
-      //   this.extIndId = '';
-      //   store.dispatch(updateAssessorData(this.assessor));
-      // }
     }
   }
 
@@ -88,7 +79,6 @@ export class ExternalIndividual extends connect(store)(LitElement) {
     if (!this.dialogExtIndividual) {
       this.createExternalIndividualDialog();
     }
-    this.extIndId = '';
     this.dialogExtIndividual.openDialog();
   }
 
@@ -102,15 +92,13 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   }
 
   onDialogIndividualSaved(e: any) {
-    this.extIndId = e.detail.id;
-     loadExternalIndividuals();//.then(() => {
-    //   this.assessor.user = e.detail.id;
-    //   this.assessor.assessor_type = AssessorTypes.ExternalIndividual;
-    //   console.log('dispatch...');
-    //   console.log(this.assessor);
-    //   store.dispatch(updateAssessorData(this.assessor));
-    // }
-    //);
+    const extIndId = e.detail.id;
+
+    loadExternalIndividuals(() => {
+      this.assessor.user = extIndId;
+      this.assessor.assessor_type = AssessorTypes.ExternalIndividual;
+      store.dispatch(updateAssessorData(cloneDeep(this.assessor)));
+    });
   }
 
   disconnectedCallback() {

@@ -3,6 +3,7 @@ import {makeRequest, RequestEndpoint} from '../../components/utils/request-helpe
 import {etoolsEndpoints} from '../../endpoints/endpoints-list';
 import {GenericObject} from "../../types/globals";
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+import {store} from '../store';
 
 export const UPDATE_UNICEF_USERS_DATA = 'UPDATE_UNICEF_USERS_DATA';
 export const SET_PARTNERS = 'SET_PARTNERS';
@@ -98,13 +99,14 @@ export const loadPartners = () => (dispatch: any) => {
     });
 };
 
-export const loadExternalIndividuals = () => (dispatch: any) => {
-  return makeRequest(new RequestEndpoint(etoolsEndpoints.externalIndividuals.url!))
-    .then((resp: any) => dispatch(setExternalIndividuals(resp)))
+export const loadExternalIndividuals = (callBack?: Function) => {
+  makeRequest(new RequestEndpoint(etoolsEndpoints.externalIndividuals.url!))
+    .then((resp: any) => {store.dispatch(setExternalIndividuals(resp))})
     .catch((error: GenericObject) => {
       logError('[EtoolsUnicefUser]: loadExternalIndividuals req error...', error);
       throw error;
-    });
+    })
+    .then(() => {if (callBack && typeof (callBack) === 'function') {callBack()};});
 };
 
 export const loadAssessingFirms = () => (dispatch: any) => {
