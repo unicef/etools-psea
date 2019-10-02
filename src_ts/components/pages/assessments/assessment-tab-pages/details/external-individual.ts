@@ -93,12 +93,13 @@ export class ExternalIndividual extends connect(store)(LitElement) {
 
   onDialogIndividualSaved(e: any) {
     const extIndId = e.detail.id;
+    store.dispatch(loadExternalIndividuals(this.updateAssessor.bind(this, extIndId)));
+  }
 
-    loadExternalIndividuals(() => {
-      this.assessor.user = extIndId;
-      this.assessor.assessor_type = AssessorTypes.ExternalIndividual;
-      store.dispatch(updateAssessorData(cloneDeep(this.assessor)));
-    });
+  updateAssessor(userId: string) {
+    this.assessor.user = userId;
+    this.assessor.assessor_type = AssessorTypes.ExternalIndividual;
+    store.dispatch(updateAssessorData(cloneDeep(this.assessor)));
   }
 
   disconnectedCallback() {

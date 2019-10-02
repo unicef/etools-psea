@@ -152,7 +152,7 @@ export class AppShell extends connect(store)(LitElement) {
     store.dispatch(loadPartners());
     store.dispatch(loadOffices());
     store.dispatch(loadSections());
-    loadExternalIndividuals();
+    store.dispatch(loadExternalIndividuals());
     store.dispatch(loadAssessingFirms());
   }
 
