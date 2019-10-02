@@ -93,8 +93,8 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       <paper-radio-group .selected="${this.getAssessorType(assessor)}"
           ?readonly="${!editMode}"
           @selected-changed="${(e: CustomEvent) =>
-        this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
-        <paper-radio-button name="staff">Unicef Staff</paper-radio-button>
+            this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
+        <paper-radio-button name="staff">UNICEF Staff</paper-radio-button>
         <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
         <paper-radio-button name="external">External Individual</paper-radio-button>
       </paper-radio-group>
@@ -109,7 +109,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       case 'staff':
         return html`
           <etools-dropdown id="unicefUser"
-            label="Unicef Staff" class="row-padding-v"
+            label="UNICEF Staff" class="row-padding-v"
             .options="${this.unicefUsers}"
             .selected="${this.assessor.user}"
             trigger-value-change-event
