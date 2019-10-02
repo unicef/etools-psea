@@ -94,7 +94,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
           ?readonly="${!editMode}"
           @selected-changed="${(e: CustomEvent) =>
             this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
-        <paper-radio-button name="staff">Unicef Staff</paper-radio-button>
+        <paper-radio-button name="staff">UNICEF Staff</paper-radio-button>
         <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
         <paper-radio-button name="external">External Individual</paper-radio-button>
       </paper-radio-group>
