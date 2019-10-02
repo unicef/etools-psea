@@ -7,37 +7,43 @@ export const gridLayoutStylesLit = html`
     .w100 {
       width: 100%;
     }
+
     .layout-horizontal,
     .layout-vertical {
       box-sizing: border-box;
     }
+
     .layout-horizontal {
       @apply --layout-horizontal;
     }
+
     .layout-vertical,
     .col.layout-vertical {
       @apply --layout-vertical;
     }
+
     .layout-wrap {
       @apply --layout-wrap;
     }
+
     .row-padding {
       padding: 16px 24px;
     }
+
     .row-padding-h {
       padding-left: 24px;
       padding-right: 24px;
     }
+
     .row-padding-v {
       padding-top: 8px;
       padding-bottom: 8px;
     }
-    .row-padding-d {
-      padding-bottom: 12px;
-    }
+
     .space-between {
       justify-content: space-between;
     }
+
     .align-items-center {
       align-items: center;
     }
@@ -45,13 +51,16 @@ export const gridLayoutStylesLit = html`
     .row-h {
       @apply --layout-horizontal;
     }
+
     .row-v {
       @apply --layout-vertical;
     }
+
     .flex-c {
       /* flex container */
       @apply --layout-flex;
     }
+
     .row-h, .row-v {
       padding: 16px 24px;
     }
@@ -59,6 +68,7 @@ export const gridLayoutStylesLit = html`
     .row-v.t-border, .row-h.t-border {
       border-top: 1px solid var(--light-divider-color);
     }
+
     .row-v.b-border, .row-h.b-border {
       border-bottom: 1px solid var(--light-divider-color);
     }
@@ -68,12 +78,15 @@ export const gridLayoutStylesLit = html`
       border-bottom: 1px solid var(--light-divider-color);
       font-weight: 600;
     }
+
     .row-v.header-row > .col, .row-h.header-row > .col {
       line-height: 24px;
     }
+
     .table .row-h:not(.header-row) {
       border-top: 1px solid var(--light-divider-color);
     }
+
     .table.form-fields .row-h:not(.header-row) {
       padding: 8px 24px;
     }
@@ -81,24 +94,29 @@ export const gridLayoutStylesLit = html`
     .row-second-bg {
       background-color: var(--light-theme-background-color);
     }
+
     .center-align {
       justify-content: center;
       align-items: center;
       text-align: center;
     }
+
     .right-align {
       @apply --layout-horizontal;
       justify-content: flex-end;
       align-items: center;
       text-align: right;
     }
+
     .bottom-aligned {
       align-items: flex-end;
     }
+
     .no-overflow {
       /* used to prevent flexbox to change it's size if content grows */
       overflow: hidden;
     }
+
     .col {
       @apply --layout-horizontal;
       box-sizing: border-box;

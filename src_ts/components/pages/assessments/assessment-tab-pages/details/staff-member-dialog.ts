@@ -23,14 +23,7 @@ export class StaffMemberDialog extends LitElement {
   render() {
     // language=HTML
     return html`
-      <style>
-        paper-input, paper-checkbox{
-          padding:4px 10px;
-        }
-        .mt-12{
-          margin-top: 12px;
-        }
-      </style>
+      
       ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
       <etools-dialog id="staffMemberDialog"
                       ?opened="${this.dialogOpened}"
@@ -43,95 +36,93 @@ export class StaffMemberDialog extends LitElement {
                       keep-dialog-open
                       @confirm-btn-clicked="${this.onSaveClick}">
 
-              <div class="row-padding-d">
                   <div class="layout-horizontal">
-                      <div class="input-container col-4">
-                          <!-- Email address -->
-                          <paper-input
-                                  id="emailInput"
-                                  value="${this.editedItem.user.email}"
-                                  label="E-mail"
-                                  type="email"
-                                  placeholder="Enter E-mail"
-                                  ?required = "${this.isNewRecord}"
-                                  ?disabled="${!this.isNewRecord}"
-                                  maxlength="45"
-                                  error-message="Email is required"
-                                  @focus="${this.resetFieldError}"
-                                  @tap="${this.resetFieldError}">
-                              <iron-icon slot="prefix" icon="communication:email"></iron-icon>
-                          </paper-input>
-                      </div>
+                    <div class="col col-4">
+                      <!-- Email address -->
+                      <paper-input
+                              id="emailInput"
+                              value="${this.editedItem.user.email}"
+                              label="E-mail"
+                              type="email"
+                              placeholder="Enter E-mail"
+                              ?required = "${this.isNewRecord}"
+                              ?disabled="${!this.isNewRecord}"
+                              maxlength="45"
+                              error-message="Email is required"
+                              @focus="${this.resetFieldError}"
+                              @tap="${this.resetFieldError}">
+                        <iron-icon slot="prefix" icon="communication:email"></iron-icon>
+                      </paper-input>
+                    </div>
 
-                      <div class="input-container col-4">
-                          <!-- First Name -->
-                          <paper-input
-                                  id="firstNameInput"
-                                  value="${this.editedItem.user.first_name}"
-                                  label="First Name"
-                                  placeholder="Enter First Name"
-                                  required
-                                  maxlength="30"
-                                  error-message="${this.requiredMessage}"
-                                  @focus="${this.resetFieldError}"
-                                  @tap="${this.resetFieldError}">
-                          </paper-input>
-                      </div>
+                    <div class="col col-4">
+                      <!-- First Name -->
+                      <paper-input
+                              id="firstNameInput"
+                              value="${this.editedItem.user.first_name}"
+                              label="First Name"
+                              placeholder="Enter First Name"
+                              required
+                              maxlength="30"
+                              error-message="${this.requiredMessage}"
+                              @focus="${this.resetFieldError}"
+                              @tap="${this.resetFieldError}">
+                      </paper-input>
+                    </div>
 
-                      <div class="input-container col-4">
-                          <!-- Last Name -->
-                          <paper-input
-                                  id="lastNameInput"
-                                  value="${this.editedItem.user.last_name}"
-                                  label="Last Name"
-                                  placeholder="Enter Last Name"
-                                  required
-                                  maxlength="30"
-                                  error-message="${this.requiredMessage}"
-                                  @focus="${this.resetFieldError}"
-                                  @tap="${this.resetFieldError}">
-                          </paper-input>
-                      </div>
+                    <div class="col col-4">
+                      <!-- Last Name -->
+                      <paper-input
+                              id="lastNameInput"
+                              value="${this.editedItem.user.last_name}"
+                              label="Last Name"
+                              placeholder="Enter Last Name"
+                              required
+                              maxlength="30"
+                              error-message="${this.requiredMessage}"
+                              @focus="${this.resetFieldError}"
+                              @tap="${this.resetFieldError}">
+                      </paper-input>
+                    </div>
                   </div>
                   <div class="layout-horizontal">
-                      <div class="input-container col-4">
-                          <!-- Position -->
-                          <paper-input
-                                  id="positionInput"
-                                  value="${this.editedItem.user.profile.job_title}"
-                                  label="Position"
-                                  placeholder="Enter Position"
-                                  maxlength="45"
-                                  error-message="{{errors.profile.job_title}}">
-                          </paper-input>
-                      </div>
+                    <div class="col col-4">
+                      <!-- Position -->
+                      <paper-input
+                              id="positionInput"
+                              value="${this.editedItem.user.profile.job_title}"
+                              label="Position"
+                              placeholder="Enter Position"
+                              maxlength="45"
+                              error-message="{{errors.profile.job_title}}">
+                      </paper-input>
+                    </div>
 
-                      <div class="input-container col-4">
-                          <!-- Phone number -->
-                          <paper-input
-                                  id="phoneInput"
-                                  value="${this.editedItem.user.profile.phone_number}"
-                                  allowed-pattern="[0-9\\ \\.\\+\\-\\(\\)]"
-                                  label="Phone number"
-                                  placeholder="Enter Phone"
-                                  maxlength="20"
-                                  error-message="{{errors.user.profile.phone_number}}">
-                              <iron-icon slot="prefix" icon="communication:phone"></iron-icon>
-                          </paper-input>
-                      </div>
+                    <div class="col col-4">
+                      <!-- Phone number -->
+                      <paper-input
+                              id="phoneInput"
+                              value="${this.editedItem.user.profile.phone_number}"
+                              allowed-pattern="[0-9\\ \\.\\+\\-\\(\\)]"
+                              label="Phone number"
+                              placeholder="Enter Phone"
+                              maxlength="20"
+                              error-message="{{errors.user.profile.phone_number}}">
+                        <iron-icon slot="prefix" icon="communication:phone"></iron-icon>
+                      </paper-input>
+                    </div>
                   </div>
 
                   <div class="layout-horizontal mt-12">
                       <!--receive notification-->
-                      <div class="input-container col-4">
-                          <paper-checkbox
-                                  id="hasAccessInput"
-                                  ?checked="${this.editedItem.hasAccess}">
-                              Has Access
-                          </paper-checkbox>
-                      </div>
+                    <div class="col col-4">
+                      <paper-checkbox
+                              id="hasAccessInput"
+                              ?checked="${this.editedItem.hasAccess}">
+                          Has Access
+                      </paper-checkbox>
+                    </div>
                   </div>
-            </div>
       </etools-dialog>
     `;
   }
@@ -227,7 +218,7 @@ export class StaffMemberDialog extends LitElement {
   private validate() {
     let isValid = true;
     this.validationSelectors.forEach((selector: string) => {
-      const el = this.shadowRoot!.querySelector(selector) as PolymerElement & {validate(): boolean};
+      const el = this.shadowRoot!.querySelector(selector) as PolymerElement & { validate(): boolean };
       if (el && !el.validate()) {
         isValid = false;
       }
@@ -262,9 +253,9 @@ export class StaffMemberDialog extends LitElement {
 
     if (this._staffMemberDataHasChanged()) {
       makeRequest(options, this.editedItem)
-        .then((resp: any) => this._staffMemberDataUpdateComplete(resp))
-        .catch((err: any) => this._handleError(err))
-        .then(() => this.requestInProgress = false);
+          .then((resp: any) => this._staffMemberDataUpdateComplete(resp))
+          .catch((err: any) => this._handleError(err))
+          .then(() => this.requestInProgress = false);
     } else {
       if (this.initialItem.hasAccess !== this.editedItem.hasAccess) {
         this._staffMemberDataUpdateComplete(this.editedItem);

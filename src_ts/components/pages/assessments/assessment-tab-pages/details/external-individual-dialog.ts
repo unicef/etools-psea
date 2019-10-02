@@ -25,11 +25,7 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
   render() {
     // language=HTML
     return html`
-      <style>
-        paper-input{
-          padding:4px 10px;
-        }
-      </style>
+     
       ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
       <etools-dialog id="externalIndividualDialog"
                       ?opened="${this.dialogOpened}"
@@ -42,56 +38,54 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
                       keep-dialog-open
                       @confirm-btn-clicked="${this.onSaveClick}">
 
-              <div class="row-padding-d">
                   <div class="layout-horizontal">
-                      <div class="input-container col-4">
-                          <!-- Email address -->
-                          <paper-input
-                                  id="emailInput"
-                                  value="${this.editedItem.email}"
-                                  label="E-mail"
-                                  type="email"
-                                  placeholder="Enter E-mail"
-                                  required
-                                  maxlength="45"
-                                  error-message="Email is required"
-                                  @focus="${this.resetFieldError}"
-                                  @tap="${this.resetFieldError}">
-                              <iron-icon slot="prefix" icon="communication:email"></iron-icon>
-                          </paper-input>
-                      </div>
+                    <div class="col col-4">
+                      <!-- Email address -->
+                      <paper-input
+                              id="emailInput"
+                              value="${this.editedItem.email}"
+                              label="E-mail"
+                              type="email"
+                              placeholder="Enter E-mail"
+                              required
+                              maxlength="45"
+                              error-message="Email is required"
+                              @focus="${this.resetFieldError}"
+                              @tap="${this.resetFieldError}">
+                        <iron-icon slot="prefix" icon="communication:email"></iron-icon>
+                      </paper-input>
+                    </div>
 
-                      <div class="input-container col-4">
-                          <!-- First Name -->
-                          <paper-input
-                                  id="firstNameInput"
-                                  value="${this.editedItem.first_name}"
-                                  label="First Name"
-                                  placeholder="Enter First Name"
-                                  required
-                                  maxlength="30"
-                                  error-message="${this.requiredMessage}"
-                                  @focus="${this.resetFieldError}"
-                                  @tap="${this.resetFieldError}">
-                          </paper-input>
-                      </div>
+                    <div class="col col-4">
+                      <!-- First Name -->
+                      <paper-input
+                              id="firstNameInput"
+                              value="${this.editedItem.first_name}"
+                              label="First Name"
+                              placeholder="Enter First Name"
+                              required
+                              maxlength="30"
+                              error-message="${this.requiredMessage}"
+                              @focus="${this.resetFieldError}"
+                              @tap="${this.resetFieldError}">
+                      </paper-input>
+                    </div>
 
-                      <div class="input-container col-4">
-                          <!-- Last Name -->
-                          <paper-input
-                                  id="lastNameInput"
-                                  value="${this.editedItem.last_name}"
-                                  label="Last Name"
-                                  placeholder="Enter Last Name"
-                                  required
-                                  maxlength="30"
-                                  error-message="${this.requiredMessage}"
-                                  @focus="${this.resetFieldError}"
-                                  @tap="${this.resetFieldError}">
-                          </paper-input>
-                      </div>
+                    <div class="col col-4">
+                      <!-- Last Name -->
+                      <paper-input
+                              id="lastNameInput"
+                              value="${this.editedItem.last_name}"
+                              label="Last Name"
+                              placeholder="Enter Last Name"
+                              required
+                              maxlength="30"
+                              error-message="${this.requiredMessage}"
+                              @focus="${this.resetFieldError}"
+                              @tap="${this.resetFieldError}">
+                      </paper-input>
+                    </div>
                   </div>
-              </div>
       </etools-dialog>
     `;
   }
@@ -182,7 +176,7 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
   private validateInput() {
     let isValid = true;
     this.validationSelectors.forEach((selector: string) => {
-      const el = this.shadowRoot!.querySelector(selector) as PolymerElement & {validate(): boolean};
+      const el = this.shadowRoot!.querySelector(selector) as PolymerElement & { validate(): boolean };
       if (el && !el.validate()) {
         isValid = false;
       }
@@ -209,9 +203,9 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
     const options = new RequestEndpoint(getEndpoint(etoolsEndpoints.externalIndividuals).url!, 'POST');
 
     makeRequest(options, this.editedItem)
-      .then((resp: any) => this._handleResponse(resp))
-      .catch((err: any) => this._handleError(err))
-      .then(() => this.requestInProgress = false);
+        .then((resp: any) => this._handleResponse(resp))
+        .catch((err: any) => this._handleError(err))
+        .then(() => this.requestInProgress = false);
   }
 
   _handleResponse(resp: any) {
