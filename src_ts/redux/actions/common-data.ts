@@ -101,7 +101,7 @@ export const loadPartners = () => (dispatch: any) => {
 export const loadExternalIndividuals = (callBack?: () => void) => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.externalIndividuals.url!))
     .then((resp: any) => {
-      dispatch(setExternalIndividuals(resp))
+      dispatch(setExternalIndividuals(resp));
     })
     .catch((error: GenericObject) => {
       logError('[EtoolsUnicefUser]: loadExternalIndividuals req error...', error);
@@ -109,7 +109,7 @@ export const loadExternalIndividuals = (callBack?: () => void) => (dispatch: any
     })
     .then(() => {
       if (callBack && typeof (callBack) === 'function') {
-        callBack()
+        callBack();
       };
     });
 };
