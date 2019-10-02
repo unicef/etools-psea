@@ -24,14 +24,8 @@ import '../../../../common/layout/etools-error-warn-box';
 export class FollowUpDialog extends connect(store)(LitElement) {
   render() {
     return html`
-      ${gridLayoutStylesLit}
-      ${SharedStylesLit}
+       ${SharedStylesLit} ${gridLayoutStylesLit}
       <style>
-        :root {
-          --etools-dialog-content: {
-            overflow-y: hidden;
-          }
-        }
 
         etools-dropdown {
           --esmm-external-wrapper: {
@@ -44,13 +38,9 @@ export class FollowUpDialog extends connect(store)(LitElement) {
         }
 
         paper-checkbox {
-          margin-top: 20px;
+          margin-bottom: 20px;
         }
 
-        .layout-horizontal {
-          padding-left: 16px;
-          padding-right: 16px;
-        }
       </style>
 
       <etools-dialog keep-dialog-open size="md"
@@ -66,7 +56,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
         
         <etools-error-warn-box .messages="${this.warningMessages}">
         </etools-error-warn-box>
-
+  
         <div class="layout-horizontal">
           <div class="col col-6">
             <etools-dropdown
@@ -93,35 +83,20 @@ export class FollowUpDialog extends connect(store)(LitElement) {
             </etools-dropdown>
           </div>
         </div>
-
-        <!-- <div class="layout-horizontal">
-          <div class="col col-6">
-            <etools-dropdown
-                    id="categoryInput"
-                    // @ts-ignore
-                    .selected="${this.editedItem.category}"
-                    label="Category"
-                    .options="${this.categories}"
-                    option-label="display_name"
-                    required
-                    option-value="value">
-            </etools-dropdown>
-          </div>
-        </div> -->
-
+  
         <div class="layout-horizontal">
           <paper-textarea
                   id="descriptionInput"
                   always-float-label
                   placeholder="—"
                   required
-                  allowed-pattern="[\d\s]"
+                  allowed-pattern="[\\d\\s]"
                   value="${this.editedItem.description}"
                   label="Description"
                   max-rows="4">
           </paper-textarea>
         </div>
-
+  
         <div class="layout-horizontal">
           <div class="col col-6">
             <etools-dropdown
@@ -134,7 +109,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
                     option-value="id">
             </etools-dropdown>
           </div>
-
+  
           <div class="col col-6">
             <etools-dropdown
                     id="sectionInput"
@@ -147,7 +122,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
             </etools-dropdown>
           </div>
         </div>
-
+  
         <div class="layout-horizontal">
           <div class="col col-6">
             <etools-dropdown
@@ -160,7 +135,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
                     option-value="id">
             </etools-dropdown>
           </div>
-
+  
           <div class="col col-6">
             <datepicker-lite
                     id="dueDateInput"
@@ -171,7 +146,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
             </datepicker-lite>
           </div>
         </div>
-
+  
         <div class="layout-horizontal">
           <paper-checkbox
                   id="highPriorityInput"
