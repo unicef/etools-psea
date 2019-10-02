@@ -43,7 +43,7 @@ export class PageHeader extends connect(store)(LitElement) {
       <app-toolbar sticky class="content-align">
         <paper-icon-button id="menuButton" icon="menu" @tap="${() => this.menuBtnClicked()}"></paper-icon-button>
         <div class="titlebar content-align">
-          <etools-app-selector id="selector"></etools-app-selector>
+          <etools-app-selector .user="${this.profile}"></etools-app-selector>
           <img id="app-logo" src="${this.rootPath}images/etools-logo-color-white.svg" alt="eTools">
           ${this.isStaging ? html`<div class="envWarning"> - STAGING TESTING ENVIRONMENT</div>` : ''}
         </div>
@@ -182,4 +182,5 @@ export class PageHeader extends connect(store)(LitElement) {
   protected clearLocalStorage() {
     localStorage.clear();
   }
+
 }
