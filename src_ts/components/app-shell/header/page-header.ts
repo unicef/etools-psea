@@ -108,8 +108,7 @@ export class PageHeader extends connect(store)(LitElement) {
   public connectedCallback() {
     super.connectedCallback();
     this.setBgColor();
-    this.isProduction = isProductionServer();
-    this._checkEnvironment();
+    this.checkEnvironment();
   }
 
   public stateChanged(state: RootState) {
@@ -160,7 +159,8 @@ export class PageHeader extends connect(store)(LitElement) {
     return modifiedFields;
   }
 
-  protected _checkEnvironment() {
+  protected checkEnvironment() {
+    this.isProduction = isProductionServer();
     this.environment = isDevServer() ? 'DEVELOPMENT' :
                        isDemoServer() ? 'DEMO' :
                        isStagingServer() ? 'STAGING' :
