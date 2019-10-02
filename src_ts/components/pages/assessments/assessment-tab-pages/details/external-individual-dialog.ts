@@ -21,7 +21,7 @@ import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
  *  @LitElement
  */
 @customElement('external-individual-dialog')
-class ExternalIndividualDialog extends connect(store)(LitElement) {
+export class ExternalIndividualDialog extends connect(store)(LitElement) {
   render() {
     // language=HTML
     return html`
@@ -161,7 +161,6 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
       return false;
     }
     this.getControlsData();
-
     // check if email is unique
     let isValid = !this.externalIndividuals.find(x => x.email === this.editedItem.email);
     if (!isValid) {
@@ -226,5 +225,3 @@ class ExternalIndividualDialog extends connect(store)(LitElement) {
   }
 
 }
-
-export {ExternalIndividualDialog as ExternalIndividualDialogEl}

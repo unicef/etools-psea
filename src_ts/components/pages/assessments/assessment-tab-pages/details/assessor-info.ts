@@ -270,13 +270,15 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   }
 
   setSelectedUnicefUser(event: CustomEvent) {
-    const selectedUser = event.detail.selectedItem;
-    if (selectedUser) {
-      this.assessor.user = selectedUser.id;
-    } else {
-      this.assessor.user = null;
+    if (this.assessor.assessor_type === AssessorTypes.Staff) {
+      const selectedUser = event.detail.selectedItem;
+      if (selectedUser) {
+        this.assessor.user = selectedUser.id;
+      } else {
+        this.assessor.user = null;
+      }
+      this.requestUpdate();
     }
-    this.requestUpdate();
   }
 
   saveAssessor() {
