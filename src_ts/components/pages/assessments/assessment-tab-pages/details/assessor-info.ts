@@ -109,7 +109,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       case 'staff':
         return html`
           <etools-dropdown id="unicefUser"
-            label="Unicef Staff" class="row-padding-v"
+            label="UNICEF Staff" class="row-padding-v"
             .options="${this.unicefUsers}"
             .selected="${this.assessor.user}"
             trigger-value-change-event
