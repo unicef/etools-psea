@@ -23,8 +23,12 @@ export class StaffMemberDialog extends LitElement {
   render() {
     // language=HTML
     return html`
-      
       ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
+      <style>
+        #has-access-checkbox-wrapper {
+          padding: 16px 0;
+        }
+      </style>
       <etools-dialog id="staffMemberDialog"
                       ?opened="${this.dialogOpened}"
                       dialog-title="${this.dialogTitle}"
@@ -36,93 +40,90 @@ export class StaffMemberDialog extends LitElement {
                       keep-dialog-open
                       @confirm-btn-clicked="${this.onSaveClick}">
 
-                  <div class="layout-horizontal">
-                    <div class="col col-4">
-                      <!-- Email address -->
-                      <paper-input
-                              id="emailInput"
-                              value="${this.editedItem.user.email}"
-                              label="E-mail"
-                              type="email"
-                              placeholder="Enter E-mail"
-                              ?required = "${this.isNewRecord}"
-                              ?disabled="${!this.isNewRecord}"
-                              maxlength="45"
-                              error-message="Email is required"
-                              @focus="${this.resetFieldError}"
-                              @tap="${this.resetFieldError}">
-                        <iron-icon slot="prefix" icon="communication:email"></iron-icon>
-                      </paper-input>
-                    </div>
+        <div class="layout-horizontal">
+          <div class="col col-4">
+            <!-- Email address -->
+            <paper-input
+                    id="emailInput"
+                    value="${this.editedItem.user.email}"
+                    label="E-mail"
+                    type="email"
+                    placeholder="Enter E-mail"
+                    ?required = "${this.isNewRecord}"
+                    ?disabled="${!this.isNewRecord}"
+                    maxlength="45"
+                    error-message="Email is required"
+                    @focus="${this.resetFieldError}"
+                    @tap="${this.resetFieldError}">
+              <iron-icon slot="prefix" icon="communication:email"></iron-icon>
+            </paper-input>
+          </div>
 
-                    <div class="col col-4">
-                      <!-- First Name -->
-                      <paper-input
-                              id="firstNameInput"
-                              value="${this.editedItem.user.first_name}"
-                              label="First Name"
-                              placeholder="Enter First Name"
-                              required
-                              maxlength="30"
-                              error-message="${this.requiredMessage}"
-                              @focus="${this.resetFieldError}"
-                              @tap="${this.resetFieldError}">
-                      </paper-input>
-                    </div>
+          <div class="col col-4">
+            <!-- First Name -->
+            <paper-input
+                    id="firstNameInput"
+                    value="${this.editedItem.user.first_name}"
+                    label="First Name"
+                    placeholder="Enter First Name"
+                    required
+                    maxlength="30"
+                    error-message="${this.requiredMessage}"
+                    @focus="${this.resetFieldError}"
+                    @tap="${this.resetFieldError}">
+            </paper-input>
+          </div>
 
-                    <div class="col col-4">
-                      <!-- Last Name -->
-                      <paper-input
-                              id="lastNameInput"
-                              value="${this.editedItem.user.last_name}"
-                              label="Last Name"
-                              placeholder="Enter Last Name"
-                              required
-                              maxlength="30"
-                              error-message="${this.requiredMessage}"
-                              @focus="${this.resetFieldError}"
-                              @tap="${this.resetFieldError}">
-                      </paper-input>
-                    </div>
-                  </div>
-                  <div class="layout-horizontal">
-                    <div class="col col-4">
-                      <!-- Position -->
-                      <paper-input
-                              id="positionInput"
-                              value="${this.editedItem.user.profile.job_title}"
-                              label="Position"
-                              placeholder="Enter Position"
-                              maxlength="45"
-                              error-message="{{errors.profile.job_title}}">
-                      </paper-input>
-                    </div>
+          <div class="col col-4">
+            <!-- Last Name -->
+            <paper-input
+                    id="lastNameInput"
+                    value="${this.editedItem.user.last_name}"
+                    label="Last Name"
+                    placeholder="Enter Last Name"
+                    required
+                    maxlength="30"
+                    error-message="${this.requiredMessage}"
+                    @focus="${this.resetFieldError}"
+                    @tap="${this.resetFieldError}">
+            </paper-input>
+          </div>
+        </div>
+        <div class="layout-horizontal">
+          <div class="col col-4">
+            <!-- Position -->
+            <paper-input
+                    id="positionInput"
+                    value="${this.editedItem.user.profile.job_title}"
+                    label="Position"
+                    placeholder="Enter Position"
+                    maxlength="45"
+                    error-message="{{errors.profile.job_title}}">
+            </paper-input>
+          </div>
 
-                    <div class="col col-4">
-                      <!-- Phone number -->
-                      <paper-input
-                              id="phoneInput"
-                              value="${this.editedItem.user.profile.phone_number}"
-                              allowed-pattern="[0-9\\ \\.\\+\\-\\(\\)]"
-                              label="Phone number"
-                              placeholder="Enter Phone"
-                              maxlength="20"
-                              error-message="{{errors.user.profile.phone_number}}">
-                        <iron-icon slot="prefix" icon="communication:phone"></iron-icon>
-                      </paper-input>
-                    </div>
-                  </div>
+          <div class="col col-4">
+            <!-- Phone number -->
+            <paper-input
+                    id="phoneInput"
+                    value="${this.editedItem.user.profile.phone_number}"
+                    allowed-pattern="[0-9\\ \\.\\+\\-\\(\\)]"
+                    label="Phone number"
+                    placeholder="Enter Phone"
+                    maxlength="20"
+                    error-message="{{errors.user.profile.phone_number}}">
+              <iron-icon slot="prefix" icon="communication:phone"></iron-icon>
+            </paper-input>
+          </div>
+        </div>
 
-                  <div class="layout-horizontal mt-12">
-                      <!--receive notification-->
-                    <div class="col col-4">
-                      <paper-checkbox
-                              id="hasAccessInput"
-                              ?checked="${this.editedItem.hasAccess}">
-                          Has Access
-                      </paper-checkbox>
-                    </div>
-                  </div>
+        <div id="has-access-checkbox-wrapper" class="layout-horizontal">
+          <paper-checkbox
+                  id="hasAccessInput"
+                  ?checked="${this.editedItem.hasAccess}">
+              Has Access
+          </paper-checkbox>
+        </div>
       </etools-dialog>
     `;
   }
