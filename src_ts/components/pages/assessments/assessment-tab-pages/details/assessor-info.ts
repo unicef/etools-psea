@@ -93,7 +93,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       <paper-radio-group .selected="${this.getAssessorType(assessor)}"
           ?readonly="${!editMode}"
           @selected-changed="${(e: CustomEvent) =>
-            this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
+        this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
         <paper-radio-button name="staff">Unicef Staff</paper-radio-button>
         <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
         <paper-radio-button name="external">External Individual</paper-radio-button>
@@ -270,13 +270,15 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   }
 
   setSelectedUnicefUser(event: CustomEvent) {
-    const selectedUser = event.detail.selectedItem;
-    if (selectedUser) {
-      this.assessor.user = selectedUser.id;
-    } else {
-      this.assessor.user = null;
+    if (this.assessor.assessor_type === AssessorTypes.Staff) {
+      const selectedUser = event.detail.selectedItem;
+      if (selectedUser) {
+        this.assessor.user = selectedUser.id;
+      } else {
+        this.assessor.user = null;
+      }
+      this.requestUpdate();
     }
-    this.requestUpdate();
   }
 
   saveAssessor() {
