@@ -146,5 +146,3 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   }
 
 }
-
-export {ExternalIndividual as ExternalIndividualElement};
