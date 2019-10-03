@@ -51,7 +51,7 @@ import {
   loadSections,
   loadExternalIndividuals,
   loadAssessingFirms,
-  loadUnicefUsersData
+  loadUnicefUsers
 } from '../../redux/actions/common-data';
 import {checkEnvFlags} from '../common/environment-flags';
 
@@ -163,7 +163,7 @@ export class AppShell extends connect(store)(LitElement) {
     store.dispatch(loadSections());
     store.dispatch(loadExternalIndividuals());
     store.dispatch(loadAssessingFirms());
-    store.dispatch(loadUnicefUsersData());
+    store.dispatch(loadUnicefUsers());
   }
 
   public connectedCallback() {

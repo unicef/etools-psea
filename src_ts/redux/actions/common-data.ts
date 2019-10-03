@@ -133,11 +133,11 @@ export const loadAssessingFirms = () => (dispatch: any) => {
     });
 };
 
-export const loadUnicefUsersData = () => (dispatch: any) => {
+export const loadUnicefUsers = () => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.unicefUsers.url!))
       .then((resp: any) => dispatch(setUsers(resp)))
       .catch((error: GenericObject) => {
-        logError('[EtoolsUnicefUser]: loadUnicefUsersData req error...', error);
+        logError('[EtoolsUnicefUser]: loadUnicefUsers req error...', error);
         throw  error;
       });
 };
