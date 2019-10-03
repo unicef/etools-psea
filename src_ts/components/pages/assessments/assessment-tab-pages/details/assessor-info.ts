@@ -93,7 +93,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       <paper-radio-group .selected="${this.getAssessorType(assessor)}"
           ?readonly="${!editMode}"
           @selected-changed="${(e: CustomEvent) =>
-            this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
+    this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
         <paper-radio-button name="staff">UNICEF Staff</paper-radio-button>
         <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
         <paper-radio-button name="external">External Individual</paper-radio-button>
@@ -214,7 +214,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     this.isNew = !this.assessor.id;
     this.originalAssessor = cloneDeep(this.assessor);
     this.requestUpdate().then(() => {
-      //Make sure isNew and canEditAssessorInfo are set before computing editMode
+      // Make sure isNew and canEditAssessorInfo are set before computing editMode
       this.editMode = this.isNew && this.canEditAssessorInfo;
 
       // load staff members after staff members element is initialized
@@ -369,6 +369,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
         return false;
     }
   }
+
   _validateUnicefStaff() {
     if (!this.assessor.user) {
       (this.shadowRoot!.querySelector('#unicefUser') as EtoolsDropdownEl).invalid = true;

@@ -134,7 +134,9 @@ export class StaffMemberDialog extends LitElement {
       first_name: '',
       last_name: '',
       profile: {phone_number: '', job_title: ''}
-    }, hasAccess: false, id: ''
+    },
+    hasAccess: false,
+    id: ''
   };
   private validationSelectors: string[] = ['#emailInput', '#firstNameInput', '#lastNameInput'];
 
@@ -172,7 +174,7 @@ export class StaffMemberDialog extends LitElement {
   requiredMessage: string = 'This field is required';
 
   @property({type: Object})
-  editedItem: EtoolsStaffMemberModel = cloneDeep(this.defaultItem);
+  editedItem!: EtoolsStaffMemberModel;
 
   @property({type: Boolean})
   isNewRecord!: boolean;
@@ -184,6 +186,11 @@ export class StaffMemberDialog extends LitElement {
   toastEventSource!: LitElement;
 
   private initialItem!: EtoolsStaffMemberModel;
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.editedItem= cloneDeep(this.defaultItem);
+  }
 
   public openDialog() {
     this.isNewRecord = !(parseInt(this.editedItem.id) > 0);
@@ -254,9 +261,9 @@ export class StaffMemberDialog extends LitElement {
 
     if (this._staffMemberDataHasChanged()) {
       makeRequest(options, this.editedItem)
-          .then((resp: any) => this._staffMemberDataUpdateComplete(resp))
-          .catch((err: any) => this._handleError(err))
-          .then(() => this.requestInProgress = false);
+        .then((resp: any) => this._staffMemberDataUpdateComplete(resp))
+        .catch((err: any) => this._handleError(err))
+        .then(() => this.requestInProgress = false);
     } else {
       if (this.initialItem.hasAccess !== this.editedItem.hasAccess) {
         this._staffMemberDataUpdateComplete(this.editedItem);

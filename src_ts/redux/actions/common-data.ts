@@ -1,8 +1,8 @@
 import {Action, ActionCreator} from 'redux';
 import {makeRequest, RequestEndpoint} from '../../components/utils/request-helper';
 import {etoolsEndpoints} from '../../endpoints/endpoints-list';
-import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {GenericObject} from '../../types/globals';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 export const UPDATE_UNICEF_USERS_DATA = 'UPDATE_UNICEF_USERS_DATA';
 export const SET_PARTNERS = 'SET_PARTNERS';
@@ -110,7 +110,7 @@ export const loadExternalIndividuals = (callBack?: () => void) => (dispatch: any
     .then(() => {
       if (callBack && typeof (callBack) === 'function') {
         callBack();
-      };
+      }
     });
 };
 

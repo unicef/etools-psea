@@ -25,7 +25,6 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
   render() {
     // language=HTML
     return html`
-     
       ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
       <etools-dialog id="externalIndividualDialog"
                       ?opened="${this.dialogOpened}"
@@ -118,7 +117,7 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
   requiredMessage: string = 'This field is required';
 
   @property({type: Object})
-  editedItem: GenericObject = cloneDeep(this.defaultItem);
+  editedItem!: GenericObject;
 
   @property({type: Object})
   toastEventSource!: LitElement;
@@ -133,6 +132,11 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
         this.externalIndividuals = state.commonData!.externalIndividuals;
       }
     }
+  }
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.editedItem = cloneDeep(this.defaultItem);
   }
 
   public openDialog() {
@@ -156,7 +160,7 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
     }
     this.getControlsData();
     // check if email is unique
-    let isValid = !this.externalIndividuals.find(x => x.email === this.editedItem.email);
+    const isValid = !this.externalIndividuals.find(x => x.email === this.editedItem.email);
     if (!isValid) {
       fireEvent(this.toastEventSource, 'toast', {text: 'This email address is already being used!'});
     }
@@ -175,7 +179,7 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
   private validateInput() {
     let isValid = true;
     this.validationSelectors.forEach((selector: string) => {
-      const el = this.shadowRoot!.querySelector(selector) as PolymerElement & { validate(): boolean };
+      const el = this.shadowRoot!.querySelector(selector) as PolymerElement & {validate(): boolean};
       if (el && !el.validate()) {
         isValid = false;
       }
@@ -202,9 +206,9 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
     const options = new RequestEndpoint(getEndpoint(etoolsEndpoints.externalIndividuals).url!, 'POST');
 
     makeRequest(options, this.editedItem)
-        .then((resp: any) => this._handleResponse(resp))
-        .catch((err: any) => this._handleError(err))
-        .then(() => this.requestInProgress = false);
+      .then((resp: any) => this._handleResponse(resp))
+      .catch((err: any) => this._handleError(err))
+      .then(() => this.requestInProgress = false);
   }
 
   _handleResponse(resp: any) {
@@ -213,7 +217,7 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
   }
 
   _handleError(err: any) {
-    let msg = formatServerErrorAsText(err);
+    const msg = formatServerErrorAsText(err);
     logError(msg, 'external-individual-dialog', err);
     fireEvent(this.toastEventSource, 'toast', {text: msg});
   }
