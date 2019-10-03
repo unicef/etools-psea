@@ -96,8 +96,8 @@ export class AnswerEvidence {
 export class AnswerAttachment {
   id?: string;
   created: string = '';
-  file_type: string = ''; // id
-  url: string ='';
+  file_type?: string = ''; // id
+  url?: string ='';
   _filename: string = ''; // temp prop , used only on frontend
 }
 

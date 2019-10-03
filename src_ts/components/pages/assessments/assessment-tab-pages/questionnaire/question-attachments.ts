@@ -170,11 +170,12 @@ export class QuestionAttachmentsElement extends LitElement {
   }
 
   _parseUploadedFileResponse(response: UploadedFileInfo) {
-    return {
+    const answerAttachment: AnswerAttachment = {
       id: response.id,
       _filename: response.filename,
       created: response.created
-    } as any as AnswerAttachment;
+    };
+    return answerAttachment;
   }
 
   getAttachmentsForSave() {

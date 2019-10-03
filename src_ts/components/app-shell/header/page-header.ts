@@ -162,9 +162,9 @@ export class PageHeader extends connect(store)(LitElement) {
   protected checkEnvironment() {
     this.isProduction = isProductionServer();
     this.environment = isDevServer() ? 'DEVELOPMENT' :
-                       isDemoServer() ? 'DEMO' :
-                       isStagingServer() ? 'STAGING' :
-                       'LOCAL';
+      isDemoServer() ? 'DEMO' :
+        isStagingServer() ? 'STAGING' :
+          'LOCAL';
   }
 
   public menuBtnClicked() {
