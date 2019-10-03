@@ -1,6 +1,6 @@
 {
   "extends": [
-    "eslint:recommended", "google",
+    "eslint:recommended", "plugin:lit/recommended", "google",
     "plugin:@typescript-eslint/recommended"
   ],
   "parser": "@typescript-eslint/parser",
@@ -14,7 +14,8 @@
     "node": true
   },
   "plugins": [
-    "html"
+    "html",
+    "lit"
   ],
   "rules": {
     "linebreak-style": "off",
@@ -36,7 +37,9 @@
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-use-before-define": ["error", { "functions": false, "classes": true, "variables": true }],
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "lit/attribute-value-entities": "off",
+    "lit/no-legacy-template-syntax": "off"
   },
   "globals": {
     "moment": true,

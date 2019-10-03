@@ -9,7 +9,7 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
-import {buttonsStyles} from "../../../../styles/button-styles";
+import {buttonsStyles} from '../../../../styles/button-styles';
 
 /**
  * @customElement

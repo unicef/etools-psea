@@ -1,7 +1,7 @@
 import {Action, ActionCreator} from 'redux';
 import {makeRequest, RequestEndpoint} from '../../components/utils/request-helper';
 import {etoolsEndpoints} from '../../endpoints/endpoints-list';
-import {GenericObject} from "../../types/globals";
+import {GenericObject} from '../../types/globals';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 export const UPDATE_UNICEF_USERS_DATA = 'UPDATE_UNICEF_USERS_DATA';
@@ -98,12 +98,19 @@ export const loadPartners = () => (dispatch: any) => {
     });
 };
 
-export const loadExternalIndividuals = () => (dispatch: any) => {
+export const loadExternalIndividuals = (callBack?: () => void) => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.externalIndividuals.url!))
-    .then((resp: any) => dispatch(setExternalIndividuals(resp)))
+    .then((resp: any) => {
+      dispatch(setExternalIndividuals(resp));
+    })
     .catch((error: GenericObject) => {
       logError('[EtoolsUnicefUser]: loadExternalIndividuals req error...', error);
       throw error;
+    })
+    .then(() => {
+      if (callBack && typeof (callBack) === 'function') {
+        callBack();
+      }
     });
 };
 

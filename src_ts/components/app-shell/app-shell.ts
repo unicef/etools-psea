@@ -46,7 +46,13 @@ import {getCurrentUserData} from '../user/user-actions';
 import {EtoolsRouter} from '../../routing/routes';
 import {RouteDetails} from '../../routing/router';
 import {getUnicefUsersData} from '../common-data/common-data-actions';
-import {loadPartners, loadOffices, loadSections, loadExternalIndividuals, loadAssessingFirms} from '../../redux/actions/common-data';
+import {
+  loadPartners,
+  loadOffices,
+  loadSections,
+  loadExternalIndividuals,
+  loadAssessingFirms} from '../../redux/actions/common-data';
+import {checkEnvFlags} from '../common/environment-flags';
 
 store.addReducers({
   user,
@@ -90,10 +96,12 @@ export class AppShell extends connect(store)(LitElement) {
         <!-- Main content -->
         <main role="main" class="main-content">
           <assessments-list class="page"
-            ?active="${this.isActivePage(this.mainPage, 'assessments', this.subPage, 'list')}">
+            ?active="${this.isActivePage(this.mainPage, 'assessments',
+    this.subPage, 'list')}">
           </assessments-list>
           <assessment-tabs class="page"
-            ?active="${this.isActivePage(this.mainPage, 'assessments', this.subPage, 'details|questionnaire|followup')}">
+            ?active="${this.isActivePage(this.mainPage, 'assessments',
+    this.subPage, 'details|questionnaire|followup')}">
           </assessment-tabs>
           <page-not-found class="page"
             ?active="${this.isActivePage(this.mainPage, 'page-not-found')}">
@@ -147,6 +155,7 @@ export class AppShell extends connect(store)(LitElement) {
       this.smallMenu = !!parseInt(menuTypeStoredVal, 10);
     }
 
+    checkEnvFlags();
     getCurrentUserData();
     getUnicefUsersData();
     store.dispatch(loadPartners());

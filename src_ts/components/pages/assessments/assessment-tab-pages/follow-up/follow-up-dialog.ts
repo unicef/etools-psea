@@ -40,7 +40,6 @@ export class FollowUpDialog extends connect(store)(LitElement) {
         paper-checkbox {
           margin-bottom: 20px;
         }
-
       </style>
 
       <etools-dialog keep-dialog-open size="md"
@@ -56,7 +55,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
         
         <etools-error-warn-box .messages="${this.warningMessages}">
         </etools-error-warn-box>
-  
+
         <div class="layout-horizontal">
           <div class="col col-6">
             <etools-dropdown
@@ -83,20 +82,20 @@ export class FollowUpDialog extends connect(store)(LitElement) {
             </etools-dropdown>
           </div>
         </div>
-  
+
         <div class="layout-horizontal">
           <paper-textarea
                   id="descriptionInput"
                   always-float-label
                   placeholder="—"
                   required
-                  allowed-pattern="[\\d\\s]"
+                  allowed-pattern="[\d\s]"
                   value="${this.editedItem.description}"
                   label="Description"
                   max-rows="4">
           </paper-textarea>
         </div>
-  
+
         <div class="layout-horizontal">
           <div class="col col-6">
             <etools-dropdown
@@ -109,7 +108,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
                     option-value="id">
             </etools-dropdown>
           </div>
-  
+
           <div class="col col-6">
             <etools-dropdown
                     id="sectionInput"
@@ -122,7 +121,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
             </etools-dropdown>
           </div>
         </div>
-  
+
         <div class="layout-horizontal">
           <div class="col col-6">
             <etools-dropdown
@@ -135,7 +134,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
                     option-value="id">
             </etools-dropdown>
           </div>
-  
+
           <div class="col col-6">
             <datepicker-lite
                     id="dueDateInput"
@@ -146,7 +145,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
             </datepicker-lite>
           </div>
         </div>
-  
+
         <div class="layout-horizontal">
           <paper-checkbox
                   id="highPriorityInput"

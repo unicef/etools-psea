@@ -89,7 +89,8 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   }
 
   cancelAssessmentStatusActionTmpl(assessment: Assessment) {
-    if (!this.canShowActionBtn(assessment.available_actions, 'cancel')) {
+    if (!assessment || !assessment.available_actions ||
+      !this.canShowActionBtn(assessment.available_actions, 'cancel')) {
       return;
     }
     return this.cancelBtnHtml();
@@ -112,11 +113,11 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
       case 'submitted':
         return html`
           ${this.canShowActionBtn(assessment.available_actions, 'reject')
-            ? this.rejectBtnHtml()
-            : ''}
+    ? this.rejectBtnHtml()
+    : ''}
           ${this.canShowActionBtn(assessment.available_actions, 'finalize')
-            ? this.finalizeBtnHtml()
-            : ''}
+    ? this.finalizeBtnHtml()
+    : ''}
           `;
       default:
         return '';

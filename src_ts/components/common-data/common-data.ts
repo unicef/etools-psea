@@ -9,15 +9,14 @@ import {updateUnicefUsersData} from '../../redux/actions/common-data';
 import {etoolsEndpoints} from '../../endpoints/endpoints-list';
 
 
-
 /**
  * @customElement
  * @polymer
  * @appliesMixin EtoolsAjaxRequestMixin
  */
-//TODO - this component most likely is not needed
+// TODO - this component most likely is not needed
 export class EtoolsCommonData extends connect(store)(EtoolsAjaxRequestMixin(PolymerElement)) {
-  //TODO This components most likely doesn't need to be connected to the store
+  // TODO This components most likely doesn't need to be connected to the store
 
   @property({type: Object, notify: true})
   unicefUsers!: UnicefUser[];

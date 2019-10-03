@@ -14,8 +14,8 @@ documentContainer.innerHTML = `
         --secondary-text-color: rgba(0, 0, 0, 0.54);
 
         --header-color: #ffffff;
-        --header-bg-color: var(--primary-color);
-        --nonprod-header-color: #233944;
+        --header-bg-color: #233944;
+        --nonprod-header-color: #a94442;
         --nonprod-text-warn-color: #e6e600;
 
         --light-divider-color: rgba(0, 0, 0, 0.12);

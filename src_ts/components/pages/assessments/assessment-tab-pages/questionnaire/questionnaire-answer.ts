@@ -152,7 +152,8 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
             ?checked="${this._isChecked(evidence.id, answer.evidences)}"
             evidenceid="${evidence.id}"
             ?requires-description="${evidence.requires_description}"
-            @checked-changed="${(e: CustomEvent) => this._checkedEvidenceChanged(evidence, (e.target as PaperCheckboxElement).checked!, answer)}">
+            @checked-changed="${(e: CustomEvent) => this._checkedEvidenceChanged(evidence,
+    (e.target as PaperCheckboxElement).checked!, answer)}">
             ${evidence.label}
         </paper-checkbox>`;
 
@@ -203,7 +204,10 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
     if (evidence.requires_description) {
       this.showOtherInput = checked;
       // fix for display Other text in no-edit mode
-      this.updateComplete.then(() => {this.showOtherInput = checked; this.requestUpdate();});
+      this.updateComplete.then(() => {
+        this.showOtherInput = checked;
+        this.requestUpdate();
+      });
     }
   }
 

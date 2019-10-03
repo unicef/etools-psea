@@ -27,7 +27,7 @@ export interface EtoolsUserPermissions{
   canExportAssessment: boolean;
 }
 export interface EtoolsStaffMemberModel {
-  id: number;
+  id: number | string;
   hasAccess: boolean;
   user: EtoolsStaffUserModel;
 }

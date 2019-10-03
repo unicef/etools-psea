@@ -79,7 +79,9 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   },
   answerAttachment: {
     template: `/api/psea/assessment/<%=assessmentId%>/indicator/<%=indicatorId%>/attachments/`
+  },
+  environmentFlags: {
+    url: '/api/v2/environment/flags/'
   }
-
 
 };
