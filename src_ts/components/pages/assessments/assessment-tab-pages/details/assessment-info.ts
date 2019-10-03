@@ -22,11 +22,11 @@ import {formatDate} from '../../../../utils/date-utility';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import DatePickerLite from '@unicef-polymer/etools-date-time/datepicker-lite';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
-import {UnicefUser} from '../../../../../types/user-model';
 import {updateAssessmentData} from '../../../../../redux/actions/page-data';
 import PermissionsMixin from '../../../mixins/permissions-mixins';
 import get from 'lodash-es/get';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import '@unicef-polymer/etools-loading';
 
 /**
  * @customElement
@@ -46,6 +46,8 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
       </style>
       ${SharedStylesLit}${gridLayoutStylesLit} ${buttonsStyles}
       <etools-content-panel panel-title="Assessment Information">
+        <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
+
         <div slot="panel-btns">
           <paper-icon-button
                 ?hidden="${this.hideEditIcon(this.isNew, this.editMode, this.canEditAssessmentInfo)}"
@@ -140,6 +142,9 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
   @property({type: Boolean})
   isUnicefUser: boolean = false;
 
+  @property({type: Boolean})
+  showLoading: boolean = false;
+
   stateChanged(state: RootState) {
     if (state.commonData && !isJsonStrMatch(this.partners, state.commonData!.partners)) {
       this.partners = [...state.commonData!.partners];
@@ -162,7 +167,6 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
         : [];
 
       this.updateUnicefUsers([...state.commonData!.unicefUsers]);
-
       setTimeout(() => this.resetValidations(), 10);
     }
   }
@@ -238,7 +242,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     if (!this.validate()) {
       return;
     }
-
+    this.showLoading = true;
     const options = {
       url: this._getUrl()!,
       method: this.isNew ? 'POST' : 'PATCH'
@@ -257,7 +261,8 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           store.dispatch(updateAssessmentData(response));
         }
       })
-      .catch(err => fireEvent(this, 'toast', {text: formatServerErrorAsText(err)}));
+      .catch(err => fireEvent(this, 'toast', {text: formatServerErrorAsText(err)}))
+      .then(() => this.showLoading = false);
   }
 
   resetValidations() {
