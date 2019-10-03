@@ -98,12 +98,19 @@ export const loadPartners = () => (dispatch: any) => {
     });
 };
 
-export const loadExternalIndividuals = () => (dispatch: any) => {
+export const loadExternalIndividuals = (callBack?: () => void) => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.externalIndividuals.url!))
-    .then((resp: any) => dispatch(setExternalIndividuals(resp)))
+    .then((resp: any) => {
+      dispatch(setExternalIndividuals(resp));
+    })
     .catch((error: GenericObject) => {
       logError('[EtoolsUnicefUser]: loadExternalIndividuals req error...', error);
       throw error;
+    })
+    .then(() => {
+      if (callBack && typeof (callBack) === 'function') {
+        callBack();
+      }
     });
 };
 

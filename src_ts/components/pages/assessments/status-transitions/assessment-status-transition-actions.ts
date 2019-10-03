@@ -89,7 +89,8 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   }
 
   cancelAssessmentStatusActionTmpl(assessment: Assessment) {
-    if (!this.canShowActionBtn(assessment.available_actions, 'cancel')) {
+    if (!assessment || !assessment.available_actions ||
+      !this.canShowActionBtn(assessment.available_actions, 'cancel')) {
       return;
     }
     return this.cancelBtnHtml();
