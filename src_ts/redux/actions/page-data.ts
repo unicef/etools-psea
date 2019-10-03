@@ -57,9 +57,9 @@ export const requestAssessorData = (assessmentId: number) => (dispatch: any) => 
  * @param errorCallback
  */
 export const saveAssessorData = (assessmentId: number,
-                                 assessorId: string | number | undefined | null,
-                                 data: any,
-                                 errorCallback: (...args: any[]) => void) =>
+  assessorId: string | number | undefined | null,
+  data: any,
+  errorCallback: (...args: any[]) => void) =>
   (dispatch: any) => {
     if (!assessmentId) {
       throw new Error(`[updateAssessorData] Invalid assessment id ${assessmentId}`);

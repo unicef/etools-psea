@@ -71,7 +71,7 @@ export const buildUrlQueryString = (params: GenericObject): string => {
 };
 
 export const getSelectedFiltersFromUrlParams = (selectedFilters: GenericObject,
-                                                params: GenericObject): GenericObject => {
+  params: GenericObject): GenericObject => {
   const filters: GenericObject = {...selectedFilters};
   for (const param in params) {
     if (params[param]) {
