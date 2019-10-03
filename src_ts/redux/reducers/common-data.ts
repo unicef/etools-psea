@@ -1,5 +1,5 @@
 import {Reducer} from 'redux';
-import {UPDATE_UNICEF_USERS_DATA, SET_PARTNERS, SET_EXTERNAL_INDIVIDUALS, SET_OFFICES, SET_SECTIONS, SET_ASSESSING_FIRMS} from '../actions/common-data';
+import {UPDATE_UNICEF_USERS_DATA, SET_PARTNERS, SET_EXTERNAL_INDIVIDUALS, SET_OFFICES, SET_SECTIONS, SET_ASSESSING_FIRMS, SET_USERS} from '../actions/common-data';
 import {RootAction} from '../store';
 import {UnicefUser} from '../../types/user-model';
 
@@ -52,6 +52,11 @@ const commonData: Reducer<CommonDataState, RootAction> = (state = INITIAL_COMMON
       return {
         ...state,
         assessingFirms: action.assessingFirms
+      };
+    case SET_USERS:
+      return {
+        ...state,
+        users: action.users
       };
     default:
       return state;
