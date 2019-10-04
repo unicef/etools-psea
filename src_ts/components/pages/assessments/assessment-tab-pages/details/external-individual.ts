@@ -7,13 +7,12 @@ import './external-individual-dialog';
 import {ExternalIndividualDialog} from './external-individual-dialog';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
-import {isJsonStrMatch} from '../../../../utils/utils';
+import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
 import {UnicefUser} from '../../../../../types/user-model';
 import {Assessor, AssessorTypes} from '../../../../../types/assessment';
 import {updateAssessorData} from '../../../../../redux/actions/page-data';
 import {loadExternalIndividuals} from '../../../../../redux/actions/common-data';
-import {cloneDeep} from 'lodash-es';
 
 /**
  * @customElement
