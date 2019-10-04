@@ -10,6 +10,7 @@ export const SET_OFFICES = 'SET_OFFICES';
 export const SET_SECTIONS = 'SET_SECTIONS';
 export const SET_EXTERNAL_INDIVIDUALS = 'SET_EXTERNAL_INDIVIDUALS';
 export const SET_ASSESSING_FIRMS = 'SET_ASSESSING_FIRMS';
+export const SET_USERS = 'SET_USERS';
 
 export interface CommonDataActionUpdateUnicefUsersData extends Action<'UPDATE_UNICEF_USERS_DATA'> {
   unicefUsersData: object[];
@@ -61,6 +62,13 @@ export const setExternalIndividuals = (externalIndividuals: []) => {
   return {
     type: SET_EXTERNAL_INDIVIDUALS,
     externalIndividuals
+  };
+};
+
+export const setUsers = (users: []) => {
+  return {
+    type: SET_USERS,
+    users
   };
 };
 
@@ -123,4 +131,13 @@ export const loadAssessingFirms = () => (dispatch: any) => {
       logError('[EtoolsUnicefUser]: loadAssessingFirms req error...', error);
       throw error;
     });
+};
+
+export const loadUnicefUsers = () => (dispatch: any) => {
+  makeRequest(new RequestEndpoint(etoolsEndpoints.unicefUsers.url!))
+      .then((resp: any) => dispatch(setUsers(resp)))
+      .catch((error: GenericObject) => {
+        logError('[EtoolsUnicefUser]: loadUnicefUsers req error...', error);
+        throw  error;
+      });
 };
