@@ -64,7 +64,7 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
           text-align: left;
         }
       </style>
-
+      <etools-loading loading-text="Loading..." .active="${this.loadingQuestions || this.loadingAnswers}"></etools-loading>
       <div class="overall layout-horizontal ${this._getColorClass(this.overallRatingDisplay)}"
           ?hidden="${!this.overallRatingDisplay}">
         <div class="col-5 r-align">SEA Risk Rating:</div><div class="col-1"></div>
@@ -88,6 +88,12 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
 
   @property({type: Boolean})
   canEditAnswers!: boolean;
+
+  @property({type: Boolean})
+  loadingQuestions!: boolean;
+
+  @property({type: Boolean})
+  loadingAnswers!: boolean;
 
   @property({type: Boolean})
   isUnicefUser: boolean = false;
@@ -117,7 +123,7 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     this.canEditAnswers = !!canEdit;
   }
 
-  setOverallRatingDisplay(overall_rating: {rating: number, display: string}) {
+  setOverallRatingDisplay(overall_rating: {rating: number; display: string}) {
     if (overall_rating && overall_rating.display !== '-') {
       this.overallRatingDisplay = overall_rating.display;
     } else {
@@ -195,20 +201,24 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   }
 
   getQuestionnaire() {
+    this.loadingQuestions = true;
     const url = etoolsEndpoints.questionnaire.url!;
     makeRequest(new RequestEndpoint(url))
       .then((resp) => {
         resp.map((r: any) => r.stamp = Date.now());
         this.questionnaireItems = resp;
-      });
+      }).catch((err: any) => console.error(err))
+      .then(() => this.loadingQuestions = false);
   }
 
   getAnswers() {
+    this.loadingAnswers = true;
     const url = getEndpoint(etoolsEndpoints.getQuestionnaireAnswers, {assessmentId: this.assessmentId}).url!;
     makeRequest(new RequestEndpoint(url))
       .then((resp) => {
         this.answers = resp;
-      });
+      }).catch((err: any) => console.error(err))
+      .then(() => this.loadingAnswers = false);
   }
 
 }

@@ -71,16 +71,21 @@ export class AssessmentTabs extends connect(store)(LitElement) {
 
       <section class="elevation page-content no-padding" elevation="1">
         <etools-error-warn-box
-          .messages="${(this.assessment && this.assessment.rejected_comment) ? [this.assessment.rejected_comment] : []}">
+          .messages="${(this.assessment && this.assessment.rejected_comment) ?
+    [this.assessment.rejected_comment] : []}">
         </etools-error-warn-box>
       </section>
 
       <div class="page-content">
         <assessment-details-page ?hidden="${!this.isActiveTab(this.activeTab, 'details')}">
+            <etools-loading loading-text="Loading..." active></etools-loading>
         </assessment-details-page>
         <assessment-questionnaire-page ?hidden="${!this.isActiveTab(this.activeTab, 'questionnaire')}">
+            <etools-loading loading-text="Loading..." active></etools-loading>
         </assessment-questionnaire-page>
-        <follow-up-page ?hidden="${!this.isActiveTab(this.activeTab, 'followup')}"></follow-up-page>
+        <follow-up-page ?hidden="${!this.isActiveTab(this.activeTab, 'followup')}">
+            <etools-loading loading-text="Loading..." active></etools-loading>
+        </follow-up-page>
       </div>
     `;
   }

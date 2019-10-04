@@ -52,7 +52,9 @@ export class AppMenu extends LitElement {
                        attr-for-selected="menu-name"
                        role="navigation">
 
-          <a class="nav-menu-item" menu-name="assessments" href="${this.rootPath + 'assessments'}">
+          <a class="nav-menu-item" 
+              href="${this.rootPath + 'assessments'}"
+              menu-name="assessments">
             <iron-icon id="assessments-list-opt" icon="settings-applications"></iron-icon>
             <paper-tooltip for="assessments-list-opt" position="right">
              PSEA Assessments

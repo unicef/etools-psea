@@ -50,7 +50,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   assignBtnHtml() {
     return html`
-      <paper-button class="primary right-icon" 
+      <paper-button class="primary right-icon"
           raised @tap="${() => this.updateAssessmentStatus('assign')}">
         Assign
         <iron-icon icon="assignment-ind"></iron-icon>
@@ -60,7 +60,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   submitBtnHtml() {
     return html`
-      <paper-button class="primary right-icon" 
+      <paper-button class="primary right-icon"
           raised @tap="${() => this.updateAssessmentStatus('submit')}">
         Submit
         <iron-icon icon="chevron-right"></iron-icon>
@@ -89,7 +89,8 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   }
 
   cancelAssessmentStatusActionTmpl(assessment: Assessment) {
-    if (!this.canShowActionBtn(assessment.available_actions, 'cancel')) {
+    if (!assessment || !assessment.available_actions ||
+      !this.canShowActionBtn(assessment.available_actions, 'cancel')) {
       return;
     }
     return this.cancelBtnHtml();
@@ -112,11 +113,11 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
       case 'submitted':
         return html`
           ${this.canShowActionBtn(assessment.available_actions, 'reject')
-            ? this.rejectBtnHtml()
-            : ''}
+    ? this.rejectBtnHtml()
+    : ''}
           ${this.canShowActionBtn(assessment.available_actions, 'finalize')
-            ? this.finalizeBtnHtml()
-            : ''}
+    ? this.finalizeBtnHtml()
+    : ''}
           `;
       default:
         return '';
@@ -175,7 +176,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   }
 
   updateConfirmationMsgAction(action: string) {
-    let warnMsg = `Are you sure you want to ${action} this assessment`;
+    let warnMsg = `Are you sure you want to ${action} this assessment?`;
     if (action === 'finalize') {
       warnMsg = 'Your finalisation of this Assessment confirms that you are satisfied that' +
           ' the process followed by the Assessor is in line with expected procedure, and that the Proof of Evidence' +
