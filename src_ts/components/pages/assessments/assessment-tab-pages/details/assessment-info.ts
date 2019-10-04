@@ -153,11 +153,11 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
       this.isUnicefUser = state.user.data.is_unicef_user;
     }
 
-    const currentAssessment = get(state, 'pageData.currentAssessment');
+    const currentAssessment: Assessment = get(state, 'pageData.currentAssessment');
     if (currentAssessment && Object.keys(currentAssessment).length &&
       !isJsonStrMatch(this.assessment, currentAssessment)) {
 
-      this.assessment = {...currentAssessment} as Assessment;
+      this.assessment = {...currentAssessment};
       this.originalAssessment = cloneDeep(this.assessment);
       this.isNew = !this.assessment.id;
       this.editMode = this.isNew;
@@ -181,7 +181,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
         this.unicefUsers = defaultUnicefUsers;
         // for unicef user check if saved focal points exists in unicefUsers, if not, add them
         let changed = false;
-        this.assessment.focal_points_details.forEach(fp => {
+        this.assessment.focal_points_details.forEach((fp) => {
           if (this.unicefUsers.findIndex(user => user.id === fp.id) < 0) {
             this.unicefUsers.push(fp);
             changed = true;

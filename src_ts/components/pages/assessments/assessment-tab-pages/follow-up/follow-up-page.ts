@@ -3,7 +3,7 @@ import '@unicef-polymer/etools-content-panel/etools-content-panel.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import './follow-up-dialog';
 import {FollowUpDialog} from './follow-up-dialog';
-import {EtoolsTableColumn, EtoolsTableColumnType} from '../../../../common/layout/etools-table/etools-table'
+import {EtoolsTableColumn, EtoolsTableColumnType} from '../../../../common/layout/etools-table/etools-table';
 import {GenericObject, ActionPoint} from '../../../../../types/globals';
 import {Assessment} from '../../../../../types/assessment';
 import {cloneDeep} from '../../../../utils/utils';
@@ -61,7 +61,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
       label: 'Action Point Category',
       name: 'url',
       type: EtoolsTableColumnType.Custom,
-      customMethod: this.displayAPCategory,
+      customMethod: (item: any) => {return html`<a class="" href="${item.url}">Action Point</a>`;}
     }, {
       label: 'Assignee (Section / Office)',
       name: 'assigned_to.name',
@@ -78,7 +78,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
       label: 'Priority',
       name: 'high_priority',
       type: EtoolsTableColumnType.Custom,
-      customMethod: this.displayPriority,
+      customMethod: (item: any) => {return item.high_priority ? 'High' : '';}
     }
   ];
 
@@ -145,7 +145,8 @@ export class FollowUpPage extends connect(store)(LitElement) {
 
   copyActionPoint(event: GenericObject) {
     this.extractActionPointData(event.detail);
-    this.followUpDialog.warningMessages = [...this.followUpDialog.warningMessages, "It is required to change at least one of the fields below."];
+    this.followUpDialog.warningMessages = [...this.followUpDialog.warningMessages,
+      'It is required to change at least one of the fields below.'];
     this.followUpDialog.editedItem.id = 'new';
     this.openFollowUpDialog();
   }
@@ -178,15 +179,5 @@ export class FollowUpPage extends connect(store)(LitElement) {
       this.followUpDialog.editedItem = cloneDeep(event.detail);
     }
     this.followUpDialog.openDialog();
-  }
-
-  displayPriority(item: any) {
-    return item.high_priority ? 'High' : '';
-  }
-
-  displayAPCategory(item: any) {
-    return html`
-     <a class="" href="${item.url}">Action Point</a>
-   `;
   }
 }

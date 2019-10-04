@@ -186,7 +186,7 @@ export class FirmStaffMembers extends LitElement {
     makeRequest(endpoint as RequestEndpoint)
       .then((resp: any) => {
         this.staffMembers = resp.results.map((sm: any) => {
-          return {...sm, hasAccess: this.currentFirmAssessorStaffWithAccess.includes(sm.id)}
+          return {...sm, hasAccess: this.currentFirmAssessorStaffWithAccess.includes(sm.id)};
         });
         this.paginator = getPaginator(this.paginator, {count: resp.count, data: this.staffMembers});
       })

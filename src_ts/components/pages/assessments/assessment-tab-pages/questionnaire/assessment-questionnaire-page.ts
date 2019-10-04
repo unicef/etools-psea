@@ -123,7 +123,7 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     this.canEditAnswers = !!canEdit;
   }
 
-  setOverallRatingDisplay(overall_rating: {rating: number, display: string}) {
+  setOverallRatingDisplay(overall_rating: {rating: number; display: string}) {
     if (overall_rating && overall_rating.display !== '-') {
       this.overallRatingDisplay = overall_rating.display;
     } else {

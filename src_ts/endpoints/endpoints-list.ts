@@ -82,6 +82,6 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   },
   environmentFlags: {
     url: '/api/v2/environment/flags/'
-  },
+  }
 
 };
