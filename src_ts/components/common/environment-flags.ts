@@ -20,7 +20,7 @@ function handleEnvFlagsReceived(envFlags: any) {
     if (bodyEl) {
       bodyEl.querySelectorAll('*').forEach(el => el.remove());
       const warnBox = document.createElement('etools-error-warn-box') as EtoolsErrorWarnBox;
-      warnBox.messages = ['You are not authorized to use this application'];
+      warnBox.messages = ['PSEA is currently unavailable in your workspace, please stay tuned... In the meantime checkout our other great modules'];
       bodyEl.appendChild(warnBox);
     }
   }
