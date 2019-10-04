@@ -43,6 +43,7 @@ import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
 import {makeRequest} from '../../utils/request-helper';
 import '../../common/layout/export-data';
+import '@unicef-polymer/etools-loading';
 
 /**
  * @LitElement
@@ -66,6 +67,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
         }
       </style>
       <page-content-header>
+
         <h1 slot="page-title">Assessments list</h1>
 
         <div slot="title-row-actions" class="content-header-actions">
@@ -86,6 +88,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
       </section>
 
       <section class="elevation page-content no-padding" elevation="1">
+        <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
         <etools-table .columns="${this.listColumns}"
                       .items="${this.listData}"
                       .paginator="${this.paginator}"
@@ -142,6 +145,9 @@ export class AssessmentsList extends connect(store)(LitElement) {
 
   @property({type: String})
   queryParams: string = '';
+
+  @property({type: Boolean})
+  showLoading: boolean = false;
 
   @property({type: Array})
   listColumns: EtoolsTableColumn[] = [
@@ -295,6 +301,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
    * (sort, filters, paginator init/change)
    */
   getAssessmentsData() {
+    this.showLoading = true;
     const endpoint = {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`};
     return makeRequest(endpoint).then((response: GenericObject) => {
       this.paginator = getPaginator(this.paginator, response);
@@ -305,8 +312,8 @@ export class AssessmentsList extends connect(store)(LitElement) {
         }
       });
       this.listData = [...assessments];
-    })
-      .catch((err: any) => console.error(err));
+    }).catch((err: any) => console.error(err))
+      .then(() => this.showLoading = false);
   }
 
   goToAddnewPage() {

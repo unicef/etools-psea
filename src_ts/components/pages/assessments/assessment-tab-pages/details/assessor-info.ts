@@ -25,6 +25,7 @@ import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown'
 import {saveAssessorData, updateAssessmentData} from '../../../../../redux/actions/page-data';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import PermissionsMixin from '../../../mixins/permissions-mixins';
+import '@unicef-polymer/etools-loading';
 
 /**
  * @customElement
@@ -54,6 +55,8 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       ${SharedStylesLit}${gridLayoutStylesLit}${buttonsStyles}${labelAndvalueStylesLit}
 
       <etools-content-panel panel-title="Assessor">
+        <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
+
         <div slot="panel-btns">
           <paper-icon-button
                 ?hidden="${this.hideEditIcon(this.isNew, this.editMode, this.canEditAssessorInfo)}"
@@ -182,6 +185,9 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   @property({type: Boolean})
   canEditAssessorInfo!: boolean;
 
+  @property({type: Boolean})
+  showLoading: boolean = false;
+
   stateChanged(state: RootState) {
     if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
@@ -285,7 +291,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     if (!this.validate()) {
       return;
     }
-
+    this.showLoading = true;
     store.dispatch(saveAssessorData(this.assessment.id as number,
       this.assessor.id, this.collectAssessorData(), this.handleAssessorSaveError.bind(this)))
       .then(() => {
@@ -294,7 +300,8 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
         if (assessorName) {
           store.dispatch(updateAssessmentData({...this.assessment, assessor: assessorName}));
         }
-      });
+      })
+      .then(() => this.showLoading = false);
   }
 
   getAssessorName() {
