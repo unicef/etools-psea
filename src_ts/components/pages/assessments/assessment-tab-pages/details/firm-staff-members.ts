@@ -21,6 +21,7 @@ import {EtoolsStaffMemberModel} from '../../../../../types/user-model';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
+import '@unicef-polymer/etools-loading';
 
 /**
  * @customElement
@@ -57,6 +58,7 @@ export class FirmStaffMembers extends LitElement {
         }
       </style>
       <etools-content-panel panel-title="Firm Staff Members with Access">
+        <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
         <div slot="panel-btns">
           <paper-icon-button
                 ?hidden="${!this.canEdit}"
@@ -93,6 +95,9 @@ export class FirmStaffMembers extends LitElement {
 
   @property({type: Object})
   paginator: EtoolsPaginator = {...defaultPaginator};
+
+  @property({type: Boolean})
+  showLoading: boolean = false;
 
   @property({type: Array})
   listColumns: EtoolsTableColumn[] = [
@@ -175,6 +180,7 @@ export class FirmStaffMembers extends LitElement {
   }
 
   loadStaffMembers() {
+    this.showLoading = true;
     const endpoint = getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId});
     endpoint.url += `?${buildUrlQueryString(this.paginator)}`;
     makeRequest(endpoint as RequestEndpoint)
@@ -188,7 +194,8 @@ export class FirmStaffMembers extends LitElement {
         this.staffMembers = [];
         this.paginator = getPaginator(this.paginator, {count: 0, data: this.staffMembers});
         console.log(err);
-      });
+      })
+      .then(() => this.showLoading = false);
   }
 
   createStaffMemberDialog() {
@@ -230,6 +237,7 @@ export class FirmStaffMembers extends LitElement {
       updatedStaffWithAccessIds = updatedStaffWithAccessIds.filter((id: number) => id !== staffMember.id);
     }
 
+    this.showLoading = true;
     const baseUrl = getEndpoint(etoolsEndpoints.assessor, {id: this.assessmentId}).url!;
     const endpointData = new RequestEndpoint(baseUrl + this.assessorId + '/', 'PATCH');
 
@@ -241,7 +249,8 @@ export class FirmStaffMembers extends LitElement {
         });
       })
       .catch((err: any) =>
-        fireEvent(this, 'toast', {text: formatServerErrorAsText(err), showCloseBtn: true}));
+        fireEvent(this, 'toast', {text: formatServerErrorAsText(err), showCloseBtn: true}))
+      .then(() => this.showLoading = false);
   }
 
   itemChanged(e: CustomEvent) {
