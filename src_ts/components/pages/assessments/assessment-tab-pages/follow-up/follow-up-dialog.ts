@@ -24,9 +24,9 @@ import '../../../../common/layout/etools-error-warn-box';
 export class FollowUpDialog extends connect(store)(LitElement) {
   render() {
     return html`
-      ${gridLayoutStylesLit}
-      ${SharedStylesLit}
+       ${SharedStylesLit} ${gridLayoutStylesLit}
       <style>
+
         etools-dropdown {
           --esmm-external-wrapper: {
             width: 100%;
@@ -37,8 +37,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
           width: 100%;
         }
 
-        paper-checkbox {
-          margin-top: 20px;
+        .highPriority {
+          padding: 16px 0;
         }
       </style>
 
@@ -146,7 +146,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
           </div>
         </div>
 
-        <div class="layout-horizontal">
+        <div class="layout-horizontal highPriority">
           <paper-checkbox
                   id="highPriorityInput"
                   ?checked="${this.editedItem.high_priority}">
@@ -243,7 +243,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   updated(changedProperties: GenericObject) {
     if (this.warningMessages.length && !changedProperties.has('warningMessages') &&
         !isEqual(this.editedItem, changedProperties.get('editedItem'))) {
-      this.warningMessages.pop();
+        this.warningMessages.pop();
     }
   }
 

@@ -12,6 +12,7 @@ import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {RootState, store} from '../../../../../redux/store';
 import {connect} from 'pwa-helpers/connect-mixin';
+import '@unicef-polymer/etools-loading';
 
 @customElement('follow-up-page')
 export class FollowUpPage extends connect(store)(LitElement) {
@@ -23,6 +24,8 @@ export class FollowUpPage extends connect(store)(LitElement) {
         }
       </style>
       <etools-content-panel panel-title="Action Points">
+        <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
+
         <div slot="panel-btns">
           <paper-icon-button
                 @tap="${() => this.openFollowUpDialog()}"
@@ -43,6 +46,9 @@ export class FollowUpPage extends connect(store)(LitElement) {
 
   @property({type: Array})
   dataItems: object[] = [];
+
+  @property({type: Boolean})
+  showLoading: boolean = false;
 
   @property({type: Array})
   columns: EtoolsTableColumn[] = [
@@ -119,11 +125,13 @@ export class FollowUpPage extends connect(store)(LitElement) {
   }
 
   getFollowUpData() {
+    this.showLoading = true;
     const endpoint = getEndpoint(etoolsEndpoints.actionPoints, {id: this.assessmentId});
     // @ts-ignore
     makeRequest(endpoint).then((response: any) => {
       this.dataItems = response;
-    }).catch((err: any) => console.error(err));
+    }).catch((err: any) => console.error(err))
+      .then(() => this.showLoading = false);
   }
 
   editActionPoint(event: GenericObject) {
