@@ -57,7 +57,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
       name: 'reference_number',
       type: EtoolsTableColumnType.Link,
       link_tmpl: `/apd/action-points/detail/:id`,
-      external_link: true
+      isExternalLink: true
     }, {
       label: 'Assignee (Section / Office)',
       name: 'assigned_to.name',
