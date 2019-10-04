@@ -11,7 +11,7 @@ import '@unicef-polymer/etools-profile-dropdown/etools-profile-dropdown';
 
 import {connect} from 'pwa-helpers/connect-mixin.js';
 import {RootState, store} from '../../../redux/store';
-import {isProductionServer, isStagingServer, ROOT_PATH} from '../../../config/config';
+import {isProductionServer, isStagingServer, isDevServer, isDemoServer, ROOT_PATH} from '../../../config/config';
 import {updateDrawerState} from '../../../redux/actions/app';
 import {EtoolsUserModel} from '../../../types/user-model';
 import {fireEvent} from '../../utils/fire-custom-event';
@@ -43,9 +43,9 @@ export class PageHeader extends connect(store)(LitElement) {
       <app-toolbar sticky class="content-align">
         <paper-icon-button id="menuButton" icon="menu" @tap="${() => this.menuBtnClicked()}"></paper-icon-button>
         <div class="titlebar content-align">
-          <etools-app-selector id="selector"></etools-app-selector>
+          <etools-app-selector .user="${this.profile}"></etools-app-selector>
           <img id="app-logo" src="${this.rootPath}images/etools-logo-color-white.svg" alt="eTools">
-          ${this.isStaging ? html`<div class="envWarning"> - STAGING TESTING ENVIRONMENT</div>` : ''}
+          ${!this.isProduction ? html`<div class="envWarning"> - ${this.environment} TESTING ENVIRONMENT</div>` : ''}
         </div>
         <div class="content-align">
           <countries-dropdown></countries-dropdown>
@@ -67,7 +67,7 @@ export class PageHeader extends connect(store)(LitElement) {
   }
 
   @property({type: Boolean})
-  public isStaging: boolean = false;
+  public isProduction: boolean = false;
 
   @property({type: String})
   rootPath: string = ROOT_PATH;
@@ -99,13 +99,16 @@ export class PageHeader extends connect(store)(LitElement) {
   @property({type: Array})
   profileDrUsers: any[] = [];
 
+  @property({type: String})
+  environment: string = 'LOCAL';
+
   @property({type: Array})
   editableFields: string[] = ['office', 'section', 'job_title', 'phone_number', 'oic', 'supervisor'];
 
   public connectedCallback() {
     super.connectedCallback();
     this.setBgColor();
-    this.isStaging = isStagingServer();
+    this.checkEnvironment();
   }
 
   public stateChanged(state: RootState) {
@@ -154,6 +157,14 @@ export class PageHeader extends connect(store)(LitElement) {
     });
 
     return modifiedFields;
+  }
+
+  protected checkEnvironment() {
+    this.isProduction = isProductionServer();
+    this.environment = isDevServer() ? 'DEVELOPMENT' :
+      isDemoServer() ? 'DEMO' :
+        isStagingServer() ? 'STAGING' :
+          'LOCAL';
   }
 
   public menuBtnClicked() {

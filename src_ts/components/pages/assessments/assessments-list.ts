@@ -4,7 +4,8 @@ import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../redux/store';
 
 import '../../common/layout/page-content-header/page-content-header';
-import {pageContentHeaderSlottedStyles} from '../../common/layout/page-content-header/page-content-header-slotted-styles';
+import {pageContentHeaderSlottedStyles} from
+  '../../common/layout/page-content-header/page-content-header-slotted-styles';
 
 import {pageLayoutStyles} from '../../styles/page-layout-styles';
 
@@ -42,6 +43,7 @@ import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
 import {makeRequest} from '../../utils/request-helper';
 import '../../common/layout/export-data';
+import '@unicef-polymer/etools-loading';
 
 /**
  * @LitElement
@@ -65,6 +67,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
         }
       </style>
       <page-content-header>
+
         <h1 slot="page-title">Assessments list</h1>
 
         <div slot="title-row-actions" class="content-header-actions">
@@ -85,6 +88,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
       </section>
 
       <section class="elevation page-content no-padding" elevation="1">
+        <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
         <etools-table .columns="${this.listColumns}"
                       .items="${this.listData}"
                       .paginator="${this.paginator}"
@@ -118,7 +122,8 @@ export class AssessmentsList extends connect(store)(LitElement) {
   paginator: EtoolsPaginator = {...defaultPaginator};
 
   @property({type: Array})
-  sort: EtoolsTableSortItem[] = [{name: 'assessment_date', sort: EtoolsTableColumnSort.Desc}, {name: 'partner_name', sort: EtoolsTableColumnSort.Asc}];
+  sort: EtoolsTableSortItem[] = [{name: 'assessment_date', sort: EtoolsTableColumnSort.Desc},
+    {name: 'partner_name', sort: EtoolsTableColumnSort.Asc}];
 
   @property({type: Array})
   filters!: EtoolsFilter[];
@@ -141,13 +146,16 @@ export class AssessmentsList extends connect(store)(LitElement) {
   @property({type: String})
   queryParams: string = '';
 
+  @property({type: Boolean})
+  showLoading: boolean = false;
+
   @property({type: Array})
   listColumns: EtoolsTableColumn[] = [
     {
       label: 'Reference No.',
       name: 'reference_number',
       link_tmpl: `${ROOT_PATH}assessments/:id/details`,
-      type: EtoolsTableColumnType.Link,
+      type: EtoolsTableColumnType.Link
     },
     {
       label: 'Assessment Date',
@@ -184,7 +192,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
 
   stateChanged(state: RootState) {
     if (state.app!.routeDetails.routeName === 'assessments' &&
-      state.app!.routeDetails.subRouteName === 'list') {
+        state.app!.routeDetails.subRouteName === 'list') {
 
       const stateRouteDetails = {...state.app!.routeDetails};
 
@@ -213,7 +221,8 @@ export class AssessmentsList extends connect(store)(LitElement) {
       }
     }
     // init filters using default defined filters (including options)
-    let updatedFilters = this.isUnicefUser ? [...assessmentsFilters] : [...assessmentsFilters.filter(x => this.unicefFilters.indexOf(x.filterKey) < 0)];
+    let updatedFilters = this.isUnicefUser ?
+      [...assessmentsFilters] : [...assessmentsFilters.filter(x => this.unicefFilters.indexOf(x.filterKey) < 0)];
     if (state.commonData) {
       // update dropdowns filters options from redux
       updatedFilters = [...this.updateDropdownFiltersOptionsFromCommonData(state.commonData, updatedFilters)];
@@ -227,7 +236,8 @@ export class AssessmentsList extends connect(store)(LitElement) {
     let updatedFilters = updateFilterSelectionOptions(currentFilters, 'unicef_focal_point', commonData.unicefUsers);
     updatedFilters = updateFilterSelectionOptions(updatedFilters, 'partner', commonData.partners);
     if (this.isUnicefUser) {
-      updatedFilters = updateFilterSelectionOptions(updatedFilters, 'assessor_external', commonData.externalIndividuals);
+      updatedFilters = updateFilterSelectionOptions(updatedFilters, 'assessor_external',
+        commonData.externalIndividuals);
       updatedFilters = updateFilterSelectionOptions(updatedFilters, 'assessor_staff', commonData.unicefUsers);
       updatedFilters = updateFilterSelectionOptions(updatedFilters, 'assessor_firm', commonData.assessingFirms);
     }
@@ -291,18 +301,19 @@ export class AssessmentsList extends connect(store)(LitElement) {
    * (sort, filters, paginator init/change)
    */
   getAssessmentsData() {
-    let endpoint = {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`};
+    this.showLoading = true;
+    const endpoint = {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`};
     return makeRequest(endpoint).then((response: GenericObject) => {
       this.paginator = getPaginator(this.paginator, response);
       const assessments = response.results;
-      assessments.forEach( (assessment: Assessment) => {
+      assessments.forEach((assessment: Assessment) => {
         if (assessment.status === 'in_progress') {
           assessment.status = 'in progress';
         }
       });
       this.listData = [...assessments];
-    })
-      .catch((err: any) => console.error(err));
+    }).catch((err: any) => console.error(err))
+      .then(() => this.showLoading = false);
   }
 
   goToAddnewPage() {

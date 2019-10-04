@@ -27,4 +27,4 @@ export const radioButtonStyles = html`
       border: solid 1px var(--primary-shade-of-green);
     }
   </style>
-`
+`;
