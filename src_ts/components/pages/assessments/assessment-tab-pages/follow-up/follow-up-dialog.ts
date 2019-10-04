@@ -37,8 +37,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
           width: 100%;
         }
 
-        paper-checkbox {
-          margin-bottom: 20px;
+        .highPriority {
+          padding: 16px 0;
         }
       </style>
 
@@ -146,7 +146,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
           </div>
         </div>
 
-        <div class="layout-horizontal">
+        <div class="layout-horizontal highPriority">
           <paper-checkbox
                   id="highPriorityInput"
                   ?checked="${this.editedItem.high_priority}">
