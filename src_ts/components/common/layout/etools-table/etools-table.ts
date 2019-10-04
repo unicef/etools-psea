@@ -35,7 +35,7 @@ export interface EtoolsTableColumn {
    *    - id will be replaced with item object id property
    */
   link_tmpl?: string;
-  link_external?: boolean;
+  external_link?: boolean;
   capitalize?: boolean;
   placeholder?: string;
   customMethod?: Function;
@@ -133,8 +133,9 @@ export class EtoolsTable extends LitElement {
       }
     });
     const aHref = path.join('/');
-    return external ? html` <a class="" @click="${() => window.location.href = aHref}" href="#">${item[key]}</a>` :
-      html`<a class="" href="${aHref}">${item[key]}</a>`;
+    return external
+      ? html`<a class="" @click="${() => window.location.href = aHref}" href="#">${item[key]}</a>`
+      : html`<a class="" href="${aHref}">${item[key]}</a>`;
   }
 
   getRowDataHtml(item: any, showEdit: boolean) {
@@ -231,7 +232,7 @@ export class EtoolsTable extends LitElement {
           ? prettyDate(item[key], this.dateFormat)
           : (column.placeholder ? column.placeholder : this.defaultPlaceholder);
       case EtoolsTableColumnType.Link:
-        return this.getLinkTmpl(column.link_tmpl, item, key, column.link_external);
+        return this.getLinkTmpl(column.link_tmpl, item, key, column.external_link);
       case EtoolsTableColumnType.Number:
       case EtoolsTableColumnType.Checkbox:
         return this._getCheckbox(item, key, showEdit);
