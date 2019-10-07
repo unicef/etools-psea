@@ -1,5 +1,6 @@
 import {LitElement, html, property, customElement, query} from 'lit-element';
 import {styleMap} from 'lit-html/directives/style-map.js';
+import {unsafeHTML} from 'lit-html/directives/unsafe-html.js';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import './questionnaire-answer';
@@ -54,7 +55,7 @@ export class QuestionnaireItemElement extends LitElement {
           </paper-icon-button>
         </div>
         <div class="description">
-          ${this.question.content}
+          ${unsafeHTML(this.question.content)}
         </div>
 
         <div class="row-padding-v">

@@ -9,6 +9,7 @@ import {fireEvent} from '../../../utils/fire-custom-event';
 import {prettyDate} from '../../../utils/date-utility';
 import {EtoolsPaginator} from './pagination/paginator';
 import './pagination/etools-pagination';
+import get from 'lodash-es/get';
 
 export enum EtoolsTableColumnType {
   Text,
@@ -35,7 +36,7 @@ export interface EtoolsTableColumn {
    *    - id will be replaced with item object id property
    */
   link_tmpl?: string;
-  external_link?: boolean;
+  isExternalLink?: boolean;
   capitalize?: boolean;
   placeholder?: string;
   customMethod?: Function;
@@ -121,7 +122,7 @@ export class EtoolsTable extends LitElement {
     `;
   }
 
-  getLinkTmpl(pathTmpl: string | undefined, item: any, key: string, external?: boolean) {
+  getLinkTmpl(pathTmpl: string | undefined, item: any, key: string, isExternalLink?: boolean) {
     if (!pathTmpl) {
       throw new Error(`[EtoolsTable.getLinkTmpl]: column "${item[key]}" has no link tmpl defined`);
     }
@@ -133,7 +134,7 @@ export class EtoolsTable extends LitElement {
       }
     });
     const aHref = path.join('/');
-    return external
+    return isExternalLink
       ? html`<a class="" @click="${() => window.location.href = aHref}" href="#">${item[key]}</a>`
       : html`<a class="" href="${aHref}">${item[key]}</a>`;
   }
@@ -229,17 +230,17 @@ export class EtoolsTable extends LitElement {
     switch (column.type) {
       case EtoolsTableColumnType.Date:
         return item[key]
-          ? prettyDate(item[key], this.dateFormat)
-          : (column.placeholder ? column.placeholder : this.defaultPlaceholder);
+            ? prettyDate(item[key], this.dateFormat)
+            : (column.placeholder ? column.placeholder : this.defaultPlaceholder);
       case EtoolsTableColumnType.Link:
-        return this.getLinkTmpl(column.link_tmpl, item, key, column.external_link);
+        return this.getLinkTmpl(column.link_tmpl, item, key, column.isExternalLink);
       case EtoolsTableColumnType.Number:
       case EtoolsTableColumnType.Checkbox:
         return this._getCheckbox(item, key, showEdit);
       case EtoolsTableColumnType.Custom:
         return column.customMethod
-          ? column.customMethod(item, key)
-          : this._getValueByKey(item, key, column.placeholder);
+            ? column.customMethod(item, key)
+            : this._getValueByKey(item, key, column.placeholder);
       default:
         return this._getValueByKey(item, key, column.placeholder);
     }
@@ -255,17 +256,8 @@ export class EtoolsTable extends LitElement {
   }
 
   _getValueByKey(item: any, key: string, placeholder?: string, ignorePlaceholder: boolean = false) {
-    let value = null;
-    if (key.includes('.')) {
-      const propertyNames = key.split('.');
+    const value = get(item, key, '');
 
-      value = item[propertyNames.shift()!];
-      while (propertyNames.length) {
-        value = value[propertyNames.shift()!];
-      }
-    } else {
-      value = item[key];
-    }
     if (!ignorePlaceholder && (!value || value === '')) {
       return placeholder ? placeholder : this.defaultPlaceholder;
     }
