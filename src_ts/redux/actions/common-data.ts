@@ -1,17 +1,17 @@
 import {Action, ActionCreator} from 'redux';
 import {makeRequest, RequestEndpoint} from '../../components/utils/request-helper';
 import {etoolsEndpoints} from '../../endpoints/endpoints-list';
-import {GenericObject} from "../../types/globals";
+import {GenericObject} from '../../types/globals';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
-export const UPDATE_UNICEF_USERS_DATA = 'UPDATE_UNICEF_USERS_DATA';
+export const SET_UNICEF_USERS_DATA = 'SET_UNICEF_USERS_DATA';
 export const SET_PARTNERS = 'SET_PARTNERS';
 export const SET_OFFICES = 'SET_OFFICES';
 export const SET_SECTIONS = 'SET_SECTIONS';
 export const SET_EXTERNAL_INDIVIDUALS = 'SET_EXTERNAL_INDIVIDUALS';
 export const SET_ASSESSING_FIRMS = 'SET_ASSESSING_FIRMS';
 
-export interface CommonDataActionUpdateUnicefUsersData extends Action<'UPDATE_UNICEF_USERS_DATA'> {
+export interface CommonDataActionSetUnicefUsersData extends Action<'SET_UNICEF_USERS_DATA'> {
   unicefUsersData: object[];
 }
 
@@ -24,14 +24,14 @@ export interface CommonDataActionSetSections extends Action<'SET_SECTIONS'> {
 }
 
 export type CommonDataAction =
-  CommonDataActionUpdateUnicefUsersData
+  CommonDataActionSetUnicefUsersData
   | CommonDataActionSetOffices
   | CommonDataActionSetSections;
 
-export const updateUnicefUsersData: ActionCreator<CommonDataActionUpdateUnicefUsersData> =
+export const updateUnicefUsersData: ActionCreator<CommonDataActionSetUnicefUsersData> =
   (unicefUsersData: object[]) => {
     return {
-      type: UPDATE_UNICEF_USERS_DATA,
+      type: SET_UNICEF_USERS_DATA,
       unicefUsersData
     };
   };
@@ -98,12 +98,19 @@ export const loadPartners = () => (dispatch: any) => {
     });
 };
 
-export const loadExternalIndividuals = () => (dispatch: any) => {
+export const loadExternalIndividuals = (callBack?: () => void) => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.externalIndividuals.url!))
-    .then((resp: any) => dispatch(setExternalIndividuals(resp)))
+    .then((resp: any) => {
+      dispatch(setExternalIndividuals(resp));
+    })
     .catch((error: GenericObject) => {
       logError('[EtoolsUnicefUser]: loadExternalIndividuals req error...', error);
       throw error;
+    })
+    .then(() => {
+      if (callBack && typeof (callBack) === 'function') {
+        callBack();
+      }
     });
 };
 
@@ -114,6 +121,15 @@ export const loadAssessingFirms = () => (dispatch: any) => {
     })
     .catch((error: GenericObject) => {
       logError('[EtoolsUnicefUser]: loadAssessingFirms req error...', error);
+      throw error;
+    });
+};
+
+export const loadUnicefUsers = () => (dispatch: any) => {
+  makeRequest(new RequestEndpoint(etoolsEndpoints.unicefUsers.url!))
+    .then((resp: any) => dispatch(updateUnicefUsersData(resp)))
+    .catch((error: GenericObject) => {
+      logError('[EtoolsUnicefUser]: loadUnicefUsers req error...', error);
       throw error;
     });
 };

@@ -14,8 +14,8 @@ documentContainer.innerHTML = `
         --secondary-text-color: rgba(0, 0, 0, 0.54);
 
         --header-color: #ffffff;
-        --header-bg-color: var(--primary-color);
-        --nonprod-header-color: #233944;
+        --header-bg-color: #233944;
+        --nonprod-header-color: #a94442;
         --nonprod-text-warn-color: #e6e600;
 
         --light-divider-color: rgba(0, 0, 0, 0.12);
@@ -31,6 +31,7 @@ documentContainer.innerHTML = `
 
         --primary-shade-of-green: #1A9251;
         --primary-shade-of-red: #E32526;
+        --primary-shade-of-orange: orange;
 
         --info-color: #cebc06;
         --light-info-color: #fff176;
@@ -49,7 +50,7 @@ documentContainer.innerHTML = `
         }
         --epc-header-color: var(--primary-text-color);
         --ecp-header-title: {
-          padding: 0 0;
+          padding: 0 24px 0 0;
           text-align: left;
           font-size: 18px;
           font-weight: 500;

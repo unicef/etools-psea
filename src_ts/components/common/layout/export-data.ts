@@ -35,7 +35,8 @@ export class ExportData extends LitElement {
             Export
           </paper-button>
           <paper-listbox slot="dropdown-content">
-            ${this.exportLinks.map(item => html`<paper-item @tap="${() => this.export(item.type)}">${item.name}</paper-item>`)}
+            ${this.exportLinks.map(item => html`
+            <paper-item @tap="${() => this.export(item.type)}">${item.name}</paper-item>`)}
           </paper-listbox>
         </paper-menu-button>
     `;
@@ -57,7 +58,7 @@ export class ExportData extends LitElement {
   endpoint: string = '';
 
   export(type: string) {
-    let url = this.endpoint + `export/${type}/` + (this.params ? `?${this.params}` : '');
+    const url = this.endpoint + `export/${type}/` + (this.params ? `?${this.params}` : '');
     window.open(url, '_blank');
   }
 

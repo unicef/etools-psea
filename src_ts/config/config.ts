@@ -17,8 +17,11 @@ export const isStagingServer = () => {
 };
 
 export const isDevServer = () => {
-  return window.location.href.indexOf(DEV_DOMAIN) > -1;
+  const location = window.location.href;
+  return location.indexOf(DEV_DOMAIN) > -1;
 };
+
 export const isDemoServer = () => {
-  return window.location.href.indexOf(DEMO_DOMAIN) > -1;
+  const location = window.location.href;
+  return location.indexOf(DEMO_DOMAIN) > -1;
 };

@@ -24,6 +24,7 @@ import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import './answer-instructions';
 
 @customElement('questionnaire-answer')
 export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
@@ -45,19 +46,22 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
 
         .invalid-color {
           color: var(--error-color);
-        }
-        .block {
           display: block;
         }
       </style>
       <div class="row-padding-v" ?hidden="${!this.editMode}">
-        <label class="paper-label" required>Rating</label> <br/>
-        <paper-radio-group id="ratingElement"
-            .selected="${this.answer.rating}"
-            @change="${((e: CustomEvent) => this._selectedRatingChanged(e.target as PaperRadioButtonElement))}">
-          ${this._getRatingRadioButtonsTemplate(this.question)}
-        </paper-radio-group>
-        <span class="invalid-color block" ?hidden="${this.hideRatingRequiredMsg}">Please select Rating</span>
+        <div>
+          <label class="paper-label" required>Rating</label>
+          <answer-instructions></answer-instructions>
+        </div> 
+        <div>
+          <paper-radio-group id="ratingElement"
+              .selected="${this.answer.rating}"
+              @change="${((e: CustomEvent) => this._selectedRatingChanged(e.target as PaperRadioButtonElement))}">
+            ${this._getRatingRadioButtonsTemplate(this.question)}
+          </paper-radio-group>
+          <span class="invalid-color" ?hidden="${this.hideRatingRequiredMsg}">Please select Rating</span>
+        </div>
       </div>
       <paper-textarea id="commentsElement" label="Comments" always-float-label class="row-padding-v"
         placeholder="—"
@@ -126,7 +130,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
 
   stateChanged(state: RootState) {
     if (get(state, 'app.routeDetails.params.assessmentId')) {
-      let id = state.app!.routeDetails.params!.assessmentId;
+      const id = state.app!.routeDetails.params!.assessmentId;
       this.assessmentId = id === 'new' ? null : id;
       this.clearControls();
     }
@@ -148,7 +152,8 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
             ?checked="${this._isChecked(evidence.id, answer.evidences)}"
             evidenceid="${evidence.id}"
             ?requires-description="${evidence.requires_description}"
-            @checked-changed="${(e: CustomEvent) => this._checkedEvidenceChanged(evidence, (e.target as PaperCheckboxElement).checked!, answer)}">
+            @checked-changed="${(e: CustomEvent) => this._checkedEvidenceChanged(evidence,
+    (e.target as PaperCheckboxElement).checked!, answer)}">
             ${evidence.label}
         </paper-checkbox>`;
 
@@ -180,7 +185,11 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       return false;
     }
     let checked = false;
-    selectedEvidences.forEach(ev => {if (Number(ev.evidence) === Number(evidenceId)) {checked = true;} });
+    selectedEvidences.forEach((ev: any) => {
+      if (Number(ev.evidence) === Number(evidenceId)) {
+        checked = true;
+      }
+    });
     return checked;
   }
 
@@ -195,17 +204,20 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
     if (evidence.requires_description) {
       this.showOtherInput = checked;
       // fix for display Other text in no-edit mode
-      this.updateComplete.then(() => {this.showOtherInput = checked; this.requestUpdate();});
+      this.updateComplete.then(() => {
+        this.showOtherInput = checked;
+        this.requestUpdate();
+      });
     }
   }
 
   _getOtherEvidenceInputValue(answer: Answer) {
-    let otherEvidence = answer.evidences.filter((ev: AnswerEvidence) => !!ev.description)[0];
+    const otherEvidence = answer.evidences.filter((ev: AnswerEvidence) => !!ev.description)[0];
     return otherEvidence ? otherEvidence.description : '';
   }
 
   getAnswerForSave() {
-    let answer: GenericObject = {};
+    const answer: GenericObject = {};
     answer.assessment = this.assessmentId;
     answer.indicator = this.question.id;
     answer.rating = this.answer.rating;
@@ -220,24 +232,23 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       return [];
     }
 
-    let evidences: AnswerEvidence[] = [];
-    this.checkedEvidenceBoxes.forEach((checkboxEl => {
-      let ev: AnswerEvidence = {evidence: checkboxEl.getAttribute('evidenceid')!};
+    const evidences: AnswerEvidence[] = [];
+    this.checkedEvidenceBoxes.forEach((checkboxEl: HTMLElement) => {
+      const ev: AnswerEvidence = {evidence: checkboxEl.getAttribute('evidenceid')!};
       if (checkboxEl.hasAttribute('requires-description')) {
         ev.description = this.otherEvidenceInput.value!;
       }
       evidences.push(ev);
-    }));
+    });
     return evidences;
   }
-
 
   validate() {
     this.hideRatingRequiredMsg = !!this.ratingElement.selected;
     return this.hideRatingRequiredMsg;
   }
 
-  _getReadonlyStyle(editMode: Boolean) {
+  _getReadonlyStyle(editMode: boolean) {
     return editMode ? '' : 'readonly';
   }
 
@@ -258,13 +269,11 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       .then(() => {
         this.answer = {...this.answer, attachments: this._filterOutDeletedAttachment(attachmentId)};
       })
-      .catch((err) => fireEvent(this, 'toast', formatServerErrorAsText(err)));
+      .catch((err: any) => fireEvent(this, 'toast', formatServerErrorAsText(err)));
   }
 
   _filterOutDeletedAttachment(attachmentId: string) {
     return this.answer.attachments.filter(att => Number(att.id) !== Number(attachmentId));
   }
-
-
 
 }

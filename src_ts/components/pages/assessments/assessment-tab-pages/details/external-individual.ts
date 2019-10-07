@@ -4,13 +4,15 @@ import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import './external-individual-dialog';
-import {ExternalIndividualDialogEl} from './external-individual-dialog';
+import {ExternalIndividualDialog} from './external-individual-dialog';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
-import {isJsonStrMatch} from '../../../../utils/utils';
+import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
+import {UnicefUser} from '../../../../../types/user-model';
+import {Assessor, AssessorTypes} from '../../../../../types/assessment';
+import {updateAssessorData} from '../../../../../redux/actions/page-data';
 import {loadExternalIndividuals} from '../../../../../redux/actions/common-data';
-import {UnicefUser} from "../../../../../types/globals";
 
 /**
  * @customElement
@@ -42,11 +44,12 @@ export class ExternalIndividual extends connect(store)(LitElement) {
           option-label="name"
           required
           auto-validate
+          enable-none-option
           ?readonly="${this.isReadonly(this.editMode)}"
           trigger-value-change-event
           @etools-selected-item-changed="${this._setSelectedExternalIndividual}">
         </etools-dropdown>
-        <span ?hidden="${!this.editMode}" class="paper-label">
+        <span ?hidden="${!this.editMode}">
           User not yet in the system? Add them <a @tap="${this.openAddDialog}">here</a>
         </span>
       </div>
@@ -54,7 +57,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   }
 
   @property({type: Object})
-  assessor: { user?: string | number | null } = {};
+  assessor!: Assessor;
 
   @property({type: Array})
   externalIndividuals!: any[];
@@ -62,7 +65,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   @property({type: Boolean})
   editMode!: boolean;
 
-  private dialogExtIndividual!: ExternalIndividualDialogEl;
+  private dialogExtIndividual!: ExternalIndividualDialog;
 
   stateChanged(state: RootState) {
     const stateExternalIndivs = state.commonData!.externalIndividuals;
@@ -79,7 +82,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   }
 
   createExternalIndividualDialog() {
-    this.dialogExtIndividual = document.createElement('external-individual-dialog') as ExternalIndividualDialogEl;
+    this.dialogExtIndividual = document.createElement('external-individual-dialog') as ExternalIndividualDialog;
     this.dialogExtIndividual.setAttribute('id', 'externalIndividualDialog');
     this.dialogExtIndividual.toastEventSource = this;
     this.onDialogIndividualSaved = this.onDialogIndividualSaved.bind(this);
@@ -88,8 +91,14 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   }
 
   onDialogIndividualSaved(e: any) {
-    store.dispatch(loadExternalIndividuals());
-    this.assessor.user = e.detail.id;
+    const extIndId = e.detail.id;
+    store.dispatch(loadExternalIndividuals(this.updateAssessor.bind(this, extIndId)));
+  }
+
+  updateAssessor(userId: string) {
+    this.assessor.user = userId;
+    this.assessor.assessor_type = AssessorTypes.ExternalIndividual;
+    store.dispatch(updateAssessorData(cloneDeep(this.assessor)));
   }
 
   disconnectedCallback() {
@@ -136,5 +145,3 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   }
 
 }
-
-export {ExternalIndividual as ExternalIndividualElement};

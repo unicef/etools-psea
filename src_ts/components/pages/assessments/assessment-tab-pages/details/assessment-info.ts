@@ -14,9 +14,7 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
-import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
-import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+import {makeRequest} from '../../../../utils/request-helper';
 import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
 import {Assessment, AssessmentInvalidator, AssessmentPermissions} from '../../../../../types/assessment';
 import {updateAppLocation} from '../../../../../routing/routes';
@@ -24,11 +22,12 @@ import {formatDate} from '../../../../utils/date-utility';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import DatePickerLite from '@unicef-polymer/etools-date-time/datepicker-lite';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
-import {UnicefUser} from '../../../../../types/user-model';
 import {updateAssessmentData} from '../../../../../redux/actions/page-data';
 import PermissionsMixin from '../../../mixins/permissions-mixins';
 import get from 'lodash-es/get';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import '@unicef-polymer/etools-loading';
+import {UnicefUser} from '../../../../../types/user-model';
 
 /**
  * @customElement
@@ -48,6 +47,8 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
       </style>
       ${SharedStylesLit}${gridLayoutStylesLit} ${buttonsStyles}
       <etools-content-panel panel-title="Assessment Information">
+        <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
+
         <div slot="panel-btns">
           <paper-icon-button
                 ?hidden="${this.hideEditIcon(this.isNew, this.editMode, this.canEditAssessmentInfo)}"
@@ -75,10 +76,9 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
         <etools-dropdown-multi label="UNICEF Focal Point"
           class="row-padding-v"
           .selectedValues="${this.assessment.focal_points}"
-          .options="${this.unicefUsers}"
+          .options="${this.unicefFocalPointUsers}"
           option-label="name"
           option-value="id"
-          enable-none-option
           trigger-value-change-event
           @etools-selected-items-changed="${this._setSelectedFocalPoints}"
           ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.focal_points)}">
@@ -91,7 +91,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           fire-date-has-changed
           @date-has-changed="${(e: CustomEvent) => this._setSelectedDate(e.detail.date)}"
           ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.assessment_date)}"
-          required
+          ?required="${this.assessment.permissions.required.assessment_date}"
           ?invalid="${this.invalid.assessment_date}"
           auto-validate>
         </datepicker-lite>
@@ -126,7 +126,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
   editMode: boolean = false;
 
   @property({type: Array})
-  unicefUsers!: UnicefUser[];
+  unicefFocalPointUsers!: UnicefUser[];
 
   @property({type: Array})
   staffMembers: GenericObject[] = [];
@@ -140,30 +140,72 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
   @property({type: Boolean})
   canEditAssessmentInfo!: boolean;
 
+  @property({type: Boolean})
+  isUnicefUser: boolean = false;
+
+  @property({type: Boolean})
+  showLoading: boolean = false;
+
   stateChanged(state: RootState) {
-    if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
-      this.unicefUsers = [...state.commonData!.unicefUsers];
-    }
     if (state.commonData && !isJsonStrMatch(this.partners, state.commonData!.partners)) {
       this.partners = [...state.commonData!.partners];
     }
+    if (state.user && state.user.data) {
+      this.isUnicefUser = state.user.data.is_unicef_user;
+    }
 
-    let currentAssessment = get(state, 'pageData.currentAssessment')
+    const currentAssessment: Assessment = get(state, 'pageData.currentAssessment');
     if (currentAssessment && Object.keys(currentAssessment).length &&
-       !isJsonStrMatch(this.assessment, currentAssessment)) {
+      !isJsonStrMatch(this.assessment, currentAssessment)) {
 
-      this.assessment = {...currentAssessment} as Assessment;
+      this.assessment = {...currentAssessment};
       this.originalAssessment = cloneDeep(this.assessment);
       this.isNew = !this.assessment.id;
       this.editMode = this.isNew;
       this.setAssessmentInfoPermissions(this.assessment.permissions);
+      this.staffMembers = (this.assessment && this.assessment.partner_details)
+        ? this.assessment.partner_details.staff_members
+        : [];
+
+      this.setUnicefFocalPointUsers([...state.commonData!.unicefUsers]);
       setTimeout(() => this.resetValidations(), 10);
+    }
+  }
+
+  setUnicefFocalPointUsers(defaultUnicefUsers: any[]) {
+    if (this.assessment) {
+      const focalPointUsers = this.assessment.focal_points_details ? this.assessment.focal_points_details as UnicefUser[] : [];
+      if (!this.isUnicefUser) {
+        // if user is not Unicef user, this is opened in read-only mode and we just display already saved
+        // Focal Point users (which are provided in the assessment object)
+        this.unicefFocalPointUsers = [...focalPointUsers];
+      } else {
+        //  if user is Unicef user, Focal Point users are loaded from Redux
+        this.unicefFocalPointUsers = defaultUnicefUsers;
+        // check if already saved users exists on loaded data, if not they will be added (they might be missing if changed country)
+        this.handleFocalPointsNoLongerAssignedToCurrentCountry(focalPointUsers);
+      }
+    }
+  }
+
+  handleFocalPointsNoLongerAssignedToCurrentCountry(focalPointSavedUsers: UnicefUser[]) {
+    if (focalPointSavedUsers && focalPointSavedUsers.length > 0) {
+      let changed = false;
+      focalPointSavedUsers.forEach((fp) => {
+        if (this.unicefFocalPointUsers.findIndex(user => user.id === fp.id) < 0) {
+          this.unicefFocalPointUsers.push(fp);
+          changed = true;
+        }
+      });
+      if (changed) {
+        this.unicefFocalPointUsers.sort((a, b) => (a.name < b.name) ? -1 : 1);
+      }
     }
   }
 
   setAssessmentInfoPermissions(permissions: AssessmentPermissions) {
     this.canEditAssessmentInfo = permissions.edit.partner || permissions.edit.focal_points ||
-                                 permissions.edit.assessment_date;
+      permissions.edit.assessment_date;
   }
 
   _allowEdit() {
@@ -179,18 +221,12 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     this.selectedPartner = event.detail.selectedItem;
 
     if (this.selectedPartner) {
+      if (this.assessment.partner != this.selectedPartner.id && this.staffMembers.length > 0) {
+        this.staffMembers = [];
+        this.requestUpdate();
+      }
       this.assessment.partner = this.selectedPartner.id;
-      makeRequest(getEndpoint(etoolsEndpoints.partnerStaffMembers, {id: this.selectedPartner.id}) as RequestEndpoint)
-        .then((resp: any[]) => {
-          this.staffMembers = resp;
-          this.requestUpdate();
-        })
-        .catch((err: any) => {
-          this.staffMembers = [];
-          logError(err);
-        });
     }
-
   }
 
   _setSelectedDate(selDate: Date) {
@@ -215,7 +251,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     if (!this.validate()) {
       return;
     }
-
+    this.showLoading = true;
     const options = {
       url: this._getUrl()!,
       method: this.isNew ? 'POST' : 'PATCH'
@@ -234,7 +270,8 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           store.dispatch(updateAssessmentData(response));
         }
       })
-      .catch(err => fireEvent(this, 'toast', {text: formatServerErrorAsText(err)}));
+      .catch(err => fireEvent(this, 'toast', {text: formatServerErrorAsText(err)}))
+      .then(() => this.showLoading = false);
   }
 
   resetValidations() {
@@ -254,10 +291,6 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     if (!this.assessment.partner) {
       valid = false;
       invalid.partner = true;
-    }
-    if (!this.assessment.assessment_date) {
-      valid = false;
-      invalid.assessment_date = true;
     }
 
     this.invalid = cloneDeep(invalid);

@@ -5,6 +5,7 @@ import {makeRequest, RequestEndpoint} from '../utils/request-helper';
 import {setUserData, setUserPermissions} from '../../redux/actions/user';
 import {getEndpoint} from '../../endpoints/endpoints';
 import {etoolsEndpoints} from '../../endpoints/endpoints-list';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 
 export const getCurrentUserData = () => {
@@ -31,7 +32,10 @@ export function getUserData() {
     store.dispatch(setUserData(response));
     store.dispatch(setUserPermissions(getUserPermissions(response)));
   }).catch((error: GenericObject) => {
-    console.error('[EtoolsUser]: getUserData req error...', error);
+    logError('[EtoolsUser]: getUserData req error...', error);
+    if (error.status === 403) {
+      window.location.href = window.location.origin + '/login';
+    }
     throw error;
   });
 }
@@ -42,23 +46,24 @@ export function updateUserData(profile: GenericObject) {
     store.dispatch(setUserData(response));
     store.dispatch(setUserPermissions(getUserPermissions(response)));
   }).catch((error: GenericObject) => {
-    console.error('[EtoolsUser]: setUserData req error ', error);
+    logError('[EtoolsUser]: setUserData req error ', error);
     throw error;
   });
 }
 
 private function getUserPermissions(user: GenericObject): EtoolsUserPermissions {
   const permissions: EtoolsUserPermissions = {
-    canAddAssessment: user && user.groups && Boolean(user.groups.find((group: any) => group.name === 'UNICEF User' || group.name === 'UNICEF Audit Focal Point')),
+    canAddAssessment: user && user.groups && Boolean(user.groups.find((group: any) => group.name === 'UNICEF User' ||
+                                                                          group.name === 'UNICEF Audit Focal Point')),
     canExportAssessment: user && user.groups
-  }
+  };
   return permissions;
 }
 
 export function changeCountry(countryId: number) {
   const options = new RequestEndpoint(getEndpoint(etoolsEndpoints.changeCountry).url!, 'POST');
   return makeRequest(options, {country: countryId}).catch((error: GenericObject) => {
-    console.error('[EtoolsUser]: setUserData req error ', error);
+    logError('[EtoolsUser]: setUserData req error ', error);
     throw error;
   });
 }

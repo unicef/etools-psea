@@ -1,4 +1,4 @@
-import {LitElement, html, property, customElement} from 'lit-element';
+import {LitElement, html, property, customElement, query} from 'lit-element';
 import '@unicef-polymer/etools-dialog/etools-dialog.js';
 import {PolymerElement} from '@polymer/polymer';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
@@ -23,15 +23,12 @@ export class StaffMemberDialog extends LitElement {
   render() {
     // language=HTML
     return html`
+      ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
       <style>
-        paper-input, paper-checkbox{
-          padding:4px 10px;
-        }
-        .mt-12{
-          margin-top: 12px;
+        #has-access-checkbox-wrapper {
+          padding: 16px 0;
         }
       </style>
-      ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
       <etools-dialog id="staffMemberDialog"
                       ?opened="${this.dialogOpened}"
                       dialog-title="${this.dialogTitle}"
@@ -43,95 +40,90 @@ export class StaffMemberDialog extends LitElement {
                       keep-dialog-open
                       @confirm-btn-clicked="${this.onSaveClick}">
 
-              <div class="row-padding-d">
-                  <div class="layout-horizontal">
-                      <div class="input-container col-4">
-                          <!-- Email address -->
-                          <paper-input
-                                  id="emailInput"
-                                  value="${this.editedItem.user.email}"
-                                  label="E-mail"
-                                  type="email"
-                                  placeholder="Enter E-mail"
-                                  ?required = "${this.isNewRecord}"
-                                  ?disabled="${!this.isNewRecord}"
-                                  maxlength="45"
-                                  error-message="Email is required"
-                                  @focus="${this.resetFieldError}"
-                                  @tap="${this.resetFieldError}">
-                              <iron-icon slot="prefix" icon="communication:email"></iron-icon>
-                          </paper-input>
-                      </div>
+        <div class="layout-horizontal">
+          <div class="col col-4">
+            <!-- Email address -->
+            <paper-input
+                    id="emailInput"
+                    value="${this.editedItem.user.email}"
+                    label="E-mail"
+                    type="email"
+                    placeholder="Enter E-mail"
+                    ?required = "${this.isNewRecord}"
+                    ?disabled="${!this.isNewRecord}"
+                    maxlength="45"
+                    error-message="Email is required"
+                    @focus="${this.resetFieldError}"
+                    @tap="${this.resetFieldError}">
+              <iron-icon slot="prefix" icon="communication:email"></iron-icon>
+            </paper-input>
+          </div>
 
-                      <div class="input-container col-4">
-                          <!-- First Name -->
-                          <paper-input
-                                  id="firstNameInput"
-                                  value="${this.editedItem.user.first_name}"
-                                  label="First Name"
-                                  placeholder="Enter First Name"
-                                  required
-                                  maxlength="30"
-                                  error-message="${this.requiredMessage}"
-                                  @focus="${this.resetFieldError}"
-                                  @tap="${this.resetFieldError}">
-                          </paper-input>
-                      </div>
+          <div class="col col-4">
+            <!-- First Name -->
+            <paper-input
+                    id="firstNameInput"
+                    value="${this.editedItem.user.first_name}"
+                    label="First Name"
+                    placeholder="Enter First Name"
+                    required
+                    maxlength="30"
+                    error-message="${this.requiredMessage}"
+                    @focus="${this.resetFieldError}"
+                    @tap="${this.resetFieldError}">
+            </paper-input>
+          </div>
 
-                      <div class="input-container col-4">
-                          <!-- Last Name -->
-                          <paper-input
-                                  id="lastNameInput"
-                                  value="${this.editedItem.user.last_name}"
-                                  label="Last Name"
-                                  placeholder="Enter Last Name"
-                                  required
-                                  maxlength="30"
-                                  error-message="${this.requiredMessage}"
-                                  @focus="${this.resetFieldError}"
-                                  @tap="${this.resetFieldError}">
-                          </paper-input>
-                      </div>
-                  </div>
-                  <div class="layout-horizontal">
-                      <div class="input-container col-4">
-                          <!-- Position -->
-                          <paper-input
-                                  id="positionInput"
-                                  value="${this.editedItem.user.profile.job_title}"
-                                  label="Position"
-                                  placeholder="Enter Position"
-                                  maxlength="45"
-                                  error-message="{{errors.profile.job_title}}">
-                          </paper-input>
-                      </div>
+          <div class="col col-4">
+            <!-- Last Name -->
+            <paper-input
+                    id="lastNameInput"
+                    value="${this.editedItem.user.last_name}"
+                    label="Last Name"
+                    placeholder="Enter Last Name"
+                    required
+                    maxlength="30"
+                    error-message="${this.requiredMessage}"
+                    @focus="${this.resetFieldError}"
+                    @tap="${this.resetFieldError}">
+            </paper-input>
+          </div>
+        </div>
+        <div class="layout-horizontal">
+          <div class="col col-4">
+            <!-- Position -->
+            <paper-input
+                    id="positionInput"
+                    value="${this.editedItem.user.profile.job_title}"
+                    label="Position"
+                    placeholder="Enter Position"
+                    maxlength="45"
+                    error-message="{{errors.profile.job_title}}">
+            </paper-input>
+          </div>
 
-                      <div class="input-container col-4">
-                          <!-- Phone number -->
-                          <paper-input
-                                  id="phoneInput"
-                                  value="${this.editedItem.user.profile.phone_number}"
-                                  allowed-pattern="[0-9\\ \\.\\+\\-\\(\\)]"
-                                  label="Phone number"
-                                  placeholder="Enter Phone"
-                                  maxlength="20"
-                                  error-message="{{errors.user.profile.phone_number}}">
-                              <iron-icon slot="prefix" icon="communication:phone"></iron-icon>
-                          </paper-input>
-                      </div>
-                  </div>
+          <div class="col col-4">
+            <!-- Phone number -->
+            <paper-input
+                    id="phoneInput"
+                    value="${this.editedItem.user.profile.phone_number}"
+                    allowed-pattern="[0-9\\ \\.\\+\\-\\(\\)]"
+                    label="Phone number"
+                    placeholder="Enter Phone"
+                    maxlength="20"
+                    error-message="{{errors.user.profile.phone_number}}">
+              <iron-icon slot="prefix" icon="communication:phone"></iron-icon>
+            </paper-input>
+          </div>
+        </div>
 
-                  <div class="layout-horizontal mt-12">
-                      <!--receive notification-->
-                      <div class="input-container col-4">
-                          <paper-checkbox
-                                  id="hasAccessInput"
-                                  ?checked="${this.editedItem.hasAccess}">
-                              Has Access
-                          </paper-checkbox>
-                      </div>
-                  </div>
-            </div>
+        <div id="has-access-checkbox-wrapper" class="layout-horizontal">
+          <paper-checkbox
+                  id="hasAccessInput"
+                  ?checked="${this.editedItem.hasAccess}">
+              Has Access
+          </paper-checkbox>
+        </div>
       </etools-dialog>
     `;
   }
@@ -142,9 +134,29 @@ export class StaffMemberDialog extends LitElement {
       first_name: '',
       last_name: '',
       profile: {phone_number: '', job_title: ''}
-    }, hasAccess: false, id: ''
+    },
+    hasAccess: false,
+    id: ''
   };
   private validationSelectors: string[] = ['#emailInput', '#firstNameInput', '#lastNameInput'];
+
+  @query('#emailInput')
+  emailInputEl!: HTMLInputElement;
+
+  @query('#firstNameInput')
+  firstNameInputEl!: HTMLInputElement;
+
+  @query('#lastNameInput')
+  lastNameInputEl!: HTMLInputElement;
+
+  @query('#positionInput')
+  positionInputEl!: HTMLInputElement;
+
+  @query('#phoneInput')
+  phoneInputEl!: HTMLInputElement;
+
+  @query('#hasAccessInput')
+  hasAccessInputEl!: HTMLInputElement;
 
   @property({type: Boolean, reflect: true})
   dialogOpened: boolean = false;
@@ -162,7 +174,7 @@ export class StaffMemberDialog extends LitElement {
   requiredMessage: string = 'This field is required';
 
   @property({type: Object})
-  editedItem: EtoolsStaffMemberModel = cloneDeep(this.defaultItem);
+  editedItem!: EtoolsStaffMemberModel;
 
   @property({type: Boolean})
   isNewRecord!: boolean;
@@ -174,6 +186,11 @@ export class StaffMemberDialog extends LitElement {
   toastEventSource!: LitElement;
 
   private initialItem!: EtoolsStaffMemberModel;
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.editedItem= cloneDeep(this.defaultItem);
+  }
 
   public openDialog() {
     this.isNewRecord = !(parseInt(this.editedItem.id) > 0);
@@ -200,16 +217,16 @@ export class StaffMemberDialog extends LitElement {
       el.invalid = false;
       el.value = '';
     });
-    this.getEl('#positionInput').value = '';
-    this.getEl('#phoneInput').value = '';
-    this.getEl('#hasAccessInput').checked = false;
+    this.positionInputEl.value = '';
+    this.phoneInputEl.value = '';
+    this.hasAccessInputEl.checked = false;
     this.editedItem = cloneDeep(this.defaultItem);
   }
 
   private validate() {
     let isValid = true;
     this.validationSelectors.forEach((selector: string) => {
-      const el = this.shadowRoot!.querySelector(selector) as PolymerElement & {validate(): boolean};
+      const el = this.shadowRoot!.querySelector(selector) as PolymerElement & { validate(): boolean };
       if (el && !el.validate()) {
         isValid = false;
       }
@@ -225,12 +242,12 @@ export class StaffMemberDialog extends LitElement {
   }
 
   private getControlsData() {
-    this.editedItem.user.email = this.getEl('#emailInput').value;
-    this.editedItem.user.first_name = this.getEl('#firstNameInput').value;
-    this.editedItem.user.last_name = this.getEl('#lastNameInput').value;
-    this.editedItem.user.profile.phone_number = this.getEl('#phoneInput').value;
-    this.editedItem.hasAccess = this.getEl('#hasAccessInput').checked;
-    this.editedItem.user.profile.job_title = this.getEl('#positionInput').value;
+    this.editedItem.user.email = this.emailInputEl.value;
+    this.editedItem.user.first_name = this.firstNameInputEl.value;
+    this.editedItem.user.last_name = this.lastNameInputEl.value;
+    this.editedItem.hasAccess = this.hasAccessInputEl.checked;
+    this.editedItem.user.profile.phone_number = this.phoneInputEl.value;
+    this.editedItem.user.profile.job_title = this.positionInputEl.value;
   }
 
   private saveDialogData() {
@@ -274,10 +291,6 @@ export class StaffMemberDialog extends LitElement {
     const msg = formatServerErrorAsText(err);
     logError(msg, 'staff-member', err);
     fireEvent(this.toastEventSource, 'toast', {text: msg});
-  }
-
-  getEl(elName: string): HTMLInputElement {
-    return this.shadowRoot!.querySelector(elName)! as HTMLInputElement;
   }
 
 }

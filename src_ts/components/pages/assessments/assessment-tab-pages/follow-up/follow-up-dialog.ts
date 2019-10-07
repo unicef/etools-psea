@@ -24,9 +24,9 @@ import '../../../../common/layout/etools-error-warn-box';
 export class FollowUpDialog extends connect(store)(LitElement) {
   render() {
     return html`
-      ${gridLayoutStylesLit}
-      ${SharedStylesLit}
+       ${SharedStylesLit} ${gridLayoutStylesLit}
       <style>
+
         etools-dropdown {
           --esmm-external-wrapper: {
             width: 100%;
@@ -37,8 +37,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
           width: 100%;
         }
 
-        paper-checkbox {
-          margin-top: 20px;
+        .highPriority {
+          padding: 16px 0;
         }
       </style>
 
@@ -83,24 +83,11 @@ export class FollowUpDialog extends connect(store)(LitElement) {
           </div>
         </div>
 
-        <!-- <div class="layout-horizontal">
-          <div class="col col-6">
-            <etools-dropdown
-                    id="categoryInput"
-                    // @ts-ignore
-                    .selected="${this.editedItem.category}"
-                    label="Category"
-                    .options="${this.categories}"
-                    option-label="display_name"
-                    required
-                    option-value="value">
-            </etools-dropdown>
-          </div>
-        </div> -->
-
         <div class="layout-horizontal">
           <paper-textarea
                   id="descriptionInput"
+                  always-float-label
+                  placeholder="—"
                   required
                   allowed-pattern="[\d\s]"
                   value="${this.editedItem.description}"
@@ -159,7 +146,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
           </div>
         </div>
 
-        <div class="layout-horizontal">
+        <div class="layout-horizontal highPriority">
           <paper-checkbox
                   id="highPriorityInput"
                   ?checked="${this.editedItem.high_priority}">
@@ -256,7 +243,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   }
 
   updated(changedProperties: GenericObject) {
-    if (this.warningMessages.length && !changedProperties.has('warningMessages') && 
+    if (this.warningMessages.length && !changedProperties.has('warningMessages') &&
         !isEqual(this.editedItem, changedProperties.get('editedItem'))) {
         this.warningMessages.pop();
     }

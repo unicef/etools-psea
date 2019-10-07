@@ -25,6 +25,7 @@ import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown'
 import {saveAssessorData, updateAssessmentData} from '../../../../../redux/actions/page-data';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import PermissionsMixin from '../../../mixins/permissions-mixins';
+import '@unicef-polymer/etools-loading';
 
 /**
  * @customElement
@@ -53,7 +54,9 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       </style>
       ${SharedStylesLit}${gridLayoutStylesLit}${buttonsStyles}${labelAndvalueStylesLit}
 
-      <etools-content-panel panel-title="Primary Assessor">
+      <etools-content-panel panel-title="Assessor">
+        <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
+
         <div slot="panel-btns">
           <paper-icon-button
                 ?hidden="${this.hideEditIcon(this.isNew, this.editMode, this.canEditAssessorInfo)}"
@@ -93,8 +96,8 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       <paper-radio-group .selected="${this.getAssessorType(assessor)}"
           ?readonly="${!editMode}"
           @selected-changed="${(e: CustomEvent) =>
-            this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
-        <paper-radio-button name="staff">Unicef Staff</paper-radio-button>
+    this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
+        <paper-radio-button name="staff">UNICEF Staff</paper-radio-button>
         <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
         <paper-radio-button name="external">External Individual</paper-radio-button>
       </paper-radio-group>
@@ -109,7 +112,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       case 'staff':
         return html`
           <etools-dropdown id="unicefUser"
-            label="Unicef Staff" class="row-padding-v"
+            label="UNICEF Staff" class="row-padding-v"
             .options="${this.unicefUsers}"
             .selected="${this.assessor.user}"
             trigger-value-change-event
@@ -182,6 +185,9 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   @property({type: Boolean})
   canEditAssessorInfo!: boolean;
 
+  @property({type: Boolean})
+  showLoading: boolean = false;
+
   stateChanged(state: RootState) {
     if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
@@ -214,7 +220,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     this.isNew = !this.assessor.id;
     this.originalAssessor = cloneDeep(this.assessor);
     this.requestUpdate().then(() => {
-      //Make sure isNew and canEditAssessorInfo are set before computing editMode
+      // Make sure isNew and canEditAssessorInfo are set before computing editMode
       this.editMode = this.isNew && this.canEditAssessorInfo;
 
       // load staff members after staff members element is initialized
@@ -270,20 +276,22 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   }
 
   setSelectedUnicefUser(event: CustomEvent) {
-    const selectedUser = event.detail.selectedItem;
-    if (selectedUser) {
-      this.assessor.user = selectedUser.id;
-    } else {
-      this.assessor.user = null;
+    if (this.assessor.assessor_type === AssessorTypes.Staff) {
+      const selectedUser = event.detail.selectedItem;
+      if (selectedUser) {
+        this.assessor.user = selectedUser.id;
+      } else {
+        this.assessor.user = null;
+      }
+      this.requestUpdate();
     }
-    this.requestUpdate();
   }
 
   saveAssessor() {
     if (!this.validate()) {
       return;
     }
-
+    this.showLoading = true;
     store.dispatch(saveAssessorData(this.assessment.id as number,
       this.assessor.id, this.collectAssessorData(), this.handleAssessorSaveError.bind(this)))
       .then(() => {
@@ -292,7 +300,8 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
         if (assessorName) {
           store.dispatch(updateAssessmentData({...this.assessment, assessor: assessorName}));
         }
-      });
+      })
+      .then(() => this.showLoading = false);
   }
 
   getAssessorName() {
@@ -367,6 +376,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
         return false;
     }
   }
+
   _validateUnicefStaff() {
     if (!this.assessor.user) {
       (this.shadowRoot!.querySelector('#unicefUser') as EtoolsDropdownEl).invalid = true;
