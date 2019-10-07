@@ -36,6 +36,7 @@ export interface EtoolsTableColumn {
    *    - id will be replaced with item object id property
    */
   link_tmpl?: string;
+  isExternalLink?: boolean;
   capitalize?: boolean;
   placeholder?: string;
   customMethod?: Function;
@@ -121,7 +122,7 @@ export class EtoolsTable extends LitElement {
     `;
   }
 
-  getLinkTmpl(pathTmpl: string | undefined, item: any, key: string) {
+  getLinkTmpl(pathTmpl: string | undefined, item: any, key: string, isExternalLink?: boolean) {
     if (!pathTmpl) {
       throw new Error(`[EtoolsTable.getLinkTmpl]: column "${item[key]}" has no link tmpl defined`);
     }
@@ -133,9 +134,9 @@ export class EtoolsTable extends LitElement {
       }
     });
     const aHref = path.join('/');
-    return html`
-      <a class="" href="${aHref}">${item[key]}</a>
-    `;
+    return isExternalLink
+      ? html`<a class="" @click="${() => window.location.href = aHref}" href="#">${item[key]}</a>`
+      : html`<a class="" href="${aHref}">${item[key]}</a>`;
   }
 
   getRowDataHtml(item: any, showEdit: boolean) {
@@ -232,7 +233,7 @@ export class EtoolsTable extends LitElement {
             ? prettyDate(item[key], this.dateFormat)
             : (column.placeholder ? column.placeholder : this.defaultPlaceholder);
       case EtoolsTableColumnType.Link:
-        return this.getLinkTmpl(column.link_tmpl, item, key);
+        return this.getLinkTmpl(column.link_tmpl, item, key, column.isExternalLink);
       case EtoolsTableColumnType.Number:
       case EtoolsTableColumnType.Checkbox:
         return this._getCheckbox(item, key, showEdit);
