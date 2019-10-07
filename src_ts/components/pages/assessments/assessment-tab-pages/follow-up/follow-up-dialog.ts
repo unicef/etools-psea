@@ -219,6 +219,11 @@ export class FollowUpDialog extends connect(store)(LitElement) {
 
   private initialItem!: ActionPoint;
 
+  connectedCallback() {
+    super.connectedCallback();
+    this.editedItem = cloneDeep(this.defaultItem);
+  }
+
   stateChanged(state: RootState) {
     if (state.commonData) {
       if (!isJsonStrMatch(this.partners, state.commonData.partners)) {
@@ -280,15 +285,19 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   }
 
   private _editedItemHasChanged() {
-    return !isJsonStrMatch(this.initialItem.id, this.editedItem.id);
+    return !isJsonStrMatch(this.initialItem, this.editedItem);
   }
 
   private saveDialogData() {
+    this.getControlsData();
     if (!this._editedItemHasChanged()) {
       this.handleDialogClosed();
+      fireEvent(this.toastEventSource, 'toast', {
+        text: `No changes have been detected to this action point.`
+      });
       return;
     }
-    this.getControlsData();
+
     this.requestInProcess = true;
     const options: any = {
       method: this.isNewRecord ? 'POST' : 'PATCH',
@@ -328,7 +337,9 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   }
 
   public openDialog() {
-    if (!this.editedItem.id) {this.resetEditedItem();}
+    if (!this.editedItem.id) {
+      this.resetEditedItem();
+    }
     this.isNewRecord = !this.editedItem.id || this.editedItem.id == 'new';
     this.dialogTitle = this.isNewRecord ? 'Add Action Point' : 'Edit Action Point';
     this.confirmBtnTxt = this.isNewRecord ? 'Add' : 'Save';
