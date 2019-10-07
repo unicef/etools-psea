@@ -27,6 +27,7 @@ import PermissionsMixin from '../../../mixins/permissions-mixins';
 import get from 'lodash-es/get';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import '@unicef-polymer/etools-loading';
+import {UnicefUser} from '../../../../../types/user-model';
 
 /**
  * @customElement
@@ -75,7 +76,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
         <etools-dropdown-multi label="UNICEF Focal Point"
           class="row-padding-v"
           .selectedValues="${this.assessment.focal_points}"
-          .options="${this.unicefUsers}"
+          .options="${this.unicefFocalPointUsers}"
           option-label="name"
           option-value="id"
           trigger-value-change-event
@@ -125,7 +126,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
   editMode: boolean = false;
 
   @property({type: Array})
-  unicefUsers!: GenericObject[];
+  unicefFocalPointUsers!: UnicefUser[];
 
   @property({type: Array})
   staffMembers: GenericObject[] = [];
@@ -166,30 +167,38 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
         ? this.assessment.partner_details.staff_members
         : [];
 
-      this.updateUnicefUsers([...state.commonData!.unicefUsers]);
+      this.setUnicefFocalPointUsers([...state.commonData!.unicefUsers]);
       setTimeout(() => this.resetValidations(), 10);
     }
   }
 
-  updateUnicefUsers(defaultUnicefUsers: any[]) {
-
-    if (this.assessment && this.assessment.focal_points_details) {
-
+  setUnicefFocalPointUsers(defaultUnicefUsers: any[]) {
+    if (this.assessment) {
+      const focalPointUsers = this.assessment.focal_points_details ? this.assessment.focal_points_details as UnicefUser[] : [];
       if (!this.isUnicefUser) {
-        this.unicefUsers = [...this.assessment.focal_points_details];
+        // if user is not Unicef user, this is opened in read-only mode and we just display already saved
+        // Focal Point users (which are provided in the assessment object)
+        this.unicefFocalPointUsers = [...focalPointUsers];
       } else {
-        this.unicefUsers = defaultUnicefUsers;
-        // for unicef user check if saved focal points exists in unicefUsers, if not, add them
-        let changed = false;
-        this.assessment.focal_points_details.forEach((fp) => {
-          if (this.unicefUsers.findIndex(user => user.id === fp.id) < 0) {
-            this.unicefUsers.push(fp);
-            changed = true;
-          }
-        });
-        if (changed) {
-          this.unicefUsers.sort((a, b) => (a.name < b.name) ? -1 : 1);
+        //  if user is Unicef user, Focal Point users are loaded from Redux
+        this.unicefFocalPointUsers = defaultUnicefUsers;
+        // check if already saved users exists on loaded data, if not they will be added (they might be missing if changed country)
+        this.handleFocalPointsNoLongerAssignedToCurrentCountry(focalPointUsers);
+      }
+    }
+  }
+
+  handleFocalPointsNoLongerAssignedToCurrentCountry(focalPointSavedUsers: UnicefUser[]) {
+    if (focalPointSavedUsers && focalPointSavedUsers.length > 0) {
+      let changed = false;
+      focalPointSavedUsers.forEach((fp) => {
+        if (this.unicefFocalPointUsers.findIndex(user => user.id === fp.id) < 0) {
+          this.unicefFocalPointUsers.push(fp);
+          changed = true;
         }
+      });
+      if (changed) {
+        this.unicefFocalPointUsers.sort((a, b) => (a.name < b.name) ? -1 : 1);
       }
     }
   }
