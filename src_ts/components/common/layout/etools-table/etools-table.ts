@@ -9,6 +9,7 @@ import {fireEvent} from '../../../utils/fire-custom-event';
 import {prettyDate} from '../../../utils/date-utility';
 import {EtoolsPaginator} from './pagination/paginator';
 import './pagination/etools-pagination';
+import get from 'lodash-es/get';
 
 export enum EtoolsTableColumnType {
   Text,
@@ -229,8 +230,8 @@ export class EtoolsTable extends LitElement {
     switch (column.type) {
       case EtoolsTableColumnType.Date:
         return item[key]
-          ? prettyDate(item[key], this.dateFormat)
-          : (column.placeholder ? column.placeholder : this.defaultPlaceholder);
+            ? prettyDate(item[key], this.dateFormat)
+            : (column.placeholder ? column.placeholder : this.defaultPlaceholder);
       case EtoolsTableColumnType.Link:
         return this.getLinkTmpl(column.link_tmpl, item, key, column.isExternalLink);
       case EtoolsTableColumnType.Number:
@@ -238,8 +239,8 @@ export class EtoolsTable extends LitElement {
         return this._getCheckbox(item, key, showEdit);
       case EtoolsTableColumnType.Custom:
         return column.customMethod
-          ? column.customMethod(item, key)
-          : this._getValueByKey(item, key, column.placeholder);
+            ? column.customMethod(item, key)
+            : this._getValueByKey(item, key, column.placeholder);
       default:
         return this._getValueByKey(item, key, column.placeholder);
     }
@@ -255,17 +256,8 @@ export class EtoolsTable extends LitElement {
   }
 
   _getValueByKey(item: any, key: string, placeholder?: string, ignorePlaceholder: boolean = false) {
-    let value = null;
-    if (key.includes('.')) {
-      const propertyNames = key.split('.');
+    const value = get(item, key, '');
 
-      value = item[propertyNames.shift()!];
-      while (propertyNames.length) {
-        value = value[propertyNames.shift()!];
-      }
-    } else {
-      value = item[key];
-    }
     if (!ignorePlaceholder && (!value || value === '')) {
       return placeholder ? placeholder : this.defaultPlaceholder;
     }
