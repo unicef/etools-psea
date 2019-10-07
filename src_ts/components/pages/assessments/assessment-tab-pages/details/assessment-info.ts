@@ -174,7 +174,8 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
 
   setUnicefFocalPointUsers(defaultUnicefUsers: any[]) {
     if (this.assessment) {
-      const focalPointUsers = this.assessment.focal_points_details ? this.assessment.focal_points_details as UnicefUser[] : [];
+      const focalPointUsers = this.assessment.focal_points_details ?
+                              this.assessment.focal_points_details as UnicefUser[] : [];
       if (!this.isUnicefUser) {
         // if user is not Unicef user, this is opened in read-only mode and we just display already saved
         // Focal Point users (which are provided in the assessment object)
@@ -182,7 +183,8 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
       } else {
         //  if user is Unicef user, Focal Point users are loaded from Redux
         this.unicefFocalPointUsers = defaultUnicefUsers;
-        // check if already saved users exists on loaded data, if not they will be added (they might be missing if changed country)
+        // check if already saved users exists on loaded data, if not they will be added
+        // (they might be missing if changed country)
         this.handleFocalPointsNoLongerAssignedToCurrentCountry(focalPointUsers);
       }
     }
