@@ -1,10 +1,16 @@
 import {UnicefUser} from '../../types/user-model';
 
-export const handleAssessorsNoLongerAssignedToCurrentCountry = (assessors: UnicefUser[], assessorToCheck?: UnicefUser) => {
-  if (assessorToCheck && assessorToCheck.id && assessors) {
-    if (assessors.findIndex(user => user.id === assessorToCheck.id) < 0) {
-      assessors.push(assessorToCheck);
-      assessors.sort((a, b) => (a.name < b.name) ? -1 : 1);
+export const handleUsersNoLongerAssignedToCurrentCountry = (users: UnicefUser[], usersToCheck?: UnicefUser[]) => {
+  if (usersToCheck && usersToCheck.length > 0 && users && users.length > 0) {
+    let changed = false;
+    usersToCheck.forEach((usr) => {
+      if (users.findIndex(x => x.id === usr.id) < 0) {
+        users.push(usr);
+        changed = true;
+      }
+    });
+    if (changed) {
+      users.sort((a, b) => (a.name < b.name) ? -1 : 1);
     }
   }
 }

@@ -14,7 +14,7 @@ import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../../../redux/store';
 import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
-import {handleAssessorsNoLongerAssignedToCurrentCountry} from '../../../../common/common-methods';
+import {handleUsersNoLongerAssignedToCurrentCountry} from '../../../../common/common-methods';
 import {Assessment, Assessor, AssessorTypes, AssessmentPermissions} from '../../../../../types/assessment';
 import {AssessingFirm} from './assessing-firm';
 import {ExternalIndividual} from './external-individual';
@@ -210,7 +210,8 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       if (!isJsonStrMatch(this.assessor, newAssessor)) {
         this.assessor = cloneDeep(newAssessor);
         if (this.assessor.assessor_type === AssessorTypes.Staff) {
-          handleAssessorsNoLongerAssignedToCurrentCountry(this.unicefUsers, this.assessor.user_details);
+          // check if already saved Unicef staff exists on loaded data, if not they will be added (they might be missing if changed country)
+          handleUsersNoLongerAssignedToCurrentCountry(this.unicefUsers, [this.assessor.user_details]);
           this.unicefUsers = [...this.unicefUsers];
         }
         this.initializeRelatedData();
