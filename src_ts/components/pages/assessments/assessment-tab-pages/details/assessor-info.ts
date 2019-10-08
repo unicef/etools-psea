@@ -13,7 +13,7 @@ import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-
 import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../../../redux/store';
-import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
+import {cloneDeep, isJsonStrMatch, handleAssessorsNoLongerAssignedToCurrentCountry} from '../../../../utils/utils';
 import {Assessment, Assessor, AssessorTypes, AssessmentPermissions} from '../../../../../types/assessment';
 import {AssessingFirm} from './assessing-firm';
 import {ExternalIndividual} from './external-individual';
@@ -96,7 +96,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       <paper-radio-group .selected="${this.getAssessorType(assessor)}"
           ?readonly="${!editMode}"
           @selected-changed="${(e: CustomEvent) =>
-    this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
+        this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
         <paper-radio-button name="staff">UNICEF Staff</paper-radio-button>
         <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
         <paper-radio-button name="external">External Individual</paper-radio-button>
@@ -137,7 +137,8 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
         return html`
           <external-individual id="externalIndividual"
            .assessor="${cloneDeep(this.assessor)}"
-           .editMode="${editMode}">
+           .editMode="${editMode}"
+           .origAssessorType="${this.originalAssessor.assessor_type}">
           </external-individual>
         `;
       default:
@@ -189,6 +190,13 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   showLoading: boolean = false;
 
   stateChanged(state: RootState) {
+    if (state.app!.routeDetails.subRouteName === 'list') {
+      // on navigation to Assessment list, clear assessor object and prevent further unnecessary processing
+      this.assessor = {} as Assessor;
+      this.originalAssessor = {} as Assessor;
+      return;
+    }
+
     if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
     }
@@ -207,6 +215,9 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       const newAssessor = state.pageData!.assessor;
       if (!isJsonStrMatch(this.assessor, newAssessor)) {
         this.assessor = cloneDeep(newAssessor);
+        if (this.assessor.assessor_type === AssessorTypes.Staff) {
+          handleAssessorsNoLongerAssignedToCurrentCountry(this.unicefUsers, this.assessor.user_details);
+        }
         this.initializeRelatedData();
       }
     }
