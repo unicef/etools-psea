@@ -191,13 +191,6 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   showLoading: boolean = false;
 
   stateChanged(state: RootState) {
-    if (state.app!.routeDetails.subRouteName === 'list') {
-      // on navigation to Assessment list, clear assessor object and prevent further unnecessary processing
-      this.assessor = {} as Assessor;
-      this.originalAssessor = {} as Assessor;
-      return;
-    }
-
     if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
     }
@@ -218,6 +211,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
         this.assessor = cloneDeep(newAssessor);
         if (this.assessor.assessor_type === AssessorTypes.Staff) {
           handleAssessorsNoLongerAssignedToCurrentCountry(this.unicefUsers, this.assessor.user_details);
+          this.unicefUsers = [...this.unicefUsers];
         }
         this.initializeRelatedData();
       }
