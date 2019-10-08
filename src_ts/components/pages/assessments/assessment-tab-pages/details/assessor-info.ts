@@ -13,7 +13,8 @@ import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-
 import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../../../redux/store';
-import {cloneDeep, isJsonStrMatch, handleAssessorsNoLongerAssignedToCurrentCountry} from '../../../../utils/utils';
+import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
+import {handleAssessorsNoLongerAssignedToCurrentCountry} from '../../../../common/common-methods';
 import {Assessment, Assessor, AssessorTypes, AssessmentPermissions} from '../../../../../types/assessment';
 import {AssessingFirm} from './assessing-firm';
 import {ExternalIndividual} from './external-individual';
