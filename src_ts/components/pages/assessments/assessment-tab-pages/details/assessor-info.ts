@@ -18,11 +18,11 @@ import {Assessment, Assessor, AssessorTypes, AssessmentPermissions} from '../../
 import {AssessingFirm} from './assessing-firm';
 import {ExternalIndividual} from './external-individual';
 import {fireEvent} from '../../../../utils/fire-custom-event';
-import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import {formatServerErrorAsText, parseRequestErrorsAndShowAsToastMsgs} from '../../../../utils/ajax-error-parser';
 import {FirmStaffMembers} from './firm-staff-members';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
-import {saveAssessorData, updateAssessmentData} from '../../../../../redux/actions/page-data';
+import {saveAssessorData, requestAssessment} from '../../../../../redux/actions/page-data';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import PermissionsMixin from '../../../mixins/permissions-mixins';
 import '@unicef-polymer/etools-loading';
@@ -171,7 +171,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   isNew: boolean = false;
 
   @property({type: Boolean})
-  editMode: boolean = true;
+  editMode: boolean = false;
 
   @property({type: Object})
   originalAssessor!: Assessor;
@@ -221,8 +221,9 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     this.originalAssessor = cloneDeep(this.assessor);
     this.requestUpdate().then(() => {
       // Make sure isNew and canEditAssessorInfo are set before computing editMode
-      this.editMode = this.isNew && this.canEditAssessorInfo;
-
+      if (this.isNew) {
+        this.editMode = true;
+      }
       // load staff members after staff members element is initialized
       if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessor.auditor_firm) {
         this.loadFirmStaffMembers(this.assessor.auditor_firm!);
@@ -295,10 +296,11 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     store.dispatch(saveAssessorData(this.assessment.id as number,
       this.assessor.id, this.collectAssessorData(), this.handleAssessorSaveError.bind(this)))
       .then(() => {
+        this.editMode = false;
         // update assessor in assessment object
         const assessorName = this.getAssessorName();
         if (assessorName) {
-          store.dispatch(updateAssessmentData({...this.assessment, assessor: assessorName}));
+          store.dispatch(requestAssessment(this.assessment.id!, parseRequestErrorsAndShowAsToastMsgs));
         }
       })
       .then(() => this.showLoading = false);

@@ -82,7 +82,7 @@ export const saveAssessorData = (assessmentId: number,
  * @param assessmentId
  * @param errorCallback
  */
-export const requestAssessmentData =
+export const requestAssessmentAndAssessor =
   (assessmentId: number, errorCallback: (...args: any[]) => void) => (dispatch: any) => {
     if (!assessmentId || isNaN(assessmentId)) {
       throw new Error(`[requestAssessmentData] Invalid assessment id ${assessmentId}`);
@@ -102,4 +102,18 @@ export const requestAssessmentData =
       .catch(err => errorCallback(err));
   };
 
-
+  export const requestAssessment =  (assessmentId: number, errorCallback: (...args: any[]) => void) => (dispatch: any) => {
+    if (!assessmentId || isNaN(assessmentId)) {
+      throw new Error(`[requestAssessmentData] Invalid assessment id ${assessmentId}`);
+    }
+    const url = `${etoolsEndpoints.assessment.url!}${assessmentId}/`;
+    return makeRequest({url: url})
+      .then((response: Assessment) => {
+        dispatch(updateAssessmentData(response));
+      })
+      .catch(err => {
+        if (errorCallback) {
+          errorCallback(err);
+        }
+      });
+  };
