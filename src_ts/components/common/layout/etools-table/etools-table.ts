@@ -230,8 +230,8 @@ export class EtoolsTable extends LitElement {
     switch (column.type) {
       case EtoolsTableColumnType.Date:
         return item[key]
-            ? prettyDate(item[key], this.dateFormat)
-            : (column.placeholder ? column.placeholder : this.defaultPlaceholder);
+          ? prettyDate(item[key], this.dateFormat)
+          : (column.placeholder ? column.placeholder : this.defaultPlaceholder);
       case EtoolsTableColumnType.Link:
         return this.getLinkTmpl(column.link_tmpl, item, key, column.isExternalLink);
       case EtoolsTableColumnType.Number:
@@ -239,8 +239,8 @@ export class EtoolsTable extends LitElement {
         return this._getCheckbox(item, key, showEdit);
       case EtoolsTableColumnType.Custom:
         return column.customMethod
-            ? column.customMethod(item, key)
-            : this._getValueByKey(item, key, column.placeholder);
+          ? column.customMethod(item, key)
+          : this._getValueByKey(item, key, column.placeholder);
       default:
         return this._getValueByKey(item, key, column.placeholder);
     }

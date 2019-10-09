@@ -64,7 +64,8 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
           text-align: left;
         }
       </style>
-      <etools-loading loading-text="Loading..." .active="${this.loadingQuestions || this.loadingAnswers}"></etools-loading>
+      <etools-loading loading-text="Loading..." .active="${this.loadingQuestions || this.loadingAnswers}">
+      </etools-loading>
       <div class="overall layout-horizontal ${this._getColorClass(this.overallRatingDisplay)}"
           ?hidden="${!this.overallRatingDisplay}">
         <div class="col-5 r-align">SEA Risk Rating:</div><div class="col-1"></div>
@@ -177,7 +178,7 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
 
     const index = this.answers.findIndex(a => Number(a.id) === Number(updatedAnswer.id));
     if (index > -1) {
-      this.answers.splice(index, 0, updatedAnswer);
+      this.answers.splice(index, 1, updatedAnswer);
     } else {
       this.answers.push(updatedAnswer);
     }
