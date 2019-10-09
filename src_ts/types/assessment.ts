@@ -59,7 +59,7 @@ export class Assessor {
 }
 
 export class Question {
-  id!: string | number | null;
+  id!: string | number;
   subject: string = '';
   content: string = '';
   ratings: Rating[] = [];

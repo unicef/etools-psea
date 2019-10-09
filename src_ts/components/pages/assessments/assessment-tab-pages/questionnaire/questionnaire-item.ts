@@ -144,13 +144,12 @@ export class QuestionnaireItemElement extends LitElement {
       return;
     }
 
-    const endpointData = new RequestEndpoint(this._getUrl(), this._getMethod());
     const answerBody = this.questionnaireAnswerElement.getAnswerForSave();
-
     if (!this.secondRoundOfValidations(answerBody)) {
       return;
     }
 
+    const endpointData = new RequestEndpoint(this._getUrl(), this._getMethod());
     makeRequest(endpointData, answerBody)
       .then((resp) => {
         this.answer = resp;
