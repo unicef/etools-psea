@@ -78,7 +78,7 @@ export const saveAssessorData = (assessmentId: number,
   };
 
 /**
- * Request assessment data and update redux store
+ * Request assessment and assessor and update redux store
  * @param assessmentId
  * @param errorCallback
  */

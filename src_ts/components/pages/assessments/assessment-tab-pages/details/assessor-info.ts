@@ -303,29 +303,12 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       this.assessor.id, this.collectAssessorData(), this.handleAssessorSaveError.bind(this)))
       .then(() => {
         this.editMode = false;
-        // update assessor in assessment object
-        const assessorName = this.getAssessorName();
-        if (assessorName) {
-          store.dispatch(requestAssessment(this.assessment.id!, parseRequestErrorsAndShowAsToastMsgs));
-        }
+        // update permissions and available actions
+        store.dispatch(requestAssessment(this.assessment.id!, parseRequestErrorsAndShowAsToastMsgs));
       })
       .then(() => this.showLoading = false);
   }
 
-  getAssessorName() {
-    let assessorField = null;
-    switch (this.assessor.assessor_type) {
-      case AssessorTypes.Staff:
-        assessorField = this.shadowRoot!.querySelector('#unicefUser') as EtoolsDropdownEl;
-        return assessorField ? (assessorField.selectedItem as UnicefUser).name : '';
-      case AssessorTypes.ExternalIndividual:
-        return this.externalIndividualElement.getExternalIndividualName();
-      case AssessorTypes.Firm:
-        return this.assessingFirmElement.getFirmName();
-      default:
-        return '';
-    }
-  }
 
   handleAssessorSaveError(error: any) {
     logError(error);
