@@ -303,7 +303,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       this.assessor.id, this.collectAssessorData(), this.handleAssessorSaveError.bind(this)))
       .then(() => {
         this.editMode = false;
-        // update assessment object
+        // update permissions and available actions
         store.dispatch(requestAssessment(this.assessment.id!, parseRequestErrorsAndShowAsToastMsgs));
       })
       .then(() => this.showLoading = false);
