@@ -8,6 +8,7 @@ import {ExternalIndividualDialog} from './external-individual-dialog';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
+import {handleUsersNoLongerAssignedToCurrentCountry} from '../../../../common/common-methods';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
 import {UnicefUser} from '../../../../../types/user-model';
 import {Assessor, AssessorTypes} from '../../../../../types/assessment';
@@ -65,12 +66,19 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   @property({type: Boolean})
   editMode!: boolean;
 
+  @property({type: String})
+  origAssessorType!: AssessorTypes;
+
   private dialogExtIndividual!: ExternalIndividualDialog;
 
   stateChanged(state: RootState) {
     const stateExternalIndivs = state.commonData!.externalIndividuals;
     if (stateExternalIndivs && !isJsonStrMatch(stateExternalIndivs, this.externalIndividuals)) {
       this.externalIndividuals = [...stateExternalIndivs];
+      if (this.origAssessorType === AssessorTypes.ExternalIndividual) {
+        // check if already saved external individual exists on loaded data, if not they will be added (they might be missing if changed country)
+        handleUsersNoLongerAssignedToCurrentCountry(this.externalIndividuals, [this.assessor.user_details]);
+      }
     }
   }
 
