@@ -220,10 +220,9 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     this.isNew = !this.assessor.id;
     this.originalAssessor = cloneDeep(this.assessor);
     this.requestUpdate().then(() => {
-      // Make sure isNew and canEditAssessorInfo are set before computing editMode
-      if (this.isNew) {
-        this.editMode = true;
-      }
+      // Making sure isNew and canEditAssessorInfo are set before computing editMode
+      // Checking canEditAssessotInfo for when assessment is canceled and assessor IsNew
+      this.editMode = this.isNew && this.canEditAssessorInfo;
       // load staff members after staff members element is initialized
       if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessor.auditor_firm) {
         this.loadFirmStaffMembers(this.assessor.auditor_firm!);
