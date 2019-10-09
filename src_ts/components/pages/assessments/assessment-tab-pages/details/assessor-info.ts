@@ -19,7 +19,7 @@ import {Assessment, Assessor, AssessorTypes, AssessmentPermissions} from '../../
 import {AssessingFirm} from './assessing-firm';
 import {ExternalIndividual} from './external-individual';
 import {fireEvent} from '../../../../utils/fire-custom-event';
-import {formatServerErrorAsText, parseRequestErrorsAndShowAsToastMsgs} from '../../../../utils/ajax-error-parser';
+import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {FirmStaffMembers} from './firm-staff-members';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
@@ -300,20 +300,24 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     }
     this.showLoading = true;
     store.dispatch(saveAssessorData(this.assessment.id as number,
-      this.assessor.id, this.collectAssessorData(), this.handleAssessorSaveError.bind(this)))
+      this.assessor.id, this.collectAssessorData(), this.handleError.bind(this)))
       .then(() => {
-        this.editMode = false;
         // update permissions and available actions
-        store.dispatch(requestAssessment(this.assessment.id!, parseRequestErrorsAndShowAsToastMsgs));
+        return store.dispatch(requestAssessment(this.assessment.id!, this.handleError.bind(this)));
       })
-      .then(() => this.showLoading = false);
+      .then(() => {
+        this.showLoading = false;
+        this.editMode = false;
+      });
   }
 
 
-  handleAssessorSaveError(error: any) {
+  handleError(error: any) {
+    this.showLoading = false
     logError(error);
     fireEvent(this, 'toast', {text: formatServerErrorAsText(error), showCloseBtn: true});
-    throw new Error(error.message);
+
+    throw new Error('Error thrown just to avoid executing chained .then s');
   }
 
   collectAssessorData() {
