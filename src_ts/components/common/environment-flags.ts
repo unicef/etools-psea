@@ -2,7 +2,7 @@ import {makeRequest, RequestEndpoint} from '../utils/request-helper';
 import {etoolsEndpoints} from '../../endpoints/endpoints-list';
 import {getEndpoint} from '../../endpoints/endpoints';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
-import {EtoolsErrorWarnBox} from '../common/layout/etools-error-warn-box';
+import {EtoolsErrorWarnBox} from './layout/etools-error-warn-box';
 import '../common/layout/etools-error-warn-box';
 
 
@@ -20,7 +20,8 @@ function handleEnvFlagsReceived(envFlags: any) {
     if (bodyEl) {
       bodyEl.querySelectorAll('*').forEach(el => el.remove());
       const warnBox = document.createElement('etools-error-warn-box') as EtoolsErrorWarnBox;
-      warnBox.messages = ['PSEA is currently unavailable in your workspace, please stay tuned... In the meantime checkout our other great modules'];
+      warnBox.messages = ['PSEA is currently unavailable in your workspace, please stay tuned... ' +
+                          'In the meantime checkout our other great modules'];
       bodyEl.appendChild(warnBox);
     }
   }

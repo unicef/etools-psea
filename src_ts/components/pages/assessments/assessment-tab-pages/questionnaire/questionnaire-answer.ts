@@ -53,7 +53,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
         <div>
           <label class="paper-label" required>Rating</label>
           <answer-instructions></answer-instructions>
-        </div> 
+        </div>
         <div>
           <paper-radio-group id="ratingElement"
               .selected="${this.answer.rating}"
@@ -75,12 +75,12 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       ${this._getProofOfEvidenceTemplate(this.question.evidences, this.answer)}
 
       <div class="row-padding-v" ?hidden="${!this.showOtherInput}">
-        <paper-input id="otherEvidenceInput" label="Please specify other" always-float-label
+        <paper-textarea id="otherEvidenceInput" label="Please specify other" always-float-label
           required
           auto-validate
           placeholder="—"
           value="${this._getOtherEvidenceInputValue(this.answer)}"
-          ?readonly="${!this.editMode}"></paper-input>
+          ?readonly="${!this.editMode}"></paper-textarea>
       </div>
 
       <div class="row-padding-v">

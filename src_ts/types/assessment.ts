@@ -1,4 +1,5 @@
 import {GenericObject} from './globals';
+import {UnicefUser} from './user-model';
 
 export class AssessmentPermissions {
   edit = {
@@ -54,6 +55,7 @@ export class Assessor {
   auditor_firm: string | null = null;
   auditor_firm_name: string = '';
   auditor_firm_staff: string[] = [];
+  user_details: UnicefUser = {} as UnicefUser;
 }
 
 export class Question {
