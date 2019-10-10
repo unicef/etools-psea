@@ -82,8 +82,8 @@ export class Rating {
 
 export class Answer {
   id: string | null = null;
-  assessment: string | null = null;
-  indicator: string | null = null;
+  assessment: string | number | null = null;
+  indicator: string | number | null = null;
   rating: string | null = null;
   comments: string = '';
   evidences: AnswerEvidence[] = [];
