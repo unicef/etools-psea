@@ -10,7 +10,7 @@ import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {cloneDeep} from '../../../../utils/utils';
 import get from 'lodash-es/get';
-import {requestAssessmentData} from '../../../../../redux/actions/page-data';
+import {requestAssessmentAndAssessor} from '../../../../../redux/actions/page-data';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
@@ -184,7 +184,7 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     }
 
     if (this.answers.length === this.questionnaireItems.length) {
-      store.dispatch(requestAssessmentData(Number(this.assessmentId), this._handleErrOnGetAssessment.bind(this)));
+      store.dispatch(requestAssessmentAndAssessor(Number(this.assessmentId), this._handleErrOnGetAssessment.bind(this)));
     }
   }
 
