@@ -52,7 +52,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
                      @confirm-btn-clicked="${this.onConfirmBtnClick}"
                      @close="${this.handleDialogClosed}">
         <!-- TODO: The following warning may be replaced -->
-        
+
         <etools-error-warn-box .messages="${this.warningMessages}">
         </etools-error-warn-box>
 
@@ -293,7 +293,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
     if (!this._editedItemHasChanged()) {
       this.handleDialogClosed();
       fireEvent(this.toastEventSource, 'toast', {
-        text: `No changes have been detected to this action point.`
+        text: `No changes have been detected on this action point.`
       });
       return;
     }
@@ -301,14 +301,17 @@ export class FollowUpDialog extends connect(store)(LitElement) {
     this.requestInProcess = true;
     const options: any = {
       method: this.isNewRecord ? 'POST' : 'PATCH',
-      url: this.isNewRecord ?
-        getEndpoint(etoolsEndpoints.actionPoints, {id: this.assessment.id}).url :
-        getEndpoint(etoolsEndpoints.editActionPoint, {id: this.assessment.id, actionPoint: this.editedItem.id}).url
+      url: this._getUrl()
     };
 
     makeRequest(options, this.editedItem)
       .then((resp: any) => this._handleResponse(resp))
       .catch((err: any) => this._handleError(err));
+  }
+
+  _getUrl() {
+    let actionPointsUrl = getEndpoint(etoolsEndpoints.actionPoints, {id: this.assessment.id}).url!;
+    return (this.isNewRecord ?  actionPointsUrl : actionPointsUrl + this.editedItem.id + '/');
   }
 
   _handleResponse(resp: any) {
