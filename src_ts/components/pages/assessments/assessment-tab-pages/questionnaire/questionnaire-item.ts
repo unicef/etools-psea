@@ -40,7 +40,7 @@ export class QuestionnaireItemElement extends LitElement {
           color: black;
         }
       </style>
-      <etools-content-panel panel-title="${this.question.subject}" 
+      <etools-content-panel panel-title="${this.question.subject}"
                             ?show-expand-btn=${!this.editMode} .open="${this.open}">
         <div slot="panel-btns">
           <paper-radio-button checked class="epc-header-radio-button ${this._getRadioBtnClass(this.answer)} readonly"
@@ -144,8 +144,12 @@ export class QuestionnaireItemElement extends LitElement {
       return;
     }
 
-    const endpointData = new RequestEndpoint(this._getUrl(), this._getMethod());
     const answerBody = this.questionnaireAnswerElement.getAnswerForSave();
+    if (!this.secondRoundOfValidations(answerBody)) {
+      return;
+    }
+
+    const endpointData = new RequestEndpoint(this._getUrl(), this._getMethod());
     makeRequest(endpointData, answerBody)
       .then((resp) => {
         this.answer = resp;
@@ -156,6 +160,17 @@ export class QuestionnaireItemElement extends LitElement {
       .catch((err: any) => {
         fireEvent(this, 'toast', {text: formatServerErrorAsText(err)});
       });
+  }
+
+  /**
+   * This validation needs the result of questionnaireAnswerElement.getAnswerForSave(),
+   * and in order to avoid duplicating operations of getting answer values, it's done as a second round
+   */
+  secondRoundOfValidations(answer: Answer) {
+    let valid1 = this.questionnaireAnswerElement.validateOtherProofOfEvidence(answer.evidences);
+    let valid2 = this.questionnaireAnswerElement.validateAttachments(answer.attachments);
+
+    return valid1 && valid2;
   }
 
   _getUrl() {
@@ -171,7 +186,7 @@ export class QuestionnaireItemElement extends LitElement {
   }
 
   validate() {
-    return this.questionnaireAnswerElement.validate();
+    return this.questionnaireAnswerElement.validateRating();
   }
 
   hideEditIcon(editMode: boolean, canEditAnswers: boolean) {

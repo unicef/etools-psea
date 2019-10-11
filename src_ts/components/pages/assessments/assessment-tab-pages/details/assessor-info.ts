@@ -14,6 +14,7 @@ import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../../../redux/store';
 import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
+import {handleUsersNoLongerAssignedToCurrentCountry} from '../../../../common/common-methods';
 import {Assessment, Assessor, AssessorTypes, AssessmentPermissions} from '../../../../../types/assessment';
 import {AssessingFirm} from './assessing-firm';
 import {ExternalIndividual} from './external-individual';
@@ -22,7 +23,7 @@ import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {FirmStaffMembers} from './firm-staff-members';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
-import {saveAssessorData, updateAssessmentData} from '../../../../../redux/actions/page-data';
+import {saveAssessorData, requestAssessment} from '../../../../../redux/actions/page-data';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import PermissionsMixin from '../../../mixins/permissions-mixins';
 import '@unicef-polymer/etools-loading';
@@ -96,7 +97,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       <paper-radio-group .selected="${this.getAssessorType(assessor)}"
           ?readonly="${!editMode}"
           @selected-changed="${(e: CustomEvent) =>
-    this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
+        this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
         <paper-radio-button name="staff">UNICEF Staff</paper-radio-button>
         <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
         <paper-radio-button name="external">External Individual</paper-radio-button>
@@ -137,7 +138,8 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
         return html`
           <external-individual id="externalIndividual"
            .assessor="${cloneDeep(this.assessor)}"
-           .editMode="${editMode}">
+           .editMode="${editMode}"
+           .origAssessorType="${this.originalAssessor.assessor_type}">
           </external-individual>
         `;
       default:
@@ -171,7 +173,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   isNew: boolean = false;
 
   @property({type: Boolean})
-  editMode: boolean = true;
+  editMode: boolean = false;
 
   @property({type: Object})
   originalAssessor!: Assessor;
@@ -207,6 +209,11 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       const newAssessor = state.pageData!.assessor;
       if (!isJsonStrMatch(this.assessor, newAssessor)) {
         this.assessor = cloneDeep(newAssessor);
+        if (this.assessor.assessor_type === AssessorTypes.Staff) {
+          // check if already saved Unicef staff exists on loaded data, if not they will be added (they might be missing if changed country)
+          handleUsersNoLongerAssignedToCurrentCountry(this.unicefUsers, [this.assessor.user_details]);
+          this.unicefUsers = [...this.unicefUsers];
+        }
         this.initializeRelatedData();
       }
     }
@@ -220,9 +227,9 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     this.isNew = !this.assessor.id;
     this.originalAssessor = cloneDeep(this.assessor);
     this.requestUpdate().then(() => {
-      // Make sure isNew and canEditAssessorInfo are set before computing editMode
+      // Making sure isNew and canEditAssessorInfo are set before computing editMode
+      // Checking canEditAssessotInfo also, for when assessment is canceled and assessor IsNew
       this.editMode = this.isNew && this.canEditAssessorInfo;
-
       // load staff members after staff members element is initialized
       if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessor.auditor_firm) {
         this.loadFirmStaffMembers(this.assessor.auditor_firm!);
@@ -293,36 +300,24 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     }
     this.showLoading = true;
     store.dispatch(saveAssessorData(this.assessment.id as number,
-      this.assessor.id, this.collectAssessorData(), this.handleAssessorSaveError.bind(this)))
+      this.assessor.id, this.collectAssessorData(), this.handleError.bind(this)))
       .then(() => {
-        // update assessor in assessment object
-        const assessorName = this.getAssessorName();
-        if (assessorName) {
-          store.dispatch(updateAssessmentData({...this.assessment, assessor: assessorName}));
-        }
+        // update permissions and available actions
+        return store.dispatch(requestAssessment(this.assessment.id!, this.handleError.bind(this)));
       })
-      .then(() => this.showLoading = false);
+      .then(() => {
+        this.showLoading = false;
+        this.editMode = false;
+      });
   }
 
-  getAssessorName() {
-    let assessorField = null;
-    switch (this.assessor.assessor_type) {
-      case AssessorTypes.Staff:
-        assessorField = this.shadowRoot!.querySelector('#unicefUser') as EtoolsDropdownEl;
-        return assessorField ? (assessorField.selectedItem as UnicefUser).name : '';
-      case AssessorTypes.ExternalIndividual:
-        return this.externalIndividualElement.getExternalIndividualName();
-      case AssessorTypes.Firm:
-        return this.assessingFirmElement.getFirmName();
-      default:
-        return '';
-    }
-  }
 
-  handleAssessorSaveError(error: any) {
+  handleError(error: any) {
+    this.showLoading = false
     logError(error);
     fireEvent(this, 'toast', {text: formatServerErrorAsText(error), showCloseBtn: true});
-    throw new Error(error.message);
+
+    throw new Error('Error thrown just to avoid executing chained .then s');
   }
 
   collectAssessorData() {

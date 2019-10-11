@@ -27,6 +27,7 @@ import PermissionsMixin from '../../../mixins/permissions-mixins';
 import get from 'lodash-es/get';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import '@unicef-polymer/etools-loading';
+import {handleUsersNoLongerAssignedToCurrentCountry} from '../../../../common/common-methods';
 import {UnicefUser} from '../../../../../types/user-model';
 
 /**
@@ -174,7 +175,8 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
 
   setUnicefFocalPointUsers(defaultUnicefUsers: any[]) {
     if (this.assessment) {
-      const focalPointUsers = this.assessment.focal_points_details ? this.assessment.focal_points_details as UnicefUser[] : [];
+      const focalPointUsers = this.assessment.focal_points_details ?
+                              this.assessment.focal_points_details as UnicefUser[] : [];
       if (!this.isUnicefUser) {
         // if user is not Unicef user, this is opened in read-only mode and we just display already saved
         // Focal Point users (which are provided in the assessment object)
@@ -182,23 +184,10 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
       } else {
         //  if user is Unicef user, Focal Point users are loaded from Redux
         this.unicefFocalPointUsers = defaultUnicefUsers;
-        // check if already saved users exists on loaded data, if not they will be added (they might be missing if changed country)
-        this.handleFocalPointsNoLongerAssignedToCurrentCountry(focalPointUsers);
-      }
-    }
-  }
 
-  handleFocalPointsNoLongerAssignedToCurrentCountry(focalPointSavedUsers: UnicefUser[]) {
-    if (focalPointSavedUsers && focalPointSavedUsers.length > 0) {
-      let changed = false;
-      focalPointSavedUsers.forEach((fp) => {
-        if (this.unicefFocalPointUsers.findIndex(user => user.id === fp.id) < 0) {
-          this.unicefFocalPointUsers.push(fp);
-          changed = true;
-        }
-      });
-      if (changed) {
-        this.unicefFocalPointUsers.sort((a, b) => (a.name < b.name) ? -1 : 1);
+        // check if already saved users exists on loaded data, if not they will be added (they might be missing if changed country)
+        handleUsersNoLongerAssignedToCurrentCountry(this.unicefFocalPointUsers, focalPointUsers);
+
       }
     }
   }
