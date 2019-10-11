@@ -11,6 +11,7 @@ import {getFileNameFromURL} from '../../../../utils/utils';
 import {prettyDate} from '../../../../utils/date-utility';
 import {AnswerAttachment, UploadedFileInfo} from '../../../../../types/assessment';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
+import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown';
 
 @customElement('question-attachments')
 export class QuestionAttachmentsElement extends LitElement {
@@ -64,6 +65,17 @@ export class QuestionAttachmentsElement extends LitElement {
           padding-top: 16px;
         }
 
+        etools-dropdown[required][no-star] {
+          --paper-input-container-label: {
+            background: none;
+            color: var(--secondary-text-color, #737373)
+          };
+          --paper-input-container-label-floating: {
+            background: none;
+            color: var(--secondary-text-color, #737373);
+          }
+        }
+
       </style>
 
       <div class="row-padding-v">
@@ -115,12 +127,16 @@ export class QuestionAttachmentsElement extends LitElement {
           <div class="col-2 padd-right">${att.url ? prettyDate(att.created) : att.created}</div>
           <div class="col-4 extra-padd-right">
             <etools-dropdown no-label-float
+               id="${'filetype' + att.id}"
               .options="${this.documentTypes}"
               .selected="${att.file_type}"
               option-value="id"
               option-label="label"
               .readonly="${!this.editMode}"
               hide-search
+              auto-validate
+              required
+              no-star
               trigger-value-change-event
               @etools-selected-item-changed="${(e: CustomEvent) => this._setSelectedDocType(e, att)}">
             </etools-dropdown>
@@ -179,8 +195,28 @@ export class QuestionAttachmentsElement extends LitElement {
   }
 
   getAttachmentsForSave() {
-    // At the moment, the endpoint expects all attachments to be sent
+    // At the moment, the endpoint expects all attachments to be sent, not just the modified ones
     return this.attachments;
+  }
+
+  validate(attachments?: AnswerAttachment[]) {
+    if (attachments === undefined) {
+      attachments = this.attachments;
+    }
+    if (!attachments || !attachments.length) {
+      return true;
+    }
+    let valid = true;
+    attachments.forEach(att => {
+      if (!att.file_type) {
+        let dropD = this.shadowRoot!.querySelector('#filetype'+ att.id) as EtoolsDropdownEl;
+        if (dropD) {
+          dropD.invalid = true;
+        }
+        valid = false;
+      }
+    });
+    return valid;
   }
 
   deleteAttachment(attId: string, isNotSavedYet: boolean) {
