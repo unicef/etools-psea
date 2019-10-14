@@ -110,12 +110,15 @@ export class Router {
     return (path.indexOf(this.root) === -1) ? (this.root + Router.clearSlashes(path)) : path;
   }
 
-  navigate(path?: string, navigateCallback?: (() => void) | null) {
+  pushState(path?: string) {
     path = path ? this.prepareLocationPath(path) : '';
     history.pushState(null, '', path);
-    if (typeof navigateCallback === 'function') {
-      navigateCallback();
-    }
+    return this;
+  }
+
+  replaceState(path?: string) {
+    path = path ? this.prepareLocationPath(path) : '';
+    history.replaceState(window.history.state, '', path);
     return this;
   }
 }
