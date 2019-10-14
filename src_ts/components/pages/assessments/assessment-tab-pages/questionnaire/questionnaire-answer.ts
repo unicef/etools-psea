@@ -78,7 +78,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
           label="Please specify other"
           always-float-label
           required
-          auto-validate
+          .autoValidate="${this.connected}"
           placeholder="—"
           .value="${this._getOtherEvidenceInputValue(this.answer)}"
           ?readonly="${!this.editMode}">
@@ -115,6 +115,9 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   @property({type: Boolean})
   editMode!: boolean;
 
+  @property({type: Boolean})
+  connected: boolean = false;
+
   @query('#ratingElement')
   ratingElement!: PaperRadioGroupElement;
 
@@ -129,6 +132,12 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
 
   @queryAll('paper-checkbox.proofOfEvidence[checked]')
   checkedEvidenceBoxes!: PaperCheckboxElement[];
+
+  connectedCallback() {
+    super.connectedCallback();
+
+    this._handlePaperTextareaAutovalidateError();
+  }
 
   stateChanged(state: RootState) {
     if (get(state, 'app.routeDetails.params.assessmentId')) {
@@ -145,6 +154,17 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       this.otherEvidenceInput.value = '';
       this.checkedEvidenceBoxes.forEach(el => el.checked = false);
     }
+  }
+
+  /**
+   * This will prevent a console error "Uncaught TypeError: Cannot read property 'textarea' of undefined"
+   * The error occurs only on first load/ hard refresh and on paper-textareas that have auto-validate
+   */
+  _handlePaperTextareaAutovalidateError() {
+    this.updateComplete.then(() => {
+      this.connected = true;
+    });
+
   }
 
   _getProofOfEvidenceTemplate(evidences: ProofOfEvidence[], answer: Answer) {
