@@ -112,7 +112,7 @@ export class Router {
 
   pushState(path?: string) {
     path = path ? this.prepareLocationPath(path) : '';
-    history.pushState(null, '', path);
+    history.pushState(window.history.state, '', path);
     return this;
   }
 
