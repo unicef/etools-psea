@@ -136,11 +136,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   connectedCallback() {
     super.connectedCallback();
 
-    this.updateComplete.then(() => {
-      // this is will prevent a console error "Uncaught TypeError: Cannot read property 'textarea' of undefined"
-      // the error occurs only on first load/ hard refresh
-      this._handlePaperTextareaAutovalidate();
-    });
+    this._handlePaperTextareaAutovalidateError();
   }
 
   stateChanged(state: RootState) {
@@ -160,8 +156,15 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
     }
   }
 
-  _handlePaperTextareaAutovalidate() {
-    this.connected = true;
+  /**
+   * This will prevent a console error "Uncaught TypeError: Cannot read property 'textarea' of undefined"
+   * The error occurs only on first load/ hard refresh and on paper-textareas that have auto-validate
+   */
+  _handlePaperTextareaAutovalidateError() {
+    this.updateComplete.then(() => {
+      this.connected = true;
+    });
+
   }
 
   _getProofOfEvidenceTemplate(evidences: ProofOfEvidence[], answer: Answer) {
