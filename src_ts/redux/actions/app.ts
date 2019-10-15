@@ -64,7 +64,7 @@ export const navigate: ActionCreator<ThunkResult> = (path: string) => (dispatch)
 
   // if app route is accessed, redirect to default route (if not already on it)
   // @ts-ignore
-  if (path === ROOT_PATH && ROOT_PATH !== DEFAULT_ROUTE) {// *TODO - ROOT_PATH != DEFAULT_ROUTE??? They are constants set to diff values
+  if (path === ROOT_PATH) {
     updateAppLocation(DEFAULT_ROUTE, true);
     return;
   }
