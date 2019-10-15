@@ -144,9 +144,9 @@ export class EtoolsFilters extends LitElement {
     `;
   }
 
-  get selectedFiltersTmpl() {
+  selectedFiltersTmpl(filters: EtoolsFilter[]) {
     const tmpl: any[] = [];
-    this.filters.forEach((f: EtoolsFilter) => {
+    filters.forEach((f: EtoolsFilter) => {
       let filterHtml = null;
       switch (f.type) {
         case EtoolsFilterTypes.Search:
@@ -204,7 +204,7 @@ export class EtoolsFilters extends LitElement {
           }
         </style>
         <div id="filters">
-          ${this.selectedFiltersTmpl}
+          ${this.selectedFiltersTmpl(this.filters)}
         </div>
 
         <div id="filters-selector">

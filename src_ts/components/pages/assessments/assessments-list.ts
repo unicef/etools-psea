@@ -16,7 +16,8 @@ import {
   assessmentsFilters,
   defaultSelectedFilters,
   updateFilterSelectionOptions,
-  updateFiltersSelectedValues
+  updateFiltersSelectedValues,
+  onlyForUnicefFilters
 } from './list/filters';
 import {EtoolsFilter} from '../../common/layout/filters/etools-filters';
 import {ROOT_PATH} from '../../../config/config';
@@ -44,6 +45,7 @@ import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
 import {makeRequest} from '../../utils/request-helper';
 import '../../common/layout/export-data';
 import '@unicef-polymer/etools-loading';
+import get from 'lodash-es/get';
 
 /**
  * @LitElement
@@ -75,7 +77,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
               <export-data .endpoint="${etoolsEndpoints.assessment.url!}" .params="${this.queryParams}"></export-data>
             </div>
             <div class="action" ?hidden="${!this.canAdd}" >
-              <paper-button class="primary left-icon" raised @tap="${this.goToAddnewPage}">
+              <paper-button class="primary left-icon" raised @tap="${this.goToAddNewPage}">
                 <iron-icon icon="add"></iron-icon>Add new assessment
               </paper-button>
             </div>
@@ -129,7 +131,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
   filters!: EtoolsFilter[];
 
   @property({type: Object})
-  selectedFilters: GenericObject = {...defaultSelectedFilters};
+  selectedFilters!: GenericObject;
 
   @property({type: Boolean})
   canAdd: boolean = false;
@@ -139,9 +141,6 @@ export class AssessmentsList extends connect(store)(LitElement) {
 
   @property({type: Boolean})
   isUnicefUser: boolean = false;
-
-  @property({type: Array})
-  unicefFilters: string[] = ['assessor_staff', 'assessor_firm', 'assessor_external'];
 
   @property({type: String})
   queryParams: string = '';
@@ -191,26 +190,29 @@ export class AssessmentsList extends connect(store)(LitElement) {
   listData: GenericObject[] = [];
 
   stateChanged(state: RootState) {
-    if (state.app!.routeDetails.routeName === 'assessments' &&
-        state.app!.routeDetails.subRouteName === 'list') {
+    if (state.app!.routeDetails.routeName !== 'assessments' &&
+        state.app!.routeDetails.subRouteName !== 'list') {
+      return;
+    }
 
-      const stateRouteDetails = {...state.app!.routeDetails};
+    const stateRouteDetails = {...state.app!.routeDetails};
 
-      if (JSON.stringify(stateRouteDetails) !== JSON.stringify(this.routeDetails)) {
-        this.routeDetails = stateRouteDetails;
+    if (JSON.stringify(stateRouteDetails) !== JSON.stringify(this.routeDetails)) {
+      this.routeDetails = stateRouteDetails;
 
-        if (!this.routeDetails.queryParams || Object.keys(this.routeDetails.queryParams).length === 0) {
-          // update url with params
-          this.updateUrlListQueryParams();
-          return;
-        } else {
-          // init selectedFilters, sort, page, page_size from url params
-          this.updateListParamsFromRouteDetails(this.routeDetails.queryParams);
-          // get assessments based on filters, sort and pagination
-          this.getAssessmentsData();
-        }
+      if (!this.routeDetails.queryParams || Object.keys(this.routeDetails.queryParams).length === 0) {
+        this.selectedFilters = {...defaultSelectedFilters};
+        // update url with params
+        this.updateUrlListQueryParams();
+        return;
+      } else {
+        // init selectedFilters, sort, page, page_size from url params
+        this.updateListParamsFromRouteDetails(this.routeDetails.queryParams);
+        // get assessments based on filters, sort and pagination
+        this.getAssessmentsData();
       }
     }
+
     if (state.user) {
       if (state.user.data) {
         this.isUnicefUser = state.user.data.is_unicef_user;
@@ -220,28 +222,30 @@ export class AssessmentsList extends connect(store)(LitElement) {
         this.canExport = state.user.permissions.canExportAssessment;
       }
     }
-    // init filters using default defined filters (including options)
-    let updatedFilters = this.isUnicefUser ?
-      [...assessmentsFilters] : [...assessmentsFilters.filter(x => this.unicefFilters.indexOf(x.filterKey) < 0)];
-    if (state.commonData) {
-      // update dropdowns filters options from redux
-      updatedFilters = [...this.updateDropdownFiltersOptionsFromCommonData(state.commonData, updatedFilters)];
+
+    if (get(state, 'user.data') && state.commonData && this.routeDetails.queryParams &&
+      Object.keys(this.routeDetails.queryParams).length > 0) { // Wait for all required data to be set
+      // init filters using default defined filters (including options)
+      let availableFilters = this.isUnicefUser ?
+        [...assessmentsFilters] : [...assessmentsFilters.filter(x => onlyForUnicefFilters.indexOf(x.filterKey) < 0)];
+      if (state.commonData) {
+        this.populateDropdownFiltersOptionsFromCommonData(state.commonData, availableFilters);
+      }
+      // update filter selection and assign the result to main filters object(trigger render)
+      this.filters = updateFiltersSelectedValues(this.selectedFilters, availableFilters);
     }
-    // update filter selection and assign the result to main filters object(trigger render)
-    this.filters = updateFiltersSelectedValues(this.selectedFilters, updatedFilters);
 
   }
 
-  updateDropdownFiltersOptionsFromCommonData(commonData: any, currentFilters: EtoolsFilter[]): EtoolsFilter[] {
-    let updatedFilters = updateFilterSelectionOptions(currentFilters, 'unicef_focal_point', commonData.unicefUsers);
-    updatedFilters = updateFilterSelectionOptions(updatedFilters, 'partner', commonData.partners);
+  populateDropdownFiltersOptionsFromCommonData(commonData: any, currentFilters: EtoolsFilter[]) {
+    updateFilterSelectionOptions(currentFilters, 'unicef_focal_point', commonData.unicefUsers);
+    updateFilterSelectionOptions(currentFilters, 'partner', commonData.partners);
+
     if (this.isUnicefUser) {
-      updatedFilters = updateFilterSelectionOptions(updatedFilters, 'assessor_external',
-        commonData.externalIndividuals);
-      updatedFilters = updateFilterSelectionOptions(updatedFilters, 'assessor_staff', commonData.unicefUsers);
-      updatedFilters = updateFilterSelectionOptions(updatedFilters, 'assessor_firm', commonData.assessingFirms);
+      updateFilterSelectionOptions(currentFilters, 'assessor_external', commonData.externalIndividuals);
+      updateFilterSelectionOptions(currentFilters, 'assessor_staff', commonData.unicefUsers);
+      updateFilterSelectionOptions(currentFilters, 'assessor_firm', commonData.assessingFirms);
     }
-    return updatedFilters;
   }
 
   updateUrlListQueryParams() {
@@ -316,7 +320,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
       .then(() => this.showLoading = false);
   }
 
-  goToAddnewPage() {
+  goToAddNewPage() {
     updateAppLocation('/assessments/new/details', true);
   }
 

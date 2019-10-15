@@ -2,6 +2,8 @@ import {EtoolsFilter, EtoolsFilterTypes} from '../../../common/layout/filters/et
 import {GenericObject} from '../../../../types/globals';
 import {isJsonStrMatch} from '../../../utils/utils';
 
+export const onlyForUnicefFilters = ['assessor_staff', 'assessor_firm', 'assessor_external'];
+
 export const defaultSelectedFilters: GenericObject = {
   q: '',
   status: [],
@@ -132,6 +134,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
 
 export const updateFiltersSelectedValues = (selectedFilters: GenericObject, filters: EtoolsFilter[]) => {
   const updatedFilters = [...filters];
+
   for (const fKey in selectedFilters) {
     if (selectedFilters[fKey]) {
       const filter = updatedFilters.find((f: EtoolsFilter) => f.filterKey === fKey);
@@ -146,13 +149,10 @@ export const updateFiltersSelectedValues = (selectedFilters: GenericObject, filt
 };
 
 export const updateFilterSelectionOptions = (filters: EtoolsFilter[], fKey: string, options: GenericObject[]) => {
-  let updatedFilters: EtoolsFilter[] = [...filters];
-  const filter = updatedFilters.find((f: EtoolsFilter) => f.filterKey === fKey);
+  const filter = filters.find((f: EtoolsFilter) => f.filterKey === fKey);
   if (filter && options) {
     if (!isJsonStrMatch(filter.selectionOptions, options)) {
       filter.selectionOptions = [...options];
-      updatedFilters = [...updatedFilters];
     }
   }
-  return updatedFilters;
 };
