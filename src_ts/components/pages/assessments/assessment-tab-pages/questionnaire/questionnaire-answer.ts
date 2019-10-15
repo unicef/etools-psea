@@ -1,22 +1,19 @@
 import {LitElement, html, property, query, queryAll, customElement} from 'lit-element';
 import '@polymer/paper-input/paper-textarea';
 import '@polymer/paper-checkbox/paper-checkbox';
-import '@polymer/paper-input/paper-input';
 import '@polymer/paper-radio-group';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import './question-attachments';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {radioButtonStyles} from '../../../../styles/radio-button-styles';
-import {Answer, Question, ProofOfEvidence, Rating, AnswerEvidence} from '../../../../../types/assessment';
+import {Answer, Question, ProofOfEvidence, Rating, AnswerEvidence, AnswerAttachment} from '../../../../../types/assessment';
 import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {PaperRadioButtonElement} from '@polymer/paper-radio-button';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
-import {GenericObject} from '../../../../../types/globals';
 import {PaperTextareaElement} from '@polymer/paper-input/paper-textarea';
 import {QuestionAttachmentsElement} from './question-attachments';
-import {PaperInputElement} from '@polymer/paper-input/paper-input';
 import {PaperCheckboxElement} from '@polymer/paper-checkbox/paper-checkbox';
 import get from 'lodash-es/get';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
@@ -63,7 +60,9 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
           <span class="invalid-color" ?hidden="${this.hideRatingRequiredMsg}">Please select Rating</span>
         </div>
       </div>
-      <paper-textarea id="commentsElement" label="Comments" always-float-label class="row-padding-v"
+      <paper-textarea id="commentsElement"
+        label="Comments"
+        always-float-label class="row-padding-v"
         placeholder="—"
         .value="${this.answer.comments}"
         ?readonly="${!this.editMode}">
@@ -75,12 +74,15 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       ${this._getProofOfEvidenceTemplate(this.question.evidences, this.answer)}
 
       <div class="row-padding-v" ?hidden="${!this.showOtherInput}">
-        <paper-textarea id="otherEvidenceInput" label="Please specify other" always-float-label
+        <paper-textarea id="otherEvidenceInput"
+          label="Please specify other"
+          always-float-label
           required
-          auto-validate
+          .autoValidate="${this.connected}"
           placeholder="—"
-          value="${this._getOtherEvidenceInputValue(this.answer)}"
-          ?readonly="${!this.editMode}"></paper-textarea>
+          .value="${this._getOtherEvidenceInputValue(this.answer)}"
+          ?readonly="${!this.editMode}">
+        </paper-textarea>
       </div>
 
       <div class="row-padding-v">
@@ -113,6 +115,9 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   @property({type: Boolean})
   editMode!: boolean;
 
+  @property({type: Boolean})
+  connected: boolean = false;
+
   @query('#ratingElement')
   ratingElement!: PaperRadioGroupElement;
 
@@ -123,15 +128,21 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   attachmentsElement!: QuestionAttachmentsElement;
 
   @query('#otherEvidenceInput')
-  otherEvidenceInput!: PaperInputElement;
+  otherEvidenceInput!: PaperTextareaElement;
 
   @queryAll('paper-checkbox.proofOfEvidence[checked]')
   checkedEvidenceBoxes!: PaperCheckboxElement[];
 
+  connectedCallback() {
+    super.connectedCallback();
+
+    this._handlePaperTextareaAutovalidateError();
+  }
+
   stateChanged(state: RootState) {
     if (get(state, 'app.routeDetails.params.assessmentId')) {
       const id = state.app!.routeDetails.params!.assessmentId;
-      this.assessmentId = id === 'new' ? null : id;
+      this.assessmentId = (id === 'new' ? null : id);
       this.clearControls();
     }
   }
@@ -143,6 +154,17 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       this.otherEvidenceInput.value = '';
       this.checkedEvidenceBoxes.forEach(el => el.checked = false);
     }
+  }
+
+  /**
+   * This will prevent a console error "Uncaught TypeError: Cannot read property 'textarea' of undefined"
+   * The error occurs only on first load/ hard refresh and on paper-textareas that have auto-validate
+   */
+  _handlePaperTextareaAutovalidateError() {
+    this.updateComplete.then(() => {
+      this.connected = true;
+    });
+
   }
 
   _getProofOfEvidenceTemplate(evidences: ProofOfEvidence[], answer: Answer) {
@@ -212,16 +234,19 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   }
 
   _getOtherEvidenceInputValue(answer: Answer) {
+    if (!answer) {
+      return '';
+    }
     const otherEvidence = answer.evidences.filter((ev: AnswerEvidence) => !!ev.description)[0];
     return otherEvidence ? otherEvidence.description : '';
   }
 
   getAnswerForSave() {
-    const answer: GenericObject = {};
+    const answer = {} as Answer;
     answer.assessment = this.assessmentId;
     answer.indicator = this.question.id;
     answer.rating = this.answer.rating;
-    answer.comments = this.commentsElement.value;
+    answer.comments = this.commentsElement.value || '';
     answer.evidences = this._getSelectedEvidences();
     answer.attachments = this.attachmentsElement.getAttachmentsForSave();
     return answer;
@@ -236,16 +261,29 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
     this.checkedEvidenceBoxes.forEach((checkboxEl: HTMLElement) => {
       const ev: AnswerEvidence = {evidence: checkboxEl.getAttribute('evidenceid')!};
       if (checkboxEl.hasAttribute('requires-description')) {
-        ev.description = this.otherEvidenceInput.value!;
+        ev.description = this.otherEvidenceInput.value || '';
       }
       evidences.push(ev);
     });
     return evidences;
   }
 
-  validate() {
+  validateRating() {
     this.hideRatingRequiredMsg = !!this.ratingElement.selected;
     return this.hideRatingRequiredMsg;
+  }
+
+  validateOtherProofOfEvidence(selectedEvidences: AnswerEvidence[]) {
+    let valid = selectedEvidences.filter((e: AnswerEvidence) => e.description === '').length === 0;
+    if (!valid) {
+      this.otherEvidenceInput.invalid = true;
+    }
+
+    return valid;
+  }
+
+  validateAttachments(uploadedAttachments: AnswerAttachment[]) {
+    return this.attachmentsElement.validate(uploadedAttachments);
   }
 
   _getReadonlyStyle(editMode: boolean) {

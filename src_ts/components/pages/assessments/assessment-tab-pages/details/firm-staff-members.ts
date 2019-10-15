@@ -210,7 +210,7 @@ export class FirmStaffMembers extends LitElement {
   onStaffMemberSaved(e: CustomEvent) {
     const savedItem = e.detail;
     this.updateItemData(savedItem);
-    this.updateFirmAssessorStaffAccess(savedItem as EtoolsStaffMemberModel);
+    this.saveFirmAssessorStaffAccess(savedItem as EtoolsStaffMemberModel);
   }
 
   updateItemData(itemData: any) {
@@ -224,18 +224,13 @@ export class FirmStaffMembers extends LitElement {
     this.paginator = getPaginator(this.paginator, {count: this.paginator.count, data: this.staffMembers});
   }
 
-  updateFirmAssessorStaffAccess(staffMember: EtoolsStaffMemberModel) {
+  saveFirmAssessorStaffAccess(staffMember: EtoolsStaffMemberModel) {
     if ((staffMember.hasAccess && this.currentFirmAssessorStaffWithAccess.includes(staffMember.id)) ||
       (!staffMember.hasAccess && !this.currentFirmAssessorStaffWithAccess.includes(staffMember.id))) {
       return;
     }
 
-    let updatedStaffWithAccessIds: number[] = [...this.currentFirmAssessorStaffWithAccess];
-    if (staffMember.hasAccess) {
-      updatedStaffWithAccessIds.push(staffMember.id);
-    } else {
-      updatedStaffWithAccessIds = updatedStaffWithAccessIds.filter((id: number) => id !== staffMember.id);
-    }
+    let updatedStaffWithAccessIds: number[] = this.addOrRemoveFromCurrentStaffMembersWithAccess(staffMember);
 
     this.showLoading = true;
     const baseUrl = getEndpoint(etoolsEndpoints.assessor, {id: this.assessmentId}).url!;
@@ -253,9 +248,20 @@ export class FirmStaffMembers extends LitElement {
       .then(() => this.showLoading = false);
   }
 
+  private addOrRemoveFromCurrentStaffMembersWithAccess(staffMember: EtoolsStaffMemberModel) {
+    let updatedStaffWithAccessIds: number[] = [...this.currentFirmAssessorStaffWithAccess];
+    if (staffMember.hasAccess) {
+      updatedStaffWithAccessIds.push(staffMember.id);
+    } else {
+      updatedStaffWithAccessIds = updatedStaffWithAccessIds.filter((id: number) => id !== staffMember.id);
+    }
+
+    return updatedStaffWithAccessIds;
+  }
+
   itemChanged(e: CustomEvent) {
     this.updateItemData(e.detail);
-    this.updateFirmAssessorStaffAccess(e.detail as EtoolsStaffMemberModel);
+    this.saveFirmAssessorStaffAccess(e.detail as EtoolsStaffMemberModel);
   }
 
 }

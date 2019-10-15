@@ -13,6 +13,7 @@ import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {RootState, store} from '../../../../../redux/store';
 import {connect} from 'pwa-helpers/connect-mixin';
 import '@unicef-polymer/etools-loading';
+import get from 'lodash-es/get';
 
 @customElement('follow-up-page')
 export class FollowUpPage extends connect(store)(LitElement) {
@@ -88,9 +89,10 @@ export class FollowUpPage extends connect(store)(LitElement) {
   assessment!: Assessment;
 
   stateChanged(state: RootState) {
-    if (state.app && state.app!.routeDetails!.params && state.app!.routeDetails!.params!.assessmentId! !== 'new') {
-      if (this.assessmentId !== state.app!.routeDetails!.params!.assessmentId) {
-        this.assessmentId = state.app!.routeDetails!.params!.assessmentId;
+    let stateAssessmentId = get(state, 'app.routeDetails.params.assessmentId');
+    if (stateAssessmentId && stateAssessmentId !== 'new') {
+      if (this.assessmentId !== stateAssessmentId) {
+        this.assessmentId = stateAssessmentId;
         this.getFollowUpData();
       }
     }
@@ -170,10 +172,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
     document.querySelector('body')!.appendChild(this.followUpDialog);
   }
 
-  openFollowUpDialog(event?: any) {
-    if (event && event.detail) {
-      this.followUpDialog.editedItem = cloneDeep(event.detail);
-    }
+  openFollowUpDialog() {
     this.followUpDialog.openDialog();
   }
 }
