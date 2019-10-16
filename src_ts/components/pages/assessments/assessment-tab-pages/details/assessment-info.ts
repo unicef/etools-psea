@@ -47,7 +47,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
         }
       </style>
       ${SharedStylesLit}${gridLayoutStylesLit} ${buttonsStyles}
-      <etools-content-panel panel-title="Assessment Information">
+      <etools-content-panel ?hidden="${!this.assessment}" panel-title="Assessment Information">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
 
         <div slot="panel-btns">
