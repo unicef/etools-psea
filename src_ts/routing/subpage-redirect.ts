@@ -2,7 +2,7 @@
 import {ROOT_PATH} from '../config/config';
 import {Router} from './router';
 
-export const redirectToListSubpageList = [
+export const redirectToListSubpageList = [// Modules that have lists
   'assessments'
 ];
 export const getRedirectToListPath = (path: string): undefined | string => {
