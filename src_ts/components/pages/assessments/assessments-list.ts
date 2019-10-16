@@ -17,7 +17,8 @@ import {
   defaultSelectedFilters,
   updateFilterSelectionOptions,
   updateFiltersSelectedValues,
-  onlyForUnicefFilters
+  onlyForUnicefFilters,
+  FilterKeysAndTheirSelectedValues
 } from './list/filters';
 import {EtoolsFilter} from '../../common/layout/filters/etools-filters';
 import {ROOT_PATH} from '../../../config/config';
@@ -131,7 +132,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
   filters!: EtoolsFilter[];
 
   @property({type: Object})
-  selectedFilters!: GenericObject;
+  selectedFilters!: FilterKeysAndTheirSelectedValues;
 
   @property({type: Boolean})
   canAdd: boolean = false;
@@ -190,8 +191,8 @@ export class AssessmentsList extends connect(store)(LitElement) {
   listData: GenericObject[] = [];
 
   stateChanged(state: RootState) {
-    if (state.app!.routeDetails.routeName !== 'assessments' &&
-        state.app!.routeDetails.subRouteName !== 'list') {
+    let routeDetails = get(state, 'app.routeDetails');
+    if (!(routeDetails.routeName === 'assessments' && routeDetails.subRouteName === 'list')) {
       return;
     }
 
@@ -223,29 +224,34 @@ export class AssessmentsList extends connect(store)(LitElement) {
       }
     }
 
-    if (get(state, 'user.data') && state.commonData && this.routeDetails.queryParams &&
-      Object.keys(this.routeDetails.queryParams).length > 0) { // Wait for all required data to be set
-      // init filters using default defined filters (including options)
+    // Wait for all required data to be set
+    if (get(state, 'user.data') && state.commonData &&
+        // Avoid selectedValue being set in the assessor_staff dropdown,
+        // before the dropdown is populated with options (special case as there are a lot of unicefUsers)
+        get(state, 'commonData.unicefUsers.length') &&
+        get(state, 'commonData.partners.length') &&
+        this.routeDetails.queryParams &&
+        Object.keys(this.routeDetails.queryParams).length > 0) {
+
       let availableFilters = this.isUnicefUser ?
         [...assessmentsFilters] : [...assessmentsFilters.filter(x => onlyForUnicefFilters.indexOf(x.filterKey) < 0)];
-      if (state.commonData) {
-        this.populateDropdownFiltersOptionsFromCommonData(state.commonData, availableFilters);
-      }
-      // update filter selection and assign the result to main filters object(trigger render)
+
+      this.populateDropdownFilterOptionsFromCommonData(state.commonData, availableFilters);
+
+      // update filter selection and assign the result to etools-filters(trigger render)
       this.filters = updateFiltersSelectedValues(this.selectedFilters, availableFilters);
     }
 
   }
 
-  populateDropdownFiltersOptionsFromCommonData(commonData: any, currentFilters: EtoolsFilter[]) {
-    updateFilterSelectionOptions(currentFilters, 'unicef_focal_point', commonData.unicefUsers);
-    updateFilterSelectionOptions(currentFilters, 'partner', commonData.partners);
-
+  populateDropdownFilterOptionsFromCommonData(commonData: any, currentFilters: EtoolsFilter[]) {
     if (this.isUnicefUser) {
-      updateFilterSelectionOptions(currentFilters, 'assessor_external', commonData.externalIndividuals);
       updateFilterSelectionOptions(currentFilters, 'assessor_staff', commonData.unicefUsers);
+      updateFilterSelectionOptions(currentFilters, 'assessor_external', commonData.externalIndividuals);
       updateFilterSelectionOptions(currentFilters, 'assessor_firm', commonData.assessingFirms);
     }
+    updateFilterSelectionOptions(currentFilters, 'unicef_focal_point', commonData.unicefUsers);
+    updateFilterSelectionOptions(currentFilters, 'partner', commonData.partners);
   }
 
   updateUrlListQueryParams() {
@@ -281,7 +287,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
     this.paginator = {...this.paginator, ...paginatorParams};
 
     // update selectedFilters
-    this.selectedFilters = getSelectedFiltersFromUrlParams(this.selectedFilters, queryParams);
+    this.selectedFilters = getSelectedFiltersFromUrlParams(queryParams);
   }
 
   filtersChange(e: CustomEvent) {
