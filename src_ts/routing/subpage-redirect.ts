@@ -9,6 +9,7 @@ import {Router} from './router';
 export const modulesRootPathsThatRequireListSubpageRedirect = [
   'assessments'
 ];
+
 export const getRedirectToListPath = (path: string): undefined | string => {
   path = path.replace(ROOT_PATH, '');
   const route: string = Router.clearSlashes(path);

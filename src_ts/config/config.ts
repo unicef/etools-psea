@@ -25,3 +25,11 @@ export const isDemoServer = () => {
   const location = window.location.href;
   return location.indexOf(DEMO_DOMAIN) > -1;
 };
+
+export function setLoggingLevel() {
+  if (isProductionServer()) {
+    window.EtoolsLogsLevel = 'ERROR';
+  } else {
+    window.EtoolsLogsLevel = 'INFO';
+  }
+}
