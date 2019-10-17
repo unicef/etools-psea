@@ -285,7 +285,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   setSelectedUnicefUser(event: CustomEvent) {
     if (this.assessor.assessor_type === AssessorTypes.Staff) {
       const selectedUser = event.detail.selectedItem;
-      if (selectedUser) {
+      if (selectedUser && selectedUser.id) {
         this.assessor.user = selectedUser.id;
       } else {
         this.assessor.user = null;
