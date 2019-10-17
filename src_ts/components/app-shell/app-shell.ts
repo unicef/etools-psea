@@ -54,6 +54,7 @@ import {
   loadUnicefUsers
 } from '../../redux/actions/common-data';
 import {checkEnvFlags} from '../common/environment-flags';
+import {logInfo} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 store.addReducers({
   user,
@@ -198,7 +199,7 @@ export class AppShell extends connect(store)(LitElement) {
 
   // TODO: just for testing...
   public getState() {
-    console.log(store.getState());
+    logInfo(store.getState());
   }
 
   // Testing router (from console)

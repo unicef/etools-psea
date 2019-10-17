@@ -167,8 +167,8 @@ export class QuestionnaireItemElement extends LitElement {
    * and in order to avoid duplicating operations of getting answer values, it's done as a second round
    */
   secondRoundOfValidations(answer: Answer) {
-    let valid1 = this.questionnaireAnswerElement.validateOtherProofOfEvidence(answer.evidences);
-    let valid2 = this.questionnaireAnswerElement.validateAttachments(answer.attachments);
+    const valid1 = this.questionnaireAnswerElement.validateOtherProofOfEvidence(answer.evidences);
+    const valid2 = this.questionnaireAnswerElement.validateAttachments(answer.attachments);
 
     return valid1 && valid2;
   }
