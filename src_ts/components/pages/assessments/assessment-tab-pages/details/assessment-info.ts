@@ -40,75 +40,77 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
   render() {
     // language=HTML
     return html`
-      <style>
-        :host {
-          display: block;
-          margin-bottom: 24px;
-        }
-      </style>
-      ${SharedStylesLit}${gridLayoutStylesLit} ${buttonsStyles}
-      <etools-content-panel ?hidden="${!this.assessment}" panel-title="Assessment Information">
-        <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
+      ${this.assessment ?
+        html`
+          <style>
+            :host {
+              display: block;
+              margin-bottom: 24px;
+            }
+          </style>
+          ${SharedStylesLit}${gridLayoutStylesLit} ${buttonsStyles}
+          <etools-content-panel ?hidden="${!this.assessment}" panel-title="Assessment Information">
+            <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
 
-        <div slot="panel-btns">
-          <paper-icon-button
-                ?hidden="${this.hideEditIcon(this.isNew, this.editMode, this.canEditAssessmentInfo)}"
-                @tap="${this._allowEdit}"
-                icon="create">
-          </paper-icon-button>
-        </div>
+            <div slot="panel-btns">
+              <paper-icon-button
+                    ?hidden="${this.hideEditIcon(this.isNew, this.editMode, this.canEditAssessmentInfo)}"
+                    @tap="${this._allowEdit}"
+                    icon="create">
+              </paper-icon-button>
+            </div>
 
-        <etools-dropdown id="partner" label="Partner Organization to Assess"
-          class="row-padding-v w100"
-          .options="${this.partners}"
-          .selected="${this.assessment.partner}"
-          option-value="id"
-          option-label="name"
-          trigger-value-change-event
-          @etools-selected-item-changed="${this._setSelectedPartner}"
-          ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.partner)}"
-          required
-          ?invalid="${this.invalid.partner}"
-          auto-validate>
-        </etools-dropdown>
+            <etools-dropdown id="partner" label="Partner Organization to Assess"
+              class="row-padding-v w100"
+              .options="${this.partners}"
+              .selected="${this.assessment.partner}"
+              option-value="id"
+              option-label="name"
+              trigger-value-change-event
+              @etools-selected-item-changed="${this._setSelectedPartner}"
+              ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.partner)}"
+              required
+              ?invalid="${this.invalid.partner}"
+              auto-validate>
+            </etools-dropdown>
 
-        ${this._showPartnerDetails(this.selectedPartner, this.staffMembers)}
+            ${this._showPartnerDetails(this.selectedPartner, this.staffMembers)}
 
-        <etools-dropdown-multi label="UNICEF Focal Point"
-          class="row-padding-v"
-          .selectedValues="${this.assessment.focal_points}"
-          .options="${this.unicefFocalPointUsers}"
-          option-label="name"
-          option-value="id"
-          trigger-value-change-event
-          @etools-selected-items-changed="${this._setSelectedFocalPoints}"
-          ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.focal_points)}">
-        </etools-dropdown-multi>
+            <etools-dropdown-multi label="UNICEF Focal Point"
+              class="row-padding-v"
+              .selectedValues="${this.assessment.focal_points}"
+              .options="${this.unicefFocalPointUsers}"
+              option-label="name"
+              option-value="id"
+              trigger-value-change-event
+              @etools-selected-items-changed="${this._setSelectedFocalPoints}"
+              ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.focal_points)}">
+            </etools-dropdown-multi>
 
-        <datepicker-lite id="assessmentDate" label="Assessment Date"
-          class="row-padding-v"
-          .value="${this.assessment.assessment_date}"
-          selected-date-display-format="D MMM YYYY"
-          fire-date-has-changed
-          @date-has-changed="${(e: CustomEvent) => this._setSelectedDate(e.detail.date)}"
-          ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.assessment_date)}"
-          ?required="${this.assessment.permissions.required.assessment_date}"
-          ?invalid="${this.invalid.assessment_date}"
-          auto-validate>
-        </datepicker-lite>
+            <datepicker-lite id="assessmentDate" label="Assessment Date"
+              class="row-padding-v"
+              .value="${this.assessment.assessment_date}"
+              selected-date-display-format="D MMM YYYY"
+              fire-date-has-changed
+              @date-has-changed="${(e: CustomEvent) => this._setSelectedDate(e.detail.date)}"
+              ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.assessment_date)}"
+              ?required="${this.assessment.permissions.required.assessment_date}"
+              ?invalid="${this.invalid.assessment_date}"
+              auto-validate>
+            </datepicker-lite>
 
-        <div class="layout-horizontal right-align row-padding-v"
-          ?hidden="${this.hideActionButtons(this.isNew, this.editMode, this.canEditAssessmentInfo)}">
-          <paper-button class="default" @tap="${this.cancelAssessment}">
-            Cancel
-          </paper-button>
-          <paper-button class="primary" @tap="${this.saveAssessment}">
-            Save
-          </paper-button>
-        </div>
+            <div class="layout-horizontal right-align row-padding-v"
+              ?hidden="${this.hideActionButtons(this.isNew, this.editMode, this.canEditAssessmentInfo)}">
+              <paper-button class="default" @tap="${this.cancelAssessment}">
+                Cancel
+              </paper-button>
+              <paper-button class="primary" @tap="${this.saveAssessment}">
+                Save
+              </paper-button>
+            </div>
 
-      </etools-content-panel>
-    `;
+          </etools-content-panel>
+    ` : ''}`;
   }
 
   @property({type: Object})
@@ -176,7 +178,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
   setUnicefFocalPointUsers(defaultUnicefUsers: any[]) {
     if (this.assessment) {
       const focalPointUsers = this.assessment.focal_points_details ?
-                              this.assessment.focal_points_details as UnicefUser[] : [];
+        this.assessment.focal_points_details as UnicefUser[] : [];
       if (!this.isUnicefUser) {
         // if user is not Unicef user, this is opened in read-only mode and we just display already saved
         // Focal Point users (which are provided in the assessment object)
