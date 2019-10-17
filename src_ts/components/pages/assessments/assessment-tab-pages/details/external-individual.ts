@@ -76,7 +76,8 @@ export class ExternalIndividual extends connect(store)(LitElement) {
     if (stateExternalIndivs && !isJsonStrMatch(stateExternalIndivs, this.externalIndividuals)) {
       this.externalIndividuals = [...stateExternalIndivs];
       if (this.origAssessorType === AssessorTypes.ExternalIndividual) {
-        // check if already saved external individual exists on loaded data, if not they will be added (they might be missing if changed country)
+        // check if already saved external individual exists on loaded data, if not they will be added
+        // (they might be missing if changed country)
         handleUsersNoLongerAssignedToCurrentCountry(this.externalIndividuals, [this.assessor.user_details]);
       }
     }

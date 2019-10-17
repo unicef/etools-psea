@@ -22,6 +22,7 @@ import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import '@unicef-polymer/etools-loading';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 /**
  * @customElement
@@ -193,7 +194,7 @@ export class FirmStaffMembers extends LitElement {
       .catch((err: any) => {
         this.staffMembers = [];
         this.paginator = getPaginator(this.paginator, {count: 0, data: this.staffMembers});
-        console.log(err);
+        logError(err);
       })
       .then(() => this.showLoading = false);
   }
@@ -230,7 +231,7 @@ export class FirmStaffMembers extends LitElement {
       return;
     }
 
-    let updatedStaffWithAccessIds: number[] = this.addOrRemoveFromCurrentStaffMembersWithAccess(staffMember);
+    const updatedStaffWithAccessIds: number[] = this.addOrRemoveFromCurrentStaffMembersWithAccess(staffMember);
 
     this.showLoading = true;
     const baseUrl = getEndpoint(etoolsEndpoints.assessor, {id: this.assessmentId}).url!;
