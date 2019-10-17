@@ -41,7 +41,7 @@ import {ToastNotificationHelper} from '../common/toast-notifications/toast-notif
 import user from '../../redux/reducers/user';
 import commonData from '../../redux/reducers/common-data';
 import pageData from '../../redux/reducers/page-data';
-import {SMALL_MENU_ACTIVE_LOCALSTORAGE_KEY} from '../../config/config';
+import {setLoggingLevel, SMALL_MENU_ACTIVE_LOCALSTORAGE_KEY} from '../../config/config';
 import {getCurrentUserData} from '../user/user-actions';
 import {EtoolsRouter} from '../../routing/routes';
 import {RouteDetails} from '../../routing/router';
@@ -143,6 +143,8 @@ export class AppShell extends connect(store)(LitElement) {
 
   constructor() {
     super();
+
+    setLoggingLevel();
     // Gesture events like tap and track generated from touch will not be
     // preventable, allowing for better scrolling performance.
     setPassiveTouchGestures(true);
