@@ -168,8 +168,14 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
         ? this.assessment.partner_details.staff_members
         : [];
 
-      this.setUnicefFocalPointUsers([...state.commonData!.unicefUsers]);
       setTimeout(() => this.resetValidations(), 10);
+    }
+    if (this.assessment) {
+      if (!this.isUnicefUser){
+        this.setUnicefFocalPointUsers([]);
+      } else if(!isJsonStrMatch(this.unicefFocalPointUsers, state.commonData!.unicefUsers)){
+        this.setUnicefFocalPointUsers([...state.commonData!.unicefUsers]);
+      }
     }
   }
 
@@ -187,7 +193,6 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
 
         // check if already saved users exists on loaded data, if not they will be added (they might be missing if changed country)
         handleUsersNoLongerAssignedToCurrentCountry(this.unicefFocalPointUsers, focalPointUsers);
-
       }
     }
   }
