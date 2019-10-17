@@ -310,8 +310,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   }
 
   _getUrl() {
-    let actionPointsUrl = getEndpoint(etoolsEndpoints.actionPoints, {id: this.assessment.id}).url!;
-    return (this.isNewRecord ?  actionPointsUrl : actionPointsUrl + this.editedItem.id + '/');
+    const actionPointsUrl = getEndpoint(etoolsEndpoints.actionPoints, {id: this.assessment.id}).url!;
+    return (this.isNewRecord ? actionPointsUrl : actionPointsUrl + this.editedItem.id + '/');
   }
 
   _handleResponse(resp: any) {

@@ -15,6 +15,7 @@ import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import '../../../../common/layout/etools-error-warn-box';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 export enum EtoolsPseaOverallRating {
   Low = 'Low',
@@ -184,7 +185,8 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     }
 
     if (this.answers.length === this.questionnaireItems.length) {
-      store.dispatch(requestAssessmentAndAssessor(Number(this.assessmentId), this._handleErrOnGetAssessment.bind(this)));
+      store.dispatch(requestAssessmentAndAssessor(Number(this.assessmentId),
+        this._handleErrOnGetAssessment.bind(this)));
     }
   }
 
@@ -208,7 +210,7 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
       .then((resp) => {
         resp.map((r: any) => r.stamp = Date.now());
         this.questionnaireItems = resp;
-      }).catch((err: any) => console.error(err))
+      }).catch((err: any) => logError(err))
       .then(() => this.loadingQuestions = false);
   }
 
@@ -218,7 +220,7 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     makeRequest(new RequestEndpoint(url))
       .then((resp) => {
         this.answers = resp;
-      }).catch((err: any) => console.error(err))
+      }).catch((err: any) => logError(err))
       .then(() => this.loadingAnswers = false);
   }
 
