@@ -10,6 +10,7 @@ import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {buttonsStyles} from '../../../../styles/button-styles';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 /**
  * @customElement
@@ -132,7 +133,7 @@ export class AssessingFirm extends LitElement {
   }
 
   _handleErrorOnGetFirm(err: any) {
-    console.log(err);
+    logError(err);
     this.assessor.auditor_firm = null;
     this.assessor.auditor_firm_name = '';
     this.errMessage = 'PO number not found';

@@ -16,7 +16,7 @@ export const handleUsersNoLongerAssignedToCurrentCountry = (users: UnicefUser[],
       users.sort((a, b) => (a.name < b.name) ? -1 : 1);
     }
   }
-}
+};
 
 export function genericErrorHandling(error: any) {
   logError(error);
