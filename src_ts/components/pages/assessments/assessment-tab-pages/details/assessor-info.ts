@@ -97,7 +97,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       <paper-radio-group .selected="${this.getAssessorType(assessor)}"
           ?readonly="${!editMode}"
           @selected-changed="${(e: CustomEvent) =>
-        this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
+    this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
         <paper-radio-button name="staff">UNICEF Staff</paper-radio-button>
         <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
         <paper-radio-button name="external">External Individual</paper-radio-button>
@@ -210,7 +210,8 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       if (!isJsonStrMatch(this.assessor, newAssessor)) {
         this.assessor = cloneDeep(newAssessor);
         if (this.assessor.assessor_type === AssessorTypes.Staff) {
-          // check if already saved Unicef staff exists on loaded data, if not they will be added (they might be missing if changed country)
+          // check if already saved Unicef staff exists on loaded data, if not they will be added
+          // (they might be missing if changed country)
           handleUsersNoLongerAssignedToCurrentCountry(this.unicefUsers, [this.assessor.user_details]);
           this.unicefUsers = [...this.unicefUsers];
         }
@@ -313,7 +314,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
 
 
   handleError(error: any) {
-    this.showLoading = false
+    this.showLoading = false;
     logError(error);
     fireEvent(this, 'toast', {text: formatServerErrorAsText(error), showCloseBtn: true});
 
