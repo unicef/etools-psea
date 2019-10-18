@@ -178,9 +178,11 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     if (get(state, 'pageData.currentAssessment') && get(state, 'user.data')) {
       if (!this.isUnicefUser) {
         // if user is not Unicef user, this is opened in read-only mode and we just display already saved
+        // Focal Point users (which are provided in the assessment object)
         this.unicefFocalPointUsers = [...this.assessment.focal_points_details];
       } else if (get(state, 'commonData.unicefUsers.length')) {
         this.unicefFocalPointUsers = [...state.commonData!.unicefUsers];
+        // check if already saved users exists on loaded data, if not they will be added (they might be missing if changed country)
         handleUsersNoLongerAssignedToCurrentCountry(this.unicefFocalPointUsers, this.assessment.focal_points_details);
       }
     }
