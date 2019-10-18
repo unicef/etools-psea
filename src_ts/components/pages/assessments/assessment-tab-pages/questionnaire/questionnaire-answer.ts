@@ -7,7 +7,13 @@ import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-
 import './question-attachments';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {radioButtonStyles} from '../../../../styles/radio-button-styles';
-import {Answer, Question, ProofOfEvidence, Rating, AnswerEvidence, AnswerAttachment} from '../../../../../types/assessment';
+import {
+  Answer,
+  Question,
+  ProofOfEvidence,
+  Rating,
+  AnswerEvidence,
+  AnswerAttachment} from '../../../../../types/assessment';
 import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {PaperRadioButtonElement} from '@polymer/paper-radio-button';
 import {connect} from 'pwa-helpers/connect-mixin';
@@ -274,7 +280,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   }
 
   validateOtherProofOfEvidence(selectedEvidences: AnswerEvidence[]) {
-    let valid = selectedEvidences.filter((e: AnswerEvidence) => e.description === '').length === 0;
+    const valid = selectedEvidences.filter((e: AnswerEvidence) => e.description === '').length === 0;
     if (!valid) {
       this.otherEvidenceInput.invalid = true;
     }

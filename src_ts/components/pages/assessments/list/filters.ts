@@ -88,8 +88,8 @@ export const assessmentsFilters: EtoolsFilter[] = [
     disabled: false
   },
   {
-    filterName: 'Unicef Focal Point',
-    filterKey: FilterKeys.unicef_focal_point,
+    filterName: 'UNICEF Focal Point',
+    filterKey: 'unicef_focal_point',
     type: EtoolsFilterTypes.DropdownMulti,
     selectionOptions: [],
     selectedValue: [],

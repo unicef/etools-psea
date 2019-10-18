@@ -168,26 +168,22 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
         ? this.assessment.partner_details.staff_members
         : [];
 
-      this.setUnicefFocalPointUsers([...state.commonData!.unicefUsers]);
       setTimeout(() => this.resetValidations(), 10);
     }
+    this.populateUnicefFocalPointsDropdown(state);
   }
 
-  setUnicefFocalPointUsers(defaultUnicefUsers: any[]) {
-    if (this.assessment) {
-      const focalPointUsers = this.assessment.focal_points_details ?
-                              this.assessment.focal_points_details as UnicefUser[] : [];
+  populateUnicefFocalPointsDropdown(state: RootState) {
+    // waiting for required data to be loaded from redux
+    if (get(state, 'pageData.currentAssessment') && get(state, 'user.data')) {
       if (!this.isUnicefUser) {
         // if user is not Unicef user, this is opened in read-only mode and we just display already saved
         // Focal Point users (which are provided in the assessment object)
-        this.unicefFocalPointUsers = [...focalPointUsers];
-      } else {
-        //  if user is Unicef user, Focal Point users are loaded from Redux
-        this.unicefFocalPointUsers = defaultUnicefUsers;
-
+        this.unicefFocalPointUsers = [...this.assessment.focal_points_details];
+      } else if (get(state, 'commonData.unicefUsers.length')) {
+        this.unicefFocalPointUsers = [...state.commonData!.unicefUsers];
         // check if already saved users exists on loaded data, if not they will be added (they might be missing if changed country)
-        handleUsersNoLongerAssignedToCurrentCountry(this.unicefFocalPointUsers, focalPointUsers);
-
+        handleUsersNoLongerAssignedToCurrentCountry(this.unicefFocalPointUsers, this.assessment.focal_points_details);
       }
     }
   }

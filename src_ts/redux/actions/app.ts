@@ -11,6 +11,7 @@ import {
 import {RouteDetails} from '../../routing/router';
 import {getFilePathsToImport} from '../../routing/component-lazy-load-config';
 import {getRedirectToListPath} from '../../routing/subpage-redirect';
+import {logError, logInfo} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 export const UPDATE_ROUTE_DETAILS = 'UPDATE_ROUTE_DETAILS';
 export const UPDATE_DRAWER_STATE = 'UPDATE_DRAWER_STATE';
@@ -31,7 +32,7 @@ const updateStoreRouteDetails: ActionCreator<AppActionUpdateRouteDetails> = (rou
 };
 
 const loadPageComponents: ActionCreator<ThunkResult> = (routeDetails: RouteDetails) => (dispatch) => {
-  console.log('loadPageComponents', routeDetails);
+  logInfo(routeDetails, 'loadPageComponents');
   if (!routeDetails) {
     // invalid route => redirect to 404 page
     updateAppLocation(ROUTE_404, true);
@@ -44,7 +45,7 @@ const loadPageComponents: ActionCreator<ThunkResult> = (routeDetails: RouteDetai
   filesToImport.forEach((filePath: string) => {
     import(importBase + filePath).then(() => {
     }).catch((importError: any) => {
-      console.log('component import failed...', importError);
+      logError(importError, 'component import failed...');
     });
   });
 
@@ -64,7 +65,7 @@ export const navigate: ActionCreator<ThunkResult> = (path: string) => (dispatch)
 
   // if app route is accessed, redirect to default route (if not already on it)
   // @ts-ignore
-  if (path === ROOT_PATH && ROOT_PATH !== DEFAULT_ROUTE) {
+  if (path === ROOT_PATH) {
     updateAppLocation(DEFAULT_ROUTE, true);
     return;
   }
