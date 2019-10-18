@@ -207,9 +207,9 @@ export class QuestionAttachmentsElement extends LitElement {
       return true;
     }
     let valid = true;
-    attachments.forEach(att => {
+    attachments.forEach((att) => {
       if (!att.file_type) {
-        let dropD = this.shadowRoot!.querySelector('#filetype'+ att.id) as EtoolsDropdownEl;
+        const dropD = this.shadowRoot!.querySelector('#filetype'+ att.id) as EtoolsDropdownEl;
         if (dropD) {
           dropD.invalid = true;
         }

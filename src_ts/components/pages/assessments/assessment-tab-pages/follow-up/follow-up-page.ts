@@ -14,6 +14,7 @@ import {RootState, store} from '../../../../../redux/store';
 import {connect} from 'pwa-helpers/connect-mixin';
 import '@unicef-polymer/etools-loading';
 import get from 'lodash-es/get';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 @customElement('follow-up-page')
 export class FollowUpPage extends connect(store)(LitElement) {
@@ -89,7 +90,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
   assessment!: Assessment;
 
   stateChanged(state: RootState) {
-    let stateAssessmentId = get(state, 'app.routeDetails.params.assessmentId');
+    const stateAssessmentId = get(state, 'app.routeDetails.params.assessmentId');
     if (stateAssessmentId && stateAssessmentId !== 'new') {
       if (this.assessmentId !== stateAssessmentId) {
         this.assessmentId = stateAssessmentId;
@@ -132,7 +133,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
     // @ts-ignore
     makeRequest(endpoint).then((response: any) => {
       this.dataItems = response;
-    }).catch((err: any) => console.error(err))
+    }).catch((err: any) => logError(err))
       .then(() => this.showLoading = false);
   }
 
