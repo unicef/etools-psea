@@ -251,13 +251,12 @@ export class EtoolsFilters extends LitElement {
   selectFilter(e: CustomEvent) {
     const menuOption = e.currentTarget as HTMLElement;
     const filterOption: EtoolsFilter = this.getFilterOption(menuOption);
-    const isSelected: boolean = menuOption.hasAttribute('selected');
+    const wasSelected: boolean = menuOption.hasAttribute('selected');
     // toggle selected state
-    filterOption.selected = !isSelected;
+    filterOption.selected = !wasSelected;
     // reset selected value if filter was unselected and had a value
-    if (isSelected) {
+    if (wasSelected) {
       filterOption.selectedValue = this.getFilterEmptyValue(filterOption.type);
-      console.log('selectfilter', filterOption);
     }
     // repaint&fire change event
     this.requestUpdate().then(() => this.fireFiltersChangeEvent());
