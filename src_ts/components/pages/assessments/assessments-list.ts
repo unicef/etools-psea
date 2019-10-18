@@ -17,7 +17,8 @@ import {
   defaultSelectedFilters,
   updateFilterSelectionOptions,
   updateFiltersSelectedValues,
-  onlyForUnicefFilters
+  onlyForUnicefFilters,
+  FilterKeysAndTheirSelectedValues
 } from './list/filters';
 import {EtoolsFilter} from '../../common/layout/filters/etools-filters';
 import {ROOT_PATH} from '../../../config/config';
@@ -132,7 +133,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
   filters!: EtoolsFilter[];
 
   @property({type: Object})
-  selectedFilters!: GenericObject;
+  selectedFilters!: FilterKeysAndTheirSelectedValues;
 
   @property({type: Boolean})
   canAdd: boolean = false;
@@ -191,9 +192,9 @@ export class AssessmentsList extends connect(store)(LitElement) {
   listData: GenericObject[] = [];
 
   stateChanged(state: RootState) {
-    if (state.app!.routeDetails.routeName !== 'assessments' &&
-        state.app!.routeDetails.subRouteName !== 'list') {
-      return;
+    let routeDetails = get(state, 'app.routeDetails');
+    if (!(routeDetails.routeName === 'assessments' && routeDetails.subRouteName === 'list')) {
+      return; // Avoid code execution while on a different page
     }
 
     const stateRouteDetails = {...state.app!.routeDetails};
@@ -205,12 +206,14 @@ export class AssessmentsList extends connect(store)(LitElement) {
         this.selectedFilters = {...defaultSelectedFilters};
         // update url with params
         this.updateUrlListQueryParams();
+
         return;
+
       } else {
         // init selectedFilters, sort, page, page_size from url params
         this.updateListParamsFromRouteDetails(this.routeDetails.queryParams);
         // get assessments based on filters, sort and pagination
-        this.getAssessmentsData();
+        this.getFilteredAssessments();
       }
     }
 
@@ -224,29 +227,45 @@ export class AssessmentsList extends connect(store)(LitElement) {
       }
     }
 
-    if (get(state, 'user.data') && state.commonData && this.routeDetails.queryParams &&
-      Object.keys(this.routeDetails.queryParams).length > 0) { // Wait for all required data to be set
-      // init filters using default defined filters (including options)
-      let availableFilters = this.isUnicefUser ?
-        [...assessmentsFilters] : [...assessmentsFilters.filter(x => onlyForUnicefFilters.indexOf(x.filterKey) < 0)];
-      if (state.commonData) {
-        this.populateDropdownFiltersOptionsFromCommonData(state.commonData, availableFilters);
-      }
-      // update filter selection and assign the result to main filters object(trigger render)
-      this.filters = updateFiltersSelectedValues(this.selectedFilters, availableFilters);
-    }
-
+    this.initFiltersForDisplay(state);
   }
 
-  populateDropdownFiltersOptionsFromCommonData(commonData: any, currentFilters: EtoolsFilter[]) {
-    updateFilterSelectionOptions(currentFilters, 'unicef_focal_point', commonData.unicefUsers);
-    updateFilterSelectionOptions(currentFilters, 'partner', commonData.partners);
+  initFiltersForDisplay(state: RootState) {
+    if (this.dataRequiredByFiltersHasBeenLoaded(state)) {
 
+      let availableFilters = this.isUnicefUser ?
+        [...assessmentsFilters] : [...assessmentsFilters.filter(x => onlyForUnicefFilters.indexOf(x.filterKey) < 0)];
+
+      this.populateDropdownFilterOptionsFromCommonData(state.commonData, availableFilters);
+
+      // update filter selection and assign the result to etools-filters(trigger render)
+      this.filters = updateFiltersSelectedValues(this.selectedFilters, availableFilters);
+    }
+  }
+
+   /**
+    * Wait for all required data to be set
+    */
+  private dataRequiredByFiltersHasBeenLoaded(state: RootState) {
+    if (get(state, 'user.data') && state.commonData &&
+        // Avoid selectedValue being set before the dropdown is populated with options
+        get(state, 'commonData.unicefUsers.length') &&
+        get(state, 'commonData.partners.length') &&
+        this.routeDetails.queryParams &&
+        Object.keys(this.routeDetails.queryParams).length > 0) {
+      return true;
+    }
+    return false;
+  }
+
+  populateDropdownFilterOptionsFromCommonData(commonData: any, currentFilters: EtoolsFilter[]) {
     if (this.isUnicefUser) {
-      updateFilterSelectionOptions(currentFilters, 'assessor_external', commonData.externalIndividuals);
       updateFilterSelectionOptions(currentFilters, 'assessor_staff', commonData.unicefUsers);
+      updateFilterSelectionOptions(currentFilters, 'assessor_external', commonData.externalIndividuals);
       updateFilterSelectionOptions(currentFilters, 'assessor_firm', commonData.assessingFirms);
     }
+    updateFilterSelectionOptions(currentFilters, 'unicef_focal_point', commonData.unicefUsers);
+    updateFilterSelectionOptions(currentFilters, 'partner', commonData.partners);
   }
 
   updateUrlListQueryParams() {
@@ -282,11 +301,11 @@ export class AssessmentsList extends connect(store)(LitElement) {
     this.paginator = {...this.paginator, ...paginatorParams};
 
     // update selectedFilters
-    this.selectedFilters = getSelectedFiltersFromUrlParams(this.selectedFilters, queryParams);
+    this.selectedFilters = getSelectedFiltersFromUrlParams(queryParams);
   }
 
   filtersChange(e: CustomEvent) {
-    this.selectedFilters = {...this.selectedFilters, ...e.detail};
+    this.selectedFilters = {...e.detail};
     this.updateUrlListQueryParams();
   }
 
@@ -305,7 +324,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
    * This method runs each time new data is received from routeDetails state
    * (sort, filters, paginator init/change)
    */
-  getAssessmentsData() {
+  getFilteredAssessments() {
     this.showLoading = true;
     const endpoint = {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`};
     return makeRequest(endpoint).then((response: GenericObject) => {
