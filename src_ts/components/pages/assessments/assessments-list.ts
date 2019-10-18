@@ -292,7 +292,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
   }
 
   filtersChange(e: CustomEvent) {
-    this.selectedFilters = {...this.selectedFilters, ...e.detail};
+    this.selectedFilters = {...e.detail};
     this.updateUrlListQueryParams();
   }
 

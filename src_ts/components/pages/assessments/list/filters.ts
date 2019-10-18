@@ -1,7 +1,6 @@
 import {EtoolsFilter, EtoolsFilterTypes} from '../../../common/layout/filters/etools-filters';
 import {GenericObject} from '../../../../types/globals';
 import {isJsonStrMatch} from '../../../utils/utils';
-import {timingSafeEqual} from 'crypto';
 
 export const onlyForUnicefFilters = ['assessor_staff', 'assessor_firm', 'assessor_external'];
 
@@ -177,7 +176,7 @@ export const updateFiltersSelectedValues = (selectedFilters: FilterKeysAndTheirS
       }
     }
   }
-  _resetUnselectedFilters(availableFilters, selectedFilters);
+  //_resetUnselectedFilters(availableFilters, selectedFilters);
 
   return availableFilters;
 };
