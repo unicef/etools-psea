@@ -194,7 +194,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
   stateChanged(state: RootState) {
     let routeDetails = get(state, 'app.routeDetails');
     if (!(routeDetails.routeName === 'assessments' && routeDetails.subRouteName === 'list')) {
-      return; // Avoid code executio while on a different page
+      return; // Avoid code execution while on a different page
     }
 
     const stateRouteDetails = {...state.app!.routeDetails};

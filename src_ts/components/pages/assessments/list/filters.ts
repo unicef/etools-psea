@@ -180,20 +180,6 @@ export const updateFiltersSelectedValues = (selectedFilters: FilterKeysAndTheirS
   return availableFilters;
 };
 
-
-function _resetSelectedValue(filter: EtoolsFilter, filterKey: string) {
-  switch(selectedValueTypeByFilterKey[filterKey]) {
-    case 'Array':
-      filter.selectedValue = [];
-      break;
-    case 'boolean':
-      filter.selectedValue = false;
-      break;
-    default:
-      filter.selectedValue = null;
-  }
-}
-
 export const updateFilterSelectionOptions = (filters: EtoolsFilter[], fKey: string, options: GenericObject[]) => {
   const filter = filters.find((f: EtoolsFilter) => f.filterKey === fKey);
   if (filter && options) {
