@@ -176,30 +176,10 @@ export const updateFiltersSelectedValues = (selectedFilters: FilterKeysAndTheirS
       }
     }
   }
-  //_resetUnselectedFilters(availableFilters, selectedFilters);
 
   return availableFilters;
 };
 
-function _resetUnselectedFilters(availableFilters: EtoolsFilter[], selectedFilters: FilterKeysAndTheirSelectedValues) {
-   availableFilters.forEach((avFilter) => {
-    if ([FilterKeys.sort.toString(), FilterKeys.page_size.toString()].includes(avFilter.filterKey)) {
-      return;
-    }
-
-    let isSelected = selectedFilters.hasOwnProperty(avFilter.filterKey);
-    if (!isSelected) {
-      if (![FilterKeys.status.toString(), FilterKeys.partner.toString(),
-           FilterKeys.q.toString(), FilterKeys.unicef_focal_point.toString(),
-           FilterKeys.assessment_date.toString()].includes(avFilter.filterKey)) {
-        avFilter.selected = false;
-      }
-
-      _resetSelectedValue(avFilter, avFilter.filterKey);
-    }
-   });
-
-}
 
 function _resetSelectedValue(filter: EtoolsFilter, filterKey: string) {
   switch(selectedValueTypeByFilterKey[filterKey]) {

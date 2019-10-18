@@ -194,7 +194,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
   stateChanged(state: RootState) {
     let routeDetails = get(state, 'app.routeDetails');
     if (!(routeDetails.routeName === 'assessments' && routeDetails.subRouteName === 'list')) {
-      return;
+      return; // Avoid code executio while on a different page
     }
 
     const stateRouteDetails = {...state.app!.routeDetails};
@@ -206,12 +206,14 @@ export class AssessmentsList extends connect(store)(LitElement) {
         this.selectedFilters = {...defaultSelectedFilters};
         // update url with params
         this.updateUrlListQueryParams();
+
         return;
+
       } else {
         // init selectedFilters, sort, page, page_size from url params
         this.updateListParamsFromRouteDetails(this.routeDetails.queryParams);
         // get assessments based on filters, sort and pagination
-        this.getAssessmentsData();
+        this.getFilteredAssessments();
       }
     }
 
@@ -225,14 +227,11 @@ export class AssessmentsList extends connect(store)(LitElement) {
       }
     }
 
-    // Wait for all required data to be set
-    if (get(state, 'user.data') && state.commonData &&
-        // Avoid selectedValue being set in the assessor_staff dropdown,
-        // before the dropdown is populated with options (special case as there are a lot of unicefUsers)
-        get(state, 'commonData.unicefUsers.length') &&
-        get(state, 'commonData.partners.length') &&
-        this.routeDetails.queryParams &&
-        Object.keys(this.routeDetails.queryParams).length > 0) {
+    this.initFiltersForDisplay(state);
+  }
+
+  initFiltersForDisplay(state: RootState) {
+    if (this.dataRequiredByFiltersHasBeenLoaded(state)) {
 
       let availableFilters = this.isUnicefUser ?
         [...assessmentsFilters] : [...assessmentsFilters.filter(x => onlyForUnicefFilters.indexOf(x.filterKey) < 0)];
@@ -242,7 +241,21 @@ export class AssessmentsList extends connect(store)(LitElement) {
       // update filter selection and assign the result to etools-filters(trigger render)
       this.filters = updateFiltersSelectedValues(this.selectedFilters, availableFilters);
     }
+  }
 
+   /**
+    * Wait for all required data to be set
+    */
+  private dataRequiredByFiltersHasBeenLoaded(state: RootState) {
+    if (get(state, 'user.data') && state.commonData &&
+        // Avoid selectedValue being set before the dropdown is populated with options
+        get(state, 'commonData.unicefUsers.length') &&
+        get(state, 'commonData.partners.length') &&
+        this.routeDetails.queryParams &&
+        Object.keys(this.routeDetails.queryParams).length > 0) {
+      return true;
+    }
+    return false;
   }
 
   populateDropdownFilterOptionsFromCommonData(commonData: any, currentFilters: EtoolsFilter[]) {
@@ -311,7 +324,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
    * This method runs each time new data is received from routeDetails state
    * (sort, filters, paginator init/change)
    */
-  getAssessmentsData() {
+  getFilteredAssessments() {
     this.showLoading = true;
     const endpoint = {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`};
     return makeRequest(endpoint).then((response: GenericObject) => {

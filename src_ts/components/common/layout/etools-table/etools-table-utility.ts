@@ -4,7 +4,6 @@
 
 import {EtoolsTableColumn, EtoolsTableColumnSort} from './etools-table';
 import {GenericObject} from '../../../../types/globals';
-import {EtoolsFilterTypes} from '../filters/etools-filters';
 import {selectedValueTypeByFilterKey, FilterKeysAndTheirSelectedValues} from '../../../pages/assessments/list/filters';
 
 export interface EtoolsTableSortItem {
