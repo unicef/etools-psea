@@ -365,26 +365,35 @@ export class EtoolsFilters extends LitElement {
       }
     });
     this.requestUpdate();
-    this.lastSelectedValues = {...this.getSelectedFilterValues(), ...filterValues};
+    this.lastSelectedValues = {...this.getAllFiltersAndTheirValues(), ...filterValues};
   }
 
   // fire change custom event to notify parent that filters were updated
   fireFiltersChangeEvent() {
-    const selectedValues = this.getSelectedFilterValues();
+    const selectedValues = this.getAllFiltersAndTheirValues();
     if (JSON.stringify(this.lastSelectedValues) === JSON.stringify(selectedValues)) {
       return;
     }
     this.lastSelectedValues = {...selectedValues};
 
     this.dispatchEvent(new CustomEvent('filter-change', {
-      detail: selectedValues,
+      detail: this.getSelectedFiltersAndTheirValues(),
       bubbles: true,
       composed: true
     }));
   }
 
   // build and return and object based on filterKey and selectedValue
-  getSelectedFilterValues() {
+  getAllFiltersAndTheirValues() {
+    const allFilters: any = {};
+    this.filters
+      .forEach((f: EtoolsFilter) => {
+          allFilters[f.filterKey] = f.selectedValue;
+      });
+    return allFilters;
+  }
+
+  getSelectedFiltersAndTheirValues() {
     const selectedFilters: any = {};
     this.filters
       .forEach((f: EtoolsFilter) => {
