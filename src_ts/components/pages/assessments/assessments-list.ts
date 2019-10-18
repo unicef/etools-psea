@@ -244,7 +244,9 @@ export class AssessmentsList extends connect(store)(LitElement) {
   }
 
    /**
-    * Wait for all required data to be set
+    * TODO
+    * We might avoid the issues of waiting and also reduce multiple stateChanged execution by updating
+    * redux state only after all endpoint requests (currentUser, partners, unicefUsers, externals) have finished
     */
   private dataRequiredByFiltersHasBeenLoaded(state: RootState) {
     if (get(state, 'user.data') && state.commonData &&
