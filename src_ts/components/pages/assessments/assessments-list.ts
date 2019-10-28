@@ -37,13 +37,14 @@ import {
   getUrlQueryStringSort
 } from '../../common/layout/etools-table/etools-table-utility';
 import {RouteDetails, RouteQueryParams} from '../../../routing/router';
-import {updateAppLocation} from '../../../routing/routes';
+import {updateAppLocation, replaceAppLocation} from '../../../routing/routes';
 import {buttonsStyles} from '../../styles/button-styles';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
 import {makeRequest} from '../../utils/request-helper';
 import '../../common/layout/export-data';
 import '@unicef-polymer/etools-loading';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 /**
  * @LitElement
@@ -247,7 +248,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
   updateUrlListQueryParams() {
     const qs = this.getParamsForQuery();
     this.queryParams = qs;
-    updateAppLocation(`${this.routeDetails.path}?${qs}`, true);
+    replaceAppLocation(`${this.routeDetails.path}?${qs}`, true);
   }
 
   getParamsForQuery() {
@@ -312,7 +313,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
         }
       });
       this.listData = [...assessments];
-    }).catch((err: any) => console.error(err))
+    }).catch((err: any) => logError(err))
       .then(() => this.showLoading = false);
   }
 

@@ -256,7 +256,7 @@ export class StaffMemberDialog extends LitElement {
 
     const options = {
       method: this.isNewRecord ? 'POST' : 'PATCH',
-      url: getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url! + (this.editedItem.id ? '/' : '')
+      url: getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url! + (this.editedItem.id ? this.editedItem.id + '/' : '')
     };
 
     if (this._staffMemberDataHasChanged()) {
