@@ -38,6 +38,9 @@ import {UnicefUser} from '../../../../../types/user-model';
 export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement)) {
 
   render() {
+    if (!this.assessment) {
+      return html``;
+    }
     // language=HTML
     return html`
       <style>
@@ -172,6 +175,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     }
     this.populateUnicefFocalPointsDropdown(state);
   }
+
 
   populateUnicefFocalPointsDropdown(state: RootState) {
     // waiting for required data to be loaded from redux
