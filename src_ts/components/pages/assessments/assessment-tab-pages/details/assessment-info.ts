@@ -38,6 +38,9 @@ import {UnicefUser} from '../../../../../types/user-model';
 export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement)) {
 
   render() {
+    if (!this.assessment) {
+      return html``;
+    }
     // language=HTML
     return html`
       <style>
@@ -173,12 +176,12 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     this.populateUnicefFocalPointsDropdown(state);
   }
 
+
   populateUnicefFocalPointsDropdown(state: RootState) {
     // waiting for required data to be loaded from redux
     if (get(state, 'pageData.currentAssessment') && get(state, 'user.data')) {
       if (!this.isUnicefUser) {
         // if user is not Unicef user, this is opened in read-only mode and we just display already saved
-        // Focal Point users (which are provided in the assessment object)
         this.unicefFocalPointUsers = [...this.assessment.focal_points_details];
       } else if (get(state, 'commonData.unicefUsers.length')) {
         this.unicefFocalPointUsers = [...state.commonData!.unicefUsers];

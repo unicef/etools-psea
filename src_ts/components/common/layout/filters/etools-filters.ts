@@ -95,6 +95,7 @@ export class EtoolsFilters extends LitElement {
     // language=HTML
     return html`
       <etools-dropdown-multi
+          id="${f.filterKey}"
           ?hidden="${!f.selected}"
           class="filter"
           label="${f.filterName}"
@@ -144,9 +145,15 @@ export class EtoolsFilters extends LitElement {
     `;
   }
 
-  get selectedFiltersTmpl() {
+  selectedFiltersTmpl(filters: EtoolsFilter[]) {
+    if (!filters) {
+      return [];
+    }
     const tmpl: any[] = [];
-    this.filters.forEach((f: EtoolsFilter) => {
+    filters.forEach((f: EtoolsFilter) => {
+      if (!f.selected) {
+        return;
+      }
       let filterHtml = null;
       switch (f.type) {
         case EtoolsFilterTypes.Search:
@@ -172,9 +179,12 @@ export class EtoolsFilters extends LitElement {
     return tmpl;
   }
 
-  get filterMenuOptions() {
+  filterMenuOptions(filters: EtoolsFilter[]) {
+    if (!this.filters) {
+      return [];
+    }
     const menuOptions: any[] = [];
-    this.filters.forEach((f: EtoolsFilter) => {
+    filters.forEach((f: EtoolsFilter) => {
       // language=HTML
       menuOptions.push(html`
         <paper-icon-item @tap="${this.selectFilter}"
@@ -204,7 +214,7 @@ export class EtoolsFilters extends LitElement {
           }
         </style>
         <div id="filters">
-          ${this.selectedFiltersTmpl}
+          ${this.selectedFiltersTmpl(this.filters)}
         </div>
 
         <div id="filters-selector">
@@ -220,7 +230,7 @@ export class EtoolsFilters extends LitElement {
               </paper-button>
             </div>
             <paper-listbox slot="dropdown-content" multi>
-              ${this.filterMenuOptions}
+              ${this.filterMenuOptions(this.filters)}
             </paper-listbox>
           </paper-menu-button>
         </div>
@@ -241,11 +251,11 @@ export class EtoolsFilters extends LitElement {
   selectFilter(e: CustomEvent) {
     const menuOption = e.currentTarget as HTMLElement;
     const filterOption: EtoolsFilter = this.getFilterOption(menuOption);
-    const isSelected: boolean = menuOption.hasAttribute('selected');
+    const wasSelected: boolean = menuOption.hasAttribute('selected');
     // toggle selected state
-    filterOption.selected = !isSelected;
+    filterOption.selected = !wasSelected;
     // reset selected value if filter was unselected and had a value
-    if (isSelected) {
+    if (wasSelected) {
       filterOption.selectedValue = this.getFilterEmptyValue(filterOption.type);
     }
     // repaint&fire change event
@@ -354,30 +364,41 @@ export class EtoolsFilters extends LitElement {
       }
     });
     this.requestUpdate();
-    this.lastSelectedValues = {...this.getSelectedFilterValues(), ...filterValues};
+    this.lastSelectedValues = {...this.getAllFiltersAndTheirValues(), ...filterValues};
   }
 
   // fire change custom event to notify parent that filters were updated
   fireFiltersChangeEvent() {
-    const selectedValues = this.getSelectedFilterValues();
+    const selectedValues = this.getAllFiltersAndTheirValues();
     if (JSON.stringify(this.lastSelectedValues) === JSON.stringify(selectedValues)) {
       return;
     }
     this.lastSelectedValues = {...selectedValues};
 
     this.dispatchEvent(new CustomEvent('filter-change', {
-      detail: selectedValues,
+      detail: this.getSelectedFiltersAndTheirValues(),
       bubbles: true,
       composed: true
     }));
   }
 
   // build and return and object based on filterKey and selectedValue
-  getSelectedFilterValues() {
+  getAllFiltersAndTheirValues() {
+    const allFilters: any = {};
+    this.filters
+      .forEach((f: EtoolsFilter) => {
+          allFilters[f.filterKey] = f.selectedValue;
+      });
+    return allFilters;
+  }
+
+  getSelectedFiltersAndTheirValues() {
     const selectedFilters: any = {};
     this.filters
       .forEach((f: EtoolsFilter) => {
-        selectedFilters[f.filterKey] = f.selectedValue;
+        if (f.selected) {
+          selectedFilters[f.filterKey] = f.selectedValue;
+        }
       });
     return selectedFilters;
   }
