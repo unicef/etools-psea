@@ -194,7 +194,7 @@ export class FirmStaffMembers extends LitElement {
       .catch((err: any) => {
         this.staffMembers = [];
         this.paginator = getPaginator(this.paginator, {count: 0, data: this.staffMembers});
-        logError(err);
+        logError('Firm staff members req failed', 'FirmStaffMembers', err);
       })
       .then(() => this.showLoading = false);
   }

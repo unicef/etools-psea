@@ -11,7 +11,7 @@ export function checkEnvFlags() {
     .then((response: any) => {
       handleEnvFlagsReceived(response);
     })
-    .catch((err: any) => {logError('[AppShell]', 'checkEnvFlags', err);});
+    .catch((err: any) => logError('checkEnvFlags error', 'environment-flags', err));
 }
 
 function handleEnvFlagsReceived(envFlags: any) {

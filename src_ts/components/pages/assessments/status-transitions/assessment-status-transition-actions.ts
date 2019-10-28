@@ -210,7 +210,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
         // update assessment data in redux store
         store.dispatch(updateAssessmentData(response));
       }).catch((err: any) => {
-        logError(err);
+        logError('Status update failed', 'AssessmentStatusTransitionActions', err);
         parseRequestErrorsAndShowAsToastMsgs(err, this);
       }).then(() => {
         // req finalized... reset data
@@ -228,7 +228,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
         this.rejectionDialog.closeDialog();
         this.currentStatusAction = '';
       }).catch((err: any) => {
-        logError(err);
+        logError('Reject req failed', 'AssessmentStatusTransitionActions', err);
         parseRequestErrorsAndShowAsToastMsgs(err, this);
       }).then(() => {
         // req finalized...

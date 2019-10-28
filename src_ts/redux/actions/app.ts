@@ -13,6 +13,8 @@ import {getFilePathsToImport} from '../../routing/component-lazy-load-config';
 import {getRedirectToListPath} from '../../routing/subpage-redirect';
 import {logError, logInfo} from '@unicef-polymer/etools-behaviors/etools-logging';
 
+const LOGS_PREFIX = 'Redux app actions';
+
 export const UPDATE_ROUTE_DETAILS = 'UPDATE_ROUTE_DETAILS';
 export const UPDATE_DRAWER_STATE = 'UPDATE_DRAWER_STATE';
 
@@ -32,7 +34,7 @@ const updateStoreRouteDetails: ActionCreator<AppActionUpdateRouteDetails> = (rou
 };
 
 const loadPageComponents: ActionCreator<ThunkResult> = (routeDetails: RouteDetails) => (dispatch) => {
-  logInfo(routeDetails, 'loadPageComponents');
+  logInfo('loadPageComponents for current route', LOGS_PREFIX, routeDetails);
   if (!routeDetails) {
     // invalid route => redirect to 404 page
     updateAppLocation(ROUTE_404, true);
@@ -45,7 +47,7 @@ const loadPageComponents: ActionCreator<ThunkResult> = (routeDetails: RouteDetai
   filesToImport.forEach((filePath: string) => {
     import(importBase + filePath).then(() => {
     }).catch((importError: any) => {
-      logError(importError, 'component import failed...');
+      logError('component import failed...', LOGS_PREFIX, importError);
     });
   });
 

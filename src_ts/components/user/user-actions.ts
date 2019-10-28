@@ -7,6 +7,8 @@ import {getEndpoint} from '../../endpoints/endpoints';
 import {etoolsEndpoints} from '../../endpoints/endpoints-list';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
+const LOGS_PREFIX = 'user-actions';
+
 export const getCurrentUserData = () => {
   // TODO: find a better way of getting user data or continue with this
   getUserData(); // should req data and polpuate redux state...
@@ -25,13 +27,13 @@ export const changeCurrentUserCountry = (countryId: number) => {
 };
 
 export function getUserData() {
-  const options = new RequestEndpoint(getEndpoint(etoolsEndpoints.userProfile).url);
+  const options = new RequestEndpoint(getEndpoint(etoolsEndpoints.userProfile).url!);
   return makeRequest(options).then((response: GenericObject) => {
     // console.log('response', response);
     store.dispatch(setUserData(response));
     store.dispatch(setUserPermissions(getUserPermissions(response)));
   }).catch((error: GenericObject) => {
-    logError('[EtoolsUser]: getUserData req error...', error);
+    logError('getUserData req error...', LOGS_PREFIX, error);
     if (error.status === 403) {
       window.location.href = window.location.origin + '/login';
     }
@@ -45,7 +47,7 @@ export function updateUserData(profile: GenericObject) {
     store.dispatch(setUserData(response));
     store.dispatch(setUserPermissions(getUserPermissions(response)));
   }).catch((error: GenericObject) => {
-    logError('[EtoolsUser]: setUserData req error ', error);
+    logError('setUserData req error ', LOGS_PREFIX, error);
     throw error;
   });
 }
@@ -62,7 +64,7 @@ function getUserPermissions(user: GenericObject): EtoolsUserPermissions {
 export function changeCountry(countryId: number) {
   const options = new RequestEndpoint(getEndpoint(etoolsEndpoints.changeCountry).url!, 'POST');
   return makeRequest(options, {country: countryId}).catch((error: GenericObject) => {
-    logError('[EtoolsUser]: setUserData req error ', error);
+    logError('setUserData req error ', LOGS_PREFIX, error);
     throw error;
   });
 }

@@ -387,7 +387,7 @@ export class EtoolsFilters extends LitElement {
     const allFilters: any = {};
     this.filters
       .forEach((f: EtoolsFilter) => {
-          allFilters[f.filterKey] = f.selectedValue;
+        allFilters[f.filterKey] = f.selectedValue;
       });
     return allFilters;
   }

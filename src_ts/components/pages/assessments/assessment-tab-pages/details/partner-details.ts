@@ -3,7 +3,6 @@ import {LitElement, html, property, customElement} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 
-
 /**
  * @customElement
  * @LitElement
@@ -15,8 +14,8 @@ export class PartnerDetails extends LitElement {
     return html`
       ${gridLayoutStylesLit} ${labelAndvalueStylesLit}
       <style>
-        .input-label p{
-          margin: 0px;
+        .input-label p {
+          margin: 0;
         }
       </style>
       <div class="layout-horizontal row-padding-v">
