@@ -5,6 +5,7 @@ import '@polymer/paper-input/paper-textarea.js';
 import {SharedStylesLit} from '../../../styles/shared-styles-lit';
 import {fireEvent} from '../../../utils/fire-custom-event';
 import {PaperTextareaElement} from '@polymer/paper-input/paper-textarea';
+import {PaperInputErrorElement} from '@polymer/paper-input/paper-input-error';
 
 /**
  * @customElement
@@ -16,16 +17,7 @@ export class AssessmentRejectionDialog extends LitElement {
   render() {
     // language=HTML
     return html`
-      <style>
-      
-        #rejectionReason {
-          --paper-input-error: {
-            position: relative !important;
-          }
-        }
-      
-      </style>
-        ${SharedStylesLit}
+      ${SharedStylesLit}
       <etools-dialog id="assessmentRejectionDialog"
                     ?opened="${this.dialogOpened}"
                     dialog-title="Are you sure you want to reject this assessment?"
@@ -58,6 +50,19 @@ export class AssessmentRejectionDialog extends LitElement {
   fireEventSource!: HTMLElement;
 
   @query('#rejectionReason') private rejectionCommentEl!: PaperTextareaElement;
+
+  firstUpdated(): void {
+    if (this.rejectionCommentEl) {
+      setTimeout(() => {
+        // delay paper-input-error query (otherwise it will be null, not ideal solution)
+        const rejectionReasonField: PaperInputErrorElement | null =
+          this.rejectionCommentEl.shadowRoot!.querySelector('paper-input-error');
+        if (rejectionReasonField) {
+          rejectionReasonField.style.position = 'relative';
+        }
+      }, 0);
+    }
+  }
 
   private onConfirm() {
     if (this.rejectionCommentEl.validate()) {

@@ -160,7 +160,8 @@ export const assessmentsFilters: EtoolsFilter[] = [
   }
 ];
 
-export const updateFiltersSelectedValues = (selectedFilters: FilterKeysAndTheirSelectedValues, filters: EtoolsFilter[]) => {
+export const updateFiltersSelectedValues = (selectedFilters: FilterKeysAndTheirSelectedValues,
+                                            filters: EtoolsFilter[]) => {
   const availableFilters = [...filters];
 
   for (const fKey in selectedFilters) {
