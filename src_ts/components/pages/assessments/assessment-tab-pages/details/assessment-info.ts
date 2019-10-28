@@ -1,4 +1,4 @@
-import {LitElement, html, property, customElement} from 'lit-element';
+import {LitElement, html, property, customElement, css} from 'lit-element';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-button/paper-button.js';
@@ -36,19 +36,20 @@ import {UnicefUser} from '../../../../../types/user-model';
  */
 @customElement('assessment-info')
 export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement)) {
-
+  static get styles() {
+    return css`
+      :host {
+        display: block;
+        margin-bottom: 24px;
+      }`;
+  }
   render() {
     if (!this.assessment) {
-      return html``;
+      return html`
+        ${SharedStylesLit}${gridLayoutStylesLit} ${buttonsStyles}`; //*see Constructable Stylesheets
     }
     // language=HTML
     return html`
-      <style>
-        :host {
-          display: block;
-          margin-bottom: 24px;
-        }
-      </style>
       ${SharedStylesLit}${gridLayoutStylesLit} ${buttonsStyles}
       <etools-content-panel panel-title="Assessment Information">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
