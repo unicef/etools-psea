@@ -38,7 +38,7 @@ export const selectedValueTypeByFilterKey: GenericObject = {
    [FilterKeys.assessor_external]: 'Array',
    [FilterKeys.page_size]: 'string',
    [FilterKeys.sort]: 'string',
-}
+};
 
 export const assessmentsFilters: EtoolsFilter[] = [
   {
@@ -117,7 +117,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
     filterKey: FilterKeys.assessment_date,
     type: EtoolsFilterTypes.Date,
     selectedValue: null,
-    selected: false
+    selected: true
   },
   {
     filterName: 'Assessor Unicef Staff',
