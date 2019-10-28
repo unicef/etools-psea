@@ -4,6 +4,7 @@
 
 import {EtoolsTableColumn, EtoolsTableColumnSort} from './etools-table';
 import {GenericObject} from '../../../../types/globals';
+import {selectedValueTypeByFilterKey, FilterKeysAndTheirSelectedValues} from '../../../pages/assessments/list/filters';
 
 export interface EtoolsTableSortItem {
   name: string;
@@ -70,19 +71,23 @@ export const buildUrlQueryString = (params: GenericObject): string => {
   return queryParams.join('&');
 };
 
-export const getSelectedFiltersFromUrlParams = (selectedFilters: GenericObject,
-  params: GenericObject): GenericObject => {
-  const filters: GenericObject = {...selectedFilters};
-  for (const param in params) {
-    if (params[param]) {
-      if (filters[param] instanceof Array) {
-        filters[param] = params[param].split(',');
-      } else if (typeof filters[param] === 'boolean') {
-        filters[param] = params[param] === 'true';
+
+//TODO - probably should move out of etools-table-utility because it uses selectedValueTypeByFilterKey specific to this application
+export const getSelectedFiltersFromUrlParams = (params: GenericObject): FilterKeysAndTheirSelectedValues => {
+  const selectedFilters: GenericObject = {};
+
+  for (const filterKey in params) {
+    if (params[filterKey]) {
+      if (selectedValueTypeByFilterKey[filterKey] === 'Array') {
+        selectedFilters[filterKey] = params[filterKey].split(',');
+      } else if (selectedValueTypeByFilterKey[filterKey] === 'boolean') {
+        selectedFilters[filterKey] = (params[filterKey] === 'true');
       } else {
-        filters[param] = params[param];
+        selectedFilters[filterKey] = params[filterKey];
       }
     }
   }
-  return filters;
+  return selectedFilters as FilterKeysAndTheirSelectedValues;
 };
+
+

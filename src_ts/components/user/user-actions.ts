@@ -7,7 +7,6 @@ import {getEndpoint} from '../../endpoints/endpoints';
 import {etoolsEndpoints} from '../../endpoints/endpoints-list';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
-
 export const getCurrentUserData = () => {
   // TODO: find a better way of getting user data or continue with this
   getUserData(); // should req data and polpuate redux state...
@@ -51,7 +50,7 @@ export function updateUserData(profile: GenericObject) {
   });
 }
 
-private function getUserPermissions(user: GenericObject): EtoolsUserPermissions {
+function getUserPermissions(user: GenericObject): EtoolsUserPermissions {
   const permissions: EtoolsUserPermissions = {
     canAddAssessment: user && user.groups && Boolean(user.groups.find((group: any) => group.name === 'UNICEF User' ||
                                                                           group.name === 'UNICEF Audit Focal Point')),
