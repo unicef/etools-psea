@@ -5,6 +5,8 @@ import {etoolsEndpoints} from '../../endpoints/endpoints-list';
 import {getEndpoint} from '../../endpoints/endpoints';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
+const LOGS_PREFIX = 'Redux page-data actions';
+
 export const UPDATE_ASSESSMENT_DATA = 'UPDATE_ASSESSMENT_DATA';
 export const UPDATE_ASSESSOR_DATA = 'UPDATE_ASSESSOR_DATA';
 
@@ -42,7 +44,7 @@ export const requestAssessorData = (assessmentId: number) => (dispatch: any) => 
       dispatch(updateAssessorData(response));
     })
     .catch((err: any) => {
-      logError(err);
+      logError('Assessor request failed', LOGS_PREFIX, err);
       if (err.status === 404) {
         // in case assessor is not found, init as new assessor
         dispatch(updateAssessorData(new Assessor()));

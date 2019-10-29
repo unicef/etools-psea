@@ -201,7 +201,7 @@ export class AppShell extends connect(store)(LitElement) {
 
   // TODO: just for testing...
   public getState() {
-    logInfo(store.getState());
+    logInfo('Current redux state', 'AppShell', store.getState());
   }
 
   // Testing router (from console)

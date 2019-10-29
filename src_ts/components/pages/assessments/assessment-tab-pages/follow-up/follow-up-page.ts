@@ -133,7 +133,8 @@ export class FollowUpPage extends connect(store)(LitElement) {
     // @ts-ignore
     makeRequest(endpoint).then((response: any) => {
       this.dataItems = response;
-    }).catch((err: any) => logError(err))
+    }).catch((err: any) => logError(
+      'Get action points list data req failed', 'FollowUpPage', err))
       .then(() => this.showLoading = false);
   }
 

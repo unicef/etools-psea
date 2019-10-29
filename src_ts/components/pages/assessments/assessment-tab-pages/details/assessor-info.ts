@@ -315,7 +315,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
 
   handleError(error: any) {
     this.showLoading = false;
-    logError(error);
+    logError('Assessor save error', 'AssessorInfo', error);
     fireEvent(this, 'toast', {text: formatServerErrorAsText(error), showCloseBtn: true});
 
     throw new Error('Error thrown just to avoid executing chained .then s');
