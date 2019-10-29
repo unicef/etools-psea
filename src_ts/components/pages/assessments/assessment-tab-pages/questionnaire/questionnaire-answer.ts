@@ -171,7 +171,6 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
    */
   _handlePaperTextareaAutovalidateError() {
     this.updateComplete.then(() => {
-      console.log('update completed 1');
       this.connected = true;
     });
 
@@ -237,7 +236,6 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       this.showOtherInput = checked;
       // fix for display Other text in no-edit mode
       this.updateComplete.then(() => {
-        console.log('update completed 2');
         this.showOtherInput = checked;
         this.requestUpdate();
       });
