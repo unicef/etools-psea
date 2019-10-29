@@ -162,6 +162,10 @@ export class AssessingFirm extends LitElement {
     return valid;
   }
 
+  resetValidations() {
+    this.showGetDetailsBtnWarn = false;
+  }
+
   _updatePoNumber(newVal: string) {
     this.errMessage = '10 digits expected';
     this.assessor.order_number = newVal;
