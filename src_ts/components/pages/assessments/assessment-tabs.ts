@@ -211,7 +211,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     if (err.status == 404) {
       updateAppLocation('/page-not-found', true);
     }
-    logError(err);
+    logError('Assessment req error', 'AssessmentTabs', err);
   }
 
   getPageTitle(assessment: Assessment) {
