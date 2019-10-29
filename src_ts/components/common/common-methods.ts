@@ -18,9 +18,10 @@ export const handleUsersNoLongerAssignedToCurrentCountry = (users: UnicefUser[],
   }
 };
 
+// The method will be used with bind(this)
 export function genericErrorHandling(error: any) {
-  logError(error);
-  // @ts-ignore *The method will be used with bind(this)
+  logError('genericErrorHandling', 'common-methods', error);
+  /* eslint-disable-next-line */
   fireEvent(this, 'toast', {text: formatServerErrorAsText(error), showCloseBtn: true});
 
 }

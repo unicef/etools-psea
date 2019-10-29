@@ -6,7 +6,7 @@ import './assessing-firm';
 import './external-individual';
 import './firm-staff-members';
 import {UnicefUser} from '../../../../../types/user-model';
-import {LitElement, html, property, query, customElement} from 'lit-element';
+import {customElement, html, LitElement, property, query} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {buttonsStyles} from '../../../../styles/button-styles';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
@@ -15,7 +15,7 @@ import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../../../redux/store';
 import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
 import {handleUsersNoLongerAssignedToCurrentCountry} from '../../../../common/common-methods';
-import {Assessment, Assessor, AssessorTypes, AssessmentPermissions} from '../../../../../types/assessment';
+import {Assessment, AssessmentPermissions, Assessor, AssessorTypes} from '../../../../../types/assessment';
 import {AssessingFirm} from './assessing-firm';
 import {ExternalIndividual} from './external-individual';
 import {fireEvent} from '../../../../utils/fire-custom-event';
@@ -23,7 +23,7 @@ import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {FirmStaffMembers} from './firm-staff-members';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
-import {saveAssessorData, requestAssessment} from '../../../../../redux/actions/page-data';
+import {requestAssessment, saveAssessorData} from '../../../../../redux/actions/page-data';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import PermissionsMixin from '../../../mixins/permissions-mixins';
 import '@unicef-polymer/etools-loading';
@@ -315,7 +315,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
 
   handleError(error: any) {
     this.showLoading = false;
-    logError(error);
+    logError('Assessor save error', 'AssessorInfo', error);
     fireEvent(this, 'toast', {text: formatServerErrorAsText(error), showCloseBtn: true});
 
     throw new Error('Error thrown just to avoid executing chained .then s');
@@ -385,6 +385,9 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   cancelAssessorUpdate() {
     this.assessor = cloneDeep(this.originalAssessor);
     this.editMode = this.isNew;
+    if (this.assessor.assessor_type === AssessorTypes.Firm) {
+      this.assessingFirmElement.resetValidations();
+    }
   }
 
   allowEdit() {
