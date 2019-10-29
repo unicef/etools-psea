@@ -18,10 +18,13 @@ import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
  */
 @customElement('assessing-firm')
 export class AssessingFirm extends LitElement {
+  static get styles() {
+    return [buttonsStyles, labelAndvalueStylesLit]
+  }
   render() {
     // language=HTML
     return html`
-      ${SharedStylesLit} ${labelAndvalueStylesLit} ${gridLayoutStylesLit} ${buttonsStyles}
+     ${SharedStylesLit} ${gridLayoutStylesLit}
       <style>
         .input-width {
           max-width: 230px;
@@ -41,7 +44,7 @@ export class AssessingFirm extends LitElement {
           width: 16px;
           height: 16px;
         }
-       
+
       </style>
 
       <div class="layout-horizontal row-padding-v">
@@ -56,7 +59,7 @@ export class AssessingFirm extends LitElement {
           required
           ?readonly="${this.isReadonly(this.editMode)}">
         </paper-input>
-        <paper-button class="info left-icon" 
+        <paper-button class="info left-icon"
                       @tap="${this.getAssessorFirmByPoNumber}"
                       ?hidden="${this.isReadonly(this.editMode) || this.poRequestInProgress}">
           <iron-icon icon="autorenew"></iron-icon>

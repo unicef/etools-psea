@@ -1,4 +1,4 @@
-import {LitElement, html, property, query, queryAll, customElement} from 'lit-element';
+import {LitElement, html, property, query, queryAll, customElement, css} from 'lit-element';
 import '@polymer/paper-input/paper-textarea';
 import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-radio-group';
@@ -31,11 +31,9 @@ import './answer-instructions';
 
 @customElement('questionnaire-answer')
 export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
-  render() {
-    return html`
-      ${SharedStylesLit}${gridLayoutStylesLit}${labelAndvalueStylesLit}
-      ${radioButtonStyles}
-      <style>
+  static get styles() {
+    return [radioButtonStyles, labelAndvalueStylesLit,
+      css`
         .padd-right {
           padding-right: 24px;
         }
@@ -51,7 +49,12 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
           color: var(--error-color);
           display: block;
         }
-      </style>
+      `
+    ];
+  }
+  render() {
+    return html`
+      ${SharedStylesLit}${gridLayoutStylesLit}
       <div class="row-padding-v" ?hidden="${!this.editMode}">
         <div>
           <label class="paper-label" required>Rating</label>
@@ -168,6 +171,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
    */
   _handlePaperTextareaAutovalidateError() {
     this.updateComplete.then(() => {
+      console.log('update completed 1');
       this.connected = true;
     });
 
@@ -233,6 +237,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       this.showOtherInput = checked;
       // fix for display Other text in no-edit mode
       this.updateComplete.then(() => {
+        console.log('update completed 2');
         this.showOtherInput = checked;
         this.requestUpdate();
       });

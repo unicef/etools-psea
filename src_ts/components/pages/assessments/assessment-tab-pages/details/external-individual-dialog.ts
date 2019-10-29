@@ -22,10 +22,13 @@ import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
  */
 @customElement('external-individual-dialog')
 export class ExternalIndividualDialog extends connect(store)(LitElement) {
+  static get styles() {
+    return [labelAndvalueStylesLit];
+  }
   render() {
     // language=HTML
     return html`
-      ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
+      ${SharedStylesLit}${gridLayoutStylesLit}
       <etools-dialog id="externalIndividualDialog"
                       ?opened="${this.dialogOpened}"
                       dialog-title="${this.dialogTitle}"

@@ -20,10 +20,14 @@ import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
  */
 @customElement('staff-member-dialog')
 export class StaffMemberDialog extends LitElement {
+  static get styles() {
+    return [labelAndvalueStylesLit];
+  }
+
   render() {
     // language=HTML
     return html`
-      ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
+      ${SharedStylesLit}${gridLayoutStylesLit}
       <style>
         #has-access-checkbox-wrapper {
           padding: 16px 0;

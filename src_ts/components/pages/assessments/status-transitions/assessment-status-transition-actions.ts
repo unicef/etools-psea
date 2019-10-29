@@ -19,6 +19,17 @@ import {AssessmentRejectionDialog} from './assessment-rejection-dialog';
 
 @customElement('assessment-status-transition-actions')
 export class AssessmentStatusTransitionActions extends connect(store)(LitElement) {
+  static get styles() {
+    return [buttonsStyles];
+  }
+
+  render() {
+    // language=HTML
+    return html`
+      ${this.cancelAssessmentStatusActionTmpl(this.assessment)}
+      ${this.assessmentStatusActionBtnsTmpl(this.assessment)}
+    `;
+  }
 
   @property({type: Object})
   assessment!: Assessment;
@@ -29,15 +40,6 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   private statusChangeConfirmationDialog: EtoolsDialog | null = null;
   private confirmationMSg: HTMLSpanElement = document.createElement('span');
   private currentStatusAction = '';
-
-  render() {
-    // language=HTML
-    return html`
-      ${buttonsStyles}
-      ${this.cancelAssessmentStatusActionTmpl(this.assessment)}
-      ${this.assessmentStatusActionBtnsTmpl(this.assessment)}
-    `;
-  }
 
   cancelBtnHtml() {
     return html`
