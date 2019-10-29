@@ -210,7 +210,7 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
       .then((resp) => {
         resp.map((r: any) => r.stamp = Date.now());
         this.questionnaireItems = resp;
-      }).catch((err: any) => logError(err))
+      }).catch((err: any) => logError('Questions req failed', 'AssessmentQuestionnairePage', err))
       .then(() => this.loadingQuestions = false);
   }
 
@@ -220,7 +220,7 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     makeRequest(new RequestEndpoint(url))
       .then((resp) => {
         this.answers = resp;
-      }).catch((err: any) => logError(err))
+      }).catch((err: any) => logError('Get answers req failed', 'AssessmentQuestionnairePage', err))
       .then(() => this.loadingAnswers = false);
   }
 

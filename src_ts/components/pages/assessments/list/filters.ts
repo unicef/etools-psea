@@ -28,16 +28,16 @@ export const defaultSelectedFilters: FilterKeysAndTheirSelectedValues = {
 };
 
 export const selectedValueTypeByFilterKey: GenericObject = {
-   [FilterKeys.q]: 'string',
-   [FilterKeys.status]: 'Array',
-   [FilterKeys.unicef_focal_point]: 'Array',
-   [FilterKeys.partner]: 'Array',
-   [FilterKeys.assessment_date]: 'string',
-   [FilterKeys.assessor_staff]: 'Array',
-   [FilterKeys.assessor_firm]: 'Array',
-   [FilterKeys.assessor_external]: 'Array',
-   [FilterKeys.page_size]: 'string',
-   [FilterKeys.sort]: 'string',
+  [FilterKeys.q]: 'string',
+  [FilterKeys.status]: 'Array',
+  [FilterKeys.unicef_focal_point]: 'Array',
+  [FilterKeys.partner]: 'Array',
+  [FilterKeys.assessment_date]: 'string',
+  [FilterKeys.assessor_staff]: 'Array',
+  [FilterKeys.assessor_firm]: 'Array',
+  [FilterKeys.assessor_external]: 'Array',
+  [FilterKeys.page_size]: 'string',
+  [FilterKeys.sort]: 'string'
 };
 
 export const assessmentsFilters: EtoolsFilter[] = [
@@ -161,19 +161,21 @@ export const assessmentsFilters: EtoolsFilter[] = [
 ];
 
 export const updateFiltersSelectedValues = (selectedFilters: FilterKeysAndTheirSelectedValues,
-                                            filters: EtoolsFilter[]) => {
+  filters: EtoolsFilter[]) => {
   const availableFilters = [...filters];
 
   for (const fKey in selectedFilters) {
-    let selectedValue = selectedFilters[fKey as FilterKeys];
-    if (selectedValue) {
-      const filter = availableFilters.find((f: EtoolsFilter) => f.filterKey === fKey);
-      if (filter) {
-        filter.selectedValue = selectedValue instanceof Array
-          ? [...selectedValue]
-          : selectedValue;
+    if (fKey) {
+      const selectedValue = selectedFilters[fKey as FilterKeys];
+      if (selectedValue) {
+        const filter = availableFilters.find((f: EtoolsFilter) => f.filterKey === fKey);
+        if (filter) {
+          filter.selectedValue = selectedValue instanceof Array
+            ? [...selectedValue]
+            : selectedValue;
 
-        filter.selected = true;
+          filter.selected = true;
+        }
       }
     }
   }
