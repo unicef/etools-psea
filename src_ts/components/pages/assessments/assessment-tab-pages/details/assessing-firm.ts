@@ -133,7 +133,7 @@ export class AssessingFirm extends LitElement {
   }
 
   _handleErrorOnGetFirm(err: any) {
-    logError(err);
+    logError('Assessing firm req failed', 'AssessingFirm', err);
     this.assessor.auditor_firm = null;
     this.assessor.auditor_firm_name = '';
     this.errMessage = 'PO number not found';
@@ -160,6 +160,10 @@ export class AssessingFirm extends LitElement {
     const valid = !!(this.assessor.auditor_firm && this.assessor.auditor_firm_name);
     this.showGetDetailsBtnWarn = !valid;
     return valid;
+  }
+
+  resetValidations() {
+    this.showGetDetailsBtnWarn = false;
   }
 
   _updatePoNumber(newVal: string) {

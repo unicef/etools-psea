@@ -192,7 +192,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
   listData: GenericObject[] = [];
 
   stateChanged(state: RootState) {
-    let routeDetails = get(state, 'app.routeDetails');
+    const routeDetails = get(state, 'app.routeDetails');
     if (!(routeDetails.routeName === 'assessments' && routeDetails.subRouteName === 'list')) {
       return; // Avoid code execution while on a different page
     }
@@ -233,7 +233,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
   initFiltersForDisplay(state: RootState) {
     if (this.dataRequiredByFiltersHasBeenLoaded(state)) {
 
-      let availableFilters = this.isUnicefUser ?
+      const availableFilters = this.isUnicefUser ?
         [...assessmentsFilters] : [...assessmentsFilters.filter(x => onlyForUnicefFilters.indexOf(x.filterKey) < 0)];
 
       this.populateDropdownFilterOptionsFromCommonData(state.commonData, availableFilters);
@@ -243,7 +243,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
     }
   }
 
-   /**
+  /**
     * TODO
     * We might avoid the issues of waiting and also reduce multiple stateChanged execution by updating
     * redux state only after all endpoint requests (currentUser, partners, unicefUsers, externals) have finished
@@ -339,7 +339,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
         }
       });
       this.listData = [...assessments];
-    }).catch((err: any) => logError(err))
+    }).catch((err: any) => logError('Assessments list req error', 'AssessmentsList', err))
       .then(() => this.showLoading = false);
   }
 
