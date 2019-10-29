@@ -72,7 +72,10 @@ export const buildUrlQueryString = (params: GenericObject): string => {
 };
 
 
-//TODO - probably should move out of etools-table-utility because it uses selectedValueTypeByFilterKey specific to this application
+/**
+ * TODO - probably should move out of etools-table-utility because it uses
+ * selectedValueTypeByFilterKey specific to this application
+ */
 export const getSelectedFiltersFromUrlParams = (params: GenericObject): FilterKeysAndTheirSelectedValues => {
   const selectedFilters: GenericObject = {};
 

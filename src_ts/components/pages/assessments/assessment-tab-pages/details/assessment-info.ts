@@ -79,7 +79,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           auto-validate>
         </etools-dropdown>
 
-        ${this._showPartnerDetails(this.selectedPartner, this.staffMembers)}
+        ${this._showPartnerDetails(this.selectedPartner)}
 
         <etools-dropdown-multi label="UNICEF Focal Point"
           class="row-padding-v"
@@ -136,9 +136,6 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
   @property({type: Array})
   unicefFocalPointUsers!: UnicefUser[];
 
-  @property({type: Array})
-  staffMembers: GenericObject[] = [];
-
   @property({type: Boolean})
   isNew!: boolean;
 
@@ -171,9 +168,6 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
       this.isNew = !this.assessment.id;
       this.editMode = this.isNew;
       this.setAssessmentInfoPermissions(this.assessment.permissions);
-      this.staffMembers = (this.assessment && this.assessment.partner_details)
-        ? this.assessment.partner_details.staff_members
-        : [];
 
       setTimeout(() => this.resetValidations(), 10);
     }
@@ -189,7 +183,8 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
         this.unicefFocalPointUsers = [...this.assessment.focal_points_details];
       } else if (get(state, 'commonData.unicefUsers.length')) {
         this.unicefFocalPointUsers = [...state.commonData!.unicefUsers];
-        // check if already saved users exists on loaded data, if not they will be added (they might be missing if changed country)
+        // check if already saved users exists on loaded data, if not they will be added
+        // (they might be missing if changed country)
         handleUsersNoLongerAssignedToCurrentCountry(this.unicefFocalPointUsers, this.assessment.focal_points_details);
       }
     }
@@ -204,19 +199,15 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     this.editMode = true;
   }
 
-  _showPartnerDetails(selectedPartner: GenericObject, staffMembers: GenericObject[]) {
+  _showPartnerDetails(selectedPartner: GenericObject) {
     return selectedPartner ?
-      html`<partner-details .partner="${selectedPartner}" .staffMembers="${staffMembers}"></partner-details>` : '';
+      html`<partner-details .partner="${selectedPartner}"></partner-details>` : '';
   }
 
   _setSelectedPartner(event: CustomEvent) {
     this.selectedPartner = event.detail.selectedItem;
 
     if (this.selectedPartner) {
-      if (this.assessment.partner != this.selectedPartner.id && this.staffMembers.length > 0) {
-        this.staffMembers = [];
-        this.requestUpdate();
-      }
       this.assessment.partner = this.selectedPartner.id;
     }
   }

@@ -11,7 +11,7 @@
   "repository": "https://github.com/unicef-polymer/etools-frontend-template",
   "scripts": {
     "tsToJs": "tsc --skipLibCheck",
-    "tsEslint": "node_modules/eslint/bin/eslint.js 'src_ts/**' --fix",
+    "tsEslint": "npx eslint 'src_ts/**' --fix",
     "start": "gulp serve",
     "build": "tsc && npm run build:prpl-server && npm run build:static",
     "build:prpl-server": "polymer build --auto-base-path && gulp prpl-server",

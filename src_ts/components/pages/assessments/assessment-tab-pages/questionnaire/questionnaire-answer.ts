@@ -253,7 +253,8 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   }
 
   getAnswerForSave() {
-    const answer = {} as Answer;
+    const answer: Answer = new Answer();
+    delete answer.id;
     answer.assessment = this.assessmentId;
     answer.indicator = this.question.id;
     answer.rating = this.answer.rating;

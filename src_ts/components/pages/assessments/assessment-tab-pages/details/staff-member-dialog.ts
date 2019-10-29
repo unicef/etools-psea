@@ -197,7 +197,7 @@ export class StaffMemberDialog extends LitElement {
   }
 
   public openDialog() {
-    this.isNewRecord = !(parseInt(this.editedItem.id) > 0);
+    this.isNewRecord = !(parseInt(this.editedItem.id as string) > 0);
     this.dialogTitle = this.isNewRecord ? 'Add New Firm Staff Member' : 'Edit Firm Staff Member';
     this.confirmBtnText = this.isNewRecord ? 'Add' : 'Save';
     this.dialogOpened = true;
@@ -260,7 +260,9 @@ export class StaffMemberDialog extends LitElement {
 
     const options = {
       method: this.isNewRecord ? 'POST' : 'PATCH',
-      url: getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url! + (this.editedItem.id ? this.editedItem.id + '/' : '')
+      url: getEndpoint(
+        etoolsEndpoints.staffMembers,
+        {id: this.firmId}).url! + (this.editedItem.id ? this.editedItem.id + '/' : '')
     };
 
     if (this._staffMemberDataHasChanged()) {
