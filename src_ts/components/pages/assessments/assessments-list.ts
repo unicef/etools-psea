@@ -308,6 +308,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
 
   filtersChange(e: CustomEvent) {
     this.selectedFilters = {...e.detail};
+    this.paginator.page = 1;
     this.updateUrlListQueryParams();
   }
 

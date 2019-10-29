@@ -200,6 +200,8 @@ export class EtoolsFilters extends LitElement {
   }
 
   render() {
+    this.setDefaultLastSelectedValues();
+
     // language=HTML
     return html`
         <style>
@@ -235,6 +237,12 @@ export class EtoolsFilters extends LitElement {
           </paper-menu-button>
         </div>
     `;
+  }
+
+  setDefaultLastSelectedValues() {
+    if (!this.lastSelectedValues && this.filters) {
+      this.lastSelectedValues = this.getAllFiltersAndTheirValues();
+    }
   }
 
   clearAllFilterValues() {
@@ -385,10 +393,12 @@ export class EtoolsFilters extends LitElement {
   // build and return and object based on filterKey and selectedValue
   getAllFiltersAndTheirValues() {
     const allFilters: any = {};
-    this.filters
-      .forEach((f: EtoolsFilter) => {
-        allFilters[f.filterKey] = f.selectedValue;
-      });
+    if (this.filters) {
+      this.filters
+        .forEach((f: EtoolsFilter) => {
+          allFilters[f.filterKey] = f.selectedValue;
+        });
+    }
     return allFilters;
   }
 
