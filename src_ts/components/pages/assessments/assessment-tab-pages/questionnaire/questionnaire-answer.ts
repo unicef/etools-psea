@@ -84,7 +84,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
           label="Please specify other"
           always-float-label
           required
-          .autoValidate="${this.connected}"
+          .autoValidate="${this.autoValidate}"
           placeholder="—"
           .value="${this._getOtherEvidenceInputValue(this.answer)}"
           ?readonly="${!this.editMode}">
@@ -122,7 +122,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   editMode!: boolean;
 
   @property({type: Boolean})
-  connected: boolean = false;
+  autoValidate: boolean = false;
 
   @query('#ratingElement')
   ratingElement!: PaperRadioGroupElement;
@@ -141,7 +141,9 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
 
   connectedCallback() {
     super.connectedCallback();
+  }
 
+  firstUpdated() {
     this._handlePaperTextareaAutovalidateError();
   }
 
@@ -167,10 +169,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
    * The error occurs only on first load/ hard refresh and on paper-textareas that have auto-validate
    */
   _handlePaperTextareaAutovalidateError() {
-    this.updateComplete.then(() => {
-      this.connected = true;
-    });
-
+    this.autoValidate = true;
   }
 
   _getProofOfEvidenceTemplate(evidences: ProofOfEvidence[], answer: Answer) {
