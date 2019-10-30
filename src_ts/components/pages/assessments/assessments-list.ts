@@ -49,6 +49,8 @@ import '@unicef-polymer/etools-loading';
 import get from 'lodash-es/get';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
+let lastSelectedFilters: FilterKeysAndTheirSelectedValues = {...defaultSelectedFilters};
+
 /**
  * @LitElement
  * @customElement
@@ -203,7 +205,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
       this.routeDetails = stateRouteDetails;
 
       if (!this.routeDetails.queryParams || Object.keys(this.routeDetails.queryParams).length === 0) {
-        this.selectedFilters = {...defaultSelectedFilters};
+        this.selectedFilters = {...lastSelectedFilters};
         // update url with params
         this.updateUrlListQueryParams();
 
@@ -240,6 +242,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
 
       // update filter selection and assign the result to etools-filters(trigger render)
       this.filters = updateFiltersSelectedValues(this.selectedFilters, availableFilters);
+      lastSelectedFilters = {...this.selectedFilters};
     }
   }
 
