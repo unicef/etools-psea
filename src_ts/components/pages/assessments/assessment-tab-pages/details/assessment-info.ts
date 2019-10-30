@@ -101,6 +101,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.assessment_date)}"
           ?required="${this.assessment.permissions.required.assessment_date}"
           ?invalid="${this.invalid.assessment_date}"
+          max-date=${this.getCurrentDate()}
           auto-validate>
         </datepicker-lite>
 
@@ -286,6 +287,10 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
       return url;
     }
     return url! + this.assessment.id + '/';
+  }
+
+  getCurrentDate() {
+    return new Date();
   }
 
 }
