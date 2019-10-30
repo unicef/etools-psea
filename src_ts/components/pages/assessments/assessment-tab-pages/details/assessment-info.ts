@@ -37,20 +37,23 @@ import {UnicefUser} from '../../../../../types/user-model';
 @customElement('assessment-info')
 export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement)) {
   static get styles() {
-    return css`
+    return [
+      buttonsStyles,
+      css`
       :host {
         display: block;
         margin-bottom: 24px;
-      }`;
+      }`];
   }
+
   render() {
     if (!this.assessment) {
       return html`
-        ${SharedStylesLit}${gridLayoutStylesLit} ${buttonsStyles}`; //*see Constructable Stylesheets
+      ${SharedStylesLit}${gridLayoutStylesLit}`;
     }
     // language=HTML
     return html`
-      ${SharedStylesLit}${gridLayoutStylesLit} ${buttonsStyles}
+    ${SharedStylesLit}${gridLayoutStylesLit}
       <etools-content-panel panel-title="Assessment Information">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
 

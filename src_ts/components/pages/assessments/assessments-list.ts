@@ -57,14 +57,14 @@ import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 export class AssessmentsList extends connect(store)(LitElement) {
 
   static get styles() {
-    return [elevationStyles];
+    return [elevationStyles, buttonsStyles, pageLayoutStyles];
   }
 
   public render() {
     // main template
     // language=HTML
     return html`
-      ${SharedStylesLit} ${pageContentHeaderSlottedStyles} ${pageLayoutStyles} ${buttonsStyles}
+      ${SharedStylesLit}${pageContentHeaderSlottedStyles}
       <style>
         etools-table {
           padding-top: 12px;
