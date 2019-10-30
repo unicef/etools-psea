@@ -46,6 +46,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
         }
 
         .invalid-color {
+          font-size: 12px;
           color: var(--error-color);
           display: block;
         }
