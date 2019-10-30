@@ -142,10 +142,6 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   @queryAll('paper-checkbox.proofOfEvidence[checked]')
   checkedEvidenceBoxes!: PaperCheckboxElement[];
 
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
   firstUpdated() {
     this._handlePaperTextareaAutovalidateError();
   }
