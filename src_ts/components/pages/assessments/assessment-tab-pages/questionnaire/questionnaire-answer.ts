@@ -1,4 +1,4 @@
-import {LitElement, html, property, query, queryAll, customElement} from 'lit-element';
+import {LitElement, html, property, query, queryAll, customElement, css} from 'lit-element';
 import '@polymer/paper-input/paper-textarea';
 import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-radio-group';
@@ -31,11 +31,9 @@ import './answer-instructions';
 
 @customElement('questionnaire-answer')
 export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
-  render() {
-    return html`
-      ${SharedStylesLit}${gridLayoutStylesLit}${labelAndvalueStylesLit}
-      ${radioButtonStyles}
-      <style>
+  static get styles() {
+    return [radioButtonStyles, labelAndvalueStylesLit,
+      css`
         .padd-right {
           padding-right: 24px;
         }
@@ -51,7 +49,12 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
           color: var(--error-color);
           display: block;
         }
-      </style>
+      `
+    ];
+  }
+  render() {
+    return html`
+      ${SharedStylesLit}${gridLayoutStylesLit}
       <div class="row-padding-v" ?hidden="${!this.editMode}">
         <div>
           <label class="paper-label" required>Rating</label>
@@ -84,7 +87,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
           label="Please specify other"
           always-float-label
           required
-          .autoValidate="${this.connected}"
+          .autoValidate="${this.autoValidate}"
           placeholder="—"
           .value="${this._getOtherEvidenceInputValue(this.answer)}"
           ?readonly="${!this.editMode}">
@@ -122,7 +125,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   editMode!: boolean;
 
   @property({type: Boolean})
-  connected: boolean = false;
+  autoValidate: boolean = false;
 
   @query('#ratingElement')
   ratingElement!: PaperRadioGroupElement;
@@ -139,9 +142,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   @queryAll('paper-checkbox.proofOfEvidence[checked]')
   checkedEvidenceBoxes!: PaperCheckboxElement[];
 
-  connectedCallback() {
-    super.connectedCallback();
-
+  firstUpdated() {
     this._handlePaperTextareaAutovalidateError();
   }
 
@@ -167,10 +168,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
    * The error occurs only on first load/ hard refresh and on paper-textareas that have auto-validate
    */
   _handlePaperTextareaAutovalidateError() {
-    this.updateComplete.then(() => {
-      this.connected = true;
-    });
-
+    this.autoValidate = true;
   }
 
   _getProofOfEvidenceTemplate(evidences: ProofOfEvidence[], answer: Answer) {
@@ -248,7 +246,8 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   }
 
   getAnswerForSave() {
-    const answer = {} as Answer;
+    const answer: Answer = new Answer();
+    delete answer.id;
     answer.assessment = this.assessmentId;
     answer.indicator = this.question.id;
     answer.rating = this.answer.rating;

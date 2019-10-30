@@ -1,4 +1,4 @@
-import {LitElement, html, property, customElement} from 'lit-element';
+import {LitElement, html, property, customElement, css} from 'lit-element';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-button/paper-button.js';
@@ -36,17 +36,24 @@ import {UnicefUser} from '../../../../../types/user-model';
  */
 @customElement('assessment-info')
 export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement)) {
+  static get styles() {
+    return [
+      buttonsStyles,
+      css`
+      :host {
+        display: block;
+        margin-bottom: 24px;
+      }`];
+  }
 
   render() {
+    if (!this.assessment) {
+      return html`
+      ${SharedStylesLit}${gridLayoutStylesLit}`;
+    }
     // language=HTML
     return html`
-      <style>
-        :host {
-          display: block;
-          margin-bottom: 24px;
-        }
-      </style>
-      ${SharedStylesLit}${gridLayoutStylesLit} ${buttonsStyles}
+    ${SharedStylesLit}${gridLayoutStylesLit}
       <etools-content-panel panel-title="Assessment Information">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
 
@@ -72,7 +79,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           auto-validate>
         </etools-dropdown>
 
-        ${this._showPartnerDetails(this.selectedPartner, this.staffMembers)}
+        ${this._showPartnerDetails(this.selectedPartner)}
 
         <etools-dropdown-multi label="UNICEF Focal Point"
           class="row-padding-v"
@@ -94,6 +101,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.assessment_date)}"
           ?required="${this.assessment.permissions.required.assessment_date}"
           ?invalid="${this.invalid.assessment_date}"
+          max-date=${this.getCurrentDate()}
           auto-validate>
         </datepicker-lite>
 
@@ -129,9 +137,6 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
   @property({type: Array})
   unicefFocalPointUsers!: UnicefUser[];
 
-  @property({type: Array})
-  staffMembers: GenericObject[] = [];
-
   @property({type: Boolean})
   isNew!: boolean;
 
@@ -164,25 +169,23 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
       this.isNew = !this.assessment.id;
       this.editMode = this.isNew;
       this.setAssessmentInfoPermissions(this.assessment.permissions);
-      this.staffMembers = (this.assessment && this.assessment.partner_details)
-        ? this.assessment.partner_details.staff_members
-        : [];
 
       setTimeout(() => this.resetValidations(), 10);
     }
     this.populateUnicefFocalPointsDropdown(state);
   }
 
+
   populateUnicefFocalPointsDropdown(state: RootState) {
     // waiting for required data to be loaded from redux
     if (get(state, 'pageData.currentAssessment') && get(state, 'user.data')) {
       if (!this.isUnicefUser) {
         // if user is not Unicef user, this is opened in read-only mode and we just display already saved
-        // Focal Point users (which are provided in the assessment object)
         this.unicefFocalPointUsers = [...this.assessment.focal_points_details];
       } else if (get(state, 'commonData.unicefUsers.length')) {
         this.unicefFocalPointUsers = [...state.commonData!.unicefUsers];
-        // check if already saved users exists on loaded data, if not they will be added (they might be missing if changed country)
+        // check if already saved users exists on loaded data, if not they will be added
+        // (they might be missing if changed country)
         handleUsersNoLongerAssignedToCurrentCountry(this.unicefFocalPointUsers, this.assessment.focal_points_details);
       }
     }
@@ -197,19 +200,15 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     this.editMode = true;
   }
 
-  _showPartnerDetails(selectedPartner: GenericObject, staffMembers: GenericObject[]) {
+  _showPartnerDetails(selectedPartner: GenericObject) {
     return selectedPartner ?
-      html`<partner-details .partner="${selectedPartner}" .staffMembers="${staffMembers}"></partner-details>` : '';
+      html`<partner-details .partner="${selectedPartner}"></partner-details>` : '';
   }
 
   _setSelectedPartner(event: CustomEvent) {
     this.selectedPartner = event.detail.selectedItem;
 
     if (this.selectedPartner) {
-      if (this.assessment.partner != this.selectedPartner.id && this.staffMembers.length > 0) {
-        this.staffMembers = [];
-        this.requestUpdate();
-      }
       this.assessment.partner = this.selectedPartner.id;
     }
   }
@@ -288,6 +287,10 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
       return url;
     }
     return url! + this.assessment.id + '/';
+  }
+
+  getCurrentDate() {
+    return new Date();
   }
 
 }

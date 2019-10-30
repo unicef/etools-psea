@@ -34,14 +34,14 @@ import {GenericObject} from '../../../types/globals';
 export class AssessmentTabs extends connect(store)(LitElement) {
 
   static get styles() {
-    return [elevationStyles];
+    return [elevationStyles, pageLayoutStyles];
   }
 
   public render() {
     // main template
     // language=HTML
     return html`
-      ${SharedStylesLit} ${pageContentHeaderSlottedStyles} ${pageLayoutStyles}
+      ${SharedStylesLit}${pageContentHeaderSlottedStyles}
       <style>
         etools-status {
           justify-content: center;
@@ -211,7 +211,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     if (err.status == 404) {
       updateAppLocation('/page-not-found', true);
     }
-    logError(err);
+    logError('Assessment req error', 'AssessmentTabs', err);
   }
 
   getPageTitle(assessment: Assessment) {

@@ -11,6 +11,10 @@ import {buttonsStyles} from '../../styles/button-styles';
 @customElement('etools-error-warn-box')
 export class EtoolsErrorWarnBox extends LitElement {
 
+  static get styles() {
+    return [buttonsStyles];
+  }
+
   public render() {
     // language=HTML
 
@@ -21,7 +25,6 @@ export class EtoolsErrorWarnBox extends LitElement {
     }
 
     return html`
-      ${buttonsStyles}
       <style>
         :host {
           width: 100%;

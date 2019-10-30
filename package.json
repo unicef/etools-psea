@@ -11,7 +11,7 @@
   "repository": "https://github.com/unicef-polymer/etools-frontend-template",
   "scripts": {
     "tsToJs": "tsc --skipLibCheck",
-    "tsEslint": "node_modules/eslint/bin/eslint.js 'src_ts/**' --fix",
+    "tsEslint": "npx eslint 'src_ts/**' --fix",
     "start": "gulp serve",
     "build": "tsc && npm run build:prpl-server && npm run build:static",
     "build:prpl-server": "polymer build --auto-base-path && gulp prpl-server",
@@ -46,7 +46,7 @@
     "@polymer/polymer": "^3.1.0",
     "@types/lodash-es": "^4.17.3",
     "@unicef-polymer/etools-ajax": "^4.0.0",
-    "@unicef-polymer/etools-app-selector": "^3.1.0",
+    "@unicef-polymer/etools-app-selector": "^3.1.1",
     "@unicef-polymer/etools-behaviors": "^3.0.1",
     "@unicef-polymer/etools-content-panel": "^3.0.5",
     "@unicef-polymer/etools-date-time": "^1.0.0-rc.3",
