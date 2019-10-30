@@ -34,14 +34,14 @@ import {GenericObject} from '../../../types/globals';
 export class AssessmentTabs extends connect(store)(LitElement) {
 
   static get styles() {
-    return [elevationStyles];
+    return [elevationStyles, pageLayoutStyles];
   }
 
   public render() {
     // main template
     // language=HTML
     return html`
-      ${SharedStylesLit} ${pageContentHeaderSlottedStyles} ${pageLayoutStyles}
+      ${SharedStylesLit}${pageContentHeaderSlottedStyles}
       <style>
         etools-status {
           justify-content: center;
