@@ -147,13 +147,10 @@ export class EtoolsFilters extends LitElement {
 
   selectedFiltersTmpl(filters: EtoolsFilter[]) {
     if (!filters) {
-      return [];
+      return html``;
     }
     const tmpl: any[] = [];
     filters.forEach((f: EtoolsFilter) => {
-      if (!f.selected) {
-        return;
-      }
       let filterHtml = null;
       switch (f.type) {
         case EtoolsFilterTypes.Search:

@@ -1,4 +1,4 @@
-import {LitElement, html, property, customElement, query} from 'lit-element';
+import {LitElement, html, property, customElement, query, css} from 'lit-element';
 import '@unicef-polymer/etools-dialog/etools-dialog.js';
 import {PolymerElement} from '@polymer/polymer';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
@@ -22,10 +22,20 @@ import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
  */
 @customElement('external-individual-dialog')
 export class ExternalIndividualDialog extends connect(store)(LitElement) {
+  static get styles() {
+    return [
+      labelAndvalueStylesLit,
+      css`
+        #ext-individual-details-row {
+          padding-bottom: 24px;
+        }
+      `
+    ];
+  }
   render() {
     // language=HTML
     return html`
-      ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
+      ${SharedStylesLit}${gridLayoutStylesLit}
       <etools-dialog id="externalIndividualDialog"
                       ?opened="${this.dialogOpened}"
                       dialog-title="${this.dialogTitle}"
@@ -37,7 +47,7 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
                       keep-dialog-open
                       @confirm-btn-clicked="${this.onSaveClick}">
 
-        <div class="layout-horizontal">
+        <div id="ext-individual-details-row" class="layout-horizontal">
           <div class="col col-4">
             <!-- Email address -->
             <paper-input

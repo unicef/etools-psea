@@ -6,7 +6,7 @@ import './assessing-firm';
 import './external-individual';
 import './firm-staff-members';
 import {UnicefUser} from '../../../../../types/user-model';
-import {customElement, html, LitElement, property, query} from 'lit-element';
+import {LitElement, html, property, query, customElement, css} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {buttonsStyles} from '../../../../styles/button-styles';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
@@ -34,26 +34,29 @@ import '@unicef-polymer/etools-loading';
  */
 @customElement('assessor-info')
 export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
+  static get styles() {
+    return [buttonsStyles, labelAndvalueStylesLit,
+      css`
+      :host {
+        font-size: 16px;
+      }
 
+      etools-content-panel {
+        display: block;
+        margin-bottom: 24px;
+      }
+
+      paper-radio-group[readonly] paper-radio-button:not([checked]){
+        display: none;
+      }
+      `
+    ];
+  }
   render() {
     // language=HTML
     return html`
-      <style>
-        :host {
-          font-size: 16px;
-        }
-
-        etools-content-panel {
-          display: block;
-          margin-bottom: 24px;
-        }
-
-        paper-radio-group[readonly] paper-radio-button:not([checked]){
-          display: none;
-        }
-
-      </style>
-      ${SharedStylesLit}${gridLayoutStylesLit}${buttonsStyles}${labelAndvalueStylesLit}
+      ${SharedStylesLit}
+      ${gridLayoutStylesLit}
 
       <etools-content-panel panel-title="Assessor">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>

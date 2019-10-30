@@ -22,6 +22,9 @@ import {loadExternalIndividuals} from '../../../../../redux/actions/common-data'
 
 @customElement('external-individual')
 export class ExternalIndividual extends connect(store)(LitElement) {
+  static get styles() {
+    return [labelAndvalueStylesLit];
+  }
   render() {
     // language=HTML
     return html`
@@ -34,7 +37,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
           padding-bottom: 12px;
         }
       </style>
-      ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
+      ${SharedStylesLit}${gridLayoutStylesLit}
       <div class="row-padding-v">
         <etools-dropdown id="externalIndiv"
           class="padd-bottom"

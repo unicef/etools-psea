@@ -1,4 +1,4 @@
-import {LitElement, html, customElement, property} from 'lit-element';
+import {LitElement, html, customElement, property, css} from 'lit-element';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/paper-button/paper-button';
 import '@unicef-polymer/etools-upload/etools-upload-multi';
@@ -15,10 +15,9 @@ import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown';
 
 @customElement('question-attachments')
 export class QuestionAttachmentsElement extends LitElement {
-  render() {
-    return html`
-      ${SharedStylesLit}${gridLayoutStylesLit}${labelAndvalueStylesLit}
-      <style>
+  static get styles() {
+    return [labelAndvalueStylesLit,
+      css`
         .container {
           background-color: var(--secondary-background-color);
           margin-left: -24px;
@@ -75,8 +74,13 @@ export class QuestionAttachmentsElement extends LitElement {
             color: var(--secondary-text-color, #737373);
           }
         }
+      `
+    ];
+  }
 
-      </style>
+  render() {
+    return html`
+      ${SharedStylesLit}${gridLayoutStylesLit}
 
       <div class="row-padding-v">
         <etools-upload-multi ?hidden="${!this.editMode}"

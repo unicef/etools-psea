@@ -1,4 +1,4 @@
-import {LitElement, html, property, customElement, query} from 'lit-element';
+import {LitElement, html, property, customElement, query, css} from 'lit-element';
 import {styleMap} from 'lit-html/directives/style-map.js';
 import {unsafeHTML} from 'lit-html/directives/unsafe-html.js';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
@@ -18,10 +18,9 @@ import {buttonsStyles} from '../../../../styles/button-styles';
 
 @customElement('questionnaire-item')
 export class QuestionnaireItemElement extends LitElement {
-  render() {
-    return html`
-      ${SharedStylesLit}${gridLayoutStylesLit}${radioButtonStyles}${buttonsStyles}
-      <style>
+  static get styles() {
+    return [buttonsStyles, radioButtonStyles,
+      css`
         :host {
           display: block;
           margin-bottom: 24px;
@@ -39,7 +38,12 @@ export class QuestionnaireItemElement extends LitElement {
           background-color: var(--secondary-background-color);
           color: black;
         }
-      </style>
+      `
+    ];
+  }
+  render() {
+    return html`
+      ${SharedStylesLit}${gridLayoutStylesLit}
       <etools-content-panel panel-title="${this.question.subject}"
                             ?show-expand-btn=${!this.editMode} .open="${this.open}">
         <div slot="panel-btns">
