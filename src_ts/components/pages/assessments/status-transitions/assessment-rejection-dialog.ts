@@ -1,11 +1,10 @@
-import {customElement, LitElement, html, property, query} from 'lit-element';
+import {customElement, LitElement, html, property, query, css} from 'lit-element';
 import '@unicef-polymer/etools-dialog/etools-dialog.js';
 import '@polymer/paper-input/paper-textarea.js';
 
 import {SharedStylesLit} from '../../../styles/shared-styles-lit';
 import {fireEvent} from '../../../utils/fire-custom-event';
 import {PaperTextareaElement} from '@polymer/paper-input/paper-textarea';
-import {PaperInputErrorElement} from '@polymer/paper-input/paper-input-error';
 
 /**
  * @customElement
@@ -13,6 +12,14 @@ import {PaperInputErrorElement} from '@polymer/paper-input/paper-input-error';
  */
 @customElement('assessment-rejection-dialog')
 export class AssessmentRejectionDialog extends LitElement {
+
+  static get styles() {
+    return [css`
+      #rejectionReason {
+        padding-bottom: 24px;
+      }
+    `];
+  }
 
   render() {
     // language=HTML
@@ -50,19 +57,6 @@ export class AssessmentRejectionDialog extends LitElement {
   fireEventSource!: HTMLElement;
 
   @query('#rejectionReason') private rejectionCommentEl!: PaperTextareaElement;
-
-  firstUpdated(): void {
-    if (this.rejectionCommentEl) {
-      setTimeout(() => {
-        // delay paper-input-error query (otherwise it will be null, not ideal solution)
-        const rejectionReasonField: PaperInputErrorElement | null =
-          this.rejectionCommentEl.shadowRoot!.querySelector('paper-input-error');
-        if (rejectionReasonField) {
-          rejectionReasonField.style.position = 'relative';
-        }
-      }, 0);
-    }
-  }
 
   private onConfirm() {
     if (this.rejectionCommentEl.validate()) {
