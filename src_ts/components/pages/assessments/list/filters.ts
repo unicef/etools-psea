@@ -117,7 +117,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
     filterKey: FilterKeys.assessment_date,
     type: EtoolsFilterTypes.Date,
     selectedValue: null,
-    selected: false
+    selected: true
   },
   {
     filterName: 'Assessor Unicef Staff',
