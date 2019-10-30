@@ -183,6 +183,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
         // check if already saved users exists on loaded data, if not they will be added
         // (they might be missing if changed country)
         handleUsersNoLongerAssignedToCurrentCountry(this.unicefFocalPointUsers, this.assessment.focal_points_details);
+        this.unicefFocalPointUsers = [...this.unicefFocalPointUsers];
       }
     }
   }

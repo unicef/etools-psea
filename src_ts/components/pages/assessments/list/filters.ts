@@ -120,7 +120,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
     selected: false
   },
   {
-    filterName: 'Assessor Unicef Staff',
+    filterName: 'Assessor UNICEF Staff',
     filterKey: FilterKeys.assessor_staff,
     type: EtoolsFilterTypes.DropdownMulti,
     selectionOptions: [],
