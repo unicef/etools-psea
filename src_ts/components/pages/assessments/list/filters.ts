@@ -2,8 +2,6 @@ import {EtoolsFilter, EtoolsFilterTypes} from '../../../common/layout/filters/et
 import {GenericObject} from '../../../../types/globals';
 import {isJsonStrMatch} from '../../../utils/utils';
 
-export const onlyForUnicefFilters = ['assessor_staff', 'assessor_firm', 'assessor_external'];
-
 export enum FilterKeys {
   q = 'q',
   status = 'status',
@@ -18,6 +16,9 @@ export enum FilterKeys {
 }
 
 export type FilterKeysAndTheirSelectedValues = {[key in FilterKeys]?: any};
+
+export const onlyForUnicefFilters = [FilterKeys.assessor_staff, FilterKeys.assessor_firm,
+FilterKeys.assessor_external, FilterKeys.unicef_focal_point];
 
 export const defaultSelectedFilters: FilterKeysAndTheirSelectedValues = {
   q: '',

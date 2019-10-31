@@ -71,7 +71,6 @@ export const loadSections = () => (dispatch: any) => {
     .then((resp: any) => dispatch(setSections(resp)))
     .catch((error: GenericObject) => {
       logError('loadSections req error...', LOGS_PREFIX, error);
-      throw error;
     });
 };
 
@@ -80,7 +79,6 @@ export const loadOffices = () => (dispatch: any) => {
     .then((resp: any) => dispatch(setOffices(resp)))
     .catch((error: GenericObject) => {
       logError('loadOffices req error...', LOGS_PREFIX, error);
-      throw error;
     });
 };
 
@@ -96,7 +94,6 @@ export const loadPartners = () => (dispatch: any) => {
     .then((resp: any) => dispatch(setPartners(resp)))
     .catch((error: GenericObject) => {
       logError('loadPartners req error...', LOGS_PREFIX, error);
-      throw error;
     });
 };
 
@@ -107,7 +104,6 @@ export const loadExternalIndividuals = (callBack?: () => void) => (dispatch: any
     })
     .catch((error: GenericObject) => {
       logError('loadExternalIndividuals req error...', LOGS_PREFIX, error);
-      throw error;
     })
     .then(() => {
       if (callBack && typeof (callBack) === 'function') {
@@ -123,15 +119,15 @@ export const loadAssessingFirms = () => (dispatch: any) => {
     })
     .catch((error: GenericObject) => {
       logError('loadAssessingFirms req error...', LOGS_PREFIX, error);
-      throw error;
     });
 };
 
 export const loadUnicefUsers = () => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.unicefUsers.url!))
-    .then((resp: any) => dispatch(updateUnicefUsersData(resp)))
+    .then((resp: any) => {
+      dispatch(updateUnicefUsersData(resp));
+    })
     .catch((error: GenericObject) => {
       logError('loadUnicefUsers req error...', LOGS_PREFIX, error);
-      throw error;
     });
 };

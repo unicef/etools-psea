@@ -129,7 +129,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
 
   @property({type: Array})
   sort: EtoolsTableSortItem[] = [{name: 'assessment_date', sort: EtoolsTableColumnSort.Desc},
-    {name: 'partner_name', sort: EtoolsTableColumnSort.Asc}];
+  {name: 'partner_name', sort: EtoolsTableColumnSort.Asc}];
 
   @property({type: Array})
   filters!: EtoolsFilter[];
@@ -253,11 +253,12 @@ export class AssessmentsList extends connect(store)(LitElement) {
     */
   private dataRequiredByFiltersHasBeenLoaded(state: RootState) {
     if (get(state, 'user.data') && state.commonData &&
-        // Avoid selectedValue being set before the dropdown is populated with options
-        get(state, 'commonData.unicefUsers.length') &&
-        get(state, 'commonData.partners.length') &&
-        this.routeDetails.queryParams &&
-        Object.keys(this.routeDetails.queryParams).length > 0) {
+      // Avoid selectedValue being set before the dropdown is populated with options
+      // And take into account that for non unicef users, the users endpoint returns 403
+      (!this.isUnicefUser || get(state, 'commonData.unicefUsers.length')) &&
+      get(state, 'commonData.partners.length') &&
+      this.routeDetails.queryParams &&
+      Object.keys(this.routeDetails.queryParams).length > 0) {
       return true;
     }
     return false;
