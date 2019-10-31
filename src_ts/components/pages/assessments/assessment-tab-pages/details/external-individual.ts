@@ -14,6 +14,7 @@ import {UnicefUser} from '../../../../../types/user-model';
 import {Assessor, AssessorTypes} from '../../../../../types/assessment';
 import {updateAssessorData} from '../../../../../redux/actions/page-data';
 import {loadExternalIndividuals} from '../../../../../redux/actions/common-data';
+import get from 'lodash-es/get';
 
 /**
  * @customElement
@@ -72,16 +73,32 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   @property({type: String})
   origAssessorType!: AssessorTypes;
 
+
   private dialogExtIndividual!: ExternalIndividualDialog;
 
   stateChanged(state: RootState) {
-    const stateExternalIndivs = state.commonData!.externalIndividuals;
-    if (stateExternalIndivs && !isJsonStrMatch(stateExternalIndivs, this.externalIndividuals)) {
-      this.externalIndividuals = [...stateExternalIndivs];
-      if (this.origAssessorType === AssessorTypes.ExternalIndividual) {
+    this.populateExternalIndividualsDropdown(state);
+  }
+
+  private populateExternalIndividualsDropdown(state: RootState) {
+    if (this.origAssessorType !== AssessorTypes.ExternalIndividual) {
+      return;
+    }
+
+    if (get(state, 'user.data')) {
+      if (!state.user!.data!.is_unicef_user) {
+
+        const stateExternalIndivs = get(state, 'commonData.externalIndividuals');
+        if (stateExternalIndivs &&
+          !isJsonStrMatch(stateExternalIndivs, this.externalIndividuals))
+        this.externalIndividuals = [...stateExternalIndivs];
         // check if already saved external individual exists on loaded data, if not they will be added
         // (they might be missing if changed country)
         handleUsersNoLongerAssignedToCurrentCountry(this.externalIndividuals, [this.assessor.user_details]);
+        this.externalIndividuals = [...this.externalIndividuals];
+
+      } else {
+        this.externalIndividuals = [this.assessor.user_details];
       }
     }
   }
