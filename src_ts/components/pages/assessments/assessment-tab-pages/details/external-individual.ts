@@ -77,6 +77,10 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   private dialogExtIndividual!: ExternalIndividualDialog;
 
   stateChanged(state: RootState) {
+    if (get(state, 'app.routeDetails.subRouteName') !== 'details') {
+      return;
+    }
+
     this.populateExternalIndividualsDropdown(state);
   }
 
