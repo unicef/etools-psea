@@ -10,6 +10,7 @@ import {prettyDate} from '../../../utils/date-utility';
 import {EtoolsPaginator} from './pagination/paginator';
 import './pagination/etools-pagination';
 import get from 'lodash-es/get';
+import {etoolsTableResponsiveStyles} from "./etools-table-responsive-styles";
 
 export enum EtoolsTableColumnType {
   Text,
@@ -58,7 +59,7 @@ export class EtoolsTable extends LitElement {
   public render() {
     // language=HTML
     return html`
-      ${etoolsTableStyles}
+      ${etoolsTableStyles} ${etoolsTableResponsiveStyles}
       <table>
         <caption ?hidden="${this.showCaption(this.caption)}">${this.caption}</caption>
         <thead>
