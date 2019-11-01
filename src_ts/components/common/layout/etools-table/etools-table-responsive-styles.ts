@@ -50,6 +50,7 @@ export const etoolsTableResponsiveStyles = html`
     table td::before {
       content: attr(data-label);
       float: left;
+      color: var(--etools-table-secondary-text-color, rgba(0, 0, 0, .54));
     }
 
     table td:first-child {
