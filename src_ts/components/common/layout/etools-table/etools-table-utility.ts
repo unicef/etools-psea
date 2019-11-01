@@ -46,25 +46,28 @@ export const buildUrlQueryString = (params: GenericObject): string => {
   const queryParams = [];
 
   for (const param in params) {
-    if (params[param]) {
-      const paramValue = params[param];
-      let filterUrlValue;
+    if (!params[param]) {
+      continue;
+    }
+    const paramValue = params[param];
+    let filterUrlValue;
 
-      if (paramValue instanceof Array && paramValue.length > 0) {
+    if (paramValue instanceof Array) {
+      if (paramValue.length > 0) {
         filterUrlValue = paramValue.join(',');
-      } else if (typeof paramValue === 'boolean') {
-        if (paramValue) { // ignore if it's false
-          filterUrlValue = 'true';
-        }
-      } else {
-        if (!(param === 'page' && paramValue === 1)) { // do not include page if page=1
-          filterUrlValue = String(paramValue).trim();
-        }
       }
+    } else if (typeof paramValue === 'boolean') {
+      if (paramValue) { // ignore if it's false
+        filterUrlValue = 'true';
+      }
+    } else {
+      if (!(param === 'page' && paramValue === 1)) { // do not include page if page=1
+        filterUrlValue = String(paramValue).trim();
+      }
+    }
 
-      if (filterUrlValue) {
-        queryParams.push(param + '=' + filterUrlValue);
-      }
+    if (filterUrlValue) {
+      queryParams.push(param + '=' + filterUrlValue);
     }
   }
 
