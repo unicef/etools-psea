@@ -15,6 +15,7 @@ documentContainer.innerHTML = `
 
         --header-color: #ffffff;
         --header-bg-color: #233944;
+        --header-icon-color: rgba(250, 250, 250, 0.70);
         --nonprod-header-color: #a94442;
         --nonprod-text-warn-color: #e6e600;
 
