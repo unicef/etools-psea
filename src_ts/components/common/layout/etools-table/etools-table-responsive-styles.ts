@@ -5,18 +5,6 @@ import {html} from 'lit-element';
 export const etoolsTableResponsiveStyles = html`
   <style>
 
-    /*.wide-screen {*/
-    
-    /*}*/
-    
-    /*.narrow-screen {*/
-    /*  @apply --layout-wrap;*/
-    /*  @apply --layout-flex;*/
-    /*  flex: 1 0 calc(50% - 16px);*/
-    /*  max-width: calc(50% - 16px);*/
-    /*}*/
-
-
     /* 
     Max width before this PARTICULAR table gets nasty
     This query will take effect for any screen smaller than 760px
@@ -37,10 +25,6 @@ export const etoolsTableResponsiveStyles = html`
       table td {
         padding: 0 0 0 50%;
       }
-
-      /*table tr td:last-child {*/
-      /*  padding: 0;*/
-      /*}*/
       
       table td, table th {
         display: block;
@@ -69,7 +53,6 @@ export const etoolsTableResponsiveStyles = html`
         /* Behave  like a "row" */
         border: none;
         line-height: inherit;
-        /*border-bottom: 1px solid #eee;*/
         position: relative;
         padding-left: 50%;
       }
@@ -78,7 +61,6 @@ export const etoolsTableResponsiveStyles = html`
         /* Now like a table header */
         position: absolute;
         /* Top/left values mimic padding */
-        top: 6px;
         left: 6px;
         width: 45%;
         padding-right: 10px;
@@ -90,39 +72,26 @@ export const etoolsTableResponsiveStyles = html`
       \t*/
       td:nth-of-type(1):before {
         content: "Reference No.";
-        display: inline-block;
-        vertical-align: middle;
-        color: red;
       }
 
       td:nth-of-type(2):before {
         content: "Assessment Date";
-        display: inline-block;
-        vertical-align: middle;
       }
 
       td:nth-of-type(3):before {
         content: "Partner Org";
-        display: inline-block;
-        vertical-align: middle;
       }
 
       td:nth-of-type(4):before {
         content: "Status";
-        display: inline-block;
-        vertical-align: middle;
       }
 
       td:nth-of-type(5):before {
         content: "Assessor";
-        display: inline-block;
-        vertical-align: middle;
       }
 
       td:nth-of-type(6):before {
         content: "SEA Risk Rating";
-        display: inline-block;
-        vertical-align: middle;
       }
       
     }
