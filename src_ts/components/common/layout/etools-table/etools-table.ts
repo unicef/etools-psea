@@ -91,6 +91,9 @@ export class EtoolsTable extends LitElement {
   @property({type: String})
   caption: string = '';
 
+  @property({type: String})
+  actionsLabel: string = 'Actions';
+
   @property({type: Array})
   columns: EtoolsTableColumn[] = [];
 
@@ -144,10 +147,10 @@ export class EtoolsTable extends LitElement {
     const columnsKeys = this.getColumnsKeys();
     return html`
       <tr>
-        ${columnsKeys.map((k: string) => html`<td class="${this.getRowDataColumnClassList(k)}">
+        ${columnsKeys.map((k: string) => html`<td data-label="${this.getColumnDetails(k).label}" class="${this.getRowDataColumnClassList(k)}">
           ${this.getItemValue(item, k, showEdit)}</td>`)}
 
-        ${this.showRowActions() ? html`<td class="row-actions">${this.getRowActionsTmpl(item)}` : ''}
+        ${this.showRowActions() ? html`<td data-label="${this.actionsLabel}" class="row-actions">&nbsp;${this.getRowActionsTmpl(item)}` : ''}
       </tr>
     `;
   }
