@@ -77,30 +77,39 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   private dialogExtIndividual!: ExternalIndividualDialog;
 
   stateChanged(state: RootState) {
+    if (get(state, 'app.routeDetails.subRouteName') !== 'details') {
+      return;
+    }
+
     this.populateExternalIndividualsDropdown(state);
   }
 
   private populateExternalIndividualsDropdown(state: RootState) {
-    if (this.origAssessorType !== AssessorTypes.ExternalIndividual) {
-      return;
-    }
-
     if (get(state, 'user.data')) {
-      if (!state.user!.data!.is_unicef_user) {
+      if (state.user!.data!.is_unicef_user) {
 
         const stateExternalIndivs = get(state, 'commonData.externalIndividuals');
         if (stateExternalIndivs &&
-          !isJsonStrMatch(stateExternalIndivs, this.externalIndividuals))
-        this.externalIndividuals = [...stateExternalIndivs];
-        // check if already saved external individual exists on loaded data, if not they will be added
-        // (they might be missing if changed country)
-        handleUsersNoLongerAssignedToCurrentCountry(this.externalIndividuals, [this.assessor.user_details]);
-        this.externalIndividuals = [...this.externalIndividuals];
+          !isJsonStrMatch(stateExternalIndivs, this.externalIndividuals)) {
 
+          this.externalIndividuals = [...stateExternalIndivs];
+          if (this.origAssessorType === AssessorTypes.ExternalIndividual) {// ?????
+            // check if already saved external individual exists on loaded data, if not they will be added
+            // (they might be missing if changed country)
+            handleUsersNoLongerAssignedToCurrentCountry(this.externalIndividuals,
+              this.getSavedExternalDetailsAsArray());
+            this.externalIndividuals = [...this.externalIndividuals];
+          }
+        }
       } else {
-        this.externalIndividuals = [this.assessor.user_details];
+        this.externalIndividuals = this.getSavedExternalDetailsAsArray();
       }
     }
+  }
+
+  private getSavedExternalDetailsAsArray() {
+    let savedExternal = this.assessor.user_details;
+    return !!(savedExternal && Object.keys(savedExternal).length > 0) ? [savedExternal] : [];
   }
 
   private openAddDialog() {
