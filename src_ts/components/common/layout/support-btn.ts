@@ -31,7 +31,6 @@ export class SupportBtn extends LitElement {
           }
           iron-icon {
             visibility: visible;
-            vertical-align: middle;
             top: 13px;
           }
         }
