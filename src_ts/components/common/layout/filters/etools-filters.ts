@@ -211,6 +211,10 @@ export class EtoolsFilters extends LitElement {
           *[hidden] {
             display: none !important;
           }
+          
+          paper-button:focus {
+            outline: 1px solid var(--primary-color);
+          }
         </style>
         <div id="filters">
           ${this.selectedFiltersTmpl(this.filters)}

@@ -9,6 +9,10 @@ export const etoolsTableStyles = html`
       width: 100%;
     }
 
+    a:focus {
+      outline: 1px solid var(--primary-color);
+    }
+
     table {
       width: 100%;
       margin-bottom: 1rem;

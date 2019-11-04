@@ -24,6 +24,11 @@ export class ExportData extends LitElement {
           font-weight: bold;
           color: var(--secondary-text-color);
         }
+        
+        paper-button:focus {
+          outline: 1px solid var(--primary-color);
+        }
+        
         paper-button iron-icon {
           margin-right: 10px;
           color: var(--secondary-text-color);
