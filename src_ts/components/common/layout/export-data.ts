@@ -1,9 +1,10 @@
-import {customElement, html, LitElement, property} from 'lit-element';
+import {customElement, html, LitElement, property, css} from 'lit-element';
 import '@polymer/paper-button/paper-button';
 import '@polymer/paper-menu-button/paper-menu-button';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/paper-listbox/paper-listbox';
 import {GenericObject} from '../../../types/globals';
+import {elevation2} from '../../styles/lit-styles/elevation-styles';
 
 /**
  * @customElement
@@ -11,10 +12,9 @@ import {GenericObject} from '../../../types/globals';
  */
 @customElement('export-data')
 export class ExportData extends LitElement {
-
-  public render() {
-    return html`
-      <style>
+  static get styles() {
+    return [
+      css`
         paper-menu-button{
           padding: 0px 24px;
         }
@@ -25,18 +25,20 @@ export class ExportData extends LitElement {
           font-weight: bold;
           color: var(--secondary-text-color);
         }
-        
-        paper-button:focus {
-          box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14),
-          0 1px 10px 0 rgba(0, 0, 0, 0.12),
-          0 2px 4px -1px rgba(0, 0, 0, 0.4);
-        }
-        
+
         paper-button iron-icon {
           margin-right: 10px;
           color: var(--secondary-text-color);
         }
-      </style>
+
+        paper-button:focus {
+          ${elevation2}
+        }
+      `
+    ];
+  }
+  public render() {
+    return html`
       <paper-menu-button id="pdExportMenuBtn" close-on-activate horizontal-align="right">
           <paper-button slot="dropdown-trigger" class="dropdown-trigger">
             <iron-icon icon="file-download"></iron-icon>
