@@ -19,14 +19,16 @@ export class ExportData extends LitElement {
           padding: 0px 24px;
         }
         paper-button{
-          padding: 0px;
+          height: 40px;
+          padding: 0px 5px;
           margin-left: 10px;
           font-weight: bold;
           color: var(--secondary-text-color);
         }
         
         paper-button:focus {
-          outline: 1px solid var(--primary-color);
+          /*@apply --paper-button-raised-keyboard-focus*/
+          @apply --paper-material-elevation-2
         }
         
         paper-button iron-icon {

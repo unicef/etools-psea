@@ -10,7 +10,7 @@ export const etoolsTableStyles = html`
     }
 
     a:focus {
-      outline: 1px solid var(--primary-color);
+      border-bottom: 2px solid var(--paper-input-container-focus-color, var(--primary-color));
     }
 
     table {

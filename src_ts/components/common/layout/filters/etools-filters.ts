@@ -213,7 +213,7 @@ export class EtoolsFilters extends LitElement {
           }
           
           paper-button:focus {
-            outline: 1px solid var(--primary-color);
+            @apply --paper-material-elevation-2
           }
         </style>
         <div id="filters">
