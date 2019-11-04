@@ -27,7 +27,6 @@ export class ExportData extends LitElement {
         }
         
         paper-button:focus {
-          /*@apply --paper-button-raised-keyboard-focus*/
           @apply --paper-material-elevation-2
         }
         
