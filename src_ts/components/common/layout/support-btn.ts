@@ -26,8 +26,11 @@ export class SupportBtn extends LitElement {
         }
         
         @media (max-width: 768px) {
+          a {
+            visibility: collapse;
+          }
           iron-icon {
-            display: none;
+            visibility: visible;
           }
         }
       </style>
