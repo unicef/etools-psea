@@ -1,10 +1,8 @@
 import '@polymer/iron-flex-layout/iron-flex-layout';
-import {html} from 'lit-element';
+import {css} from 'lit-element';
 
 // language=HTML
-export const etoolsTableResponsiveStyles = html`
-  <style>
-
+export const etoolsTableResponsiveStyles = css`
   /*
     Max width before this PARTICULAR table gets nasty
     This query will take effect for any screen smaller than 760px
@@ -65,6 +63,4 @@ export const etoolsTableResponsiveStyles = html`
       visibility: visible;
     }
   }
-
-  </style>
 `;
