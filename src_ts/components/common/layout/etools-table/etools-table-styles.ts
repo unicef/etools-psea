@@ -7,6 +7,11 @@ export const etoolsTableStyles = html`
     :host {
       display: block;
       width: 100%;
+      overflow-x: hidden;
+    }
+
+    a:focus {
+      border-bottom: 2px solid var(--paper-input-container-focus-color, var(--primary-color));
     }
 
     table {
