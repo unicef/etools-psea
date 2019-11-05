@@ -1,5 +1,5 @@
 import {
-  LitElement, html, customElement, property
+  LitElement, html, customElement, property, css
 } from 'lit-element';
 import {etoolsFiltersStyles} from './etools-filters-styles';
 
@@ -15,6 +15,7 @@ import '@polymer/paper-item/paper-item-body';
 import '@unicef-polymer/etools-dropdown/etools-dropdown-multi';
 import '@unicef-polymer/etools-dropdown/etools-dropdown';
 import '@unicef-polymer/etools-date-time/datepicker-lite';
+import {elevation2} from '../../../styles/lit-styles/elevation-styles';
 
 export enum EtoolsFilterTypes {
   Search,
@@ -47,7 +48,23 @@ export class EtoolsFilters extends LitElement {
   private lastSelectedValues: any = null;
 
   static get styles() {
-    return [etoolsFiltersStyles];
+    return [etoolsFiltersStyles,
+      css`
+        /* Set datepicker prefix icon color using mixin (cannot be used in etools-filter-styles) */
+        datepicker-lite {
+          --paper-input-prefix: {
+            color: var(--secondary-text-color, rgba(0, 0, 0, 0.54));
+          }
+        }
+        *[hidden] {
+          display: none !important;
+        }
+
+        paper-button:focus {
+          ${elevation2}
+        }
+      `
+    ];
   }
 
   getSearchTmpl(f: EtoolsFilter) {
@@ -201,17 +218,6 @@ export class EtoolsFilters extends LitElement {
 
     // language=HTML
     return html`
-        <style>
-          /* Set datepicker prefix icon color using mixin (cannot be used in etools-filter-styles) */
-          datepicker-lite {
-            --paper-input-prefix: {
-              color: var(--secondary-text-color, rgba(0, 0, 0, 0.54));
-            }
-          }
-          *[hidden] {
-            display: none !important;
-          }
-        </style>
         <div id="filters">
           ${this.selectedFiltersTmpl(this.filters)}
         </div>
