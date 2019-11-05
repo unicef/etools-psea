@@ -10,6 +10,10 @@ export const etoolsTableStyles = html`
       overflow-x: hidden;
     }
 
+    a:focus {
+      border-bottom: 2px solid var(--paper-input-container-focus-color, var(--primary-color));
+    }
+
     table {
       width: 100%;
       margin-bottom: 1rem;
