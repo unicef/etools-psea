@@ -8,11 +8,13 @@ import {ExternalIndividualDialog} from './external-individual-dialog';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
+import {handleUsersNoLongerAssignedToCurrentCountry} from '../../../../common/common-methods';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
 import {UnicefUser} from '../../../../../types/user-model';
 import {Assessor, AssessorTypes} from '../../../../../types/assessment';
 import {updateAssessorData} from '../../../../../redux/actions/page-data';
 import {loadExternalIndividuals} from '../../../../../redux/actions/common-data';
+import get from 'lodash-es/get';
 
 /**
  * @customElement
@@ -21,6 +23,9 @@ import {loadExternalIndividuals} from '../../../../../redux/actions/common-data'
 
 @customElement('external-individual')
 export class ExternalIndividual extends connect(store)(LitElement) {
+  static get styles() {
+    return [labelAndvalueStylesLit];
+  }
   render() {
     // language=HTML
     return html`
@@ -33,7 +38,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
           padding-bottom: 12px;
         }
       </style>
-      ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
+      ${SharedStylesLit}${gridLayoutStylesLit}
       <div class="row-padding-v">
         <etools-dropdown id="externalIndiv"
           class="padd-bottom"
@@ -65,13 +70,46 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   @property({type: Boolean})
   editMode!: boolean;
 
+  @property({type: String})
+  origAssessorType!: AssessorTypes;
+
+
   private dialogExtIndividual!: ExternalIndividualDialog;
 
   stateChanged(state: RootState) {
-    const stateExternalIndivs = state.commonData!.externalIndividuals;
-    if (stateExternalIndivs && !isJsonStrMatch(stateExternalIndivs, this.externalIndividuals)) {
-      this.externalIndividuals = [...stateExternalIndivs];
+    if (get(state, 'app.routeDetails.subRouteName') !== 'details') {
+      return;
     }
+
+    this.populateExternalIndividualsDropdown(state);
+  }
+
+  private populateExternalIndividualsDropdown(state: RootState) {
+    if (get(state, 'user.data')) {
+      if (state.user!.data!.is_unicef_user) {
+
+        const stateExternalIndivs = get(state, 'commonData.externalIndividuals');
+        if (stateExternalIndivs &&
+          !isJsonStrMatch(stateExternalIndivs, this.externalIndividuals)) {
+
+          this.externalIndividuals = [...stateExternalIndivs];
+          if (this.origAssessorType === AssessorTypes.ExternalIndividual) {// ?????
+            // check if already saved external individual exists on loaded data, if not they will be added
+            // (they might be missing if changed country)
+            handleUsersNoLongerAssignedToCurrentCountry(this.externalIndividuals,
+              this.getSavedExternalDetailsAsArray());
+            this.externalIndividuals = [...this.externalIndividuals];
+          }
+        }
+      } else {
+        this.externalIndividuals = this.getSavedExternalDetailsAsArray();
+      }
+    }
+  }
+
+  private getSavedExternalDetailsAsArray() {
+    let savedExternal = this.assessor.user_details;
+    return !!(savedExternal && Object.keys(savedExternal).length > 0) ? [savedExternal] : [];
   }
 
   private openAddDialog() {

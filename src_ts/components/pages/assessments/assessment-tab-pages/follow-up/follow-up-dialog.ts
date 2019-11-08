@@ -52,7 +52,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
                      @confirm-btn-clicked="${this.onConfirmBtnClick}"
                      @close="${this.handleDialogClosed}">
         <!-- TODO: The following warning may be replaced -->
-        
+
         <etools-error-warn-box .messages="${this.warningMessages}">
         </etools-error-warn-box>
 
@@ -217,6 +217,13 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   @property({type: Array, reflect: true})
   warningMessages: string[] = [];
 
+  private initialItem!: ActionPoint;
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.editedItem = cloneDeep(this.defaultItem);
+  }
+
   stateChanged(state: RootState) {
     if (state.commonData) {
       if (!isJsonStrMatch(this.partners, state.commonData.partners)) {
@@ -243,7 +250,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   updated(changedProperties: GenericObject) {
     if (this.warningMessages.length && !changedProperties.has('warningMessages') &&
         !isEqual(this.editedItem, changedProperties.get('editedItem'))) {
-        this.warningMessages.pop();
+      this.warningMessages.pop();
     }
   }
 
@@ -277,19 +284,34 @@ export class FollowUpDialog extends connect(store)(LitElement) {
     this.editedItem.high_priority = this.getEl('#highPriorityInput').checked;
   }
 
+  private _editedItemHasChanged() {
+    return !isJsonStrMatch(this.initialItem, this.editedItem);
+  }
+
   private saveDialogData() {
     this.getControlsData();
+    if (!this._editedItemHasChanged()) {
+      this.handleDialogClosed();
+      fireEvent(this.toastEventSource, 'toast', {
+        text: `No changes have been detected on this action point.`
+      });
+      return;
+    }
+
     this.requestInProcess = true;
     const options: any = {
       method: this.isNewRecord ? 'POST' : 'PATCH',
-      url: this.isNewRecord ?
-        getEndpoint(etoolsEndpoints.actionPoints, {id: this.assessment.id}).url :
-        getEndpoint(etoolsEndpoints.editActionPoint, {id: this.assessment.id, actionPoint: this.editedItem.id}).url
+      url: this._getUrl()
     };
 
     makeRequest(options, this.editedItem)
       .then((resp: any) => this._handleResponse(resp))
       .catch((err: any) => this._handleError(err));
+  }
+
+  _getUrl() {
+    const actionPointsUrl = getEndpoint(etoolsEndpoints.actionPoints, {id: this.assessment.id}).url!;
+    return (this.isNewRecord ? actionPointsUrl : actionPointsUrl + this.editedItem.id + '/');
   }
 
   _handleResponse(resp: any) {
@@ -318,10 +340,13 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   }
 
   public openDialog() {
-    if (!this.editedItem.id) {this.resetEditedItem();}
+    if (!this.editedItem.id) {
+      this.resetEditedItem();
+    }
     this.isNewRecord = !this.editedItem.id || this.editedItem.id == 'new';
     this.dialogTitle = this.isNewRecord ? 'Add Action Point' : 'Edit Action Point';
     this.confirmBtnTxt = this.isNewRecord ? 'Add' : 'Save';
+    this.initialItem = cloneDeep(this.editedItem);
     this.dialogOpened = true;
   }
 

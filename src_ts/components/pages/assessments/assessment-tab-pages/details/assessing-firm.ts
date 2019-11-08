@@ -10,6 +10,7 @@ import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {buttonsStyles} from '../../../../styles/button-styles';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 /**
  * @customElement
@@ -17,10 +18,13 @@ import {buttonsStyles} from '../../../../styles/button-styles';
  */
 @customElement('assessing-firm')
 export class AssessingFirm extends LitElement {
+  static get styles() {
+    return [buttonsStyles, labelAndvalueStylesLit]
+  }
   render() {
     // language=HTML
     return html`
-      ${SharedStylesLit} ${labelAndvalueStylesLit} ${gridLayoutStylesLit} ${buttonsStyles}
+     ${SharedStylesLit} ${gridLayoutStylesLit}
       <style>
         .input-width {
           max-width: 230px;
@@ -40,7 +44,7 @@ export class AssessingFirm extends LitElement {
           width: 16px;
           height: 16px;
         }
-       
+
       </style>
 
       <div class="layout-horizontal row-padding-v">
@@ -55,7 +59,7 @@ export class AssessingFirm extends LitElement {
           required
           ?readonly="${this.isReadonly(this.editMode)}">
         </paper-input>
-        <paper-button class="info left-icon" 
+        <paper-button class="info left-icon"
                       @tap="${this.getAssessorFirmByPoNumber}"
                       ?hidden="${this.isReadonly(this.editMode) || this.poRequestInProgress}">
           <iron-icon icon="autorenew"></iron-icon>
@@ -132,7 +136,7 @@ export class AssessingFirm extends LitElement {
   }
 
   _handleErrorOnGetFirm(err: any) {
-    console.log(err);
+    logError('Assessing firm req failed', 'AssessingFirm', err);
     this.assessor.auditor_firm = null;
     this.assessor.auditor_firm_name = '';
     this.errMessage = 'PO number not found';
@@ -159,6 +163,10 @@ export class AssessingFirm extends LitElement {
     const valid = !!(this.assessor.auditor_firm && this.assessor.auditor_firm_name);
     this.showGetDetailsBtnWarn = !valid;
     return valid;
+  }
+
+  resetValidations() {
+    this.showGetDetailsBtnWarn = false;
   }
 
   _updatePoNumber(newVal: string) {

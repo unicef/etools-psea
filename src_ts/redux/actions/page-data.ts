@@ -5,6 +5,8 @@ import {etoolsEndpoints} from '../../endpoints/endpoints-list';
 import {getEndpoint} from '../../endpoints/endpoints';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
+const LOGS_PREFIX = 'Redux page-data actions';
+
 export const UPDATE_ASSESSMENT_DATA = 'UPDATE_ASSESSMENT_DATA';
 export const UPDATE_ASSESSOR_DATA = 'UPDATE_ASSESSOR_DATA';
 
@@ -42,7 +44,7 @@ export const requestAssessorData = (assessmentId: number) => (dispatch: any) => 
       dispatch(updateAssessorData(response));
     })
     .catch((err: any) => {
-      logError(err);
+      logError('Assessor request failed', LOGS_PREFIX, err);
       if (err.status === 404) {
         // in case assessor is not found, init as new assessor
         dispatch(updateAssessorData(new Assessor()));
@@ -78,11 +80,11 @@ export const saveAssessorData = (assessmentId: number,
   };
 
 /**
- * Request assessment data and update redux store
+ * Request assessment and assessor and update redux store
  * @param assessmentId
  * @param errorCallback
  */
-export const requestAssessmentData =
+export const requestAssessmentAndAssessor =
   (assessmentId: number, errorCallback: (...args: any[]) => void) => (dispatch: any) => {
     if (!assessmentId || isNaN(assessmentId)) {
       throw new Error(`[requestAssessmentData] Invalid assessment id ${assessmentId}`);
@@ -102,4 +104,18 @@ export const requestAssessmentData =
       .catch(err => errorCallback(err));
   };
 
-
+export const requestAssessment = (assessmentId: number, errorCallback: (...args: any[]) => void) => (dispatch: any) => {
+  if (!assessmentId || isNaN(assessmentId)) {
+    throw new Error(`[requestAssessmentData] Invalid assessment id ${assessmentId}`);
+  }
+  const url = `${etoolsEndpoints.assessment.url!}${assessmentId}/`;
+  return makeRequest({url: url})
+    .then((response: Assessment) => {
+      dispatch(updateAssessmentData(response));
+    })
+    .catch((err) => {
+      if (errorCallback) {
+        errorCallback(err);
+      }
+    });
+};

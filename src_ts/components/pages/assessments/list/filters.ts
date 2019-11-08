@@ -2,7 +2,25 @@ import {EtoolsFilter, EtoolsFilterTypes} from '../../../common/layout/filters/et
 import {GenericObject} from '../../../../types/globals';
 import {isJsonStrMatch} from '../../../utils/utils';
 
-export const defaultSelectedFilters: GenericObject = {
+export enum FilterKeys {
+  q = 'q',
+  status = 'status',
+  unicef_focal_point = 'unicef_focal_point',
+  partner = 'partner',
+  assessment_date = 'assessment_date',
+  assessor_staff = 'assessor_staff',
+  assessor_firm = 'assessor_firm',
+  assessor_external = 'assessor_external',
+  page_size = 'page_size',
+  sort = 'sort'
+}
+
+export type FilterKeysAndTheirSelectedValues = {[key in FilterKeys]?: any};
+
+export const onlyForUnicefFilters = [FilterKeys.assessor_staff, FilterKeys.assessor_firm,
+FilterKeys.assessor_external, FilterKeys.unicef_focal_point];
+
+export const defaultSelectedFilters: FilterKeysAndTheirSelectedValues = {
   q: '',
   status: [],
   unicef_focal_point: [],
@@ -10,17 +28,30 @@ export const defaultSelectedFilters: GenericObject = {
   assessment_date: null
 };
 
+export const selectedValueTypeByFilterKey: GenericObject = {
+  [FilterKeys.q]: 'string',
+  [FilterKeys.status]: 'Array',
+  [FilterKeys.unicef_focal_point]: 'Array',
+  [FilterKeys.partner]: 'Array',
+  [FilterKeys.assessment_date]: 'string',
+  [FilterKeys.assessor_staff]: 'Array',
+  [FilterKeys.assessor_firm]: 'Array',
+  [FilterKeys.assessor_external]: 'Array',
+  [FilterKeys.page_size]: 'string',
+  [FilterKeys.sort]: 'string'
+};
+
 export const assessmentsFilters: EtoolsFilter[] = [
   {
     filterName: 'Search assessment',
-    filterKey: 'q',
+    filterKey: FilterKeys.q,
     type: EtoolsFilterTypes.Search,
     selectedValue: '',
     selected: true
   },
   {
     filterName: 'Status',
-    filterKey: 'status',
+    filterKey: FilterKeys.status,
     type: EtoolsFilterTypes.DropdownMulti,
     selectionOptions: [
       {
@@ -57,7 +88,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
     disabled: false
   },
   {
-    filterName: 'Unicef Focal Point',
+    filterName: 'UNICEF Focal Point',
     filterKey: 'unicef_focal_point',
     type: EtoolsFilterTypes.DropdownMulti,
     selectionOptions: [],
@@ -71,7 +102,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
   },
   {
     filterName: 'Partner Org',
-    filterKey: 'partner',
+    filterKey: FilterKeys.partner,
     type: EtoolsFilterTypes.DropdownMulti,
     selectionOptions: [],
     selectedValue: [],
@@ -84,14 +115,14 @@ export const assessmentsFilters: EtoolsFilter[] = [
   },
   {
     filterName: 'Assessment Date',
-    filterKey: 'assessment_date',
+    filterKey: FilterKeys.assessment_date,
     type: EtoolsFilterTypes.Date,
     selectedValue: null,
-    selected: false
+    selected: true
   },
   {
-    filterName: 'Assessor Unicef Staff',
-    filterKey: 'assessor_staff',
+    filterName: 'Assessor UNICEF Staff',
+    filterKey: FilterKeys.assessor_staff,
     type: EtoolsFilterTypes.DropdownMulti,
     selectionOptions: [],
     selectedValue: [],
@@ -104,7 +135,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
   },
   {
     filterName: 'Assessor Assessing Firm',
-    filterKey: 'assessor_firm',
+    filterKey: FilterKeys.assessor_firm,
     type: EtoolsFilterTypes.DropdownMulti,
     selectionOptions: [],
     selectedValue: [],
@@ -117,7 +148,7 @@ export const assessmentsFilters: EtoolsFilter[] = [
   },
   {
     filterName: 'Assessor External Individual',
-    filterKey: 'assessor_external',
+    filterKey: FilterKeys.assessor_external,
     type: EtoolsFilterTypes.DropdownMulti,
     selectionOptions: [],
     selectedValue: [],
@@ -130,29 +161,34 @@ export const assessmentsFilters: EtoolsFilter[] = [
   }
 ];
 
-export const updateFiltersSelectedValues = (selectedFilters: GenericObject, filters: EtoolsFilter[]) => {
-  const updatedFilters = [...filters];
+export const updateFiltersSelectedValues = (selectedFilters: FilterKeysAndTheirSelectedValues,
+  filters: EtoolsFilter[]) => {
+  const availableFilters = [...filters];
+
   for (const fKey in selectedFilters) {
-    if (selectedFilters[fKey]) {
-      const filter = updatedFilters.find((f: EtoolsFilter) => f.filterKey === fKey);
-      if (filter) {
-        filter.selectedValue = selectedFilters[fKey] instanceof Array
-          ? [...selectedFilters[fKey]]
-          : selectedFilters[fKey];
+    if (fKey) {
+      const selectedValue = selectedFilters[fKey as FilterKeys];
+      if (selectedValue) {
+        const filter = availableFilters.find((f: EtoolsFilter) => f.filterKey === fKey);
+        if (filter) {
+          filter.selectedValue = selectedValue instanceof Array
+            ? [...selectedValue]
+            : selectedValue;
+
+          filter.selected = true;
+        }
       }
     }
   }
-  return updatedFilters;
+
+  return availableFilters;
 };
 
 export const updateFilterSelectionOptions = (filters: EtoolsFilter[], fKey: string, options: GenericObject[]) => {
-  let updatedFilters: EtoolsFilter[] = [...filters];
-  const filter = updatedFilters.find((f: EtoolsFilter) => f.filterKey === fKey);
+  const filter = filters.find((f: EtoolsFilter) => f.filterKey === fKey);
   if (filter && options) {
     if (!isJsonStrMatch(filter.selectionOptions, options)) {
       filter.selectionOptions = [...options];
-      updatedFilters = [...updatedFilters];
     }
   }
-  return updatedFilters;
 };

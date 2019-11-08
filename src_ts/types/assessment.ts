@@ -1,4 +1,5 @@
 import {GenericObject} from './globals';
+import {UnicefUser} from './user-model';
 
 export class AssessmentPermissions {
   edit = {
@@ -31,7 +32,7 @@ export class Assessment {
   rejected_comment: string = '';
   permissions = new AssessmentPermissions();
   partner_details?: GenericObject;
-  focal_points_details: GenericObject[] = [];
+  focal_points_details: UnicefUser[] = [];
 }
 
 export class AssessmentInvalidator {
@@ -54,6 +55,8 @@ export class Assessor {
   auditor_firm: string | null = null;
   auditor_firm_name: string = '';
   auditor_firm_staff: string[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
+  user_details: UnicefUser = {} as UnicefUser;
 }
 
 export class Question {
@@ -79,9 +82,9 @@ export class Rating {
 }
 
 export class Answer {
-  id: string | null = null;
-  assessment: string | null = null;
-  indicator: string | null = null;
+  id?: string | null = null;
+  assessment: string | number | null = null;
+  indicator: string | number | null = null;
   rating: string | null = null;
   comments: string = '';
   evidences: AnswerEvidence[] = [];

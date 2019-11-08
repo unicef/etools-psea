@@ -1,4 +1,4 @@
-import {customElement, LitElement, html, property, query} from 'lit-element';
+import {customElement, LitElement, html, property, query, css} from 'lit-element';
 import '@unicef-polymer/etools-dialog/etools-dialog.js';
 import '@polymer/paper-input/paper-textarea.js';
 
@@ -13,19 +13,18 @@ import {PaperTextareaElement} from '@polymer/paper-input/paper-textarea';
 @customElement('assessment-rejection-dialog')
 export class AssessmentRejectionDialog extends LitElement {
 
+  static get styles() {
+    return [css`
+      #rejectionReason {
+        padding-bottom: 24px;
+      }
+    `];
+  }
+
   render() {
     // language=HTML
     return html`
-      <style>
-      
-        #rejectionReason {
-          --paper-input-error: {
-            position: relative !important;
-          }
-        }
-      
-      </style>
-        ${SharedStylesLit}
+      ${SharedStylesLit}
       <etools-dialog id="assessmentRejectionDialog"
                     ?opened="${this.dialogOpened}"
                     dialog-title="Are you sure you want to reject this assessment?"

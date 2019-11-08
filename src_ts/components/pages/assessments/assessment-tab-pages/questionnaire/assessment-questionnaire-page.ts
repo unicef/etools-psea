@@ -10,11 +10,12 @@ import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {cloneDeep} from '../../../../utils/utils';
 import get from 'lodash-es/get';
-import {requestAssessmentData} from '../../../../../redux/actions/page-data';
+import {requestAssessmentAndAssessor} from '../../../../../redux/actions/page-data';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import '../../../../common/layout/etools-error-warn-box';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 export enum EtoolsPseaOverallRating {
   Low = 'Low',
@@ -64,7 +65,8 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
           text-align: left;
         }
       </style>
-      <etools-loading loading-text="Loading..." .active="${this.loadingQuestions || this.loadingAnswers}"></etools-loading>
+      <etools-loading loading-text="Loading..." .active="${this.loadingQuestions || this.loadingAnswers}">
+      </etools-loading>
       <div class="overall layout-horizontal ${this._getColorClass(this.overallRatingDisplay)}"
           ?hidden="${!this.overallRatingDisplay}">
         <div class="col-5 r-align">SEA Risk Rating:</div><div class="col-1"></div>
@@ -177,13 +179,14 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
 
     const index = this.answers.findIndex(a => Number(a.id) === Number(updatedAnswer.id));
     if (index > -1) {
-      this.answers.splice(index, 0, updatedAnswer);
+      this.answers.splice(index, 1, updatedAnswer);
     } else {
       this.answers.push(updatedAnswer);
     }
 
     if (this.answers.length === this.questionnaireItems.length) {
-      store.dispatch(requestAssessmentData(Number(this.assessmentId), this._handleErrOnGetAssessment.bind(this)));
+      store.dispatch(requestAssessmentAndAssessor(Number(this.assessmentId),
+        this._handleErrOnGetAssessment.bind(this)));
     }
   }
 
@@ -207,7 +210,7 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
       .then((resp) => {
         resp.map((r: any) => r.stamp = Date.now());
         this.questionnaireItems = resp;
-      }).catch((err: any) => console.error(err))
+      }).catch((err: any) => logError('Questions req failed', 'AssessmentQuestionnairePage', err))
       .then(() => this.loadingQuestions = false);
   }
 
@@ -217,7 +220,7 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     makeRequest(new RequestEndpoint(url))
       .then((resp) => {
         this.answers = resp;
-      }).catch((err: any) => console.error(err))
+      }).catch((err: any) => logError('Get answers req failed', 'AssessmentQuestionnairePage', err))
       .then(() => this.loadingAnswers = false);
   }
 

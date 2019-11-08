@@ -15,7 +15,7 @@ import {elevationStyles} from '../../styles/lit-styles/elevation-styles';
 import {RouteDetails} from '../../../routing/router';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {Assessment} from '../../../types/assessment';
-import {requestAssessmentData, updateAssessmentData} from '../../../redux/actions/page-data';
+import {requestAssessmentAndAssessor, updateAssessmentData} from '../../../redux/actions/page-data';
 import {cloneDeep, isJsonStrMatch} from '../../utils/utils';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {EtoolsStatusModel} from '../../common/layout/status/etools-status';
@@ -34,14 +34,14 @@ import {GenericObject} from '../../../types/globals';
 export class AssessmentTabs extends connect(store)(LitElement) {
 
   static get styles() {
-    return [elevationStyles];
+    return [elevationStyles, pageLayoutStyles];
   }
 
   public render() {
     // main template
     // language=HTML
     return html`
-      ${SharedStylesLit} ${pageContentHeaderSlottedStyles} ${pageLayoutStyles}
+      ${SharedStylesLit}${pageContentHeaderSlottedStyles}
       <style>
         etools-status {
           justify-content: center;
@@ -203,7 +203,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     if (assessmentId === 'new') {
       store.dispatch(updateAssessmentData(new Assessment()));
     } else {
-      store.dispatch(requestAssessmentData(Number(assessmentId), this.handleGetAssessmentError.bind(this)));
+      store.dispatch(requestAssessmentAndAssessor(Number(assessmentId), this.handleGetAssessmentError.bind(this)));
     }
   }
 
@@ -211,7 +211,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     if (err.status == 404) {
       updateAppLocation('/page-not-found', true);
     }
-    logError(err);
+    logError('Assessment req error', 'AssessmentTabs', err);
   }
 
   getPageTitle(assessment: Assessment) {

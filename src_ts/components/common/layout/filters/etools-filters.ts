@@ -1,5 +1,5 @@
 import {
-  LitElement, html, customElement, property
+  LitElement, html, customElement, property, css
 } from 'lit-element';
 import {etoolsFiltersStyles} from './etools-filters-styles';
 
@@ -15,6 +15,7 @@ import '@polymer/paper-item/paper-item-body';
 import '@unicef-polymer/etools-dropdown/etools-dropdown-multi';
 import '@unicef-polymer/etools-dropdown/etools-dropdown';
 import '@unicef-polymer/etools-date-time/datepicker-lite';
+import {elevation2} from '../../../styles/lit-styles/elevation-styles';
 
 export enum EtoolsFilterTypes {
   Search,
@@ -47,7 +48,23 @@ export class EtoolsFilters extends LitElement {
   private lastSelectedValues: any = null;
 
   static get styles() {
-    return [etoolsFiltersStyles];
+    return [etoolsFiltersStyles,
+      css`
+        /* Set datepicker prefix icon color using mixin (cannot be used in etools-filter-styles) */
+        datepicker-lite {
+          --paper-input-prefix: {
+            color: var(--secondary-text-color, rgba(0, 0, 0, 0.54));
+          }
+        }
+        *[hidden] {
+          display: none !important;
+        }
+
+        paper-button:focus {
+          ${elevation2}
+        }
+      `
+    ];
   }
 
   getSearchTmpl(f: EtoolsFilter) {
@@ -95,6 +112,7 @@ export class EtoolsFilters extends LitElement {
     // language=HTML
     return html`
       <etools-dropdown-multi
+          id="${f.filterKey}"
           ?hidden="${!f.selected}"
           class="filter"
           label="${f.filterName}"
@@ -144,9 +162,12 @@ export class EtoolsFilters extends LitElement {
     `;
   }
 
-  get selectedFiltersTmpl() {
+  selectedFiltersTmpl(filters: EtoolsFilter[]) {
+    if (!filters) {
+      return html``;
+    }
     const tmpl: any[] = [];
-    this.filters.forEach((f: EtoolsFilter) => {
+    filters.forEach((f: EtoolsFilter) => {
       let filterHtml = null;
       switch (f.type) {
         case EtoolsFilterTypes.Search:
@@ -172,9 +193,12 @@ export class EtoolsFilters extends LitElement {
     return tmpl;
   }
 
-  get filterMenuOptions() {
+  filterMenuOptions(filters: EtoolsFilter[]) {
+    if (!this.filters) {
+      return [];
+    }
     const menuOptions: any[] = [];
-    this.filters.forEach((f: EtoolsFilter) => {
+    filters.forEach((f: EtoolsFilter) => {
       // language=HTML
       menuOptions.push(html`
         <paper-icon-item @tap="${this.selectFilter}"
@@ -190,21 +214,12 @@ export class EtoolsFilters extends LitElement {
   }
 
   render() {
+    this.setDefaultLastSelectedValues();
+
     // language=HTML
     return html`
-        <style>
-          /* Set datepicker prefix icon color using mixin (cannot be used in etools-filter-styles) */
-          datepicker-lite {
-            --paper-input-prefix: {
-              color: var(--secondary-text-color, rgba(0, 0, 0, 0.54));
-            }
-          }
-          *[hidden] {
-            display: none !important;
-          }
-        </style>
         <div id="filters">
-          ${this.selectedFiltersTmpl}
+          ${this.selectedFiltersTmpl(this.filters)}
         </div>
 
         <div id="filters-selector">
@@ -220,11 +235,17 @@ export class EtoolsFilters extends LitElement {
               </paper-button>
             </div>
             <paper-listbox slot="dropdown-content" multi>
-              ${this.filterMenuOptions}
+              ${this.filterMenuOptions(this.filters)}
             </paper-listbox>
           </paper-menu-button>
         </div>
     `;
+  }
+
+  setDefaultLastSelectedValues() {
+    if (!this.lastSelectedValues && this.filters) {
+      this.lastSelectedValues = this.getAllFiltersAndTheirValues();
+    }
   }
 
   clearAllFilterValues() {
@@ -241,11 +262,11 @@ export class EtoolsFilters extends LitElement {
   selectFilter(e: CustomEvent) {
     const menuOption = e.currentTarget as HTMLElement;
     const filterOption: EtoolsFilter = this.getFilterOption(menuOption);
-    const isSelected: boolean = menuOption.hasAttribute('selected');
+    const wasSelected: boolean = menuOption.hasAttribute('selected');
     // toggle selected state
-    filterOption.selected = !isSelected;
+    filterOption.selected = !wasSelected;
     // reset selected value if filter was unselected and had a value
-    if (isSelected) {
+    if (wasSelected) {
       filterOption.selectedValue = this.getFilterEmptyValue(filterOption.type);
     }
     // repaint&fire change event
@@ -354,30 +375,43 @@ export class EtoolsFilters extends LitElement {
       }
     });
     this.requestUpdate();
-    this.lastSelectedValues = {...this.getSelectedFilterValues(), ...filterValues};
+    this.lastSelectedValues = {...this.getAllFiltersAndTheirValues(), ...filterValues};
   }
 
   // fire change custom event to notify parent that filters were updated
   fireFiltersChangeEvent() {
-    const selectedValues = this.getSelectedFilterValues();
+    const selectedValues = this.getAllFiltersAndTheirValues();
     if (JSON.stringify(this.lastSelectedValues) === JSON.stringify(selectedValues)) {
       return;
     }
     this.lastSelectedValues = {...selectedValues};
 
     this.dispatchEvent(new CustomEvent('filter-change', {
-      detail: selectedValues,
+      detail: this.getSelectedFiltersAndTheirValues(),
       bubbles: true,
       composed: true
     }));
   }
 
   // build and return and object based on filterKey and selectedValue
-  getSelectedFilterValues() {
+  getAllFiltersAndTheirValues() {
+    const allFilters: any = {};
+    if (this.filters) {
+      this.filters
+        .forEach((f: EtoolsFilter) => {
+          allFilters[f.filterKey] = f.selectedValue;
+        });
+    }
+    return allFilters;
+  }
+
+  getSelectedFiltersAndTheirValues() {
     const selectedFilters: any = {};
     this.filters
       .forEach((f: EtoolsFilter) => {
-        selectedFilters[f.filterKey] = f.selectedValue;
+        if (f.selected) {
+          selectedFilters[f.filterKey] = f.selectedValue;
+        }
       });
     return selectedFilters;
   }

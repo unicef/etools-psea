@@ -13,6 +13,8 @@ import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {RootState, store} from '../../../../../redux/store';
 import {connect} from 'pwa-helpers/connect-mixin';
 import '@unicef-polymer/etools-loading';
+import get from 'lodash-es/get';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 @customElement('follow-up-page')
 export class FollowUpPage extends connect(store)(LitElement) {
@@ -57,7 +59,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
       name: 'reference_number',
       type: EtoolsTableColumnType.Link,
       link_tmpl: `/apd/action-points/detail/:id`,
-      external_link: true
+      isExternalLink: true
     }, {
       label: 'Assignee (Section / Office)',
       name: 'assigned_to.name',
@@ -88,9 +90,10 @@ export class FollowUpPage extends connect(store)(LitElement) {
   assessment!: Assessment;
 
   stateChanged(state: RootState) {
-    if (state.app && state.app!.routeDetails!.params && state.app!.routeDetails!.params!.assessmentId! !== 'new') {
-      if (this.assessmentId !== state.app!.routeDetails!.params!.assessmentId) {
-        this.assessmentId = state.app!.routeDetails!.params!.assessmentId;
+    const stateAssessmentId = get(state, 'app.routeDetails.params.assessmentId');
+    if (stateAssessmentId && stateAssessmentId !== 'new') {
+      if (this.assessmentId !== stateAssessmentId) {
+        this.assessmentId = stateAssessmentId;
         this.getFollowUpData();
       }
     }
@@ -130,7 +133,8 @@ export class FollowUpPage extends connect(store)(LitElement) {
     // @ts-ignore
     makeRequest(endpoint).then((response: any) => {
       this.dataItems = response;
-    }).catch((err: any) => console.error(err))
+    }).catch((err: any) => logError(
+      'Get action points list data req failed', 'FollowUpPage', err))
       .then(() => this.showLoading = false);
   }
 
@@ -170,10 +174,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
     document.querySelector('body')!.appendChild(this.followUpDialog);
   }
 
-  openFollowUpDialog(event?: any) {
-    if (event && event.detail) {
-      this.followUpDialog.editedItem = cloneDeep(event.detail);
-    }
+  openFollowUpDialog() {
     this.followUpDialog.openDialog();
   }
 }

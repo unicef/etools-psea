@@ -4,6 +4,8 @@ import {etoolsEndpoints} from '../../endpoints/endpoints-list';
 import {GenericObject} from '../../types/globals';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
+const LOGS_PREFIX = 'Redux common-data actions';
+
 export const SET_UNICEF_USERS_DATA = 'SET_UNICEF_USERS_DATA';
 export const SET_PARTNERS = 'SET_PARTNERS';
 export const SET_OFFICES = 'SET_OFFICES';
@@ -68,8 +70,7 @@ export const loadSections = () => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.sections.url!))
     .then((resp: any) => dispatch(setSections(resp)))
     .catch((error: GenericObject) => {
-      logError('[EtoolsUnicefUser]: loadSections req error...', error);
-      throw error;
+      logError('loadSections req error...', LOGS_PREFIX, error);
     });
 };
 
@@ -77,8 +78,7 @@ export const loadOffices = () => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.offices.url!))
     .then((resp: any) => dispatch(setOffices(resp)))
     .catch((error: GenericObject) => {
-      logError('[EtoolsUnicefUser]: loadOffices req error...', error);
-      throw error;
+      logError('loadOffices req error...', LOGS_PREFIX, error);
     });
 };
 
@@ -93,8 +93,7 @@ export const loadPartners = () => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.partners.url!))
     .then((resp: any) => dispatch(setPartners(resp)))
     .catch((error: GenericObject) => {
-      logError('[EtoolsUnicefUser]: loadPartners req error...', error);
-      throw error;
+      logError('loadPartners req error...', LOGS_PREFIX, error);
     });
 };
 
@@ -104,8 +103,7 @@ export const loadExternalIndividuals = (callBack?: () => void) => (dispatch: any
       dispatch(setExternalIndividuals(resp));
     })
     .catch((error: GenericObject) => {
-      logError('[EtoolsUnicefUser]: loadExternalIndividuals req error...', error);
-      throw error;
+      logError('loadExternalIndividuals req error...', LOGS_PREFIX, error);
     })
     .then(() => {
       if (callBack && typeof (callBack) === 'function') {
@@ -120,16 +118,16 @@ export const loadAssessingFirms = () => (dispatch: any) => {
       dispatch(setAssessingFirms(resp));
     })
     .catch((error: GenericObject) => {
-      logError('[EtoolsUnicefUser]: loadAssessingFirms req error...', error);
-      throw error;
+      logError('loadAssessingFirms req error...', LOGS_PREFIX, error);
     });
 };
 
 export const loadUnicefUsers = () => (dispatch: any) => {
   makeRequest(new RequestEndpoint(etoolsEndpoints.unicefUsers.url!))
-    .then((resp: any) => dispatch(updateUnicefUsersData(resp)))
+    .then((resp: any) => {
+      dispatch(updateUnicefUsersData(resp));
+    })
     .catch((error: GenericObject) => {
-      logError('[EtoolsUnicefUser]: loadUnicefUsers req error...', error);
-      throw error;
+      logError('loadUnicefUsers req error...', LOGS_PREFIX, error);
     });
 };

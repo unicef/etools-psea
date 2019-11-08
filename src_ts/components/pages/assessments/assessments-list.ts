@@ -16,7 +16,9 @@ import {
   assessmentsFilters,
   defaultSelectedFilters,
   updateFilterSelectionOptions,
-  updateFiltersSelectedValues
+  updateFiltersSelectedValues,
+  onlyForUnicefFilters,
+  FilterKeysAndTheirSelectedValues
 } from './list/filters';
 import {EtoolsFilter} from '../../common/layout/filters/etools-filters';
 import {ROOT_PATH} from '../../../config/config';
@@ -37,13 +39,17 @@ import {
   getUrlQueryStringSort
 } from '../../common/layout/etools-table/etools-table-utility';
 import {RouteDetails, RouteQueryParams} from '../../../routing/router';
-import {updateAppLocation} from '../../../routing/routes';
+import {updateAppLocation, replaceAppLocation} from '../../../routing/routes';
 import {buttonsStyles} from '../../styles/button-styles';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
 import {makeRequest} from '../../utils/request-helper';
 import '../../common/layout/export-data';
 import '@unicef-polymer/etools-loading';
+import get from 'lodash-es/get';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+
+let lastSelectedFilters: FilterKeysAndTheirSelectedValues = {...defaultSelectedFilters};
 
 /**
  * @LitElement
@@ -53,14 +59,14 @@ import '@unicef-polymer/etools-loading';
 export class AssessmentsList extends connect(store)(LitElement) {
 
   static get styles() {
-    return [elevationStyles];
+    return [elevationStyles, buttonsStyles, pageLayoutStyles];
   }
 
   public render() {
     // main template
     // language=HTML
     return html`
-      ${SharedStylesLit} ${pageContentHeaderSlottedStyles} ${pageLayoutStyles} ${buttonsStyles}
+      ${SharedStylesLit}${pageContentHeaderSlottedStyles}
       <style>
         etools-table {
           padding-top: 12px;
@@ -75,7 +81,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
               <export-data .endpoint="${etoolsEndpoints.assessment.url!}" .params="${this.queryParams}"></export-data>
             </div>
             <div class="action" ?hidden="${!this.canAdd}" >
-              <paper-button class="primary left-icon" raised @tap="${this.goToAddnewPage}">
+              <paper-button class="primary left-icon" raised @tap="${this.goToAddNewPage}">
                 <iron-icon icon="add"></iron-icon>Add new assessment
               </paper-button>
             </div>
@@ -123,13 +129,13 @@ export class AssessmentsList extends connect(store)(LitElement) {
 
   @property({type: Array})
   sort: EtoolsTableSortItem[] = [{name: 'assessment_date', sort: EtoolsTableColumnSort.Desc},
-    {name: 'partner_name', sort: EtoolsTableColumnSort.Asc}];
+  {name: 'partner_name', sort: EtoolsTableColumnSort.Asc}];
 
   @property({type: Array})
   filters!: EtoolsFilter[];
 
   @property({type: Object})
-  selectedFilters: GenericObject = {...defaultSelectedFilters};
+  selectedFilters!: FilterKeysAndTheirSelectedValues;
 
   @property({type: Boolean})
   canAdd: boolean = false;
@@ -139,9 +145,6 @@ export class AssessmentsList extends connect(store)(LitElement) {
 
   @property({type: Boolean})
   isUnicefUser: boolean = false;
-
-  @property({type: Array})
-  unicefFilters: string[] = ['assessor_staff', 'assessor_firm', 'assessor_external'];
 
   @property({type: String})
   queryParams: string = '';
@@ -191,26 +194,31 @@ export class AssessmentsList extends connect(store)(LitElement) {
   listData: GenericObject[] = [];
 
   stateChanged(state: RootState) {
-    if (state.app!.routeDetails.routeName === 'assessments' &&
-        state.app!.routeDetails.subRouteName === 'list') {
+    const routeDetails = get(state, 'app.routeDetails');
+    if (!(routeDetails.routeName === 'assessments' && routeDetails.subRouteName === 'list')) {
+      return; // Avoid code execution while on a different page
+    }
 
-      const stateRouteDetails = {...state.app!.routeDetails};
+    const stateRouteDetails = {...state.app!.routeDetails};
 
-      if (JSON.stringify(stateRouteDetails) !== JSON.stringify(this.routeDetails)) {
-        this.routeDetails = stateRouteDetails;
+    if (JSON.stringify(stateRouteDetails) !== JSON.stringify(this.routeDetails)) {
+      this.routeDetails = stateRouteDetails;
 
-        if (!this.routeDetails.queryParams || Object.keys(this.routeDetails.queryParams).length === 0) {
-          // update url with params
-          this.updateUrlListQueryParams();
-          return;
-        } else {
-          // init selectedFilters, sort, page, page_size from url params
-          this.updateListParamsFromRouteDetails(this.routeDetails.queryParams);
-          // get assessments based on filters, sort and pagination
-          this.getAssessmentsData();
-        }
+      if (!this.routeDetails.queryParams || Object.keys(this.routeDetails.queryParams).length === 0) {
+        this.selectedFilters = {...lastSelectedFilters};
+        // update url with params
+        this.updateUrlListQueryParams();
+
+        return;
+
+      } else {
+        // init selectedFilters, sort, page, page_size from url params
+        this.updateListParamsFromRouteDetails(this.routeDetails.queryParams);
+        // get assessments based on filters, sort and pagination
+        this.getFilteredAssessments();
       }
     }
+
     if (state.user) {
       if (state.user.data) {
         this.isUnicefUser = state.user.data.is_unicef_user;
@@ -220,34 +228,56 @@ export class AssessmentsList extends connect(store)(LitElement) {
         this.canExport = state.user.permissions.canExportAssessment;
       }
     }
-    // init filters using default defined filters (including options)
-    let updatedFilters = this.isUnicefUser ?
-      [...assessmentsFilters] : [...assessmentsFilters.filter(x => this.unicefFilters.indexOf(x.filterKey) < 0)];
-    if (state.commonData) {
-      // update dropdowns filters options from redux
-      updatedFilters = [...this.updateDropdownFiltersOptionsFromCommonData(state.commonData, updatedFilters)];
-    }
-    // update filter selection and assign the result to main filters object(trigger render)
-    this.filters = updateFiltersSelectedValues(this.selectedFilters, updatedFilters);
 
+    this.initFiltersForDisplay(state);
   }
 
-  updateDropdownFiltersOptionsFromCommonData(commonData: any, currentFilters: EtoolsFilter[]): EtoolsFilter[] {
-    let updatedFilters = updateFilterSelectionOptions(currentFilters, 'unicef_focal_point', commonData.unicefUsers);
-    updatedFilters = updateFilterSelectionOptions(updatedFilters, 'partner', commonData.partners);
-    if (this.isUnicefUser) {
-      updatedFilters = updateFilterSelectionOptions(updatedFilters, 'assessor_external',
-        commonData.externalIndividuals);
-      updatedFilters = updateFilterSelectionOptions(updatedFilters, 'assessor_staff', commonData.unicefUsers);
-      updatedFilters = updateFilterSelectionOptions(updatedFilters, 'assessor_firm', commonData.assessingFirms);
+  initFiltersForDisplay(state: RootState) {
+    if (this.dataRequiredByFiltersHasBeenLoaded(state)) {
+
+      const availableFilters = this.isUnicefUser ?
+        [...assessmentsFilters] : [...assessmentsFilters.filter(x => onlyForUnicefFilters.indexOf(x.filterKey) < 0)];
+
+      this.populateDropdownFilterOptionsFromCommonData(state.commonData, availableFilters);
+
+      // update filter selection and assign the result to etools-filters(trigger render)
+      this.filters = updateFiltersSelectedValues(this.selectedFilters, availableFilters);
+      lastSelectedFilters = {...this.selectedFilters};
     }
-    return updatedFilters;
+  }
+
+  /**
+    * TODO
+    * We might avoid the issues of waiting and also reduce multiple stateChanged execution by updating
+    * redux state only after all endpoint requests (currentUser, partners, unicefUsers, externals) have finished
+    */
+  private dataRequiredByFiltersHasBeenLoaded(state: RootState) {
+    if (get(state, 'user.data') && state.commonData &&
+      // Avoid selectedValue being set before the dropdown is populated with options
+      // And take into account that for non unicef users, the users endpoint returns 403
+      (!this.isUnicefUser || get(state, 'commonData.unicefUsers.length')) &&
+      get(state, 'commonData.partners.length') &&
+      this.routeDetails.queryParams &&
+      Object.keys(this.routeDetails.queryParams).length > 0) {
+      return true;
+    }
+    return false;
+  }
+
+  populateDropdownFilterOptionsFromCommonData(commonData: any, currentFilters: EtoolsFilter[]) {
+    if (this.isUnicefUser) {
+      updateFilterSelectionOptions(currentFilters, 'assessor_staff', commonData.unicefUsers);
+      updateFilterSelectionOptions(currentFilters, 'assessor_external', commonData.externalIndividuals);
+      updateFilterSelectionOptions(currentFilters, 'assessor_firm', commonData.assessingFirms);
+    }
+    updateFilterSelectionOptions(currentFilters, 'unicef_focal_point', commonData.unicefUsers);
+    updateFilterSelectionOptions(currentFilters, 'partner', commonData.partners);
   }
 
   updateUrlListQueryParams() {
     const qs = this.getParamsForQuery();
     this.queryParams = qs;
-    updateAppLocation(`${this.routeDetails.path}?${qs}`, true);
+    replaceAppLocation(`${this.routeDetails.path}?${qs}`, true);
   }
 
   getParamsForQuery() {
@@ -277,11 +307,12 @@ export class AssessmentsList extends connect(store)(LitElement) {
     this.paginator = {...this.paginator, ...paginatorParams};
 
     // update selectedFilters
-    this.selectedFilters = getSelectedFiltersFromUrlParams(this.selectedFilters, queryParams);
+    this.selectedFilters = getSelectedFiltersFromUrlParams(queryParams);
   }
 
   filtersChange(e: CustomEvent) {
-    this.selectedFilters = {...this.selectedFilters, ...e.detail};
+    this.selectedFilters = {...e.detail};
+    this.paginator.page = 1;
     this.updateUrlListQueryParams();
   }
 
@@ -300,7 +331,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
    * This method runs each time new data is received from routeDetails state
    * (sort, filters, paginator init/change)
    */
-  getAssessmentsData() {
+  getFilteredAssessments() {
     this.showLoading = true;
     const endpoint = {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`};
     return makeRequest(endpoint).then((response: GenericObject) => {
@@ -312,11 +343,11 @@ export class AssessmentsList extends connect(store)(LitElement) {
         }
       });
       this.listData = [...assessments];
-    }).catch((err: any) => console.error(err))
+    }).catch((err: any) => logError('Assessments list req error', 'AssessmentsList', err))
       .then(() => this.showLoading = false);
   }
 
-  goToAddnewPage() {
+  goToAddNewPage() {
     updateAppLocation('/assessments/new/details', true);
   }
 

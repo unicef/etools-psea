@@ -1,4 +1,4 @@
-import {LitElement, html, property, customElement, query} from 'lit-element';
+import {LitElement, html, property, customElement, query, css} from 'lit-element';
 import {styleMap} from 'lit-html/directives/style-map.js';
 import {unsafeHTML} from 'lit-html/directives/unsafe-html.js';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
@@ -18,10 +18,9 @@ import {buttonsStyles} from '../../../../styles/button-styles';
 
 @customElement('questionnaire-item')
 export class QuestionnaireItemElement extends LitElement {
-  render() {
-    return html`
-      ${SharedStylesLit}${gridLayoutStylesLit}${radioButtonStyles}${buttonsStyles}
-      <style>
+  static get styles() {
+    return [buttonsStyles, radioButtonStyles,
+      css`
         :host {
           display: block;
           margin-bottom: 24px;
@@ -39,8 +38,13 @@ export class QuestionnaireItemElement extends LitElement {
           background-color: var(--secondary-background-color);
           color: black;
         }
-      </style>
-      <etools-content-panel panel-title="${this.question.subject}" 
+      `
+    ];
+  }
+  render() {
+    return html`
+      ${SharedStylesLit}${gridLayoutStylesLit}
+      <etools-content-panel panel-title="${this.question.subject}"
                             ?show-expand-btn=${!this.editMode} .open="${this.open}">
         <div slot="panel-btns">
           <paper-radio-button checked class="epc-header-radio-button ${this._getRadioBtnClass(this.answer)} readonly"
@@ -144,8 +148,12 @@ export class QuestionnaireItemElement extends LitElement {
       return;
     }
 
-    const endpointData = new RequestEndpoint(this._getUrl(), this._getMethod());
     const answerBody = this.questionnaireAnswerElement.getAnswerForSave();
+    if (!this.secondRoundOfValidations(answerBody)) {
+      return;
+    }
+
+    const endpointData = new RequestEndpoint(this._getUrl(), this._getMethod());
     makeRequest(endpointData, answerBody)
       .then((resp) => {
         this.answer = resp;
@@ -156,6 +164,17 @@ export class QuestionnaireItemElement extends LitElement {
       .catch((err: any) => {
         fireEvent(this, 'toast', {text: formatServerErrorAsText(err)});
       });
+  }
+
+  /**
+   * This validation needs the result of questionnaireAnswerElement.getAnswerForSave(),
+   * and in order to avoid duplicating operations of getting answer values, it's done as a second round
+   */
+  secondRoundOfValidations(answer: Answer) {
+    const valid1 = this.questionnaireAnswerElement.validateOtherProofOfEvidence(answer.evidences);
+    const valid2 = this.questionnaireAnswerElement.validateAttachments(answer.attachments);
+
+    return valid1 && valid2;
   }
 
   _getUrl() {
@@ -171,7 +190,7 @@ export class QuestionnaireItemElement extends LitElement {
   }
 
   validate() {
-    return this.questionnaireAnswerElement.validate();
+    return this.questionnaireAnswerElement.validateRating();
   }
 
   hideEditIcon(editMode: boolean, canEditAnswers: boolean) {

@@ -6,7 +6,7 @@ import './assessing-firm';
 import './external-individual';
 import './firm-staff-members';
 import {UnicefUser} from '../../../../../types/user-model';
-import {LitElement, html, property, query, customElement} from 'lit-element';
+import {LitElement, html, property, query, customElement, css} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {buttonsStyles} from '../../../../styles/button-styles';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
@@ -14,7 +14,8 @@ import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../../../redux/store';
 import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
-import {Assessment, Assessor, AssessorTypes, AssessmentPermissions} from '../../../../../types/assessment';
+import {handleUsersNoLongerAssignedToCurrentCountry} from '../../../../common/common-methods';
+import {Assessment, AssessmentPermissions, Assessor, AssessorTypes} from '../../../../../types/assessment';
 import {AssessingFirm} from './assessing-firm';
 import {ExternalIndividual} from './external-individual';
 import {fireEvent} from '../../../../utils/fire-custom-event';
@@ -22,7 +23,7 @@ import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {FirmStaffMembers} from './firm-staff-members';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
-import {saveAssessorData, updateAssessmentData} from '../../../../../redux/actions/page-data';
+import {requestAssessment, saveAssessorData} from '../../../../../redux/actions/page-data';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import PermissionsMixin from '../../../mixins/permissions-mixins';
 import '@unicef-polymer/etools-loading';
@@ -33,26 +34,29 @@ import '@unicef-polymer/etools-loading';
  */
 @customElement('assessor-info')
 export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
+  static get styles() {
+    return [buttonsStyles, labelAndvalueStylesLit,
+      css`
+      :host {
+        font-size: 16px;
+      }
 
+      etools-content-panel {
+        display: block;
+        margin-bottom: 24px;
+      }
+
+      paper-radio-group[readonly] paper-radio-button:not([checked]){
+        display: none;
+      }
+      `
+    ];
+  }
   render() {
     // language=HTML
     return html`
-      <style>
-        :host {
-          font-size: 16px;
-        }
-
-        etools-content-panel {
-          display: block;
-          margin-bottom: 24px;
-        }
-
-        paper-radio-group[readonly] paper-radio-button:not([checked]){
-          display: none;
-        }
-
-      </style>
-      ${SharedStylesLit}${gridLayoutStylesLit}${buttonsStyles}${labelAndvalueStylesLit}
+      ${SharedStylesLit}
+      ${gridLayoutStylesLit}
 
       <etools-content-panel panel-title="Assessor">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
@@ -137,7 +141,8 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
         return html`
           <external-individual id="externalIndividual"
            .assessor="${cloneDeep(this.assessor)}"
-           .editMode="${editMode}">
+           .editMode="${editMode}"
+           .origAssessorType="${this.originalAssessor.assessor_type}">
           </external-individual>
         `;
       default:
@@ -171,7 +176,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   isNew: boolean = false;
 
   @property({type: Boolean})
-  editMode: boolean = true;
+  editMode: boolean = false;
 
   @property({type: Object})
   originalAssessor!: Assessor;
@@ -207,6 +212,12 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       const newAssessor = state.pageData!.assessor;
       if (!isJsonStrMatch(this.assessor, newAssessor)) {
         this.assessor = cloneDeep(newAssessor);
+        if (this.assessor.assessor_type === AssessorTypes.Staff) {
+          // check if already saved Unicef staff exists on loaded data, if not they will be added
+          // (they might be missing if changed country)
+          handleUsersNoLongerAssignedToCurrentCountry(this.unicefUsers, [this.assessor.user_details]);
+          this.unicefUsers = [...this.unicefUsers];
+        }
         this.initializeRelatedData();
       }
     }
@@ -220,9 +231,9 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     this.isNew = !this.assessor.id;
     this.originalAssessor = cloneDeep(this.assessor);
     this.requestUpdate().then(() => {
-      // Make sure isNew and canEditAssessorInfo are set before computing editMode
+      // Making sure isNew and canEditAssessorInfo are set before computing editMode
+      // Checking canEditAssessotInfo also, for when assessment is canceled and assessor IsNew
       this.editMode = this.isNew && this.canEditAssessorInfo;
-
       // load staff members after staff members element is initialized
       if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessor.auditor_firm) {
         this.loadFirmStaffMembers(this.assessor.auditor_firm!);
@@ -278,7 +289,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   setSelectedUnicefUser(event: CustomEvent) {
     if (this.assessor.assessor_type === AssessorTypes.Staff) {
       const selectedUser = event.detail.selectedItem;
-      if (selectedUser) {
+      if (selectedUser && selectedUser.id) {
         this.assessor.user = selectedUser.id;
       } else {
         this.assessor.user = null;
@@ -293,36 +304,24 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     }
     this.showLoading = true;
     store.dispatch(saveAssessorData(this.assessment.id as number,
-      this.assessor.id, this.collectAssessorData(), this.handleAssessorSaveError.bind(this)))
+      this.assessor.id, this.collectAssessorData(), this.handleError.bind(this)))
       .then(() => {
-        // update assessor in assessment object
-        const assessorName = this.getAssessorName();
-        if (assessorName) {
-          store.dispatch(updateAssessmentData({...this.assessment, assessor: assessorName}));
-        }
+        // update permissions and available actions
+        return store.dispatch(requestAssessment(this.assessment.id!, this.handleError.bind(this)));
       })
-      .then(() => this.showLoading = false);
+      .then(() => {
+        this.showLoading = false;
+        this.editMode = false;
+      });
   }
 
-  getAssessorName() {
-    let assessorField = null;
-    switch (this.assessor.assessor_type) {
-      case AssessorTypes.Staff:
-        assessorField = this.shadowRoot!.querySelector('#unicefUser') as EtoolsDropdownEl;
-        return assessorField ? (assessorField.selectedItem as UnicefUser).name : '';
-      case AssessorTypes.ExternalIndividual:
-        return this.externalIndividualElement.getExternalIndividualName();
-      case AssessorTypes.Firm:
-        return this.assessingFirmElement.getFirmName();
-      default:
-        return '';
-    }
-  }
 
-  handleAssessorSaveError(error: any) {
-    logError(error);
+  handleError(error: any) {
+    this.showLoading = false;
+    logError('Assessor save error', 'AssessorInfo', error);
     fireEvent(this, 'toast', {text: formatServerErrorAsText(error), showCloseBtn: true});
-    throw new Error(error.message);
+
+    throw new Error('Error thrown just to avoid executing chained .then s');
   }
 
   collectAssessorData() {
@@ -389,6 +388,9 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   cancelAssessorUpdate() {
     this.assessor = cloneDeep(this.originalAssessor);
     this.editMode = this.isNew;
+    if (this.assessor.assessor_type === AssessorTypes.Firm) {
+      this.assessingFirmElement.resetValidations();
+    }
   }
 
   allowEdit() {

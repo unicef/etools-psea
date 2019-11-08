@@ -20,10 +20,14 @@ import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
  */
 @customElement('staff-member-dialog')
 export class StaffMemberDialog extends LitElement {
+  static get styles() {
+    return [labelAndvalueStylesLit];
+  }
+
   render() {
     // language=HTML
     return html`
-      ${labelAndvalueStylesLit}${SharedStylesLit}${gridLayoutStylesLit}
+      ${SharedStylesLit}${gridLayoutStylesLit}
       <style>
         #has-access-checkbox-wrapper {
           padding: 16px 0;
@@ -193,7 +197,7 @@ export class StaffMemberDialog extends LitElement {
   }
 
   public openDialog() {
-    this.isNewRecord = !(parseInt(this.editedItem.id) > 0);
+    this.isNewRecord = !(parseInt(this.editedItem.id as string) > 0);
     this.dialogTitle = this.isNewRecord ? 'Add New Firm Staff Member' : 'Edit Firm Staff Member';
     this.confirmBtnText = this.isNewRecord ? 'Add' : 'Save';
     this.dialogOpened = true;
@@ -256,7 +260,9 @@ export class StaffMemberDialog extends LitElement {
 
     const options = {
       method: this.isNewRecord ? 'POST' : 'PATCH',
-      url: getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url! + this.editedItem.id + '/'
+      url: getEndpoint(
+        etoolsEndpoints.staffMembers,
+        {id: this.firmId}).url! + (this.editedItem.id ? this.editedItem.id + '/' : '')
     };
 
     if (this._staffMemberDataHasChanged()) {

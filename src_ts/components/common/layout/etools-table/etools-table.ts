@@ -9,6 +9,8 @@ import {fireEvent} from '../../../utils/fire-custom-event';
 import {prettyDate} from '../../../utils/date-utility';
 import {EtoolsPaginator} from './pagination/paginator';
 import './pagination/etools-pagination';
+import get from 'lodash-es/get';
+import {etoolsTableResponsiveStyles} from "./etools-table-responsive-styles";
 
 export enum EtoolsTableColumnType {
   Text,
@@ -35,7 +37,7 @@ export interface EtoolsTableColumn {
    *    - id will be replaced with item object id property
    */
   link_tmpl?: string;
-  external_link?: boolean;
+  isExternalLink?: boolean;
   capitalize?: boolean;
   placeholder?: string;
   customMethod?: Function;
@@ -53,7 +55,9 @@ export enum EtoolsTableActionType {
  */
 @customElement('etools-table')
 export class EtoolsTable extends LitElement {
-
+  static get styles() {
+    return [etoolsTableResponsiveStyles];
+  }
   public render() {
     // language=HTML
     return html`
@@ -89,6 +93,9 @@ export class EtoolsTable extends LitElement {
   @property({type: String})
   caption: string = '';
 
+  @property({type: String})
+  actionsLabel: string = 'Actions';
+
   @property({type: Array})
   columns: EtoolsTableColumn[] = [];
 
@@ -121,7 +128,7 @@ export class EtoolsTable extends LitElement {
     `;
   }
 
-  getLinkTmpl(pathTmpl: string | undefined, item: any, key: string, external?: boolean) {
+  getLinkTmpl(pathTmpl: string | undefined, item: any, key: string, isExternalLink?: boolean) {
     if (!pathTmpl) {
       throw new Error(`[EtoolsTable.getLinkTmpl]: column "${item[key]}" has no link tmpl defined`);
     }
@@ -133,7 +140,7 @@ export class EtoolsTable extends LitElement {
       }
     });
     const aHref = path.join('/');
-    return external
+    return isExternalLink
       ? html`<a class="" @click="${() => window.location.href = aHref}" href="#">${item[key]}</a>`
       : html`<a class="" href="${aHref}">${item[key]}</a>`;
   }
@@ -142,10 +149,10 @@ export class EtoolsTable extends LitElement {
     const columnsKeys = this.getColumnsKeys();
     return html`
       <tr>
-        ${columnsKeys.map((k: string) => html`<td class="${this.getRowDataColumnClassList(k)}">
+        ${columnsKeys.map((k: string) => html`<td data-label="${this.getColumnDetails(k).label}" class="${this.getRowDataColumnClassList(k)}">
           ${this.getItemValue(item, k, showEdit)}</td>`)}
 
-        ${this.showRowActions() ? html`<td class="row-actions">${this.getRowActionsTmpl(item)}` : ''}
+        ${this.showRowActions() ? html`<td data-label="${this.actionsLabel}" class="row-actions">&nbsp;${this.getRowActionsTmpl(item)}` : ''}
       </tr>
     `;
   }
@@ -232,7 +239,7 @@ export class EtoolsTable extends LitElement {
           ? prettyDate(item[key], this.dateFormat)
           : (column.placeholder ? column.placeholder : this.defaultPlaceholder);
       case EtoolsTableColumnType.Link:
-        return this.getLinkTmpl(column.link_tmpl, item, key, column.external_link);
+        return this.getLinkTmpl(column.link_tmpl, item, key, column.isExternalLink);
       case EtoolsTableColumnType.Number:
       case EtoolsTableColumnType.Checkbox:
         return this._getCheckbox(item, key, showEdit);
@@ -255,17 +262,8 @@ export class EtoolsTable extends LitElement {
   }
 
   _getValueByKey(item: any, key: string, placeholder?: string, ignorePlaceholder: boolean = false) {
-    let value = null;
-    if (key.includes('.')) {
-      const propertyNames = key.split('.');
+    const value = get(item, key, '');
 
-      value = item[propertyNames.shift()!];
-      while (propertyNames.length) {
-        value = value[propertyNames.shift()!];
-      }
-    } else {
-      value = item[key];
-    }
     if (!ignorePlaceholder && (!value || value === '')) {
       return placeholder ? placeholder : this.defaultPlaceholder;
     }
