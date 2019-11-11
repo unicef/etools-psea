@@ -54,6 +54,19 @@ export class ExternalIndividual extends connect(store)(LitElement) {
           trigger-value-change-event
           @etools-selected-item-changed="${this._setSelectedExternalIndividual}">
         </etools-dropdown>
+        
+        <div class="col col-4">
+          <paper-input
+                  id="emailInput"
+                  value="${this.assessor.user_details.email}"
+                  label="E-mail"
+                  type="email"
+                  placeholder="E-mail"
+                  maxlength="45">
+            <iron-icon slot="prefix" icon="communication:email"></iron-icon>
+          </paper-input>
+        </div>
+            
         <span ?hidden="${!this.editMode}">
           User not yet in the system? Add them <a @tap="${this.openAddDialog}">here</a>
         </span>
@@ -155,7 +168,9 @@ export class ExternalIndividual extends connect(store)(LitElement) {
     const selectedUser = event.detail.selectedItem;
     if (selectedUser) {
       this.assessor.user = selectedUser.id;
+      this.assessor.user_details.email = selectedUser.email;
     } else {
+      this.assessor.user_details.email = "";
       this.assessor.user = null;
     }
     this.requestUpdate();
