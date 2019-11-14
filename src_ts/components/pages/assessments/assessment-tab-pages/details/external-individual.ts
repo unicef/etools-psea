@@ -55,16 +55,19 @@ export class ExternalIndividual extends connect(store)(LitElement) {
           @etools-selected-item-changed="${this._setSelectedExternalIndividual}">
         </etools-dropdown>
         
-        <div class="col col-4">
-          <paper-input
-                  id="emailInput"
-                  value="${this.assessor.user_details.email}"
-                  label="E-mail"
-                  type="email"
-                  placeholder="E-mail"
-                  maxlength="45">
-            <iron-icon slot="prefix" icon="communication:email"></iron-icon>
-          </paper-input>
+        <div class="row-padding-v">
+          <div class="col col-4">
+            <paper-input
+                    id="emailInput"
+                    value="${this.assessor.user_details.email}"
+                    label="E-mail"
+                    type="email"
+                    readonly
+                    placeholder="E-mail"
+                    maxlength="45">
+              <iron-icon slot="prefix" icon="communication:email"></iron-icon>
+            </paper-input>
+          </div>
         </div>
             
         <span ?hidden="${!this.editMode}">
