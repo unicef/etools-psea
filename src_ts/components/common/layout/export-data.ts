@@ -34,6 +34,10 @@ export class ExportData extends LitElement {
         paper-button:focus {
           ${elevation2}
         }
+        
+        paper-item:hover {
+          cursor: pointer;
+        }
       `
     ];
   }
