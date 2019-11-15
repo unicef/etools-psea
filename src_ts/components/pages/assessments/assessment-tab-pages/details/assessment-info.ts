@@ -236,6 +236,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     if (!this.validate()) {
       return;
     }
+    this.editMode = false;
     this.showLoading = true;
     const options = {
       url: this._getUrl()!,

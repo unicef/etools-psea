@@ -94,7 +94,7 @@ export class QuestionnaireItemElement extends LitElement {
   open = false;
 
   @property({type: Boolean})
-  editMode!: boolean;
+  editMode: boolean = false;
 
   @property({type: String})
   assessmentId!: string;
@@ -147,6 +147,7 @@ export class QuestionnaireItemElement extends LitElement {
     if (!this.validate()) {
       return;
     }
+    this.editMode = false;
 
     const answerBody = this.questionnaireAnswerElement.getAnswerForSave();
     if (!this.secondRoundOfValidations(answerBody)) {
@@ -157,7 +158,7 @@ export class QuestionnaireItemElement extends LitElement {
     makeRequest(endpointData, answerBody)
       .then((resp) => {
         this.answer = resp;
-        this.editMode = false;
+        // this.editMode = false;
         this.open = false;
         fireEvent(this, 'answer-saved', this.answer);
       })

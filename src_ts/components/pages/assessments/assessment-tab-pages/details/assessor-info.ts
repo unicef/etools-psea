@@ -302,6 +302,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     if (!this.validate()) {
       return;
     }
+    this.editMode = false;
     this.showLoading = true;
     store.dispatch(saveAssessorData(this.assessment.id as number,
       this.assessor.id, this.collectAssessorData(), this.handleError.bind(this)))
@@ -311,7 +312,6 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       })
       .then(() => {
         this.showLoading = false;
-        this.editMode = false;
       });
   }
 
