@@ -34,14 +34,13 @@ export class ExternalIndividual extends connect(store)(LitElement) {
           cursor: pointer;
         }
 
-        .padd-bottom {
-          padding-bottom: 12px;
+        .padd-top {
+          padding-top: 12px;
         }
       </style>
       ${SharedStylesLit}${gridLayoutStylesLit}
       <div class="row-padding-v">
         <etools-dropdown id="externalIndiv"
-          class="padd-bottom"
           label="External Individual"
           .options="${this.externalIndividuals}"
           .selected="${this.assessor.user}"
@@ -54,9 +53,25 @@ export class ExternalIndividual extends connect(store)(LitElement) {
           trigger-value-change-event
           @etools-selected-item-changed="${this._setSelectedExternalIndividual}">
         </etools-dropdown>
-        <span ?hidden="${!this.editMode}">
+
+        <div ?hidden="${!this.editMode}" class="padd-top">
           User not yet in the system? Add them <a @tap="${this.openAddDialog}">here</a>
-        </span>
+        </div>
+
+        <div class="row-padding-v">
+          <div class="col col-4">
+            <paper-input
+                    id="emailInput"
+                    value="${this.assessor.user_details.email}"
+                    label="E-mail"
+                    type="email"
+                    readonly
+                    placeholder="E-mail"
+                    maxlength="45">
+              <iron-icon slot="prefix" icon="communication:email"></iron-icon>
+            </paper-input>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -155,7 +170,9 @@ export class ExternalIndividual extends connect(store)(LitElement) {
     const selectedUser = event.detail.selectedItem;
     if (selectedUser) {
       this.assessor.user = selectedUser.id;
+      this.assessor.user_details.email = selectedUser.email;
     } else {
+      this.assessor.user_details.email = "";
       this.assessor.user = null;
     }
     this.requestUpdate();
