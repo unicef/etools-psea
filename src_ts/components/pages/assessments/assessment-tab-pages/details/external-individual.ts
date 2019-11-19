@@ -66,7 +66,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
                     label="E-mail"
                     type="email"
                     readonly
-                    placeholder="E-mail"
+                    placeholder="—"
                     maxlength="45">
               <iron-icon slot="prefix" icon="communication:email"></iron-icon>
             </paper-input>
