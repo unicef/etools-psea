@@ -18,6 +18,7 @@ export enum EtoolsTableColumnType {
   Link,
   Number,
   Checkbox,
+  Icon,
   Custom
 }
 
@@ -62,6 +63,11 @@ export class EtoolsTable extends LitElement {
     // language=HTML
     return html`
       ${etoolsTableStyles}
+      <style>
+        iron-icon {
+          color: var(--secondary-text-color);
+        }
+      </style>
       <table>
         <caption ?hidden="${this.showCaption(this.caption)}">${this.caption}</caption>
         <thead>
@@ -243,6 +249,8 @@ export class EtoolsTable extends LitElement {
       case EtoolsTableColumnType.Number:
       case EtoolsTableColumnType.Checkbox:
         return this._getCheckbox(item, key, showEdit);
+      case EtoolsTableColumnType.Icon:
+        return this._getIcon();
       case EtoolsTableColumnType.Custom:
         return column.customMethod
           ? column.customMethod(item, key)
@@ -259,6 +267,12 @@ export class EtoolsTable extends LitElement {
         @change="${(e: CustomEvent) => this.triggerItemChanged(item, key, (e.currentTarget as any).checked)}">
       </paper-checkbox>`;
 
+  }
+
+  _getIcon() {
+    return html`
+      <iron-icon icon="check-box"></iron-icon>
+    `;
   }
 
   _getValueByKey(item: any, key: string, placeholder?: string, ignorePlaceholder: boolean = false) {

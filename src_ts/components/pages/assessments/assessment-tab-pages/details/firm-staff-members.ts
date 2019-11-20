@@ -189,6 +189,11 @@ export class FirmStaffMembers extends LitElement {
         this.staffMembers = resp.results.map((sm: any) => {
           return {...sm, hasAccess: this.currentFirmAssessorStaffWithAccess.includes(sm.id)};
         });
+
+        if (!this.canEdit) {
+          this.staffMembers = this.staffMembers.filter((staffMember) => staffMember.hasAccess === true);
+          this.listColumns.forEach(column => column.type === 4 ? column.type = 5 : column.type);
+        }
         this.paginator = getPaginator(this.paginator, {count: resp.count, data: this.staffMembers});
       })
       .catch((err: any) => {
