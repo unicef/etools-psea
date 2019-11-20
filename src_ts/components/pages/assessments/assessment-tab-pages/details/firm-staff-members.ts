@@ -34,7 +34,7 @@ export class FirmStaffMembers extends LitElement {
   render() {
     // language=HTML
     return html`
-      ${gridLayoutStylesLit}${SharedStylesLit}
+      ${gridLayoutStylesLit} ${SharedStylesLit}
       <style>
         :host {
           display: block;
