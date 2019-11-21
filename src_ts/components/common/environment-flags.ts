@@ -6,14 +6,14 @@ import {EtoolsErrorWarnBox} from './layout/etools-error-warn-box';
 import '../common/layout/etools-error-warn-box';
 
 
-export const checkEnvFlags = new Promise((resolve, reject) => {
-    makeRequest(getEndpoint(etoolsEndpoints.environmentFlags) as RequestEndpoint)
+export function checkEnvFlags() {
+    return makeRequest(getEndpoint(etoolsEndpoints.environmentFlags) as RequestEndpoint)
         .then((response: any) => {
           handleEnvFlagsReceived(response);
-          resolve(response);
+          return response;
         })
         .catch((err: any) => logError('checkEnvFlags error', 'environment-flags', err));
-  });
+  };
 
 function handleEnvFlagsReceived(envFlags: any) {
   if (envFlags && envFlags.active_flags && envFlags.active_flags.includes('psea_disabled')) {
