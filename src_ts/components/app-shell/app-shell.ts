@@ -141,8 +141,6 @@ export class AppShell extends connect(store)(LitElement) {
 
   private appToastsNotificationsHelper!: ToastNotificationHelper;
 
-  private pseaDisabled: boolean = true;
-
   constructor() {
     super();
 
@@ -162,26 +160,21 @@ export class AppShell extends connect(store)(LitElement) {
     }
 
     checkEnvFlags().then((response) => {
-      if (response !== undefined) {
-        const activeFlag = response.active_flags.find(flag => flag === 'psea_disabled');
-        if (activeFlag === undefined) {
-          this.pseaDisabled = false;
-          this._activateRequests();
-        }
+      if (!this._pseaIsDisabled(response)) {
+        getCurrentUserData();
+        store.dispatch(loadPartners());
+        store.dispatch(loadOffices());
+        store.dispatch(loadSections());
+        store.dispatch(loadExternalIndividuals());
+        store.dispatch(loadAssessingFirms());
+        store.dispatch(loadUnicefUsers());
       }
     });
   }
 
-  private _activateRequests() {
-    if (!this.pseaDisabled) {
-      getCurrentUserData();
-      store.dispatch(loadPartners());
-      store.dispatch(loadOffices());
-      store.dispatch(loadSections());
-      store.dispatch(loadExternalIndividuals());
-      store.dispatch(loadAssessingFirms());
-      store.dispatch(loadUnicefUsers());
-    }
+  protected _pseaIsDisabled(response) {
+    const activeFlag = response.active_flags.find(flag => flag === 'psea_disabled');
+    return activeFlag === undefined ? false : true;
   }
 
   public connectedCallback() {
