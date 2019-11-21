@@ -55,6 +55,7 @@ import {
 } from '../../redux/actions/common-data';
 import {checkEnvFlags} from '../common/environment-flags';
 import {logInfo} from '@unicef-polymer/etools-behaviors/etools-logging';
+import {GenericObject} from "../../types/globals";
 
 store.addReducers({
   user,
@@ -159,14 +160,18 @@ export class AppShell extends connect(store)(LitElement) {
       this.smallMenu = !!parseInt(menuTypeStoredVal, 10);
     }
 
-    checkEnvFlags();
-    getCurrentUserData();
-    store.dispatch(loadPartners());
-    store.dispatch(loadOffices());
-    store.dispatch(loadSections());
-    store.dispatch(loadExternalIndividuals());
-    store.dispatch(loadAssessingFirms());
-    store.dispatch(loadUnicefUsers());
+    checkEnvFlags.then((response) => {
+      const activeFlag = response.active_flags.find(flag => flag === 'psea_disabled');
+      if (activeFlag === undefined) {
+        getCurrentUserData();
+        store.dispatch(loadPartners());
+        store.dispatch(loadOffices());
+        store.dispatch(loadSections());
+        store.dispatch(loadExternalIndividuals());
+        store.dispatch(loadAssessingFirms());
+        store.dispatch(loadUnicefUsers());
+      }
+    });
   }
 
   public connectedCallback() {
