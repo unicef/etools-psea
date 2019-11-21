@@ -34,7 +34,7 @@ export class ExportData extends LitElement {
         paper-button:focus {
           ${elevation2}
         }
-        
+
         paper-item:hover {
           cursor: pointer;
         }
@@ -43,6 +43,19 @@ export class ExportData extends LitElement {
   }
   public render() {
     return html`
+      <style>
+        #pdExportMenuBtn {
+          /* Prevent first item highlighted by default */
+          --paper-item-focused-before: {
+            background: none;
+            opacity: 0;
+          };
+          --paper-item-focused-after: {
+            background: none;
+            opacity: 0;
+          }
+        }
+      </style>
       <paper-menu-button id="pdExportMenuBtn" close-on-activate horizontal-align="right">
           <paper-button slot="dropdown-trigger" class="dropdown-trigger">
             <iron-icon icon="file-download"></iron-icon>
