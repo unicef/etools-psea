@@ -38,40 +38,28 @@ export class ExternalIndividual extends connect(store)(LitElement) {
           padding-top: 12px;
         }
         
-        #externalIndiv, .message {
-          display: inline-block;
-        }
-        
-        .message {
-          margin-left: 10px;
-        }
-        
         #emailInput {
-          width: 100%;
+         width: 100%;
         }
-      
-        
       </style>
       ${SharedStylesLit}${gridLayoutStylesLit}
       <div class="row-padding-v">
-        <div class="col col-6">
-          <etools-dropdown id="externalIndiv"
-            label="External Individual"
-            .options="${this.externalIndividuals}"
-            .selected="${this.assessor.user}"
-            option-value="id"
-            option-label="name"
-            required
-            auto-validate
-            enable-none-option
-            ?readonly="${this.isReadonly(this.editMode)}"
-            trigger-value-change-event
-            @etools-selected-item-changed="${this._setSelectedExternalIndividual}">
-          </etools-dropdown>
-  
-          <div ?hidden="${!this.editMode}" class="padd-top message">
-            User not yet in the system? Add them <a @tap="${this.openAddDialog}">here</a>
-          </div>
+        <etools-dropdown id="externalIndiv"
+          label="External Individual"
+          .options="${this.externalIndividuals}"
+          .selected="${this.assessor.user}"
+          option-value="id"
+          option-label="name"
+          required
+          auto-validate
+          enable-none-option
+          ?readonly="${this.isReadonly(this.editMode)}"
+          trigger-value-change-event
+          @etools-selected-item-changed="${this._setSelectedExternalIndividual}">
+        </etools-dropdown>
+
+        <div ?hidden="${!this.editMode}" class="padd-top message">
+          User not yet in the system? Add them <a @tap="${this.openAddDialog}">here</a>
         </div>
 
         <div class="row-padding-v">
