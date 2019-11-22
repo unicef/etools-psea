@@ -1,6 +1,7 @@
 import {html} from 'lit-element';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import {appDrawerStyles} from './menu/styles/app-drawer-styles';
+import {displayFlex} from '@collaborne/lit-flexbox-literals';
 
 // language=HTML
 export const AppShellStyles = html`

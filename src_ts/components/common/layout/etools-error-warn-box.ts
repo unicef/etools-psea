@@ -2,6 +2,7 @@ import {LitElement, html, customElement, property} from 'lit-element';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@polymer/paper-button/paper-button.js';
 import {buttonsStyles} from '../../styles/button-styles';
+import {displayFlex, endJustified, horizontal} from '@collaborne/lit-flexbox-literals';
 
 /**
  * @LitElement
@@ -43,7 +44,8 @@ export class EtoolsErrorWarnBox extends LitElement {
           border:1px solid var(--warning-border-color);
         }
         .warning-item {
-          @apply --layout-horizontal;
+          ${displayFlex}
+          ${horizontal}
         }
         etools-content-panel {
           width: 100%;
@@ -73,8 +75,9 @@ export class EtoolsErrorWarnBox extends LitElement {
         }
         .errors-box-actions {
           margin-top: 20px;
-          @apply --layout-horizontal;
-          @apply --layout-end-justified;
+          ${displayFlex}
+          ${horizontal}
+          ${endJustified}
         }
         paper-button {
           margin: 0;

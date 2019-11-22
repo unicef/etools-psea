@@ -1,4 +1,5 @@
 import {html} from 'lit-element';
+import {centerAligned, displayFlex, horizontal} from '@collaborne/lit-flexbox-literals';
 
 // language=HTML
 export const pageHeaderStyles = html`
@@ -27,7 +28,8 @@ export const pageHeaderStyles = html`
     }
 
     .titlebar {
-      @apply --layout-flex;
+      ${displayFlex}
+      /*@apply --layout-flex;*/
       font-size: 28px;
       font-weight: 300;
     }
@@ -38,8 +40,11 @@ export const pageHeaderStyles = html`
     }
 
     .content-align {
-      @apply --layout-horizontal;
-      @apply --layout-center;
+      ${displayFlex}
+      ${horizontal}
+      ${centerAligned}
+      /*@apply --layout-horizontal;*/
+      /*@apply --layout-center;*/
     }
 
     #app-logo {

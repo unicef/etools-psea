@@ -1,14 +1,21 @@
-import '@polymer/iron-flex-layout/iron-flex-layout';
 import {html} from 'lit-element';
+import {
+  centerAligned,
+  displayFlex,
+  endJustified,
+  horizontal,
+  startAlignedContent,
+  vertical
+} from '@collaborne/lit-flexbox-literals';
 
 // language=HTML
 export const etoolsPaginationStyles = html`
   <style>
     :host {
-      @apply --layout-horizontal;
-      @apply --layout-center;
-      @apply --layout-end-justified;
-
+      ${displayFlex}
+      ${horizontal}
+      ${centerAligned}
+      ${endJustified}
       font-size: 12px;
       color: var(--secondary-text-color, rgba(0, 0, 0, 0.54));
     }
@@ -52,7 +59,8 @@ export const etoolsPaginationStyles = html`
         font-size: 12px;
         height: 24px;
         /* For IE below */
-        @apply --layout-horizontal;
+        ${displayFlex}
+        ${horizontal}
         align-items: strech;
         max-width: 24px;
       };
@@ -63,16 +71,17 @@ export const etoolsPaginationStyles = html`
     }
 
     .pagination-item {
-      @apply --layout-horizontal;
-      @apply --layout-center;
+      ${displayFlex}
+      ${centerAligned}
     }
 
     /* Mobile view CSS */
     :host([low-resolution-layout]){
       padding: 8px 0;
       height: auto;
-      @apply --layout-vertical;
-      @apply --layout-start;
+      ${displayFlex}
+      ${vertical}
+      ${startAlignedContent}
     }
 
     :host([low-resolution-layout]) #range {
