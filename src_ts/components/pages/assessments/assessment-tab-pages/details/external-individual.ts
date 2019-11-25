@@ -58,7 +58,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
           @etools-selected-item-changed="${this._setSelectedExternalIndividual}">
         </etools-dropdown>
 
-        <div ?hidden="${!this.editMode}" class="padd-top message">
+        <div ?hidden="${!this.editMode}" class="padd-top">
           User not yet in the system? Add them <a @tap="${this.openAddDialog}">here</a>
         </div>
 
