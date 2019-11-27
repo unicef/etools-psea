@@ -37,6 +37,10 @@ export class ExternalIndividual extends connect(store)(LitElement) {
         .padd-top {
           padding-top: 12px;
         }
+        
+        #emailInput {
+         width: 100%;
+        }
       </style>
       ${SharedStylesLit}${gridLayoutStylesLit}
       <div class="row-padding-v">
@@ -59,7 +63,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
         </div>
 
         <div class="row-padding-v">
-          <div class="col col-4">
+          <div class="col col-6">
             <paper-input
                     id="emailInput"
                     value="${this.assessor.user_details.email}"
