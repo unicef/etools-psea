@@ -159,14 +159,22 @@ export class AppShell extends connect(store)(LitElement) {
       this.smallMenu = !!parseInt(menuTypeStoredVal, 10);
     }
 
-    checkEnvFlags();
-    getCurrentUserData();
-    store.dispatch(loadPartners());
-    store.dispatch(loadOffices());
-    store.dispatch(loadSections());
-    store.dispatch(loadExternalIndividuals());
-    store.dispatch(loadAssessingFirms());
-    store.dispatch(loadUnicefUsers());
+    checkEnvFlags().then((response) => {
+      if (!this._pseaIsDisabled(response)) {
+        getCurrentUserData();
+        store.dispatch(loadPartners());
+        store.dispatch(loadOffices());
+        store.dispatch(loadSections());
+        store.dispatch(loadExternalIndividuals());
+        store.dispatch(loadAssessingFirms());
+        store.dispatch(loadUnicefUsers());
+      }
+    });
+  }
+
+  protected _pseaIsDisabled(response) {
+    const activeFlag = response.active_flags.find(flag => flag === 'psea_disabled');
+    return activeFlag === undefined ? false : true;
   }
 
   public connectedCallback() {
