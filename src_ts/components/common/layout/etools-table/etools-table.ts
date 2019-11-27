@@ -60,7 +60,7 @@ export class EtoolsTable extends LitElement {
   }
   public render() {
     // language=HTML
-    return html`
+    return html` 
       ${etoolsTableStyles}
       <table>
         <caption ?hidden="${this.showCaption(this.caption)}">${this.caption}</caption>
