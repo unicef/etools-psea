@@ -84,7 +84,7 @@ export class Router {
   getRouteDetails(path?: string): RouteDetails | null {
     let routeDetails: RouteDetails | null = null;
     let locationPath: string = path ? this.getLocationPath(path) : this.getLocationPath();
-    logInfo(locationPath, 'Router.getRouteDetails.locationPath: ');
+    //logInfo(locationPath, 'Router.getRouteDetails.locationPath: ');
 
     const qsStartIndex: number = locationPath.indexOf('?');
     let qs = '';

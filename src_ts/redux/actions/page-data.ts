@@ -9,6 +9,7 @@ const LOGS_PREFIX = 'Redux page-data actions';
 
 export const UPDATE_ASSESSMENT_DATA = 'UPDATE_ASSESSMENT_DATA';
 export const UPDATE_ASSESSOR_DATA = 'UPDATE_ASSESSOR_DATA';
+export const UPDATE_ASSESSMENT_AND_ASSESSOR = 'UPDATE_ASSESSMENT_AND_ASSESSOR';
 
 export interface AssessmentActionUpdate extends Action<'UPDATE_ASSESSMENT_DATA'> {
   currentAssessment: Assessment;
@@ -34,21 +35,25 @@ export const updateAssessorData: ActionCreator<AssessorActionUpdate> = (assessor
   };
 };
 
-/**
- * @param assessmentId
- */
-export const requestAssessorData = (assessmentId: number) => (dispatch: any) => {
+export const updateAssessmentAndAssessor = (assessment: Assessment, assessor: Assessor) => {
+  return {
+    type: UPDATE_ASSESSMENT_AND_ASSESSOR,
+    assessment,
+    assessor
+  };
+}
+
+
+const requestAssessor = (assessmentId: number) => {
   const url = getEndpoint(etoolsEndpoints.assessor, {id: assessmentId}).url!;
-  makeRequest({url: url})
+  return makeRequest({url: url})
     .then((response: Assessor) => {
-      dispatch(updateAssessorData(response));
+      return response;
     })
     .catch((err: any) => {
       logError('Assessor request failed', LOGS_PREFIX, err);
-      if (err.status === 404) {
-        // in case assessor is not found, init as new assessor
-        dispatch(updateAssessorData(new Assessor()));
-      }
+
+      return new Assessor();
     });
 };
 
@@ -91,14 +96,17 @@ export const requestAssessmentAndAssessor =
     }
     const url = `${etoolsEndpoints.assessment.url!}${assessmentId}/`;
     return makeRequest({url: url})
-      .then((response: Assessment) => {
-        dispatch(updateAssessmentData(response));
-        if (response.assessor) {
+      .then((assessment: Assessment) => {
+
+        if (assessment.assessor) {
           // request assessor details
-          dispatch(requestAssessorData(assessmentId));
+          requestAssessor(assessmentId).then(assessor => {
+            dispatch(updateAssessmentAndAssessor(assessment, assessor));
+          });
+
         } else {
           // no assessor saved, init a new one
-          dispatch(updateAssessorData(new Assessor()));
+          dispatch(updateAssessmentAndAssessor(assessment, new Assessor()));
         }
       })
       .catch(err => errorCallback(err));

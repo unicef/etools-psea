@@ -34,7 +34,7 @@ const updateStoreRouteDetails: ActionCreator<AppActionUpdateRouteDetails> = (rou
 };
 
 const loadPageComponents: ActionCreator<ThunkResult> = (routeDetails: RouteDetails) => (dispatch) => {
-  logInfo('loadPageComponents for current route', LOGS_PREFIX, routeDetails);
+  //logInfo('loadPageComponents for current route', LOGS_PREFIX, routeDetails);
   if (!routeDetails) {
     // invalid route => redirect to 404 page
     updateAppLocation(ROUTE_404, true);
