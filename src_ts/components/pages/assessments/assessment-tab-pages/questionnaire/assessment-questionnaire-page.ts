@@ -101,7 +101,14 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   isUnicefUser: boolean = false;
 
   stateChanged(state: RootState) {
+
     const newAssessmentId = get(state, 'app.routeDetails.params.assessmentId');
+    if (newAssessmentId === 'new' ||
+      this.notOnQuestionnairePage(get(state, 'app.routeDetails'))) {
+      return;
+    }
+
+
     if (newAssessmentId && newAssessmentId !== this.assessmentId) {
       this.assessmentId = newAssessmentId;
       this.getAnswers();
@@ -119,6 +126,10 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   connectedCallback() {
     super.connectedCallback();
     this.getQuestionnaire();
+  }
+
+  notOnQuestionnairePage(routeDetails: any) {
+    return !(routeDetails.routeName === 'assessments' && routeDetails.subRouteName === 'questionnaire');
   }
 
   setAnswersEditPermision(canEdit: boolean | undefined) {
