@@ -237,7 +237,6 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
 
   _handleError(err: any) {
     const msg = formatServerErrorAsText(err);
-    console.log(msg);
     logError(msg, 'external-individual-dialog', err);
     fireEvent(this.toastEventSource, 'toast', {text: msg});
   }
