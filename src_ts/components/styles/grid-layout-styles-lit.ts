@@ -1,5 +1,5 @@
 import {html} from 'lit-element';
-import '@polymer/iron-flex-layout/iron-flex-layout.js';
+import {displayFlex, horizontal, vertical, wrap} from '@collaborne/lit-flexbox-literals';
 
 // language=HTML
 export const gridLayoutStylesLit = html`
@@ -14,16 +14,19 @@ export const gridLayoutStylesLit = html`
     }
 
     .layout-horizontal {
-      @apply --layout-horizontal;
+      ${displayFlex}
+      ${horizontal}
     }
 
     .layout-vertical,
     .col.layout-vertical {
-      @apply --layout-vertical;
+      ${displayFlex}
+      ${vertical}
     }
 
     .layout-wrap {
-      @apply --layout-wrap;
+      ${displayFlex}
+      ${wrap}
     }
 
     .row-padding {
@@ -49,16 +52,18 @@ export const gridLayoutStylesLit = html`
     }
 
     .row-h {
-      @apply --layout-horizontal;
+      ${displayFlex}
+      ${horizontal}
     }
 
     .row-v {
-      @apply --layout-vertical;
+      ${displayFlex}
+      ${vertical}
     }
 
     .flex-c {
       /* flex container */
-      @apply --layout-flex;
+      ${displayFlex}
     }
 
     .row-h, .row-v {
@@ -102,7 +107,7 @@ export const gridLayoutStylesLit = html`
     }
 
     .right-align {
-      @apply --layout-horizontal;
+      ${horizontal}
       justify-content: flex-end;
       align-items: center;
       text-align: right;
@@ -118,7 +123,7 @@ export const gridLayoutStylesLit = html`
     }
 
     .col {
-      @apply --layout-horizontal;
+      ${horizontal}
       box-sizing: border-box;
     }
 

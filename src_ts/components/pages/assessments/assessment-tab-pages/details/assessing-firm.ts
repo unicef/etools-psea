@@ -1,5 +1,4 @@
 import {LitElement, html, property, customElement} from 'lit-element';
-import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-spinner/paper-spinner';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
@@ -11,6 +10,7 @@ import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {buttonsStyles} from '../../../../styles/button-styles';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+import {centerAligned, horizontal} from '@collaborne/lit-flexbox-literals';
 
 /**
  * @customElement
@@ -30,8 +30,8 @@ export class AssessingFirm extends LitElement {
           max-width: 230px;
         }
         .po-loading {
-          @apply --layout-horizontal;
-          @apply --layout-center;
+          ${horizontal}
+          ${centerAligned}
         }
         paper-spinner {
           align-self: center;
