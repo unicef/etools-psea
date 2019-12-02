@@ -71,12 +71,8 @@ export const buttonsStyles = css`
     color: var(--error-btn-color, #FFFFFF);
     background-color: var(--error-btn-bg-color, var(--error-color));
   }
-
-  @media (max-width: 1024px) {
-    paper-button.responsive {
-      @apply --layout-vertical;
-      @apply --layout-flex;
-      margin-bottom: 8px;
-    }
+  
+  .responsive{
+    margin-bottom: 8px;
   }
 `;
