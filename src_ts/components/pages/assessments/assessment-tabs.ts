@@ -14,8 +14,8 @@ import {customElement, LitElement, html, property} from 'lit-element';
 import {elevationStyles} from '../../styles/lit-styles/elevation-styles';
 import {RouteDetails} from '../../../routing/router';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
-import {Assessment} from '../../../types/assessment';
-import {requestAssessmentAndAssessor, updateAssessmentData} from '../../../redux/actions/page-data';
+import {Assessment, Assessor} from '../../../types/assessment';
+import {requestAssessmentAndAssessor, updateAssessmentData, updateAssessorData, updateAssessmentAndAssessor} from '../../../redux/actions/page-data';
 import {cloneDeep, isJsonStrMatch} from '../../utils/utils';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {EtoolsStatusModel} from '../../common/layout/status/etools-status';
@@ -25,6 +25,7 @@ import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
 import '../../common/layout/etools-error-warn-box';
 import '../../common/layout/export-data';
 import {GenericObject} from '../../../types/globals';
+import get from 'lodash-es/get';
 
 /**
  * @LitElement
@@ -72,7 +73,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
       <section class="elevation page-content no-padding" elevation="1">
         <etools-error-warn-box
           .messages="${(this.assessment && this.assessment.rejected_comment) ?
-    [this.assessment.rejected_comment] : []}">
+        [this.assessment.rejected_comment] : []}">
         </etools-error-warn-box>
       </section>
 
@@ -129,62 +130,69 @@ export class AssessmentTabs extends connect(store)(LitElement) {
   }
 
   public stateChanged(state: RootState) {
+    if (this.onListPage(get(state, 'app.routeDetails'))) {
+      return;
+    }
 
-    if (state.user && state.user.data && !state.user.data.is_unicef_user) {
+    this.hideFollowUpTabForNonUnicefUsers(get(state, 'user.data'));
+
+    // update page route data
+    const stateActiveTab = state.app!.routeDetails.subRouteName as string;
+    if (stateActiveTab !== this.activeTab) {
+      this.activeTab = state.app!.routeDetails.subRouteName as string;
+    }
+
+    // initialize assessment object from redux state
+    if (state.pageData!.currentAssessment) {
+      const newAssessment = state.pageData!.currentAssessment;
+      if (!isJsonStrMatch(this.assessment, newAssessment)) {
+        this.assessment = cloneDeep(newAssessment);
+      }
+    }
+
+    /**
+     * Get route assessment id and get assessment data
+     * Prevent multiple times execution by making sure store routeDetails data
+     * is different than the current routeDetails data
+     * (stateChanged can be triggered by many other store data updates)
+     */
+    if (!isJsonStrMatch(state.app!.routeDetails!, this.routeDetails)) {
+      this.routeDetails = cloneDeep(state.app!.routeDetails);
+      const routeAssessmentId = this.routeDetails!.params!.assessmentId;
+      if (isNil(this.assessment) || routeAssessmentId !== String(this.assessment.id)) {
+        /**
+         * on this level, make assessment get request or init new assessment only
+         * if route id is different than assessment.id or assessment is null
+         */
+        this.setAssessmentInfo(routeAssessmentId);
+      }
+
+      // enable/disable tabs (new assessment has only details tab active until first save)
+      if (this.assessment !== null && routeAssessmentId) {
+        this.setActiveTabs(routeAssessmentId);
+      }
+
+      if (state.user && state.user.permissions) {
+        this.canExport = state.user.permissions.canExportAssessment;
+      }
+
+    }
+
+  }
+
+  hideFollowUpTabForNonUnicefUsers(userData: any) {
+    if (userData && !userData.is_unicef_user) {
       const followupTab = this.pageTabs.find((elem: GenericObject) => elem.tab === 'followup');
       if (followupTab) {
         followupTab.hidden = true;
         this.pageTabs = [...this.pageTabs];
       }
     }
+  }
 
-    // update page route data
-    if (state.app!.routeDetails.routeName === 'assessments' &&
-      state.app!.routeDetails.subRouteName !== 'list') {
-
-      const stateActiveTab = state.app!.routeDetails.subRouteName as string;
-      if (stateActiveTab !== this.activeTab) {
-        // const oldActiveTabValue = this.activeTab;
-        this.activeTab = state.app!.routeDetails.subRouteName as string;
-        // this.tabChanged(this.activeTab, oldActiveTabValue);// Is this needed here?
-      }
-
-      // initialize assessment object from redux state
-      if (state.pageData!.currentAssessment) {
-        const newAssessment = state.pageData!.currentAssessment;
-        if (!isJsonStrMatch(this.assessment, newAssessment)) {
-          this.assessment = cloneDeep(newAssessment);
-        }
-      }
-
-      /**
-       * Get route assessment id and get assessment data
-       * Prevent multiple times execution by making sure store routeDetails data
-       * is different than the current routeDetails data
-       * (stateChanged can be triggered by many other store data updates)
-       */
-      if (!isJsonStrMatch(state.app!.routeDetails!, this.routeDetails)) {
-        this.routeDetails = cloneDeep(state.app!.routeDetails);
-        const routeAssessmentId = this.routeDetails!.params!.assessmentId;
-        if (isNil(this.assessment) || routeAssessmentId !== String(this.assessment.id)) {
-          /**
-           * on this level, make assessment get request or init new assessment only
-           * if route id is different than assessment.id or assessment is null
-           */
-          this.setAssessmentInfo(routeAssessmentId);
-        }
-
-        // enable/disable tabs (new assessment has only details tab active until first save)
-        if (this.assessment !== null && routeAssessmentId) {
-          this.setActiveTabs(routeAssessmentId);
-        }
-
-        if (state.user && state.user.permissions) {
-          this.canExport = state.user.permissions.canExportAssessment;
-        }
-
-      }
-    }
+  onListPage(routeDetails: any) {
+    return routeDetails.routeName === 'assessments' &&
+      routeDetails.subRouteName == 'list';
   }
 
   setActiveTabs(assessmentId: string | number) {
@@ -201,7 +209,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
    */
   setAssessmentInfo(assessmentId: string | number) {
     if (assessmentId === 'new') {
-      store.dispatch(updateAssessmentData(new Assessment()));
+      store.dispatch(updateAssessmentAndAssessor(new Assessment(), new Assessor()));
     } else {
       store.dispatch(requestAssessmentAndAssessor(Number(assessmentId), this.handleGetAssessmentError.bind(this)));
     }
