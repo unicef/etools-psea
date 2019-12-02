@@ -25,6 +25,7 @@
     "test:regenerate_screenshots": "tsc && mocha test/integration/screenshots-baseline/regenerate.js --timeout=15000"
   },
   "dependencies": {
+    "@collaborne/lit-flexbox-literals": "0.2.2",
     "@polymer/app-layout": "^3.0.0",
     "@polymer/iron-icons": "^3.0.1",
     "@polymer/iron-selector": "^3.0.1",
