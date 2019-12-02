@@ -43,7 +43,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   cancelBtnHtml() {
     return html`
-      <paper-button class="default right-icon cancel" raised @tap="${() => this.updateAssessmentStatus('cancel')}">
+      <paper-button class="default right-icon" raised @tap="${() => this.updateAssessmentStatus('cancel')}">
         Cancel
         <iron-icon icon="remove-circle-outline"></iron-icon>
       </paper-button>
@@ -52,7 +52,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   assignBtnHtml() {
     return html`
-      <paper-button class="primary right-icon assign"
+      <paper-button class="primary right-icon"
           raised @tap="${() => this.updateAssessmentStatus('assign')}">
         Assign
         <iron-icon icon="assignment-ind"></iron-icon>
@@ -62,7 +62,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   submitBtnHtml() {
     return html`
-      <paper-button class="primary right-icon submit"
+      <paper-button class="primary right-icon"
           raised @tap="${() => this.updateAssessmentStatus('submit')}">
         Submit
         <iron-icon icon="chevron-right"></iron-icon>
@@ -72,7 +72,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   rejectBtnHtml() {
     return html`
-      <paper-button class="error right-icon reject"
+      <paper-button class="error right-icon"
         raised @tap="${() => this.updateAssessmentStatus('reject')}">
         Reject
         <iron-icon icon="assignment-return"></iron-icon>

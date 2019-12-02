@@ -73,11 +73,10 @@ export const buttonsStyles = css`
   }
 
   @media (max-width: 1024px) {
-    paper-button.reject, 
+    paper-button.primary, 
+    paper-button.error, 
     paper-button.success, 
-    paper-button.cancel, 
-    paper-button.assign, 
-    paper-button.submit {
+    paper-button.default {
       @apply --layout-vertical;
       @apply --layout-flex;
       margin-bottom: 8px;
