@@ -1,5 +1,13 @@
-import '@polymer/iron-flex-layout/iron-flex-layout.js';
 import {html} from 'lit-element';
+import {
+  centerAligned,
+  centerJustified,
+  displayFlex,
+  flexFactor,
+  horizontal,
+  justified,
+  vertical,
+} from '@collaborne/lit-flexbox-literals';
 
 // language=HTML
 export const navMenuStyles = html`
@@ -9,7 +17,8 @@ export const navMenuStyles = html`
     }
 
     :host {
-      @apply --layout-vertical;
+      ${displayFlex}
+      ${vertical}
       height: 100%;
       overflow-y: var(--side-bar-scrolling);
       overflow-x: hidden;
@@ -33,12 +42,14 @@ export const navMenuStyles = html`
     .menu-header,
     :host([small-menu]) .menu-header .ripple-wrapper.main,
     .nav-menu-item {
-      @apply --layout-horizontal;
-      @apply --layout-center;
+      ${displayFlex}
+      ${horizontal}
+      ${centerAligned}
     }
 
     .menu-header {
-      @apply --layout-justified;
+      ${displayFlex}
+      ${justified}
       background-color: var(--primary-color);
       color: white;
       min-height: 60px;
@@ -61,7 +72,8 @@ export const navMenuStyles = html`
     .nav-menu-item.section-title,
     :host([small-menu]) .nav-menu-item,
     :host([small-menu]) .menu-header .ripple-wrapper.main {
-      @apply --layout-center-justified;
+      ${displayFlex}
+      ${centerJustified}
     }
 
     :host([small-menu]) #app-name,
@@ -103,14 +115,17 @@ export const navMenuStyles = html`
     }
 
     .nav-menu {
-      @apply --layout-vertical;
+      ${displayFlex}
+      ${flexFactor}
+      ${vertical}
       background: var(--primary-background-color);
       min-height: 550px;
       padding: 8px 0 0;
     }
 
     .nav-menu, .nav-menu iron-selector[role="navigation"] {
-      @apply --layout-flex;
+      ${displayFlex}
+      ${flexFactor}
     }
 
     .nav-menu-item {
