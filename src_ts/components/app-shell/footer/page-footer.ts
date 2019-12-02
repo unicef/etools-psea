@@ -1,6 +1,6 @@
-import '@polymer/iron-flex-layout/iron-flex-layout.js';
 import {LitElement, html, customElement, property} from 'lit-element';
 import {ROOT_PATH} from '../../../config/config';
+import {displayFlex, displayInlineFlex, endJustified, horizontal, vertical} from '@collaborne/lit-flexbox-literals';
 
 /**
  * page footer element
@@ -16,9 +16,9 @@ export class PageFooter extends LitElement {
     return html`
       <style>
         :host {
-          @apply --layout-vertical;
-          @apply --layout-flex;
-          @apply --layout-end-justified;
+          ${displayFlex}
+          ${vertical}
+          ${endJustified}
           padding: 18px 24px;
           width: 100%;
           min-height: 90px;
@@ -26,12 +26,13 @@ export class PageFooter extends LitElement {
         }
 
         #footer-content {
-          @apply --layout-horizontal;
+          ${displayFlex}
+          ${horizontal}
         }
 
         #unicef-logo {
-          @apply --layout-horizontal;
-          @apply --layout-inline;
+          ${displayInlineFlex}
+          ${horizontal}
           padding-right: 30px;
         }
 

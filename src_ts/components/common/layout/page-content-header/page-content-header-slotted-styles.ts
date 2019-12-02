@@ -1,5 +1,10 @@
 import {html} from 'lit-element';
-import '@polymer/iron-flex-layout/iron-flex-layout.js';
+import {
+  displayFlex,
+  endJustified,
+  flexFactor,
+  horizontal
+} from '@collaborne/lit-flexbox-literals';
 
 /**
  * Used to style page content header title row actions child elements
@@ -10,7 +15,9 @@ import '@polymer/iron-flex-layout/iron-flex-layout.js';
 export const pageContentHeaderSlottedStyles = html`
   <style>
     .content-header-actions {
-      @apply --layout-horizontal;
-      @apply --layout-end;
+      ${displayFlex}
+      ${flexFactor}
+      ${horizontal}
+      ${endJustified}
     }
   </style>`;
