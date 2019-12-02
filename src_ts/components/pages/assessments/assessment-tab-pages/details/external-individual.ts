@@ -158,8 +158,6 @@ export class ExternalIndividual extends connect(store)(LitElement) {
       user: userId,
       assessor_type: AssessorTypes.ExternalIndividual
     }
-
-    this.requestUpdate();
   }
 
   disconnectedCallback() {
