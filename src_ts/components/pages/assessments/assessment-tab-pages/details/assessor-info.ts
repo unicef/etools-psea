@@ -125,7 +125,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
             option-value="id"
             required
             auto-validate
-            ?readonly="${!this.editMode}">
+            ?readonly="${!this.canEditAssessorInfo}">
           </etools-dropdown>
         `;
       case 'firm':
