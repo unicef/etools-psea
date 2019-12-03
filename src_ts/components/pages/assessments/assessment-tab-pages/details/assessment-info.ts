@@ -252,7 +252,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
         if (this.isNew) {
 
           let newAssessor = new Assessor();
-          newAssessor.assessment = response.id;//To have a detectable change on assessor
+          newAssessor.assessment = response.id;//To pass stateChanged dirty check
 
           store.dispatch(updateAssessmentAndAssessor(response, newAssessor));
           updateAppLocation(`/assessments/${response.id}/details`, true);
