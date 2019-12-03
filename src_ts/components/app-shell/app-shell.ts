@@ -99,11 +99,11 @@ export class AppShell extends connect(store)(LitElement) {
         <main role="main" class="main-content">
           <assessments-list class="page"
             ?active="${this.isActivePage(this.mainPage, 'assessments',
-    this.subPage, 'list')}">
+      this.subPage, 'list')}">
           </assessments-list>
           <assessment-tabs class="page"
             ?active="${this.isActivePage(this.mainPage, 'assessments',
-    this.subPage, 'details|questionnaire|followup')}">
+        this.subPage, 'details|questionnaire|followup')}">
           </assessment-tabs>
           <page-not-found class="page"
             ?active="${this.isActivePage(this.mainPage, 'page-not-found')}">
@@ -172,8 +172,8 @@ export class AppShell extends connect(store)(LitElement) {
     });
   }
 
-  protected _pseaIsDisabled(response) {
-    const activeFlag = response.active_flags.find(flag => flag === 'psea_disabled');
+  protected _pseaIsDisabled(response: any) {
+    const activeFlag = response.active_flags.find((flag: string) => flag === 'psea_disabled');
     return activeFlag === undefined ? false : true;
   }
 

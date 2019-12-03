@@ -15,6 +15,7 @@ import {Assessor, AssessorTypes} from '../../../../../types/assessment';
 import {updateAssessorData} from '../../../../../redux/actions/page-data';
 import {loadExternalIndividuals} from '../../../../../redux/actions/common-data';
 import get from 'lodash-es/get';
+import {fireEvent} from '../../../../utils/fire-custom-event';
 
 /**
  * @customElement
@@ -37,7 +38,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
         .padd-top {
           padding-top: 12px;
         }
-        
+
         #emailInput {
          width: 100%;
         }
@@ -108,26 +109,24 @@ export class ExternalIndividual extends connect(store)(LitElement) {
       if (state.user!.data!.is_unicef_user) {
 
         const stateExternalIndivs = get(state, 'commonData.externalIndividuals');
-        if (stateExternalIndivs &&
-          !isJsonStrMatch(stateExternalIndivs, this.externalIndividuals)) {
+        if (stateExternalIndivs) {
 
           this.externalIndividuals = [...stateExternalIndivs];
           if (this.origAssessorType === AssessorTypes.ExternalIndividual) {// ?????
             // check if already saved external individual exists on loaded data, if not they will be added
-            // (they might be missing if changed country)
             handleUsersNoLongerAssignedToCurrentCountry(this.externalIndividuals,
-              this.getSavedExternalDetailsAsArray());
+              this.getSavedExternalDetailsAsArray(get(state, 'pageData.assessor')));
             this.externalIndividuals = [...this.externalIndividuals];
           }
         }
       } else {
-        this.externalIndividuals = this.getSavedExternalDetailsAsArray();
+        this.externalIndividuals = this.getSavedExternalDetailsAsArray(get(state, 'pageData.assessor'));
       }
     }
   }
 
-  private getSavedExternalDetailsAsArray() {
-    let savedExternal = this.assessor.user_details;
+  private getSavedExternalDetailsAsArray(currentAssessor: Assessor) {
+    let savedExternal = currentAssessor.user_details;
     return !!(savedExternal && Object.keys(savedExternal).length > 0) ? [savedExternal] : [];
   }
 
@@ -149,13 +148,16 @@ export class ExternalIndividual extends connect(store)(LitElement) {
 
   onDialogIndividualSaved(e: any) {
     const extIndId = e.detail.id;
+    fireEvent(this, 'external-individuals-updated-in-redux');
     store.dispatch(loadExternalIndividuals(this.updateAssessor.bind(this, extIndId)));
   }
 
   updateAssessor(userId: string) {
-    this.assessor.user = userId;
-    this.assessor.assessor_type = AssessorTypes.ExternalIndividual;
-    store.dispatch(updateAssessorData(cloneDeep(this.assessor)));
+    this.assessor = {
+      ...this.assessor,
+      user: userId,
+      assessor_type: AssessorTypes.ExternalIndividual
+    }
   }
 
   disconnectedCallback() {
