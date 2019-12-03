@@ -16,13 +16,13 @@ import {store, RootState} from '../../../../../redux/store';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {makeRequest} from '../../../../utils/request-helper';
 import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
-import {Assessment, AssessmentInvalidator, AssessmentPermissions} from '../../../../../types/assessment';
+import {Assessment, AssessmentInvalidator, AssessmentPermissions, Assessor} from '../../../../../types/assessment';
 import {updateAppLocation} from '../../../../../routing/routes';
 import {formatDate} from '../../../../utils/date-utility';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import DatePickerLite from '@unicef-polymer/etools-date-time/datepicker-lite';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
-import {updateAssessmentData} from '../../../../../redux/actions/page-data';
+import {updateAssessmentData, updateAssessmentAndAssessor} from '../../../../../redux/actions/page-data';
 import PermissionsMixin from '../../../mixins/permissions-mixins';
 import get from 'lodash-es/get';
 import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
@@ -250,6 +250,11 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     makeRequest(options, body)
       .then((response: any) => {
         if (this.isNew) {
+
+          let newAssessor = new Assessor();
+          newAssessor.assessment = response.id;//To pass stateChanged dirty check
+
+          store.dispatch(updateAssessmentAndAssessor(response, newAssessor));
           updateAppLocation(`/assessments/${response.id}/details`, true);
         } else {
           store.dispatch(updateAssessmentData(response));

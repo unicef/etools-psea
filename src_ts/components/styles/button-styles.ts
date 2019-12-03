@@ -71,4 +71,8 @@ export const buttonsStyles = css`
     color: var(--error-btn-color, #FFFFFF);
     background-color: var(--error-btn-bg-color, var(--error-color));
   }
+  
+  .responsive{
+    margin-bottom: 8px;
+  }
 `;
