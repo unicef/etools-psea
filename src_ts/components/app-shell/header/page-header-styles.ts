@@ -1,12 +1,5 @@
 import {html} from 'lit-element';
-import {
-  centerAligned,
-  displayFlex,
-  endJustified,
-  flexFactor,
-  horizontal,
-  startJustified
-} from '@collaborne/lit-flexbox-literals';
+import '@polymer/iron-flex-layout/iron-flex-layout.js';
 
 // language=HTML
 export const pageHeaderStyles = html`
@@ -29,19 +22,14 @@ export const pageHeaderStyles = html`
     etools-profile-dropdown {
       margin-left: 16px;
     }
-    
+
     .content-align {
-      ${displayFlex}
-      ${flexFactor}
-      ${horizontal}
-      ${centerAligned}
-      ${endJustified}
+      @apply --layout-horizontal;
+      @apply --layout-center;
     }
 
     .titlebar {
-      ${displayFlex}
-      ${flexFactor}
-      ${startJustified}
+      @apply --layout-flex;
       font-size: 28px;
       font-weight: 300;
       color: var(--header-color);

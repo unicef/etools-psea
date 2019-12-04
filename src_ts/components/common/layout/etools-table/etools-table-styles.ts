@@ -1,5 +1,5 @@
 import {html} from 'lit-element';
-import {centerAligned, displayFlex, endJustified, horizontal} from '@collaborne/lit-flexbox-literals';
+import '@polymer/iron-flex-layout/iron-flex-layout';
 
 // language=HTML
 export const etoolsTableStyles = html`
@@ -107,10 +107,9 @@ export const etoolsTableStyles = html`
       right: var(--etools-table-side-padding, 16px);
       top: 0;
       bottom: 0;
-      ${displayFlex}
-      ${horizontal}
-      ${centerAligned}
-      ${endJustified}
+      @apply --layout-horizontal;
+      @apply --layout-center;
+      @apply --layout-end-justified;
       background: transparent;
     }
 

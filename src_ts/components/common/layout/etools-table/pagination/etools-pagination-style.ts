@@ -1,21 +1,13 @@
 import {html} from 'lit-element';
-import {
-  centerAligned,
-  displayFlex,
-  endJustified,
-  horizontal,
-  startAlignedContent,
-  vertical
-} from '@collaborne/lit-flexbox-literals';
+import '@polymer/iron-flex-layout/iron-flex-layout';
 
 // language=HTML
 export const etoolsPaginationStyles = html`
   <style>
     :host {
-      ${displayFlex}
-      ${horizontal}
-      ${centerAligned}
-      ${endJustified}
+      @apply --layout-horizontal;
+      @apply --layout-center;
+      @apply --layout-end-justified;
       font-size: 12px;
       color: var(--secondary-text-color, rgba(0, 0, 0, 0.54));
     }
@@ -32,11 +24,11 @@ export const etoolsPaginationStyles = html`
     paper-icon-button {
       color: color: var(--dark-icon-color, #6f6f70);
     }
-    
+
     paper-icon-button[disabled] {
       opacity: .33;
     }
-    
+
     paper-icon-button:not([disabled]):hover {
       color: var(--primary-text-color);
     }
@@ -59,8 +51,7 @@ export const etoolsPaginationStyles = html`
         font-size: 12px;
         height: 24px;
         /* For IE below */
-        ${displayFlex}
-        ${horizontal}
+        @apply --layout-horizontal;
         align-items: strech;
         max-width: 24px;
       };
@@ -71,17 +62,16 @@ export const etoolsPaginationStyles = html`
     }
 
     .pagination-item {
-      ${displayFlex}
-      ${centerAligned}
+      @apply --layout-horizontal;
+      @apply --layout-center;
     }
 
     /* Mobile view CSS */
     :host([low-resolution-layout]){
       padding: 8px 0;
       height: auto;
-      ${displayFlex}
-      ${vertical}
-      ${startAlignedContent}
+      @apply --layout-vertical;
+      @apply --layout-start;
     }
 
     :host([low-resolution-layout]) #range {
@@ -91,5 +81,5 @@ export const etoolsPaginationStyles = html`
     :host([low-resolution-layout]) .pagination-btns {
       margin-left: -12px;
     }
-    
+
   </style>`;
