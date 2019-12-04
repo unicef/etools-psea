@@ -1,8 +1,8 @@
 import {LitElement, html, property, customElement} from 'lit-element';
 import '@polymer/paper-tabs/paper-tabs';
 import '@polymer/paper-tabs/paper-tab';
+import '@polymer/iron-flex-layout/iron-flex-layout';
 import {GenericObject} from '../../../types/globals';
-import {displayFlex, horizontal, startJustified} from '@collaborne/lit-flexbox-literals';
 
 
 /**
@@ -21,20 +21,19 @@ export class EtoolsTabs extends LitElement {
         *[hidden] {
           display: none !important;
         }
-        
+
         paper-tab[disabled] {
           opacity: .3;
         }
-        
+
         *[disabled] {
           cursor: not-allowed !important;
           pointer-events: auto !important;
         }
 
         :host {
-          ${displayFlex}
-          ${horizontal}
-          ${startJustified}
+          @apply --layout-horizontal;
+          @apply --layout-start-justified;
         }
 
         :host([border-bottom]) {
