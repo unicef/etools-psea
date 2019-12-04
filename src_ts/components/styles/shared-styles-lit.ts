@@ -1,6 +1,4 @@
-import {css, html} from 'lit-element';
-import {requiredStarStyle} from './required-star-styles';
-import '@webcomponents/shadycss/apply-shim.min';
+import {html} from 'lit-element';
 
 export const SharedStylesLit = html`
 <style>
@@ -62,6 +60,16 @@ export const SharedStylesLit = html`
         display: block !important;
         border-bottom: 1px dashed var(--gray-20) !important;
       };
+  }
+
+  :host > * {
+    --required-star-style: {
+      background: url('./images/required.svg') no-repeat 99% 20%/8px;
+      width: auto !important;
+      max-width: 100%;
+      right: auto;
+      padding-right: 15px;
+    };
   }
 
   etools-dropdown[readonly],
@@ -129,11 +137,11 @@ export const SharedStylesLit = html`
     etools-upload[required],
     etools-currency-amount-input[required] {
       --paper-input-container-label: {
-        ${requiredStarStyle}
+        @apply --required-star-style;
         color: var(--secondary-text-color, #737373)
       };
       --paper-input-container-label-floating: {
-        ${requiredStarStyle}
+        @apply --required-star-style;
         color: var(--secondary-text-color, #737373);
       }
     }
@@ -145,7 +153,7 @@ export const SharedStylesLit = html`
     }
 
     label[required] {
-      ${requiredStarStyle}
+      @apply --required-star-style;
       background: url('./images/required.svg') no-repeat 87% 40%/6px;
     }
 
