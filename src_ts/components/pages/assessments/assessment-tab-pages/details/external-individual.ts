@@ -23,11 +23,12 @@ import {fireEvent} from '../../../../utils/fire-custom-event';
 @customElement('external-individual')
 export class ExternalIndividual extends connect(store)(LitElement) {
   static get styles() {
-    return [SharedStylesLit, gridLayoutStylesLit, labelAndvalueStylesLit];
+    return [gridLayoutStylesLit, labelAndvalueStylesLit];
   }
   render() {
     // language=HTML
     return html`
+      ${SharedStylesLit}
       <style>
         a {
           cursor: pointer;

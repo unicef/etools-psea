@@ -57,6 +57,7 @@
     "@unicef-polymer/etools-profile-dropdown": "^4.0.1",
     "@unicef-polymer/etools-upload": "3.0.1",
     "@webcomponents/webcomponentsjs": "^2.0.0",
+    "@webcomponents/shadycss": "^1.9.3",
     "lit-element": "^2.2.1",
     "lodash-es": "^4.17.11",
     "moment": "^2.24.0",

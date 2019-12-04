@@ -1,7 +1,9 @@
-import {css} from 'lit-element';
+import {css, html} from 'lit-element';
 import {requiredStarStyle} from './required-star-styles';
+import '@webcomponents/shadycss/apply-shim.min';
 
-export const SharedStylesLit = css`
+export const SharedStylesLit = html`
+<style>
   :host {
     display: block;
     box-sizing: border-box;
@@ -153,4 +155,5 @@ export const SharedStylesLit = css`
     .font-bold{
       font-weight: bold;
     }
+</style>
 `;

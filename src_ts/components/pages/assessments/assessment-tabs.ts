@@ -35,13 +35,14 @@ import get from 'lodash-es/get';
 export class AssessmentTabs extends connect(store)(LitElement) {
 
   static get styles() {
-    return [SharedStylesLit, pageContentHeaderSlottedStyles, elevationStyles, pageLayoutStyles];
+    return [pageContentHeaderSlottedStyles, elevationStyles, pageLayoutStyles];
   }
 
   public render() {
     // main template
     // language=HTML
     return html`
+      ${SharedStylesLit}
       <style>
         etools-status {
           justify-content: center;

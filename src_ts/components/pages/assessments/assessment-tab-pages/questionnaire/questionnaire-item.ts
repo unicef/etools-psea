@@ -19,7 +19,7 @@ import {buttonsStyles} from '../../../../styles/button-styles';
 @customElement('questionnaire-item')
 export class QuestionnaireItemElement extends LitElement {
   static get styles() {
-    return [SharedStylesLit, gridLayoutStylesLit, buttonsStyles, radioButtonStyles,
+    return [gridLayoutStylesLit, buttonsStyles, radioButtonStyles,
       css`
         :host {
           display: block;
@@ -43,6 +43,7 @@ export class QuestionnaireItemElement extends LitElement {
   }
   render() {
     return html`
+      ${SharedStylesLit}
       <etools-content-panel panel-title="${this.question.subject}"
                             ?show-expand-btn=${!this.editMode} .open="${this.open}">
         <etools-loading loading-text="Saving..." .active="${this.showLoading}"></etools-loading>

@@ -18,12 +18,18 @@
     "manifest.json",
     "push-manifest.json",
     "node_modules/@webcomponents/webcomponentsjs/**",
+    "node_modules/@webcomponents/shadycss/**",
     "node_modules/web-animations-js/web-animations-next-lite.min.js",
     "node_modules/moment/min/moment.min.js"
   ],
   "lint": {
-    "rules": ["polymer-3"],
-    "ignoreWarnings": ["could-not-resolve-reference", "non-literal-import"]
+    "rules": [
+      "polymer-3"
+    ],
+    "ignoreWarnings": [
+      "could-not-resolve-reference",
+      "non-literal-import"
+    ]
   },
   "builds": [
     {

@@ -1,4 +1,4 @@
-import {LitElement, html, property, customElement} from 'lit-element';
+import {LitElement, html, property, customElement, css} from 'lit-element';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-spinner/paper-spinner';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
@@ -19,19 +19,23 @@ import {centerAligned, horizontal} from '@collaborne/lit-flexbox-literals';
 @customElement('assessing-firm')
 export class AssessingFirm extends LitElement {
   static get styles() {
-    return [SharedStylesLit, gridLayoutStylesLit, buttonsStyles, labelAndvalueStylesLit]
-  }
-  render() {
-    // language=HTML
-    return html`
-      <style>
-        .input-width {
-          max-width: 230px;
-        }
+    return [gridLayoutStylesLit, buttonsStyles, labelAndvalueStylesLit,
+      css`
         .po-loading {
           ${horizontal}
           ${centerAligned}
         }
+    `]
+  }
+  render() {
+    // language=HTML
+    return html`
+      ${SharedStylesLit}
+      <style>
+        .input-width {
+          max-width: 230px;
+        }
+
         paper-spinner {
           align-self: center;
           width: 20px;

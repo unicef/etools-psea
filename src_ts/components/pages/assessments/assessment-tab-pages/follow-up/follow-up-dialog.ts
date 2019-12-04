@@ -23,10 +23,11 @@ import '../../../../common/layout/etools-error-warn-box';
 @customElement('follow-up-dialog')
 export class FollowUpDialog extends connect(store)(LitElement) {
   static get styles() {
-    return [SharedStylesLit, gridLayoutStylesLit];
+    return [gridLayoutStylesLit];
   }
   render() {
     return html`
+      ${SharedStylesLit}
       <style>
 
         etools-dropdown {

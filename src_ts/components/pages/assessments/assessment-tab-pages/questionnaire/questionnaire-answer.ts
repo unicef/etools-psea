@@ -33,7 +33,7 @@ import './answer-instructions';
 @customElement('questionnaire-answer')
 export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   static get styles() {
-    return [SharedStylesLit, gridLayoutStylesLit, radioButtonStyles, labelAndvalueStylesLit,
+    return [gridLayoutStylesLit, radioButtonStyles, labelAndvalueStylesLit,
       css`
         .padd-right {
           padding-right: 24px;
@@ -56,6 +56,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   }
   render() {
     return html`
+      ${SharedStylesLit}
       <div class="row-padding-v" ?hidden="${!this.editMode}">
         <div>
           <label class="paper-label" required>Rating</label>

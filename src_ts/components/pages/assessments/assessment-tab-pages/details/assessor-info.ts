@@ -35,7 +35,7 @@ import '@unicef-polymer/etools-loading';
 @customElement('assessor-info')
 export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   static get styles() {
-    return [SharedStylesLit, gridLayoutStylesLit, buttonsStyles, labelAndvalueStylesLit,
+    return [gridLayoutStylesLit, buttonsStyles, labelAndvalueStylesLit,
       css`
       :host {
         font-size: 16px;
@@ -55,7 +55,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   render() {
     // language=HTML
     return html`
-
+      ${SharedStylesLit}
       <etools-content-panel panel-title="Assessor">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
 

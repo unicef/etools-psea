@@ -16,7 +16,7 @@ import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown';
 @customElement('question-attachments')
 export class QuestionAttachmentsElement extends LitElement {
   static get styles() {
-    return [SharedStylesLit, gridLayoutStylesLit, labelAndvalueStylesLit,
+    return [gridLayoutStylesLit, labelAndvalueStylesLit,
       css`
         .container {
           background-color: var(--secondary-background-color);
@@ -69,6 +69,7 @@ export class QuestionAttachmentsElement extends LitElement {
 
   render() {
     return html`
+      ${SharedStylesLit}
       <style>
         etools-dropdown[required][no-star] {
           --paper-input-container-label: {

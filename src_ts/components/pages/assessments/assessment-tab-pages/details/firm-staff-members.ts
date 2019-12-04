@@ -31,11 +31,12 @@ import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 @customElement('firm-staff-members')
 export class FirmStaffMembers extends LitElement {
   static get styles() {
-    return [SharedStylesLit, gridLayoutStylesLit];
+    return [gridLayoutStylesLit];
   }
   render() {
     // language=HTML
     return html`
+      ${SharedStylesLit}
       <style>
         :host {
           display: block;

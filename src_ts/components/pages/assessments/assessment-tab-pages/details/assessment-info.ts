@@ -38,7 +38,6 @@ import {UnicefUser} from '../../../../../types/user-model';
 export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement)) {
   static get styles() {
     return [
-      SharedStylesLit,
       gridLayoutStylesLit,
       buttonsStyles,
       css`
@@ -50,10 +49,11 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
 
   render() {
     if (!this.assessment) {
-      return html``;
+      return html`${SharedStylesLit}`;
     }
     // language=HTML
     return html`
+      ${SharedStylesLit}
       <etools-content-panel panel-title="Assessment Information">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
 

@@ -14,11 +14,12 @@ import {SharedStylesLit} from '../styles/shared-styles-lit';
 export class PageNotFound extends LitElement {
 
   static get styles() {
-    return [SharedStylesLit, elevationStyles, pageLayoutStyles];
+    return [elevationStyles, pageLayoutStyles];
   }
 
   render() {
     return html`
+      ${SharedStylesLit}
       <section class="page-content elevation" elevation="1">
         <h2>Oops! You hit a 404</h2>
         <p>The page you're looking for doesn't seem to exist. Head back
