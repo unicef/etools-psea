@@ -1,11 +1,10 @@
-import {html} from 'lit-element';
+import {css} from 'lit-element';
 import {appDrawerStyles} from './menu/styles/app-drawer-styles';
 import {horizontal} from '@collaborne/lit-flexbox-literals';
 
 // language=HTML
-export const AppShellStyles = html`
+export const AppShellStyles = css`
   ${appDrawerStyles}
-  <style>
     :host {
       display: block;
     }
@@ -25,5 +24,4 @@ export const AppShellStyles = html`
     .page[active] {
       display: block;
     }
-  </style>
 `;

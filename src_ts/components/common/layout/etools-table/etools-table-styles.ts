@@ -1,9 +1,8 @@
-import {html} from 'lit-element';
+import {css} from 'lit-element';
 import {centerAligned, displayFlex, endJustified, horizontal} from '@collaborne/lit-flexbox-literals';
 
 // language=HTML
-export const etoolsTableStyles = html`
-  <style>
+export const etoolsTableStyles = css`
     :host {
       display: block;
       width: 100%;
@@ -129,5 +128,4 @@ export const etoolsTableStyles = html`
     paper-checkbox[readonly] {
       pointer-events: none;
     }
-  </style>
 `;

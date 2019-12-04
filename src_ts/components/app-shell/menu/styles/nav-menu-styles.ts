@@ -1,4 +1,4 @@
-import {html} from 'lit-element';
+import {css} from 'lit-element';
 import {
   centerAligned,
   centerJustified,
@@ -10,8 +10,7 @@ import {
 } from '@collaborne/lit-flexbox-literals';
 
 // language=HTML
-export const navMenuStyles = html`
-  <style>
+export const navMenuStyles = css`
     *[hidden] {
       display: none !important;
     }
@@ -190,5 +189,4 @@ export const navMenuStyles = html`
     .ripple-wrapper {
       position: relative;
     }
-  </style>
 `;

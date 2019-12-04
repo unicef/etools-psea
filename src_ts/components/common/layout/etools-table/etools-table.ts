@@ -56,12 +56,11 @@ export enum EtoolsTableActionType {
 @customElement('etools-table')
 export class EtoolsTable extends LitElement {
   static get styles() {
-    return [etoolsTableResponsiveStyles];
+    return [etoolsTableResponsiveStyles, etoolsTableStyles];
   }
   public render() {
     // language=HTML
     return html`
-      ${etoolsTableStyles}
       <table>
         <caption ?hidden="${this.showCaption(this.caption)}">${this.caption}</caption>
         <thead>
