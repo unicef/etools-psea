@@ -21,13 +21,12 @@ import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 @customElement('staff-member-dialog')
 export class StaffMemberDialog extends LitElement {
   static get styles() {
-    return [labelAndvalueStylesLit];
+    return [SharedStylesLit, gridLayoutStylesLit, labelAndvalueStylesLit];
   }
 
   render() {
     // language=HTML
     return html`
-      ${SharedStylesLit}${gridLayoutStylesLit}
       <style>
         #has-access-checkbox-wrapper {
           padding: 16px 0;
@@ -193,7 +192,7 @@ export class StaffMemberDialog extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.editedItem= cloneDeep(this.defaultItem);
+    this.editedItem = cloneDeep(this.defaultItem);
   }
 
   public openDialog() {
@@ -230,7 +229,7 @@ export class StaffMemberDialog extends LitElement {
   private validate() {
     let isValid = true;
     this.validationSelectors.forEach((selector: string) => {
-      const el = this.shadowRoot!.querySelector(selector) as PolymerElement & { validate(): boolean };
+      const el = this.shadowRoot!.querySelector(selector) as PolymerElement & {validate(): boolean};
       if (el && !el.validate()) {
         isValid = false;
       }

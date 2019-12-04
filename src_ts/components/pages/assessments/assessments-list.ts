@@ -59,14 +59,13 @@ let lastSelectedFilters: FilterKeysAndTheirSelectedValues = {...defaultSelectedF
 export class AssessmentsList extends connect(store)(LitElement) {
 
   static get styles() {
-    return [elevationStyles, buttonsStyles, pageLayoutStyles];
+    return [SharedStylesLit, pageContentHeaderSlottedStyles, elevationStyles, buttonsStyles, pageLayoutStyles];
   }
 
   public render() {
     // main template
     // language=HTML
     return html`
-      ${SharedStylesLit}${pageContentHeaderSlottedStyles}
       <style>
         etools-table {
           padding-top: 12px;

@@ -19,12 +19,11 @@ import {centerAligned, horizontal} from '@collaborne/lit-flexbox-literals';
 @customElement('assessing-firm')
 export class AssessingFirm extends LitElement {
   static get styles() {
-    return [buttonsStyles, labelAndvalueStylesLit]
+    return [SharedStylesLit, gridLayoutStylesLit, buttonsStyles, labelAndvalueStylesLit]
   }
   render() {
     // language=HTML
     return html`
-     ${SharedStylesLit} ${gridLayoutStylesLit}
       <style>
         .input-width {
           max-width: 230px;

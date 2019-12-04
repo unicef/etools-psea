@@ -1,4 +1,4 @@
-import {html} from 'lit-element';
+import {css} from 'lit-element';
 import {
   displayFlex,
   endJustified,
@@ -12,12 +12,11 @@ import {
  */
 
 // language=HTML
-export const pageContentHeaderSlottedStyles = html`
-  <style>
+export const pageContentHeaderSlottedStyles = css`
     .content-header-actions {
       ${displayFlex}
       ${flexFactor}
       ${horizontal}
       ${endJustified}
     }
-  </style>`;
+`;

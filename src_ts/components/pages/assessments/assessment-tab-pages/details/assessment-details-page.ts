@@ -12,10 +12,12 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
  */
 @customElement('assessment-details-page')
 export class AssessmentDetailsPage extends connect(store)(LitElement) {
+  static get styles() {
+    return [SharedStylesLit]
+  }
   render() {
     // language=HTML
     return html`
-      ${SharedStylesLit}
       <style>
         :host {
           display: block;

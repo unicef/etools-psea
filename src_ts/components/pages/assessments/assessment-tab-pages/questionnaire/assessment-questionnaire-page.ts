@@ -29,11 +29,12 @@ export enum EtoolsPseaOverallRating {
  */
 @customElement('assessment-questionnaire-page')
 export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
-
+  static get styles() {
+    return [SharedStylesLit, gridLayoutStylesLit];
+  }
   render() {
     // language=HTML
     return html`
-      ${gridLayoutStylesLit} ${SharedStylesLit}
       <style>
         :host {
           display: block;

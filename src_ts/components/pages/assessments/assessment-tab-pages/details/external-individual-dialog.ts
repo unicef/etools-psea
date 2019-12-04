@@ -24,6 +24,8 @@ import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 export class ExternalIndividualDialog extends connect(store)(LitElement) {
   static get styles() {
     return [
+      SharedStylesLit,
+      gridLayoutStylesLit,
       labelAndvalueStylesLit,
       css`
         #ext-individual-details-row {
@@ -35,7 +37,6 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
   render() {
     // language=HTML
     return html`
-      ${SharedStylesLit}${gridLayoutStylesLit}
       <etools-dialog id="externalIndividualDialog"
                       ?opened="${this.dialogOpened}"
                       dialog-title="${this.dialogTitle}"

@@ -1,9 +1,8 @@
-import {html} from 'lit-element';
+import {css} from 'lit-element';
 import {displayFlex, horizontal, vertical, wrap} from '@collaborne/lit-flexbox-literals';
 
 // language=HTML
-export const gridLayoutStylesLit = html`
-  <style>
+export const gridLayoutStylesLit = css`
     .w100 {
       width: 100%;
     }
@@ -185,7 +184,4 @@ export const gridLayoutStylesLit = html`
       flex: 0 0 100%;
       max-width: 100%;
     }
-
-    /* TODO: more classes will e added if needed */
-
-  </style>`;
+`;

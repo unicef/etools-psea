@@ -14,7 +14,7 @@ import {PaperTextareaElement} from '@polymer/paper-input/paper-textarea';
 export class AssessmentRejectionDialog extends LitElement {
 
   static get styles() {
-    return [css`
+    return [SharedStylesLit, css`
       #rejectionReason {
         padding-bottom: 24px;
       }
@@ -24,14 +24,13 @@ export class AssessmentRejectionDialog extends LitElement {
   render() {
     // language=HTML
     return html`
-      ${SharedStylesLit}
       <etools-dialog id="assessmentRejectionDialog"
                     ?opened="${this.dialogOpened}"
                     dialog-title="Are you sure you want to reject this assessment?"
                     size="md"
                     ok-btn-text="YES"
                     cancel-btn-text="Cancel"
-                    keep-dialog-open 
+                    keep-dialog-open
                     ?show-spinner="${this.spinnerLoading}"
                     @close="${() => this.closeDialog()}"
                     @confirm-btn-clicked="${this.onConfirm}">
@@ -41,8 +40,8 @@ export class AssessmentRejectionDialog extends LitElement {
                         required auto-validate
                         error-message="Please provide a rejection reason."
                         placeholder="&#8212;"></paper-textarea>
-                    
-                    
+
+
       </etools-dialog>
     `;
   }

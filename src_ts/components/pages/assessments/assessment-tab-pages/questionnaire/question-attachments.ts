@@ -16,7 +16,7 @@ import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown';
 @customElement('question-attachments')
 export class QuestionAttachmentsElement extends LitElement {
   static get styles() {
-    return [labelAndvalueStylesLit,
+    return [SharedStylesLit, gridLayoutStylesLit, labelAndvalueStylesLit,
       css`
         .container {
           background-color: var(--secondary-background-color);
@@ -81,7 +81,6 @@ export class QuestionAttachmentsElement extends LitElement {
           }
         }
       </style>
-      ${SharedStylesLit}${gridLayoutStylesLit}
 
       <div class="row-padding-v">
         <etools-upload-multi ?hidden="${!this.editMode}"

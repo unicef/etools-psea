@@ -22,9 +22,11 @@ import '../../../../common/layout/etools-error-warn-box';
 
 @customElement('follow-up-dialog')
 export class FollowUpDialog extends connect(store)(LitElement) {
+  static get styles() {
+    return [SharedStylesLit, gridLayoutStylesLit];
+  }
   render() {
     return html`
-       ${SharedStylesLit} ${gridLayoutStylesLit}
       <style>
 
         etools-dropdown {
@@ -249,7 +251,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
 
   updated(changedProperties: GenericObject) {
     if (this.warningMessages.length && !changedProperties.has('warningMessages') &&
-        !isEqual(this.editedItem, changedProperties.get('editedItem'))) {
+      !isEqual(this.editedItem, changedProperties.get('editedItem'))) {
       this.warningMessages.pop();
     }
   }
@@ -263,7 +265,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   private validate() {
     let isValid = true;
     this.validationSelectors.forEach((selector: string) => {
-      const el = this.shadowRoot!.querySelector(selector) as PolymerElement & { validate(): boolean };
+      const el = this.shadowRoot!.querySelector(selector) as PolymerElement & {validate(): boolean};
       if (el && !el.validate()) {
         isValid = false;
       }

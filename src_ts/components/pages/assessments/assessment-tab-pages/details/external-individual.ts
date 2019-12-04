@@ -7,12 +7,10 @@ import './external-individual-dialog';
 import {ExternalIndividualDialog} from './external-individual-dialog';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
-import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
 import {handleUsersNoLongerAssignedToCurrentCountry} from '../../../../common/common-methods';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
 import {UnicefUser} from '../../../../../types/user-model';
 import {Assessor, AssessorTypes} from '../../../../../types/assessment';
-import {updateAssessorData} from '../../../../../redux/actions/page-data';
 import {loadExternalIndividuals} from '../../../../../redux/actions/common-data';
 import get from 'lodash-es/get';
 import {fireEvent} from '../../../../utils/fire-custom-event';
@@ -25,7 +23,7 @@ import {fireEvent} from '../../../../utils/fire-custom-event';
 @customElement('external-individual')
 export class ExternalIndividual extends connect(store)(LitElement) {
   static get styles() {
-    return [labelAndvalueStylesLit];
+    return [SharedStylesLit, gridLayoutStylesLit, labelAndvalueStylesLit];
   }
   render() {
     // language=HTML
@@ -43,7 +41,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
          width: 100%;
         }
       </style>
-      ${SharedStylesLit}${gridLayoutStylesLit}
+
       <div class="row-padding-v">
         <etools-dropdown id="externalIndiv"
           label="External Individual"

@@ -1,7 +1,7 @@
-import {html} from 'lit-element';
+import {css} from 'lit-element';
+import {requiredStarStyle} from './required-star-styles';
 
-export const SharedStylesLit = html`
-<style>
+export const SharedStylesLit = css`
   :host {
     display: block;
     box-sizing: border-box;
@@ -102,16 +102,6 @@ export const SharedStylesLit = html`
     }
   }
 
-  :host > * {
-      --required-star-style: {
-        background: url('./images/required.svg') no-repeat 99% 20%/8px;
-        width: auto !important;
-        max-width: 100%;
-        right: auto;
-        padding-right: 15px;
-      };
-    }
-
     paper-input,
     paper-textarea,
     paper-input-container,
@@ -137,11 +127,11 @@ export const SharedStylesLit = html`
     etools-upload[required],
     etools-currency-amount-input[required] {
       --paper-input-container-label: {
-        @apply --required-star-style;
+        ${requiredStarStyle}
         color: var(--secondary-text-color, #737373)
       };
       --paper-input-container-label-floating: {
-        @apply --required-star-style;
+        ${requiredStarStyle}
         color: var(--secondary-text-color, #737373);
       }
     }
@@ -153,7 +143,7 @@ export const SharedStylesLit = html`
     }
 
     label[required] {
-      @apply --required-star-style;
+      ${requiredStarStyle}
       background: url('./images/required.svg') no-repeat 87% 40%/6px;
     }
 
@@ -163,5 +153,4 @@ export const SharedStylesLit = html`
     .font-bold{
       font-weight: bold;
     }
-</style>
 `;

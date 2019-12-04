@@ -10,12 +10,11 @@ import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-
 @customElement('partner-details')
 export class PartnerDetails extends LitElement {
   static get styles() {
-    return [labelAndvalueStylesLit];
+    return [gridLayoutStylesLit, labelAndvalueStylesLit];
   }
   render() {
     // language=HTML
     return html`
-      ${gridLayoutStylesLit}
       <style>
         .input-label p {
           margin: 0;
