@@ -28,17 +28,18 @@ import {pageHeaderStyles} from './page-header-styles';
  */
 @customElement('page-header')
 export class PageHeader extends connect(store)(LitElement) {
-
+  static get styles() {
+    return [pageHeaderStyles]
+  }
   public render() {
     // main template
     // language=HTML
     return html`
-      ${pageHeaderStyles}
       <style>
         app-toolbar {
           background-color: ${this.headerColor};
         }
-        
+
         support-btn {
           color: var(--header-icon-color);
         }
@@ -60,7 +61,7 @@ export class PageHeader extends connect(store)(LitElement) {
               .sections="${this.profileDrSections}"
               .offices="${this.profileDrOffices}"
               .users="${this.profileDrUsers}"
-              .profile="${ this.profile ? {...this.profile} : {} }"
+              .profile="${ this.profile ? {...this.profile} : {}}"
               @save-profile="${this.handleSaveProfile}"
               @sign-out="${this._signOut}">
           </etools-profile-dropdown>
@@ -154,7 +155,7 @@ export class PageHeader extends connect(store)(LitElement) {
 
   protected _getModifiedFields(originalData: any, newData: any) {
     const modifiedFields: GenericObject = {};
-    this.editableFields.forEach(function(field: any) {
+    this.editableFields.forEach(function (field: any) {
       if (originalData[field] !== newData[field]) {
         modifiedFields[field] = newData[field];
       }

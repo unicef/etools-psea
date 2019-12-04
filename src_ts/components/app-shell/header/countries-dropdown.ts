@@ -20,12 +20,13 @@ import {ROOT_PATH} from '../../../config/config';
  */
 @customElement('countries-dropdown')
 export class CountriesDropdown extends connect(store)(LitElement) {
-
+  static get styles() {
+    return [countriesDropdownStyles]
+  }
   public render() {
     // main template
     // language=HTML
     return html`
-      ${countriesDropdownStyles}
       <!-- shown options limit set to 250 as there are currently 195 countries in the UN council and about 230 total -->
       <etools-dropdown id="countrySelector"
                        .selected="${this.currentCountry.id}"

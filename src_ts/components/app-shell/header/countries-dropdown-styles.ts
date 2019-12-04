@@ -1,9 +1,7 @@
-import {html} from 'lit-element';
+import {css} from 'lit-element';
 
 // language=HTML
-export const countriesDropdownStyles = html`
-  <style>
-
+export const countriesDropdownStyles = css`
     *[hidden] {
       display: none !important;
     }
@@ -57,6 +55,4 @@ export const countriesDropdownStyles = html`
         max-height: 380px;
       };
     }
-  </style>
-
 `;

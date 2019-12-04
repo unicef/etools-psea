@@ -1,4 +1,4 @@
-import {html} from 'lit-element';
+import {css} from 'lit-element';
 import {
   centerAligned,
   displayFlex,
@@ -9,8 +9,7 @@ import {
 } from '@collaborne/lit-flexbox-literals';
 
 // language=HTML
-export const pageHeaderStyles = html`
-  <style>
+export const pageHeaderStyles = css`
     app-toolbar {
       padding: 0 16px 0 0;
       height: 60px;
@@ -29,7 +28,7 @@ export const pageHeaderStyles = html`
     etools-profile-dropdown {
       margin-left: 16px;
     }
-    
+
     .content-align {
       ${displayFlex}
       ${flexFactor}
@@ -68,5 +67,4 @@ export const pageHeaderStyles = html`
         display: none;
       }
     }
-  </style>
 `;
