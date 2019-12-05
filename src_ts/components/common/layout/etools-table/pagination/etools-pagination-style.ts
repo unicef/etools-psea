@@ -1,5 +1,5 @@
-import '@polymer/iron-flex-layout/iron-flex-layout';
 import {html} from 'lit-element';
+import '@polymer/iron-flex-layout/iron-flex-layout';
 
 // language=HTML
 export const etoolsPaginationStyles = html`
@@ -8,7 +8,6 @@ export const etoolsPaginationStyles = html`
       @apply --layout-horizontal;
       @apply --layout-center;
       @apply --layout-end-justified;
-
       font-size: 12px;
       color: var(--secondary-text-color, rgba(0, 0, 0, 0.54));
     }
@@ -25,11 +24,11 @@ export const etoolsPaginationStyles = html`
     paper-icon-button {
       color: color: var(--dark-icon-color, #6f6f70);
     }
-    
+
     paper-icon-button[disabled] {
       opacity: .33;
     }
-    
+
     paper-icon-button:not([disabled]):hover {
       color: var(--primary-text-color);
     }
@@ -82,5 +81,5 @@ export const etoolsPaginationStyles = html`
     :host([low-resolution-layout]) .pagination-btns {
       margin-left: -12px;
     }
-    
+
   </style>`;

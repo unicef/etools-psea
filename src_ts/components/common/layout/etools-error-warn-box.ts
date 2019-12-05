@@ -1,6 +1,7 @@
 import {LitElement, html, customElement, property} from 'lit-element';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@polymer/paper-button/paper-button.js';
+import '@polymer/iron-flex-layout/iron-flex-layout';
 import {buttonsStyles} from '../../styles/button-styles';
 
 /**

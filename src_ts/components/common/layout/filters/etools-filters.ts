@@ -60,7 +60,7 @@ export class EtoolsFilters extends LitElement {
           display: none !important;
         }
 
-        paper-button:focus {
+        paper-button:focus:not(.clear-filters) {
           ${elevation2}
         }
       `
@@ -230,7 +230,7 @@ export class EtoolsFilters extends LitElement {
             </paper-button>
             <div slot="dropdown-content" class="clear-all-filters">
               <paper-button @tap="${this.clearAllFilterValues}"
-                            class="secondary-btn">
+                            class="secondary-btn clear-filters">
                 CLEAR ALL
               </paper-button>
             </div>

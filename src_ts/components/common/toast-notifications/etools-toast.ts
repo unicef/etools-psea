@@ -1,7 +1,7 @@
 import {LitElement, html, customElement} from 'lit-element';
-import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/paper-toast/paper-toast';
 import '@polymer/paper-button/paper-button';
+import '@polymer/iron-flex-layout/iron-flex-layout';
 import {PaperToastElement} from '@polymer/paper-toast/paper-toast';
 import {PaperButtonElement} from '@polymer/paper-button/paper-button';
 import {GenericObject} from '../../../types/globals';

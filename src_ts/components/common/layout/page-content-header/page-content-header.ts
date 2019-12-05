@@ -1,5 +1,5 @@
-import '@polymer/iron-flex-layout/iron-flex-layout.js';
 import {LitElement, html, property, customElement} from 'lit-element';
+import '@polymer/iron-flex-layout/iron-flex-layout.js';
 
 /**
  * @LitElement
@@ -20,7 +20,6 @@ export class PageContentHeader extends LitElement {
           @apply --layout-vertical;
           @apply --layout-start-justified;
           @apply --layout-flex;
-
           background-color: var(--primary-background-color);
           padding: 0 24px;
           min-height: 85px;

@@ -1,5 +1,5 @@
-import '@polymer/iron-flex-layout/iron-flex-layout';
 import {html} from 'lit-element';
+import '@polymer/iron-flex-layout/iron-flex-layout';
 
 // language=HTML
 export const etoolsTableStyles = html`

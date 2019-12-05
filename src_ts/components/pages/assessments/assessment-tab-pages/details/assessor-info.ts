@@ -100,7 +100,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       <paper-radio-group .selected="${this.getAssessorType(assessor)}"
           ?readonly="${!editMode}"
           @selected-changed="${(e: CustomEvent) =>
-    this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
+        this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}">
         <paper-radio-button name="staff">UNICEF Staff</paper-radio-button>
         <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
         <paper-radio-button name="external">External Individual</paper-radio-button>
@@ -193,7 +193,14 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   @property({type: Boolean})
   showLoading: boolean = false;
 
+  @property({type: Boolean})
+  preventAssessorResetAfterExtIndividualAdd = false;
+
   stateChanged(state: RootState) {
+    if (this.preventAssessorResetAfterExtIndividualAdd) {
+      this.preventAssessorResetAfterExtIndividualAdd = false;
+      return;
+    }
     if (state.commonData && !isJsonStrMatch(this.unicefUsers, state.commonData!.unicefUsers)) {
       this.unicefUsers = [...state.commonData!.unicefUsers];
     }
@@ -214,13 +221,18 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
         this.assessor = cloneDeep(newAssessor);
         if (this.assessor.assessor_type === AssessorTypes.Staff) {
           // check if already saved Unicef staff exists on loaded data, if not they will be added
-          // (they might be missing if changed country)
           handleUsersNoLongerAssignedToCurrentCountry(this.unicefUsers, [this.assessor.user_details]);
           this.unicefUsers = [...this.unicefUsers];
         }
         this.initializeRelatedData();
       }
     }
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener('external-individuals-updated-in-redux',
+      () => {this.preventAssessorResetAfterExtIndividualAdd = true;});
   }
 
   setEditAssessorPermissions(permissions: AssessmentPermissions) {
