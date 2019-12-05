@@ -25,7 +25,7 @@ export class AppMenu extends LitElement {
       <div class="menu-header">
         <span id="app-name">
           PSEA <br>
-          ASSESSMENTS
+          ASSURANCE
         </span>
 
         <span class="ripple-wrapper main">
