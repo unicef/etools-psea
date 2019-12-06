@@ -224,8 +224,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
         this.isUnicefUser = state.user.data.is_unicef_user;
 
         if (state.user.permissions) {
-          const isAuditFocalPoint = !!state.user.data.groups.find((group: any) => group.name === 'UNICEF Audit Focal Point');
-          this.canAdd = state.user.permissions.canAddAssessment && isAuditFocalPoint;
+          this.canAdd = state.user.permissions.canAddAssessment && this.isAuditFocalPoint(state.user.data);
           this.canExport = state.user.permissions.canExportAssessment;
         }
       }
@@ -233,6 +232,8 @@ export class AssessmentsList extends connect(store)(LitElement) {
 
     this.initFiltersForDisplay(state);
   }
+
+  isAuditFocalPoint = (userData: any) => {return !!(userData.groups && userData.groups.find((group: any) => group.name === 'UNICEF Audit Focal Point'))};
 
   initFiltersForDisplay(state: RootState) {
     if (this.dataRequiredByFiltersHasBeenLoaded(state)) {
