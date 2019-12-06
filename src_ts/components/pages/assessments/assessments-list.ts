@@ -233,7 +233,9 @@ export class AssessmentsList extends connect(store)(LitElement) {
     this.initFiltersForDisplay(state);
   }
 
-  isAuditFocalPoint = (userData: any) => {return !!(userData.groups && userData.groups.find((group: any) => group.name === 'UNICEF Audit Focal Point'))};
+  isAuditFocalPoint(userData: any) {
+    return !!(userData.groups && userData.groups.find((group: any) => group.name === 'UNICEF Audit Focal Point'));
+  }
 
   initFiltersForDisplay(state: RootState) {
     if (this.dataRequiredByFiltersHasBeenLoaded(state)) {
