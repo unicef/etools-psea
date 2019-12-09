@@ -34,7 +34,7 @@ export class FirmStaffMembers extends LitElement {
   render() {
     // language=HTML
     return html`
-      ${gridLayoutStylesLit}${SharedStylesLit}
+      ${gridLayoutStylesLit} ${SharedStylesLit}
       <style>
         :host {
           display: block;
@@ -189,7 +189,16 @@ export class FirmStaffMembers extends LitElement {
         this.staffMembers = resp.results.map((sm: any) => {
           return {...sm, hasAccess: this.currentFirmAssessorStaffWithAccess.includes(sm.id)};
         });
-        this.paginator = getPaginator(this.paginator, {count: resp.count, data: this.staffMembers});
+
+        if (!this.canEdit) {
+          this.staffMembers = this.staffMembers.filter((staffMember) => staffMember.hasAccess === true);
+        }
+        if (this.staffMembers.length < 5){
+          this.paginator = getPaginator(this.paginator, {count: this.staffMembers.length, data: null});
+        }else {
+          this.paginator = getPaginator(this.paginator, {count: resp.count, data: this.staffMembers});
+        }
+
       })
       .catch((err: any) => {
         this.staffMembers = [];
