@@ -64,7 +64,6 @@ export class ExternalIndividual extends connect(store)(LitElement) {
         </div>
 
         <div class="row-padding-v">
-          <div class="col col-6">
             <paper-input
                     id="emailInput"
                     value="${this.assessor.user_details.email}"
@@ -75,7 +74,6 @@ export class ExternalIndividual extends connect(store)(LitElement) {
                     maxlength="45">
               <iron-icon slot="prefix" icon="communication:email"></iron-icon>
             </paper-input>
-          </div>
         </div>
       </div>
     `;
