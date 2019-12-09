@@ -1,6 +1,6 @@
-import '@polymer/iron-flex-layout/iron-flex-layout.js';
 import {LitElement, html, customElement, property} from 'lit-element';
 import {ROOT_PATH} from '../../../config/config';
+import '@polymer/iron-flex-layout/iron-flex-layout.js';
 
 /**
  * page footer element

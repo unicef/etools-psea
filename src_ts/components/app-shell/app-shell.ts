@@ -99,11 +99,11 @@ export class AppShell extends connect(store)(LitElement) {
         <main role="main" class="main-content">
           <assessments-list class="page"
             ?active="${this.isActivePage(this.mainPage, 'assessments',
-    this.subPage, 'list')}">
+      this.subPage, 'list')}">
           </assessments-list>
           <assessment-tabs class="page"
             ?active="${this.isActivePage(this.mainPage, 'assessments',
-    this.subPage, 'details|questionnaire|followup')}">
+        this.subPage, 'details|questionnaire|followup')}">
           </assessment-tabs>
           <page-not-found class="page"
             ?active="${this.isActivePage(this.mainPage, 'page-not-found')}">
@@ -159,14 +159,22 @@ export class AppShell extends connect(store)(LitElement) {
       this.smallMenu = !!parseInt(menuTypeStoredVal, 10);
     }
 
-    checkEnvFlags();
-    getCurrentUserData();
-    store.dispatch(loadPartners());
-    store.dispatch(loadOffices());
-    store.dispatch(loadSections());
-    store.dispatch(loadExternalIndividuals());
-    store.dispatch(loadAssessingFirms());
-    store.dispatch(loadUnicefUsers());
+    checkEnvFlags().then((response) => {
+      if (!this._pseaIsDisabled(response)) {
+        getCurrentUserData();
+        store.dispatch(loadPartners());
+        store.dispatch(loadOffices());
+        store.dispatch(loadSections());
+        store.dispatch(loadExternalIndividuals());
+        store.dispatch(loadAssessingFirms());
+        store.dispatch(loadUnicefUsers());
+      }
+    });
+  }
+
+  protected _pseaIsDisabled(response: any) {
+    const activeFlag = response.active_flags.find((flag: string) => flag === 'psea_disabled');
+    return activeFlag === undefined ? false : true;
   }
 
   public connectedCallback() {

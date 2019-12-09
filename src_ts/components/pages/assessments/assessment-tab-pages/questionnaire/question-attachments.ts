@@ -64,6 +64,16 @@ export class QuestionAttachmentsElement extends LitElement {
           padding-top: 16px;
         }
 
+        .break-word {
+          overflow-wrap: break-word;
+        }
+      `
+    ];
+  }
+
+  render() {
+    return html`
+      <style>
         etools-dropdown[required][no-star] {
           --paper-input-container-label: {
             background: none;
@@ -74,12 +84,7 @@ export class QuestionAttachmentsElement extends LitElement {
             color: var(--secondary-text-color, #737373);
           }
         }
-      `
-    ];
-  }
-
-  render() {
-    return html`
+      </style>
       ${SharedStylesLit}${gridLayoutStylesLit}
 
       <div class="row-padding-v">
@@ -108,7 +113,7 @@ export class QuestionAttachmentsElement extends LitElement {
   documentTypes = [];
 
   _getAttachmentsHeaderTemplate(attachments: any) {
-    if (!attachments|| !attachments.length) {
+    if (!attachments || !attachments.length) {
       return '';
     }
 
@@ -122,7 +127,7 @@ export class QuestionAttachmentsElement extends LitElement {
     `;
   }
   _getAttachmentsTemplate(attachments: any, editMode: boolean) {
-    if (!attachments|| !attachments.length) {
+    if (!attachments || !attachments.length) {
       return html`<div class="row-padding-v">No attachments.</div>`;
     }
     return attachments.map((att: AnswerAttachment) => {
@@ -145,7 +150,7 @@ export class QuestionAttachmentsElement extends LitElement {
               @etools-selected-item-changed="${(e: CustomEvent) => this._setSelectedDocType(e, att)}">
             </etools-dropdown>
           </div>
-          <div class="col-5 padd-right">
+          <div class="col-5 padd-right break-word">
             ${this._getAttachmentNameTemplate(att)}
           </div>
           <div class="col-1 delete" ?hidden="${!editMode}">
@@ -213,7 +218,7 @@ export class QuestionAttachmentsElement extends LitElement {
     let valid = true;
     attachments.forEach((att) => {
       if (!att.file_type) {
-        const dropD = this.shadowRoot!.querySelector('#filetype'+ att.id) as EtoolsDropdownEl;
+        const dropD = this.shadowRoot!.querySelector('#filetype' + att.id) as EtoolsDropdownEl;
         if (dropD) {
           dropD.invalid = true;
         }

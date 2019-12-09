@@ -1,7 +1,7 @@
 import {LitElement, html, property, customElement} from 'lit-element';
-import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/paper-tabs/paper-tabs';
 import '@polymer/paper-tabs/paper-tab';
+import '@polymer/iron-flex-layout/iron-flex-layout';
 import {GenericObject} from '../../../types/globals';
 
 
@@ -21,11 +21,11 @@ export class EtoolsTabs extends LitElement {
         *[hidden] {
           display: none !important;
         }
-        
+
         paper-tab[disabled] {
           opacity: .3;
         }
-        
+
         *[disabled] {
           cursor: not-allowed !important;
           pointer-events: auto !important;

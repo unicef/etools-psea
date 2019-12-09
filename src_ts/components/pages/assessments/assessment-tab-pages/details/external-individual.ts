@@ -15,6 +15,7 @@ import {Assessor, AssessorTypes} from '../../../../../types/assessment';
 import {updateAssessorData} from '../../../../../redux/actions/page-data';
 import {loadExternalIndividuals} from '../../../../../redux/actions/common-data';
 import get from 'lodash-es/get';
+import {fireEvent} from '../../../../utils/fire-custom-event';
 
 /**
  * @customElement
@@ -34,14 +35,17 @@ export class ExternalIndividual extends connect(store)(LitElement) {
           cursor: pointer;
         }
 
-        .padd-bottom {
-          padding-bottom: 12px;
+        .padd-top {
+          padding-top: 12px;
+        }
+
+        #emailInput {
+         width: 100%;
         }
       </style>
       ${SharedStylesLit}${gridLayoutStylesLit}
       <div class="row-padding-v">
         <etools-dropdown id="externalIndiv"
-          class="padd-bottom"
           label="External Individual"
           .options="${this.externalIndividuals}"
           .selected="${this.assessor.user}"
@@ -54,9 +58,25 @@ export class ExternalIndividual extends connect(store)(LitElement) {
           trigger-value-change-event
           @etools-selected-item-changed="${this._setSelectedExternalIndividual}">
         </etools-dropdown>
-        <span ?hidden="${!this.editMode}">
+
+        <div ?hidden="${!this.editMode}" class="padd-top">
           User not yet in the system? Add them <a @tap="${this.openAddDialog}">here</a>
-        </span>
+        </div>
+
+        <div class="row-padding-v">
+          <div class="col col-6">
+            <paper-input
+                    id="emailInput"
+                    value="${this.assessor.user_details.email}"
+                    label="E-mail"
+                    type="email"
+                    readonly
+                    placeholder="—"
+                    maxlength="45">
+              <iron-icon slot="prefix" icon="communication:email"></iron-icon>
+            </paper-input>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -89,26 +109,24 @@ export class ExternalIndividual extends connect(store)(LitElement) {
       if (state.user!.data!.is_unicef_user) {
 
         const stateExternalIndivs = get(state, 'commonData.externalIndividuals');
-        if (stateExternalIndivs &&
-          !isJsonStrMatch(stateExternalIndivs, this.externalIndividuals)) {
+        if (stateExternalIndivs) {
 
           this.externalIndividuals = [...stateExternalIndivs];
           if (this.origAssessorType === AssessorTypes.ExternalIndividual) {// ?????
             // check if already saved external individual exists on loaded data, if not they will be added
-            // (they might be missing if changed country)
             handleUsersNoLongerAssignedToCurrentCountry(this.externalIndividuals,
-              this.getSavedExternalDetailsAsArray());
+              this.getSavedExternalDetailsAsArray(get(state, 'pageData.assessor')));
             this.externalIndividuals = [...this.externalIndividuals];
           }
         }
       } else {
-        this.externalIndividuals = this.getSavedExternalDetailsAsArray();
+        this.externalIndividuals = this.getSavedExternalDetailsAsArray(get(state, 'pageData.assessor'));
       }
     }
   }
 
-  private getSavedExternalDetailsAsArray() {
-    let savedExternal = this.assessor.user_details;
+  private getSavedExternalDetailsAsArray(currentAssessor: Assessor) {
+    let savedExternal = currentAssessor.user_details;
     return !!(savedExternal && Object.keys(savedExternal).length > 0) ? [savedExternal] : [];
   }
 
@@ -130,13 +148,16 @@ export class ExternalIndividual extends connect(store)(LitElement) {
 
   onDialogIndividualSaved(e: any) {
     const extIndId = e.detail.id;
+    fireEvent(this, 'external-individuals-updated-in-redux');
     store.dispatch(loadExternalIndividuals(this.updateAssessor.bind(this, extIndId)));
   }
 
   updateAssessor(userId: string) {
-    this.assessor.user = userId;
-    this.assessor.assessor_type = AssessorTypes.ExternalIndividual;
-    store.dispatch(updateAssessorData(cloneDeep(this.assessor)));
+    this.assessor = {
+      ...this.assessor,
+      user: userId,
+      assessor_type: AssessorTypes.ExternalIndividual
+    }
   }
 
   disconnectedCallback() {
@@ -155,7 +176,9 @@ export class ExternalIndividual extends connect(store)(LitElement) {
     const selectedUser = event.detail.selectedItem;
     if (selectedUser) {
       this.assessor.user = selectedUser.id;
+      this.assessor.user_details.email = selectedUser.email;
     } else {
+      this.assessor.user_details.email = "";
       this.assessor.user = null;
     }
     this.requestUpdate();

@@ -1,6 +1,6 @@
 import {LitElement, html, property, customElement} from 'lit-element';
-import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/iron-icons/iron-icons';
+import '@polymer/iron-flex-layout/iron-flex-layout';
 import {completedStatusIcon} from './status-icons';
 
 export interface EtoolsStatusItem {

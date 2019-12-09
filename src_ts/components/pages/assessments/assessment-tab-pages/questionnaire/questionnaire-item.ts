@@ -46,6 +46,8 @@ export class QuestionnaireItemElement extends LitElement {
       ${SharedStylesLit}${gridLayoutStylesLit}
       <etools-content-panel panel-title="${this.question.subject}"
                             ?show-expand-btn=${!this.editMode} .open="${this.open}">
+        <etools-loading loading-text="Saving..." .active="${this.showLoading}"></etools-loading>
+
         <div slot="panel-btns">
           <paper-radio-button checked class="epc-header-radio-button ${this._getRadioBtnClass(this.answer)} readonly"
               ?hidden="${!this._answerIsSaved(this.answer)}">
@@ -55,7 +57,7 @@ export class QuestionnaireItemElement extends LitElement {
                 icon="create"
                 @tap="${this._allowEdit}"
                 style=${styleMap(this.hideEditIcon(this.editMode, this.canEditAnswers) ?
-    {visibility: 'hidden'} : {visibility: ''})}>
+      {visibility: 'hidden'} : {visibility: ''})}>
           </paper-icon-button>
         </div>
         <div class="description">
@@ -105,6 +107,9 @@ export class QuestionnaireItemElement extends LitElement {
   @property({type: Boolean})
   isUnicefUser!: boolean;
 
+  @property({type: Boolean})
+  showLoading = false;
+
   @query('#questionnaireAnswerElement')
   questionnaireAnswerElement!: QuestionnaireAnswerElement;
 
@@ -152,6 +157,7 @@ export class QuestionnaireItemElement extends LitElement {
     if (!this.secondRoundOfValidations(answerBody)) {
       return;
     }
+    this.showLoading = true;
 
     const endpointData = new RequestEndpoint(this._getUrl(), this._getMethod());
     makeRequest(endpointData, answerBody)
@@ -163,7 +169,8 @@ export class QuestionnaireItemElement extends LitElement {
       })
       .catch((err: any) => {
         fireEvent(this, 'toast', {text: formatServerErrorAsText(err)});
-      });
+      })
+      .then(() => this.showLoading = false);
   }
 
   /**

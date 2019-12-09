@@ -1,5 +1,5 @@
 import {Reducer} from 'redux';
-import {UPDATE_ASSESSMENT_DATA, UPDATE_ASSESSOR_DATA} from '../actions/page-data';
+import {UPDATE_ASSESSMENT_DATA, UPDATE_ASSESSOR_DATA, UPDATE_ASSESSMENT_AND_ASSESSOR} from '../actions/page-data';
 import {RootAction} from '../store';
 import {Assessment, Assessor} from '../../types/assessment';
 
@@ -23,6 +23,12 @@ const pageData: Reducer<PageDataState, RootAction> = (state = INITIAL_PAGE_DATA,
     case UPDATE_ASSESSOR_DATA:
       return {
         ...state,
+        assessor: action.assessor
+      };
+    case UPDATE_ASSESSMENT_AND_ASSESSOR:
+      return {
+        ...state,
+        currentAssessment: action.assessment,
         assessor: action.assessor
       };
     default:
