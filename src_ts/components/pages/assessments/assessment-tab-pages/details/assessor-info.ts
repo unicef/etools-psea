@@ -409,8 +409,4 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     this.editMode = true;
   }
 
-  checkEditable() {
-    return this.editMode && this.canEditAssessorInfo;
-  }
-
 }
