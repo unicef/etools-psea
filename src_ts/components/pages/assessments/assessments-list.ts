@@ -277,7 +277,8 @@ export class AssessmentsList extends connect(store)(LitElement) {
   updateUrlListQueryParams() {
     const qs = this.getParamsForQuery();
     this.queryParams = qs;
-    replaceAppLocation(`${this.routeDetails.path}?${qs}`, true);
+    // replaceAppLocation(`${this.routeDetails.path}?${qs}`, true);
+    updateAppLocation(`${this.routeDetails.path}?${qs}`, true);
   }
 
   getParamsForQuery() {
