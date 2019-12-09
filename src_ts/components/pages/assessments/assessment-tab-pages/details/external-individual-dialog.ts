@@ -169,21 +169,12 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
       return false;
     }
     this.getControlsData();
-    if (!this.emailFormatTest(this.editedItem.email)) {
-      (this.shadowRoot!.querySelector('#emailInput') as PaperInputElement).invalid = true;
-      (this.shadowRoot!.querySelector('#emailInput') as PaperInputElement).errorMessage = 'Email address invalid format.';
-    }
     // check if email is unique
     const isValid = !this.externalIndividuals.find(x => x.email === this.editedItem.email);
     if (!isValid) {
       fireEvent(this.toastEventSource, 'toast', {text: 'This email address is already being used!'});
     }
     return isValid;
-  }
-
-  private emailFormatTest(email: string) {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test((email).toLowerCase());
   }
 
   private resetControls() {
