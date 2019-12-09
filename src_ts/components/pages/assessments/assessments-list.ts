@@ -222,14 +222,19 @@ export class AssessmentsList extends connect(store)(LitElement) {
     if (state.user) {
       if (state.user.data) {
         this.isUnicefUser = state.user.data.is_unicef_user;
-      }
-      if (state.user.permissions) {
-        this.canAdd = state.user.permissions.canAddAssessment;
-        this.canExport = state.user.permissions.canExportAssessment;
+
+        if (state.user.permissions) {
+          this.canAdd = state.user.permissions.canAddAssessment && this.isAuditFocalPoint(state.user.data);
+          this.canExport = state.user.permissions.canExportAssessment;
+        }
       }
     }
 
     this.initFiltersForDisplay(state);
+  }
+
+  isAuditFocalPoint(userData: any) {
+    return !!(userData.groups && userData.groups.find((group: any) => group.name === 'UNICEF Audit Focal Point'));
   }
 
   initFiltersForDisplay(state: RootState) {
