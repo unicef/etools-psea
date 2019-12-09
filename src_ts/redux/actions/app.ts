@@ -63,6 +63,10 @@ export const updateDrawerState: ActionCreator<AppActionUpdateDrawerState> = (ope
 };
 
 export const navigate: ActionCreator<ThunkResult> = (path: string) => (dispatch) => {
+
+  if (path.indexOf('psea') < 0){
+    return;
+  }
   // Check if path matches a valid app route, use route details to load required page components
 
   // if app route is accessed, redirect to default route (if not already on it)
