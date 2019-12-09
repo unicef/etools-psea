@@ -63,6 +63,10 @@ export class QuestionAttachmentsElement extends LitElement {
         .padd-top {
           padding-top: 16px;
         }
+
+        .break-word {
+          overflow-wrap: break-word;
+        }
       `
     ];
   }
@@ -146,7 +150,7 @@ export class QuestionAttachmentsElement extends LitElement {
               @etools-selected-item-changed="${(e: CustomEvent) => this._setSelectedDocType(e, att)}">
             </etools-dropdown>
           </div>
-          <div class="col-5 padd-right">
+          <div class="col-5 padd-right break-word">
             ${this._getAttachmentNameTemplate(att)}
           </div>
           <div class="col-1 delete" ?hidden="${!editMode}">
