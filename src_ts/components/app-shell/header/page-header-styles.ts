@@ -71,5 +71,6 @@ export const pageHeaderStyles = html`
         margin-left: 12px;
         width: 40px;
       }
+    }
   </style>
 `;
