@@ -52,7 +52,13 @@ export const etoolsFiltersStyles = css`
   }
 
   #filters .search {
-    min-width: 170px;
+    min-width: 280px;
+  }
+
+  @media only screen and (max-width: 760px) {
+    #filters .search {
+      min-width: 170px;
+    }
   }
 
   iron-icon[icon="search"] {
