@@ -57,7 +57,7 @@ export const pageHeaderStyles = html`
       }
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 972px) {
       .envWarning {
         display: none;
       }
