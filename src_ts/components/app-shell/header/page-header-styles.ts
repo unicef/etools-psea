@@ -49,6 +49,7 @@ export const pageHeaderStyles = html`
       color: var(--nonprod-text-warn-color);
       font-weight: 700;
       font-size: 18px;
+      line-height: 20px;
     }
 
     @media (min-width: 850px) {
@@ -58,8 +59,15 @@ export const pageHeaderStyles = html`
     }
 
     @media (max-width: 972px) {
-      .envWarning {
+      .envLong {
         display: none;
+      }
+      .envWarning {
+        font-size: 14px;
+        line-height: 16px;
+      }
+      #app-logo {
+        width: 90px;
       }
       .titlebar img {
         margin: 0 8px 0 12px;
@@ -68,7 +76,7 @@ export const pageHeaderStyles = html`
         margin-left: 14px;
       }
       etools-profile-dropdown{
-        margin-left: 12px;
+        margin-left: 0px;
         width: 40px;
       }
     }
