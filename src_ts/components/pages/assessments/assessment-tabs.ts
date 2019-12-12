@@ -156,7 +156,6 @@ export class AssessmentTabs extends connect(store)(LitElement) {
      * is different than the current routeDetails data
      * (stateChanged can be triggered by many other store data updates)
      */
-
     if (!isJsonStrMatch(state.app!.routeDetails!, this.routeDetails)) {
       this.routeDetails = cloneDeep(state.app!.routeDetails);
       const routeAssessmentId = this.routeDetails!.params!.assessmentId;
