@@ -31,10 +31,14 @@ import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 @customElement('firm-staff-members')
 export class FirmStaffMembers extends LitElement {
 
+  static get styles() {
+    return [gridLayoutStylesLit];
+  }
+
   render() {
     // language=HTML
     return html`
-      ${gridLayoutStylesLit} ${SharedStylesLit}
+      ${SharedStylesLit}
       <style>
         :host {
           display: block;
@@ -193,9 +197,9 @@ export class FirmStaffMembers extends LitElement {
         if (!this.canEdit) {
           this.staffMembers = this.staffMembers.filter((staffMember) => staffMember.hasAccess === true);
         }
-        if (this.staffMembers.length < 5){
+        if (this.staffMembers.length < 5) {
           this.paginator = getPaginator(this.paginator, {count: this.staffMembers.length, data: null});
-        }else {
+        } else {
           this.paginator = getPaginator(this.paginator, {count: resp.count, data: this.staffMembers});
         }
 
