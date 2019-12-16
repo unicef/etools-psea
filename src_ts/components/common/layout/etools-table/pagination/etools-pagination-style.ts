@@ -86,7 +86,4 @@ export const etoolsPaginationStyles = html`
     #rows {
       display: none;
     }
-    paper-dropdown-menu {
-      width: 60px;
-    }
   </style>`;
