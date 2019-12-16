@@ -42,7 +42,7 @@ export const etoolsPaginationStyles = html`
     }
 
     paper-dropdown-menu {
-      width: 40px;
+      width: 50px;
       bottom: 9px;
       bottom: -1px;
 
@@ -82,4 +82,11 @@ export const etoolsPaginationStyles = html`
       margin-left: -12px;
     }
 
+    @media (max-width: 576px) {
+    #rows {
+      display: none;
+    }
+    paper-dropdown-menu {
+      width: 60px;
+    }
   </style>`;

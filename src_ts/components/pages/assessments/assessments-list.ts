@@ -68,9 +68,6 @@ export class AssessmentsList extends connect(store)(LitElement) {
     return html`
       ${SharedStylesLit}${pageContentHeaderSlottedStyles}
       <style>
-        etools-table {
-          padding-top: 12px;
-        }
       </style>
       <page-content-header>
 

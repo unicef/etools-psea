@@ -57,6 +57,11 @@ export class FirmStaffMembers extends LitElement {
         tr:hover td paper-icon-button#editrow {
           visibility: visible;
         }
+        @media (max-width: 760px) {
+          etools-content-panel {
+            --epc-header_-_border-bottom: none;
+          }
+        }
       </style>
       <etools-content-panel panel-title="Firm Staff Members with Access">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
@@ -193,9 +198,9 @@ export class FirmStaffMembers extends LitElement {
         if (!this.canEdit) {
           this.staffMembers = this.staffMembers.filter((staffMember) => staffMember.hasAccess === true);
         }
-        if (this.staffMembers.length < 5){
+        if (this.staffMembers.length < 5) {
           this.paginator = getPaginator(this.paginator, {count: this.staffMembers.length, data: null});
-        }else {
+        } else {
           this.paginator = getPaginator(this.paginator, {count: resp.count, data: this.staffMembers});
         }
 
