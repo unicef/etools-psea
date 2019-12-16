@@ -201,7 +201,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
     if (!(routeDetails.routeName === 'assessments' && routeDetails.subRouteName === 'list')) {
       return; // Avoid code execution while on a different page
     }
-
+    this.showFiltersLoading = true;
     const stateRouteDetails = {...state.app!.routeDetails};
 
     if (JSON.stringify(stateRouteDetails) !== JSON.stringify(this.routeDetails)) {
@@ -233,7 +233,6 @@ export class AssessmentsList extends connect(store)(LitElement) {
       }
     }
 
-    this.showFiltersLoading = true;
     this.initFiltersForDisplay(state);
   }
 
