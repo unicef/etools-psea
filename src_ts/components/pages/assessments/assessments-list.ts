@@ -86,8 +86,8 @@ export class AssessmentsList extends connect(store)(LitElement) {
       </page-content-header>
 
       <section class="elevation page-content filters" elevation="1">
-        <etools-filters .filters="${this.filters}"
-                        @filter-change="${this.filtersChange}"></etools-filters>
+        <etools-loading loading-text="Loading..." .active="${this.showFiltersLoading}"></etools-loading>
+        <etools-filters .filters="${this.filters}" @filter-change="${this.filtersChange}"></etools-filters>
       </section>
 
       <section class="elevation page-content no-padding" elevation="1">
@@ -148,6 +148,9 @@ export class AssessmentsList extends connect(store)(LitElement) {
 
   @property({type: Boolean})
   showLoading: boolean = false;
+
+  @property({type: Boolean})
+  showFiltersLoading: boolean = false;
 
   @property({type: Array})
   listColumns: EtoolsTableColumn[] = [
@@ -235,16 +238,23 @@ export class AssessmentsList extends connect(store)(LitElement) {
   }
 
   initFiltersForDisplay(state: RootState) {
-    if (this.dataRequiredByFiltersHasBeenLoaded(state)) {
+    this.showFiltersLoading = true;
+    try {
+      if (this.dataRequiredByFiltersHasBeenLoaded(state)) {
 
-      const availableFilters = this.isUnicefUser ?
-        [...assessmentsFilters] : [...assessmentsFilters.filter(x => onlyForUnicefFilters.indexOf(x.filterKey) < 0)];
+        const availableFilters = this.isUnicefUser ?
+          [...assessmentsFilters] : [...assessmentsFilters.filter(x => onlyForUnicefFilters.indexOf(x.filterKey) < 0)];
 
-      this.populateDropdownFilterOptionsFromCommonData(state.commonData, availableFilters);
+        this.populateDropdownFilterOptionsFromCommonData(state.commonData, availableFilters);
 
-      // update filter selection and assign the result to etools-filters(trigger render)
-      this.filters = updateFiltersSelectedValues(this.selectedFilters, availableFilters);
-      lastSelectedFilters = {...this.selectedFilters};
+        // update filter selection and assign the result to etools-filters(trigger render)
+        this.filters = updateFiltersSelectedValues(this.selectedFilters, availableFilters);
+        lastSelectedFilters = {...this.selectedFilters};
+        this.showFiltersLoading = false;
+      }
+    } catch (err) {
+      logError('Init filters failed', 'initFiltersForDisplay', err);
+      this.showFiltersLoading = false;
     }
   }
 
