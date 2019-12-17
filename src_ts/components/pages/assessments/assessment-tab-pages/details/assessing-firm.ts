@@ -20,12 +20,12 @@ import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 @customElement('assessing-firm')
 export class AssessingFirm extends LitElement {
   static get styles() {
-    return [buttonsStyles, labelAndvalueStylesLit]
+    return [buttonsStyles, labelAndvalueStylesLit, gridLayoutStylesLit]
   }
   render() {
     // language=HTML
     return html`
-     ${SharedStylesLit} ${gridLayoutStylesLit}
+     ${SharedStylesLit}
       <style>
         .input-width {
           max-width: 230px;

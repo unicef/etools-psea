@@ -11,7 +11,7 @@ import {
 import {RouteDetails} from '../../routing/router';
 import {getFilePathsToImport} from '../../routing/component-lazy-load-config';
 import {getRedirectToListPath} from '../../routing/subpage-redirect';
-import {logError, logInfo} from '@unicef-polymer/etools-behaviors/etools-logging';
+import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 const LOGS_PREFIX = 'Redux app actions';
 
@@ -69,6 +69,11 @@ export const navigate: ActionCreator<ThunkResult> = (path: string) => (dispatch)
   // @ts-ignore
   if (path === ROOT_PATH) {
     updateAppLocation(DEFAULT_ROUTE, true);
+    return;
+  }
+
+  // Ignore urls that are not from the psea app
+  if (path && path.toLowerCase().indexOf('psea') < 0) {
     return;
   }
 

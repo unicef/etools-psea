@@ -29,13 +29,14 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
         #ext-individual-details-row {
           padding-bottom: 24px;
         }
-      `
+      `,
+      gridLayoutStylesLit
     ];
   }
   render() {
     // language=HTML
     return html`
-      ${SharedStylesLit}${gridLayoutStylesLit}
+      ${SharedStylesLit}
       <etools-dialog id="externalIndividualDialog"
                       ?opened="${this.dialogOpened}"
                       dialog-title="${this.dialogTitle}"
