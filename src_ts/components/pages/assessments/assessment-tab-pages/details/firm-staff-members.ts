@@ -61,6 +61,11 @@ export class FirmStaffMembers extends LitElement {
         tr:hover td paper-icon-button#editrow {
           visibility: visible;
         }
+        @media (max-width: 760px) {
+          etools-content-panel {
+            --epc-header_-_border-bottom: none;
+          }
+        }
       </style>
       <etools-content-panel panel-title="Firm Staff Members with Access">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
