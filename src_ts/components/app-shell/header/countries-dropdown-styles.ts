@@ -63,6 +63,11 @@ export const countriesDropdownStyles = html`
         width: 130px;
       }
     }
+    @media (max-width: 360px) {
+      etools-dropdown {
+        width: 100px;
+      }
+    }
   </style>
 
 `;

@@ -18,6 +18,7 @@ import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import isEqual from 'lodash-es/isEqual';
+import get from 'lodash-es/get';
 import '../../../../common/layout/etools-error-warn-box';
 
 @customElement('follow-up-dialog')
@@ -240,7 +241,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
       }
     }
 
-    if (!isJsonStrMatch(this.assessment, state.pageData!.currentAssessment)) {
+    if (get(state, 'pageData.currentAssessment') && !isJsonStrMatch(this.assessment, state.pageData!.currentAssessment)) {
       // initialize assessment object
       this.assessment = cloneDeep(state.pageData!.currentAssessment);
       this.resetEditedItem();
@@ -249,7 +250,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
 
   updated(changedProperties: GenericObject) {
     if (this.warningMessages.length && !changedProperties.has('warningMessages') &&
-        !isEqual(this.editedItem, changedProperties.get('editedItem'))) {
+      !isEqual(this.editedItem, changedProperties.get('editedItem'))) {
       this.warningMessages.pop();
     }
   }
@@ -263,7 +264,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   private validate() {
     let isValid = true;
     this.validationSelectors.forEach((selector: string) => {
-      const el = this.shadowRoot!.querySelector(selector) as PolymerElement & { validate(): boolean };
+      const el = this.shadowRoot!.querySelector(selector) as PolymerElement & {validate(): boolean};
       if (el && !el.validate()) {
         isValid = false;
       }
