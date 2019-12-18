@@ -47,8 +47,8 @@ export const etoolsTableResponsiveStyles = css`
     tr {
       border: 1px solid #ccc;
     }
-    td:not(.pagination) {
-      border: none;
+    td {
+      border: none !important;
       line-height: inherit;
       position: relative;
       padding-left: 36% !important;
