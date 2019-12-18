@@ -47,6 +47,10 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
   }
 
   render() {
+    if (!this.assessment) {
+      return html`
+      ${SharedStylesLit}${gridLayoutStylesLit}`;
+    }
     // language=HTML
     return html`
     ${SharedStylesLit}${gridLayoutStylesLit}

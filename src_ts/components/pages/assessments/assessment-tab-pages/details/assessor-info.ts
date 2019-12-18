@@ -55,7 +55,8 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   render() {
     // language=HTML
     return html`
-      ${SharedStylesLit}${gridLayoutStylesLit}
+      ${SharedStylesLit}
+      ${gridLayoutStylesLit}
 
       <etools-content-panel panel-title="Assessor">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
