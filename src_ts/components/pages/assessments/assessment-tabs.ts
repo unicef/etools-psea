@@ -78,7 +78,6 @@ export class AssessmentTabs extends connect(store)(LitElement) {
       </section>
 
       <div class="page-content">
-        ${!this.assessment ? html`<etools-loading loading-text="Loading..." active></etools-loading>` : html`
         <assessment-details-page ?hidden="${!this.isActiveTab(this.activeTab, 'details')}">
             <etools-loading loading-text="Loading..." active></etools-loading>
         </assessment-details-page>
@@ -87,7 +86,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
         </assessment-questionnaire-page>
         <follow-up-page ?hidden="${!this.isActiveTab(this.activeTab, 'followup')}">
             <etools-loading loading-text="Loading..." active></etools-loading>
-        </follow-up-page>`}
+        </follow-up-page>
       </div>
     `;
   }
