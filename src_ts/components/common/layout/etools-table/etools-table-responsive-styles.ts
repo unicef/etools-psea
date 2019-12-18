@@ -36,7 +36,7 @@ export const etoolsTableResponsiveStyles = css`
       padding: .75rem 0 .75rem 36%;
     }
     table td, table th {
-      display: block;
+      display: block !important;
     }
     table tr td.pagination {
       padding: 0px 8px;
@@ -47,11 +47,11 @@ export const etoolsTableResponsiveStyles = css`
     tr {
       border: 1px solid #ccc;
     }
-    td {
+    td:not(.pagination) {
       border: none;
       line-height: inherit;
       position: relative;
-      padding-left: 36%;
+      padding-left: 36% !important;
     }
     tr:not(.child-row) td:before {
       position: absolute;
@@ -65,7 +65,7 @@ export const etoolsTableResponsiveStyles = css`
       text-overflow: ellipsis;
     }
     .row-actions .actions {
-      visibility: visible;
+      visibility: visible !important;
     }
     .expand-cell {
       display: none;

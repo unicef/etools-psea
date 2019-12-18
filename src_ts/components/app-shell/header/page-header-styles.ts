@@ -1,9 +1,7 @@
-import {html} from 'lit-element';
-import '@polymer/iron-flex-layout/iron-flex-layout.js';
-
+import {css} from 'lit-element';
+import {layoutFlex, layoutHorizontal, layoutCenter} from '../../styles/lit-styles/flex-layout-styles';
 // language=HTML
-export const pageHeaderStyles = html`
-  <style>
+export const pageHeaderStyles = css`
     app-toolbar {
       padding: 0 16px 0 0;
       height: 60px;
@@ -24,12 +22,12 @@ export const pageHeaderStyles = html`
     }
 
     .content-align {
-      @apply --layout-horizontal;
-      @apply --layout-center;
+      ${layoutHorizontal}
+      ${layoutCenter}
     }
 
     .titlebar {
-      @apply --layout-flex;
+      ${layoutFlex}
       font-size: 28px;
       font-weight: 300;
       color: var(--header-color);
@@ -50,6 +48,10 @@ export const pageHeaderStyles = html`
       font-weight: 700;
       font-size: 18px;
       line-height: 20px;
+    }
+
+    support-btn {
+      color: var(--header-icon-color);
     }
 
     @media (min-width: 850px) {
@@ -104,5 +106,4 @@ export const pageHeaderStyles = html`
         display: none;
       }
     }
-  </style>
 `;

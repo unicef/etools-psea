@@ -1,5 +1,6 @@
 import {LitElement, html, property, customElement} from 'lit-element';
-import '@polymer/iron-flex-layout/iron-flex-layout.js';
+import {layoutStartJustified, layoutVertical, layoutFlex, layoutHorizontal, layoutCenter}
+  from '../../../styles/lit-styles/flex-layout-styles';
 
 /**
  * @LitElement
@@ -17,9 +18,9 @@ export class PageContentHeader extends LitElement {
         }
 
         :host {
-          @apply --layout-vertical;
-          @apply --layout-start-justified;
-          @apply --layout-flex;
+          ${layoutVertical}
+          ${layoutStartJustified}
+          ${layoutFlex}
           background-color: var(--primary-background-color);
           padding: 0 24px;
           min-height: 85px;
@@ -40,18 +41,18 @@ export class PageContentHeader extends LitElement {
         }
 
         .content-header-row {
-          @apply --layout-horizontal;
-          @apply --layout-start-justified;
+          ${layoutHorizontal}
+          ${layoutStartJustified}
         }
 
         .title-row {
-          @apply --layout-center;
+          ${layoutCenter}
           margin: 30px 0 0;
           padding: 0 24px;
         }
 
         .title-row h1 {
-          @apply --layout-flex;
+          ${layoutFlex}
           @apply --page-title;
         }
 
