@@ -48,15 +48,14 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
 
       paper-radio-group[readonly] paper-radio-button:not([checked]){
         display: none;
-      }
-      `
+      }`,
+      gridLayoutStylesLit
     ];
   }
   render() {
     // language=HTML
     return html`
       ${SharedStylesLit}
-      ${gridLayoutStylesLit}
 
       <etools-content-panel panel-title="Assessor">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
@@ -211,6 +210,9 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       if (!isJsonStrMatch(this.assessment, newAssessment)) {
         this.assessment = cloneDeep(newAssessment);
         this.setEditAssessorPermissions(this.assessment.permissions);
+        this.isNew = !this.assessment.assessor;
+        // Checking canEditAssessorInfo also, for when assessment is canceled and assessor IsNew
+        this.editMode = this.isNew && this.canEditAssessorInfo;
       }
     }
 
@@ -243,9 +245,6 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     this.isNew = !this.assessor.id;
     this.originalAssessor = cloneDeep(this.assessor);
     this.requestUpdate().then(() => {
-      // Making sure isNew and canEditAssessorInfo are set before computing editMode
-      // Checking canEditAssessotInfo also, for when assessment is canceled and assessor IsNew
-      this.editMode = this.isNew && this.canEditAssessorInfo;
       // load staff members after staff members element is initialized
       if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessor.auditor_firm) {
         this.loadFirmStaffMembers(this.assessor.auditor_firm!);

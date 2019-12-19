@@ -31,10 +31,14 @@ import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 @customElement('firm-staff-members')
 export class FirmStaffMembers extends LitElement {
 
+  static get styles() {
+    return [gridLayoutStylesLit];
+  }
+
   render() {
     // language=HTML
     return html`
-      ${gridLayoutStylesLit}${SharedStylesLit}
+      ${SharedStylesLit}
       <style>
         :host {
           display: block;
@@ -56,6 +60,11 @@ export class FirmStaffMembers extends LitElement {
 
         tr:hover td paper-icon-button#editrow {
           visibility: visible;
+        }
+        @media (max-width: 760px) {
+          etools-content-panel {
+            --epc-header_-_border-bottom: none;
+          }
         }
       </style>
       <etools-content-panel panel-title="Firm Staff Members with Access">
@@ -189,7 +198,16 @@ export class FirmStaffMembers extends LitElement {
         this.staffMembers = resp.results.map((sm: any) => {
           return {...sm, hasAccess: this.currentFirmAssessorStaffWithAccess.includes(sm.id)};
         });
-        this.paginator = getPaginator(this.paginator, {count: resp.count, data: this.staffMembers});
+
+        if (!this.canEdit) {
+          this.staffMembers = this.staffMembers.filter((staffMember) => staffMember.hasAccess === true);
+        }
+        if (this.staffMembers.length < 5) {
+          this.paginator = getPaginator(this.paginator, {count: this.staffMembers.length, data: null});
+        } else {
+          this.paginator = getPaginator(this.paginator, {count: resp.count, data: this.staffMembers});
+        }
+
       })
       .catch((err: any) => {
         this.staffMembers = [];

@@ -25,7 +25,7 @@ import {fireEvent} from '../../../../utils/fire-custom-event';
 @customElement('external-individual')
 export class ExternalIndividual extends connect(store)(LitElement) {
   static get styles() {
-    return [labelAndvalueStylesLit];
+    return [labelAndvalueStylesLit, gridLayoutStylesLit];
   }
   render() {
     // language=HTML
@@ -43,7 +43,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
          width: 100%;
         }
       </style>
-      ${SharedStylesLit}${gridLayoutStylesLit}
+      ${SharedStylesLit}
       <div class="row-padding-v">
         <etools-dropdown id="externalIndiv"
           label="External Individual"
@@ -64,7 +64,6 @@ export class ExternalIndividual extends connect(store)(LitElement) {
         </div>
 
         <div class="row-padding-v">
-          <div class="col col-6">
             <paper-input
                     id="emailInput"
                     value="${this.assessor.user_details.email}"
@@ -75,7 +74,6 @@ export class ExternalIndividual extends connect(store)(LitElement) {
                     maxlength="45">
               <iron-icon slot="prefix" icon="communication:email"></iron-icon>
             </paper-input>
-          </div>
         </div>
       </div>
     `;

@@ -57,6 +57,17 @@ export const countriesDropdownStyles = html`
         max-height: 380px;
       };
     }
+
+    @media (max-width: 768px) {
+      etools-dropdown {
+        width: 130px;
+      }
+    }
+    @media (max-width: 360px) {
+      etools-dropdown {
+        width: 100px;
+      }
+    }
   </style>
 
 `;

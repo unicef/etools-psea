@@ -7,13 +7,19 @@ import '../common/layout/etools-error-warn-box';
 
 
 export function checkEnvFlags() {
-    return makeRequest(getEndpoint(etoolsEndpoints.environmentFlags) as RequestEndpoint)
-        .then((response: any) => {
-          handleEnvFlagsReceived(response);
-          return response;
-        })
-        .catch((err: any) => logError('checkEnvFlags error', 'environment-flags', err));
-  };
+  return makeRequest(getEndpoint(etoolsEndpoints.environmentFlags) as RequestEndpoint)
+    .then((response: any) => {
+      handleEnvFlagsReceived(response);
+      return response;
+    })
+    .catch((err: any) => {
+      logError('checkEnvFlags error', 'environment-flags', err);
+      if (err.status === 403) {
+        window.location.href = window.location.origin + '/login/';
+        throw err;
+      }
+    });
+}
 
 function handleEnvFlagsReceived(envFlags: any) {
   if (envFlags && envFlags.active_flags && envFlags.active_flags.includes('psea_disabled')) {
@@ -22,7 +28,7 @@ function handleEnvFlagsReceived(envFlags: any) {
       bodyEl.querySelectorAll('*').forEach(el => el.remove());
       const warnBox = document.createElement('etools-error-warn-box') as EtoolsErrorWarnBox;
       warnBox.messages = ['PSEA is currently unavailable in your workspace, please stay tuned... ' +
-                          'In the meantime checkout our other great modules'];
+        'In the meantime checkout our other great modules'];
       bodyEl.appendChild(warnBox);
     }
   }
