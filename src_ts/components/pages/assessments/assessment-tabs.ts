@@ -171,11 +171,10 @@ export class AssessmentTabs extends connect(store)(LitElement) {
       if (this.assessment !== null && routeAssessmentId) {
         this.setActiveTabs(routeAssessmentId);
       }
+    }
 
-      if (state.user && state.user.permissions) {
-        this.canExport = state.user.permissions.canExportAssessment;
-      }
-
+    if (get(state, 'user.permissions')) {
+      this.canExport = state.user!.permissions!.canExportAssessment;
     }
 
   }

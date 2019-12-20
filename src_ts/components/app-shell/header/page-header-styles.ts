@@ -49,10 +49,58 @@ export const pageHeaderStyles = html`
       color: var(--nonprod-text-warn-color);
       font-weight: 700;
       font-size: 18px;
+      line-height: 20px;
     }
 
     @media (min-width: 850px) {
       #menuButton {
+        display: none;
+      }
+    }
+
+    @media (max-width: 972px) {
+      .envLong {
+        display: none;
+      }
+      .envWarning {
+        font-size: 14px;
+        line-height: 16px;
+        white-space: nowrap;
+      }
+      #app-logo {
+        width: 90px;
+      }
+      .titlebar img {
+        margin: 0 8px 0 12px;
+      }
+      support-btn {
+        margin-left: 0px;
+      }
+      etools-profile-dropdown{
+        margin-left: 0px;
+        width: 40px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      #app-logo {
+        width: 60px;
+      }
+      .titlebar img {
+        margin: 0 8px 0 4px;
+      }
+      .envWarning {
+        font-size: 10px;
+        line-height: 12px;
+        white-space: nowrap;
+      }
+      app-toolbar {
+        padding-right: 0px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      etools-app-selector {
         display: none;
       }
     }
