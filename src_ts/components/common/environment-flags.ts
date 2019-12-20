@@ -16,8 +16,8 @@ export function checkEnvFlags() {
       logError('checkEnvFlags error', 'environment-flags', err);
       if (err.status === 403) {
         window.location.href = window.location.origin + '/login/';
-        throw err;
       }
+      throw err;
     });
 }
 
