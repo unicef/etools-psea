@@ -56,7 +56,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
 
     if (!this.assessment) {
       return html`
-      ${SharedStylesLit}${gridLayoutStylesLit}
+      ${SharedStylesLit}
       `;
     }
     // language=HTML
