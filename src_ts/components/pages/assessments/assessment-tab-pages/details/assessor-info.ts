@@ -48,8 +48,8 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
 
       paper-radio-group[readonly] paper-radio-button:not([checked]){
         display: none;
-      }
-      `
+      }`,
+      gridLayoutStylesLit
     ];
   }
   render() {
@@ -62,7 +62,6 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     // language=HTML
     return html`
       ${SharedStylesLit}
-      ${gridLayoutStylesLit}
 
       <etools-content-panel panel-title="Assessor">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>

@@ -13,7 +13,8 @@ import {
   ProofOfEvidence,
   Rating,
   AnswerEvidence,
-  AnswerAttachment} from '../../../../../types/assessment';
+  AnswerAttachment
+} from '../../../../../types/assessment';
 import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {PaperRadioButtonElement} from '@polymer/paper-radio-button';
 import {connect} from 'pwa-helpers/connect-mixin';
@@ -32,7 +33,7 @@ import './answer-instructions';
 @customElement('questionnaire-answer')
 export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   static get styles() {
-    return [radioButtonStyles, labelAndvalueStylesLit,
+    return [radioButtonStyles, labelAndvalueStylesLit, gridLayoutStylesLit,
       css`
         .padd-right {
           padding-right: 24px;
@@ -55,7 +56,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   }
   render() {
     return html`
-      ${SharedStylesLit}${gridLayoutStylesLit}
+      ${SharedStylesLit}
       <div class="row-padding-v" ?hidden="${!this.editMode}">
         <div>
           <label class="paper-label" required>Rating</label>
@@ -180,7 +181,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
             evidenceid="${evidence.id}"
             ?requires-description="${evidence.requires_description}"
             @checked-changed="${(e: CustomEvent) => this._checkedEvidenceChanged(evidence,
-    (e.target as PaperCheckboxElement).checked!, answer)}">
+        (e.target as PaperCheckboxElement).checked!, answer)}">
             ${evidence.label}
         </paper-checkbox>`;
 
