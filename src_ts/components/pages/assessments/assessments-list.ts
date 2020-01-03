@@ -268,7 +268,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
       // Avoid selectedValue being set before the dropdown is populated with options
       // And take into account that for non unicef users, the users endpoint returns 403
       (!this.isUnicefUser || get(state, 'commonData.unicefUsers.length')) &&
-      get(state, 'commonData.partners.length') &&
+      (!this.isUnicefUser || get(state, 'commonData.partners.length')) &&
       this.routeDetails.queryParams &&
       Object.keys(this.routeDetails.queryParams).length > 0) {
       return true;
