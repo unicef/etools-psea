@@ -39,7 +39,7 @@ export const etoolsTableResponsiveStyles = css`
       display: block !important;
     }
     table tr td.pagination {
-      padding: 0px 8px;
+      padding: 0px 8px !important;
     }
     table tr td.pagination:before {
       content: "";

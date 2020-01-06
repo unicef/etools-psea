@@ -22,8 +22,13 @@
     "node_modules/moment/min/moment.min.js"
   ],
   "lint": {
-    "rules": ["polymer-3"],
-    "ignoreWarnings": ["could-not-resolve-reference", "non-literal-import"]
+    "rules": [
+      "polymer-3"
+    ],
+    "ignoreWarnings": [
+      "could-not-resolve-reference",
+      "non-literal-import"
+    ]
   },
   "builds": [
     {
@@ -42,16 +47,6 @@
         "minify": true
       },
       "bundle": true,
-      "addServiceWorker": true
-    },
-    {
-      "name": "es6-bundled",
-      "preset": "es6-bundled",
-      "addServiceWorker": true
-    },
-    {
-      "name": "es5-bundled",
-      "preset": "es5-bundled",
       "addServiceWorker": true
     }
   ],
