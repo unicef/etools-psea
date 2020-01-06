@@ -73,6 +73,12 @@ export class PageContentHeader extends LitElement {
           }
         }
 
+        @media (max-width: 620px) {
+          :host {
+            padding: 0px 5px;
+          }
+        }
+
       </style>
 
       <div class="content-header-row title-row">

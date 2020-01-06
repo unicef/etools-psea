@@ -49,9 +49,11 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
   }
 
   render() {
+
     if (!this.assessment) {
       return html`
-      ${SharedStylesLit}`;
+      ${SharedStylesLit}
+      <etools-loading loading-text="Loading..." active></etools-loading>`;
     }
     // language=HTML
     return html`
