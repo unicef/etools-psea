@@ -43,17 +43,19 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
       :host {
         display: block;
         margin-bottom: 24px;
-      }`];
+      }`,
+      gridLayoutStylesLit
+    ];
   }
 
   render() {
     if (!this.assessment) {
       return html`
-      ${SharedStylesLit}${gridLayoutStylesLit}`;
+      ${SharedStylesLit}`;
     }
     // language=HTML
     return html`
-    ${SharedStylesLit}${gridLayoutStylesLit}
+    ${SharedStylesLit}
       <etools-content-panel panel-title="Assessment Information">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
 

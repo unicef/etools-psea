@@ -16,4 +16,10 @@ export const pageLayoutStyles = css`
   section.page-content.no-padding {
     padding: 0;
   }
+
+  @media (max-width: 768px) {
+    .page-content {
+      margin: 5px;
+    }
+  }
 `;

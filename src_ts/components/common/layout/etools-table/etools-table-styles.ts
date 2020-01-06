@@ -8,6 +8,7 @@ export const etoolsTableStyles = html`
       display: block;
       width: 100%;
       overflow-x: hidden;
+      padding-top: 12px;
     }
 
     a:focus {
