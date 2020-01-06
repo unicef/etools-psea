@@ -29,6 +29,10 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   }
 
   render() {
+    if (!this.assessment) {
+      return html`
+      ${SharedStylesLit}`;
+    }
     return html`
        ${SharedStylesLit}
       <style>
