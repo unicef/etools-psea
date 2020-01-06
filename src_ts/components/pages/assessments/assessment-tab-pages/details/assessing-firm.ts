@@ -1,7 +1,7 @@
 import {LitElement, html, property, customElement} from 'lit-element';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-spinner/paper-spinner';
-import '@polymer/iron-flex-layout/iron-flex-layout';
+import {layoutHorizontal, layoutCenter} from '../../../../styles/lit-styles/flex-layout-styles';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {PaperInputElement} from '@polymer/paper-input/paper-input';
@@ -20,7 +20,7 @@ import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 @customElement('assessing-firm')
 export class AssessingFirm extends LitElement {
   static get styles() {
-    return [buttonsStyles, labelAndvalueStylesLit, gridLayoutStylesLit]
+    return [buttonsStyles, labelAndvalueStylesLit, gridLayoutStylesLit];
   }
   render() {
     // language=HTML
@@ -31,8 +31,8 @@ export class AssessingFirm extends LitElement {
           max-width: 230px;
         }
         .po-loading {
-          @apply --layout-horizontal;
-          @apply --layout-center;
+          ${layoutHorizontal}
+          ${layoutCenter}
         }
         paper-spinner {
           align-self: center;

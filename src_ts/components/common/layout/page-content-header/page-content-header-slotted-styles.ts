@@ -1,5 +1,5 @@
 import {html} from 'lit-element';
-import '@polymer/iron-flex-layout/iron-flex-layout.js';
+import {layoutHorizontal, layoutEnd} from '../../../styles/lit-styles/flex-layout-styles';
 
 /**
  * Used to style page content header title row actions child elements
@@ -8,14 +8,16 @@ import '@polymer/iron-flex-layout/iron-flex-layout.js';
 
 // language=HTML
 export const pageContentHeaderSlottedStyles = html`
-  <style>
-    .content-header-actions {
-      @apply --layout-horizontal;
-      @apply --layout-end;
-    }
-    @media (max-width: 576px) {
+<style>
+  .content-header-actions {
+    ${layoutHorizontal}
+    ${layoutEnd}
+  }
+   @media (max-width: 576px) {
       .content-header-actions {
         --layout-horizontal_-_display: block;
       }
     }
-  </style>`;
+</style>
+`;
+
