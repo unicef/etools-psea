@@ -165,11 +165,11 @@ export class AppShell extends connect(store)(LitElement) {
       if (!this._pseaIsDisabled(response)) {
         getCurrentUserData();
         store.dispatch(loadPartners());
+        store.dispatch(loadUnicefUsers());
         store.dispatch(loadOffices());
         store.dispatch(loadSections());
         store.dispatch(loadExternalIndividuals());
         store.dispatch(loadAssessingFirms());
-        store.dispatch(loadUnicefUsers());
       }
     });
   }
