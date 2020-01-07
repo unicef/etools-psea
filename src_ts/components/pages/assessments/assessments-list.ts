@@ -68,6 +68,24 @@ export class AssessmentsList extends connect(store)(LitElement) {
     return html`
       ${SharedStylesLit}${pageContentHeaderSlottedStyles}
       <style>
+        .shortAddText {
+          display: none;
+        }
+        @media (max-width: 576px) {
+          .action {
+            text-align: right;
+          }
+          #addBtn{
+            padding-right: 16px;
+            margin-right: 32px
+          }
+          .shortAddText {
+            display: block;
+          }
+          .longAddText {
+            display: none;
+          }
+        }
       </style>
       <page-content-header>
 
@@ -78,8 +96,9 @@ export class AssessmentsList extends connect(store)(LitElement) {
               <export-data .endpoint="${etoolsEndpoints.assessment.url!}" .params="${this.queryParams}"></export-data>
             </div>
             <div class="action" ?hidden="${!this.canAdd}" >
-              <paper-button class="primary left-icon" raised @tap="${this.goToAddNewPage}">
-                <iron-icon icon="add"></iron-icon>Add new assessment
+              <paper-button id="addBtn" class="primary left-icon" raised @tap="${this.goToAddNewPage}">
+                <iron-icon icon="add"></iron-icon><span class='longAddText'>Add new assessment</span>
+                <span class='shortAddText'>Add</span>
               </paper-button>
             </div>
         </div>
@@ -268,7 +287,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
       // Avoid selectedValue being set before the dropdown is populated with options
       // And take into account that for non unicef users, the users endpoint returns 403
       (!this.isUnicefUser || get(state, 'commonData.unicefUsers.length')) &&
-      get(state, 'commonData.partners.length') &&
+      (!this.isUnicefUser || get(state, 'commonData.partners.length')) &&
       this.routeDetails.queryParams &&
       Object.keys(this.routeDetails.queryParams).length > 0) {
       return true;
