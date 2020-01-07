@@ -161,13 +161,16 @@ export class AppShell extends connect(store)(LitElement) {
 
     checkEnvFlags().then((response) => {
       if (!this._pseaIsDisabled(response)) {
-        getCurrentUserData();
+        getCurrentUserData().then((user) =>{
+          if (user && user.is_unicef_user) {
+            store.dispatch(loadExternalIndividuals());
+            store.dispatch(loadAssessingFirms());
+            store.dispatch(loadUnicefUsers());
+          }
+        });
         store.dispatch(loadPartners());
         store.dispatch(loadOffices());
         store.dispatch(loadSections());
-        store.dispatch(loadExternalIndividuals());
-        store.dispatch(loadAssessingFirms());
-        store.dispatch(loadUnicefUsers());
       }
     });
   }
