@@ -133,7 +133,7 @@ export class QuestionAttachmentsElement extends LitElement {
     return attachments.map((att: AnswerAttachment) => {
       return html`
         <div class="layout-horizontal row-padding-v align-items-center att">
-          <div class="col-2 padd-right">${att.url ? prettyDate(att.created) : att.created}</div>
+          <div class="col-2 padd-right">${prettyDate(att.created)}</div>
           <div class="col-4 extra-padd-right">
             <etools-dropdown no-label-float
                id="${'filetype' + att.id}"

@@ -1,8 +1,6 @@
-import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/app-layout/app-toolbar/app-toolbar';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@unicef-polymer/etools-app-selector/etools-app-selector';
-
 import {customElement, LitElement, html, property} from 'lit-element';
 
 import '../../common/layout/support-btn';
@@ -29,18 +27,17 @@ import {pageHeaderStyles} from './page-header-styles';
 @customElement('page-header')
 export class PageHeader extends connect(store)(LitElement) {
 
+  static get styles() {
+    return [pageHeaderStyles];
+  }
+
   public render() {
     // main template
     // language=HTML
     return html`
-      ${pageHeaderStyles}
       <style>
         app-toolbar {
           background-color: ${this.headerColor};
-        }
-
-        support-btn {
-          color: var(--header-icon-color);
         }
       </style>
 
