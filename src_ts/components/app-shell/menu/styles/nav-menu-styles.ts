@@ -14,6 +14,7 @@ export const navMenuStyles = css`
       overflow-y: var(--side-bar-scrolling);
       overflow-x: hidden;
       border-right: 1px solid var(--light-divider-color);
+      --app-selector-button-padding: 8px;
     }
 
     :host([small-menu]) {
