@@ -68,8 +68,23 @@ export class AssessmentsList extends connect(store)(LitElement) {
     return html`
       ${SharedStylesLit}${pageContentHeaderSlottedStyles}
       <style>
-        etools-table {
-          padding-top: 12px;
+        .shortAddText {
+          display: none;
+        }
+        @media (max-width: 576px) {
+          .action {
+            text-align: right;
+          }
+          #addBtn{
+            padding-right: 16px;
+            margin-right: 32px
+          }
+          .shortAddText {
+            display: block;
+          }
+          .longAddText {
+            display: none;
+          }
         }
       </style>
       <page-content-header>
@@ -81,16 +96,17 @@ export class AssessmentsList extends connect(store)(LitElement) {
               <export-data .endpoint="${etoolsEndpoints.assessment.url!}" .params="${this.queryParams}"></export-data>
             </div>
             <div class="action" ?hidden="${!this.canAdd}" >
-              <paper-button class="primary left-icon" raised @tap="${this.goToAddNewPage}">
-                <iron-icon icon="add"></iron-icon>Add new assessment
+              <paper-button id="addBtn" class="primary left-icon" raised @tap="${this.goToAddNewPage}">
+                <iron-icon icon="add"></iron-icon><span class='longAddText'>Add new assessment</span>
+                <span class='shortAddText'>Add</span>
               </paper-button>
             </div>
         </div>
       </page-content-header>
 
       <section class="elevation page-content filters" elevation="1">
-        <etools-filters .filters="${this.filters}"
-                        @filter-change="${this.filtersChange}"></etools-filters>
+        <etools-loading loading-text="Loading..." .active="${this.showFiltersLoading}"></etools-loading>
+        <etools-filters .filters="${this.filters}" @filter-change="${this.filtersChange}"></etools-filters>
       </section>
 
       <section class="elevation page-content no-padding" elevation="1">
@@ -151,6 +167,9 @@ export class AssessmentsList extends connect(store)(LitElement) {
 
   @property({type: Boolean})
   showLoading: boolean = false;
+
+  @property({type: Boolean})
+  showFiltersLoading: boolean = false;
 
   @property({type: Array})
   listColumns: EtoolsTableColumn[] = [
@@ -222,27 +241,39 @@ export class AssessmentsList extends connect(store)(LitElement) {
     if (state.user) {
       if (state.user.data) {
         this.isUnicefUser = state.user.data.is_unicef_user;
-      }
-      if (state.user.permissions) {
-        this.canAdd = state.user.permissions.canAddAssessment;
-        this.canExport = state.user.permissions.canExportAssessment;
+
+        if (state.user.permissions) {
+          this.canAdd = state.user.permissions.canAddAssessment && this.isAuditFocalPoint(state.user.data);
+          this.canExport = state.user.permissions.canExportAssessment;
+        }
       }
     }
 
     this.initFiltersForDisplay(state);
   }
 
+  isAuditFocalPoint(userData: any) {
+    return !!(userData.groups && userData.groups.find((group: any) => group.name === 'UNICEF Audit Focal Point'));
+  }
+
   initFiltersForDisplay(state: RootState) {
-    if (this.dataRequiredByFiltersHasBeenLoaded(state)) {
+    this.showFiltersLoading = true;
+    try {
+      if (this.dataRequiredByFiltersHasBeenLoaded(state)) {
 
-      const availableFilters = this.isUnicefUser ?
-        [...assessmentsFilters] : [...assessmentsFilters.filter(x => onlyForUnicefFilters.indexOf(x.filterKey) < 0)];
+        const availableFilters = this.isUnicefUser ?
+          [...assessmentsFilters] : [...assessmentsFilters.filter(x => onlyForUnicefFilters.indexOf(x.filterKey) < 0)];
 
-      this.populateDropdownFilterOptionsFromCommonData(state.commonData, availableFilters);
+        this.populateDropdownFilterOptionsFromCommonData(state.commonData, availableFilters);
 
-      // update filter selection and assign the result to etools-filters(trigger render)
-      this.filters = updateFiltersSelectedValues(this.selectedFilters, availableFilters);
-      lastSelectedFilters = {...this.selectedFilters};
+        // update filter selection and assign the result to etools-filters(trigger render)
+        this.filters = updateFiltersSelectedValues(this.selectedFilters, availableFilters);
+        lastSelectedFilters = {...this.selectedFilters};
+        this.showFiltersLoading = false;
+      }
+    } catch (err) {
+      logError('Init filters failed', 'initFiltersForDisplay', err);
+      this.showFiltersLoading = false;
     }
   }
 
@@ -256,7 +287,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
       // Avoid selectedValue being set before the dropdown is populated with options
       // And take into account that for non unicef users, the users endpoint returns 403
       (!this.isUnicefUser || get(state, 'commonData.unicefUsers.length')) &&
-      get(state, 'commonData.partners.length') &&
+      (!this.isUnicefUser || get(state, 'commonData.partners.length')) &&
       this.routeDetails.queryParams &&
       Object.keys(this.routeDetails.queryParams).length > 0) {
       return true;

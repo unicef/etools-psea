@@ -1,13 +1,13 @@
-import {html} from 'lit-element';
-import '@polymer/iron-flex-layout/iron-flex-layout';
+import {css} from 'lit-element';
+import {layoutEndJustified, layoutHorizontal, layoutCenter} from '../../../styles/lit-styles/flex-layout-styles';
 
 // language=HTML
-export const etoolsTableStyles = html`
-  <style>
+export const etoolsTableStyles = css`
     :host {
       display: block;
       width: 100%;
       overflow-x: hidden;
+      padding-top: 12px;
     }
 
     a:focus {
@@ -107,9 +107,9 @@ export const etoolsTableStyles = html`
       right: var(--etools-table-side-padding, 16px);
       top: 0;
       bottom: 0;
-      @apply --layout-horizontal;
-      @apply --layout-center;
-      @apply --layout-end-justified;
+      ${layoutHorizontal}
+      ${layoutCenter}
+      ${layoutEndJustified}
       background: transparent;
     }
 
@@ -128,5 +128,4 @@ export const etoolsTableStyles = html`
     paper-checkbox[readonly] {
       pointer-events: none;
     }
-  </style>
 `;

@@ -1,9 +1,8 @@
-import {html} from 'lit-element';
-import '@polymer/iron-flex-layout/iron-flex-layout.js';
+import {css} from 'lit-element';
+import {layoutHorizontal, layoutVertical, layoutFlex, layoutWrap} from '../styles/lit-styles/flex-layout-styles';
 
 // language=HTML
-export const gridLayoutStylesLit = html`
-  <style>
+export const gridLayoutStylesLit = css`
     .w100 {
       width: 100%;
     }
@@ -14,16 +13,16 @@ export const gridLayoutStylesLit = html`
     }
 
     .layout-horizontal {
-      @apply --layout-horizontal;
+      ${layoutHorizontal}
     }
 
     .layout-vertical,
     .col.layout-vertical {
-      @apply --layout-vertical;
+      ${layoutVertical}
     }
 
     .layout-wrap {
-      @apply --layout-wrap;
+      ${layoutWrap};
     }
 
     .row-padding {
@@ -49,16 +48,16 @@ export const gridLayoutStylesLit = html`
     }
 
     .row-h {
-      @apply --layout-horizontal;
+      ${layoutHorizontal}
     }
 
     .row-v {
-      @apply --layout-vertical;
+      ${layoutVertical};
     }
 
     .flex-c {
       /* flex container */
-      @apply --layout-flex;
+      ${layoutFlex}
     }
 
     .row-h, .row-v {
@@ -102,7 +101,7 @@ export const gridLayoutStylesLit = html`
     }
 
     .right-align {
-      @apply --layout-horizontal;
+      ${layoutHorizontal}
       justify-content: flex-end;
       align-items: center;
       text-align: right;
@@ -118,7 +117,7 @@ export const gridLayoutStylesLit = html`
     }
 
     .col {
-      @apply --layout-horizontal;
+      ${layoutHorizontal}
       box-sizing: border-box;
     }
 
@@ -182,5 +181,4 @@ export const gridLayoutStylesLit = html`
     }
 
     /* TODO: more classes will e added if needed */
-
-  </style>`;
+  `;

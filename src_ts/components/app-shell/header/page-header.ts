@@ -1,8 +1,6 @@
-import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/app-layout/app-toolbar/app-toolbar';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@unicef-polymer/etools-app-selector/etools-app-selector';
-
 import {customElement, LitElement, html, property} from 'lit-element';
 
 import '../../common/layout/support-btn';
@@ -29,18 +27,17 @@ import {pageHeaderStyles} from './page-header-styles';
 @customElement('page-header')
 export class PageHeader extends connect(store)(LitElement) {
 
+  static get styles() {
+    return [pageHeaderStyles];
+  }
+
   public render() {
     // main template
     // language=HTML
     return html`
-      ${pageHeaderStyles}
       <style>
         app-toolbar {
           background-color: ${this.headerColor};
-        }
-        
-        support-btn {
-          color: var(--header-icon-color);
         }
       </style>
 
@@ -49,7 +46,7 @@ export class PageHeader extends connect(store)(LitElement) {
         <div class="titlebar content-align">
           <etools-app-selector .user="${this.profile}"></etools-app-selector>
           <img id="app-logo" src="${this.rootPath}images/etools-logo-color-white.svg" alt="eTools">
-          ${!this.isProduction ? html`<div class="envWarning"> - ${this.environment} TESTING ENVIRONMENT</div>` : ''}
+          ${!this.isProduction ? html`<div class="envWarning"> - ${this.environment} <span class='envLong'>TESTING ENVIRONMENT<span></div>` : ''}
         </div>
         <div class="content-align">
           <countries-dropdown></countries-dropdown>
@@ -60,7 +57,7 @@ export class PageHeader extends connect(store)(LitElement) {
               .sections="${this.profileDrSections}"
               .offices="${this.profileDrOffices}"
               .users="${this.profileDrUsers}"
-              .profile="${ this.profile ? {...this.profile} : {} }"
+              .profile="${ this.profile ? {...this.profile} : {}}"
               @save-profile="${this.handleSaveProfile}"
               @sign-out="${this._signOut}">
           </etools-profile-dropdown>
@@ -154,7 +151,7 @@ export class PageHeader extends connect(store)(LitElement) {
 
   protected _getModifiedFields(originalData: any, newData: any) {
     const modifiedFields: GenericObject = {};
-    this.editableFields.forEach(function(field: any) {
+    this.editableFields.forEach(function (field: any) {
       if (originalData[field] !== newData[field]) {
         modifiedFields[field] = newData[field];
       }

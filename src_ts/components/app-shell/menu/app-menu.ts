@@ -17,15 +17,18 @@ import {customElement, html, LitElement, property} from 'lit-element';
 @customElement('app-menu')
 export class AppMenu extends LitElement {
 
+  static get styles() {
+    return [navMenuStyles];
+  }
+
   public render() {
     // main template
     // language=HTML
     return html`
-      ${navMenuStyles}
       <div class="menu-header">
         <span id="app-name">
           PSEA <br>
-          ASSESSMENTS
+          ASSURANCE
         </span>
 
         <span class="ripple-wrapper main">

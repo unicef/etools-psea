@@ -1,9 +1,8 @@
 import {LitElement, html, property, customElement} from 'lit-element';
 import '@polymer/paper-tabs/paper-tabs';
 import '@polymer/paper-tabs/paper-tab';
-import '@polymer/iron-flex-layout/iron-flex-layout';
 import {GenericObject} from '../../../types/globals';
-
+import {layoutStartJustified, layoutHorizontal} from '../../styles/lit-styles/flex-layout-styles';
 
 /**
  * @LitElement
@@ -32,8 +31,8 @@ export class EtoolsTabs extends LitElement {
         }
 
         :host {
-          @apply --layout-horizontal;
-          @apply --layout-start-justified;
+          ${layoutHorizontal}
+          ${layoutStartJustified}
         }
 
         :host([border-bottom]) {

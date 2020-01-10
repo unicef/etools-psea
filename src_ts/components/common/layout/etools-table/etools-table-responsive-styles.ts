@@ -1,4 +1,3 @@
-import '@polymer/iron-flex-layout/iron-flex-layout';
 import {css} from 'lit-element';
 
 // language=HTML
@@ -10,14 +9,19 @@ export const etoolsTableResponsiveStyles = css`
   */
     @media only screen and (max-width: 760px),
     (min-device-width: 768px) and (max-device-width: 1024px) {
+
+    :host {
+      padding-top: 6px;
+    }
     table {
       border: 0;
     }
-
     table caption {
       font-size: 1.3em;
+      line-height: 1.5em;
+      height: auto;
+      padding-bottom: 6px;
     }
-
     table thead {
       border: none;
       clip: rect(0 0 0 0);
@@ -28,39 +32,49 @@ export const etoolsTableResponsiveStyles = css`
       position: absolute;
       width: 1px;
     }
-
-    table tr {
-      border-top: 2px solid #ddd;
-      display: block;
+    table tr:not(.child-row) td {
+      padding: .75rem 0 .75rem 36%;
     }
-
-    table tr td:first-child, table tr td:last-child {
-      padding: .75rem;
+    table td, table th {
+      display: block !important;
     }
-
-    table td {
-      border-top: 1px solid var(--etools-table-rows-border-color, #dee2e6);
-      display: block;
-      font-size: .8em;
-      text-align: right;
+    table tr td.pagination {
+      padding: 0px 8px !important;
     }
-
-    table td::before {
+    table tr td.pagination:before {
+      content: "";
+    }
+    tr {
+      border: 1px solid #ccc;
+    }
+    td {
+      border: none !important;
+      line-height: inherit;
+      position: relative;
+      padding-left: 36% !important;
+    }
+    tr:not(.child-row) td:before {
+      position: absolute;
       content: attr(data-label);
-      float: left;
       color: var(--etools-table-secondary-text-color, rgba(0, 0, 0, .54));
+      left: 5px;
+      right: 5px;
+      width: 34%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-
-    table td:first-child {
-      border-top: 0;
-    }
-
-    table td:last-child {
-      border-bottom: 0;
-    }
-
     .row-actions .actions {
-      visibility: visible;
+      visibility: visible !important;
+    }
+    .expand-cell {
+      display: none;
+    }
+    .child-row {
+      display: var(--child-row-responsive-display, flex);
+    }
+    .child-row td {
+      padding: var(--child-row-td-padding, .5rem .75rem) !important;
     }
   }
 `;

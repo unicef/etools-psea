@@ -55,13 +55,23 @@ export enum EtoolsTableActionType {
  */
 @customElement('etools-table')
 export class EtoolsTable extends LitElement {
+
   static get styles() {
-    return [etoolsTableResponsiveStyles];
+    return [etoolsTableResponsiveStyles, etoolsTableStyles];
   }
+
   public render() {
     // language=HTML
     return html`
-      ${etoolsTableStyles}
+      <style>
+        /*
+         * Do not use transparent colors here, it will make the chk border darker.
+         * rgba(117, 117, 117) is the equivalent of --secondary-text-color
+         */
+        paper-checkbox[readonly] {
+          --paper-checkbox-checked-color: rgba(117, 117, 117);
+        }
+      </style>
       <table>
         <caption ?hidden="${this.showCaption(this.caption)}">${this.caption}</caption>
         <thead>

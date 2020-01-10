@@ -11,7 +11,7 @@ const LOGS_PREFIX = 'user-actions';
 
 export const getCurrentUserData = () => {
   // TODO: find a better way of getting user data or continue with this
-  getUserData(); // should req data and polpuate redux state...
+  return getUserData(); // should req data and polpuate redux state...
 };
 
 export const updateCurrentUserData = (profile: any) => {
@@ -32,6 +32,7 @@ export function getUserData() {
     // console.log('response', response);
     store.dispatch(setUserData(response));
     store.dispatch(setUserPermissions(getUserPermissions(response)));
+    return response;
   }).catch((error: GenericObject) => {
     logError('getUserData req error...', LOGS_PREFIX, error);
     if (error.status === 403) {
