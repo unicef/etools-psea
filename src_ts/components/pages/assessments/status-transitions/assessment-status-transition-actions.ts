@@ -26,6 +26,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   render() {
     // language=HTML
     return html`
+      <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
       ${this.cancelAssessmentStatusActionTmpl(this.assessment)}
       ${this.assessmentStatusActionBtnsTmpl(this.assessment)}
     `;
@@ -36,6 +37,9 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   @property({type: Object})
   rejectionDialog!: AssessmentRejectionDialog;
+
+  @property({type: Boolean})
+  showLoading: boolean = false;
 
   private statusChangeConfirmationDialog: EtoolsDialog | null = null;
   private confirmationMSg: HTMLSpanElement = document.createElement('span');
@@ -188,7 +192,9 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   }
 
   onStatusChangeConfirmation(e: CustomEvent) {
+    this.showLoading = true;
     if (!e.detail.confirmed) {
+      this.showLoading = false;
       // cancel status update action
       this.currentStatusAction = '';
       return;
@@ -209,9 +215,11 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   requestStatusUpdate(url: string) {
     makeRequest({url: url, method: 'PATCH'})
       .then((response) => {
+        this.showLoading = false;
         // update assessment data in redux store
         store.dispatch(updateAssessmentData(response));
       }).catch((err: any) => {
+        this.showLoading = false;
         logError('Status update failed', 'AssessmentStatusTransitionActions', err);
         parseRequestErrorsAndShowAsToastMsgs(err, this);
       }).then(() => {
