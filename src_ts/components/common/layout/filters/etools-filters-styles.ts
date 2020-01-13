@@ -111,7 +111,7 @@ export const etoolsFiltersStyles = css`
 
     padding: 0 0 0 8px;
     margin: 8px 0 8px 24px;
-    border-left: 2px solid var(--light-divider-color, rgba(0, 0, 0, 0.12));
+    border-left: 2px solid rgba(0, 0, 0, 0.12);
   }
 
   #filterMenu {
