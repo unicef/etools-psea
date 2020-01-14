@@ -1,3 +1,10 @@
+declare global {
+  interface Window {
+    EtoolsLogsLevel: string,
+    EtoolsEsmmFitIntoEl: any
+  }
+}
+
 const PROD_DOMAIN = 'etools.unicef.org';
 const STAGING_DOMAIN = 'etools-staging.unicef.org';
 const DEV_DOMAIN = 'etools-dev.unicef.org';

@@ -43,7 +43,7 @@ import {updateAppLocation, replaceAppLocation} from '../../../routing/routes';
 import {buttonsStyles} from '../../styles/button-styles';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
-import {makeRequest} from '../../utils/request-helper';
+import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import '../../common/layout/export-data';
 import '@unicef-polymer/etools-loading';
 import get from 'lodash-es/get';
@@ -364,8 +364,9 @@ export class AssessmentsList extends connect(store)(LitElement) {
    */
   getFilteredAssessments() {
     this.showLoading = true;
-    const endpoint = {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`};
-    return makeRequest(endpoint).then((response: GenericObject) => {
+    return sendRequest({
+      endpoint: {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`}
+    }).then((response: GenericObject) => {
       this.paginator = getPaginator(this.paginator, response);
       const assessments = response.results;
       assessments.forEach((assessment: Assessment) => {

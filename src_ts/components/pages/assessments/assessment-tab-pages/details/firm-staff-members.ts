@@ -10,7 +10,7 @@ import {
 } from '../../../../common/layout/etools-table/pagination/paginator';
 import '../../../../common/layout/etools-table/etools-table';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
+import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {buildUrlQueryString} from '../../../../common/layout/etools-table/etools-table-utility';
 import {GenericObject} from '../../../../../types/globals';
 import './staff-member-dialog';
@@ -193,7 +193,9 @@ export class FirmStaffMembers extends LitElement {
     this.showLoading = true;
     const endpoint = getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId});
     endpoint.url += `?${buildUrlQueryString(this.paginator)}`;
-    makeRequest(endpoint as RequestEndpoint)
+    sendRequest({
+      endpoint: endpoint
+    })
       .then((resp: any) => {
         this.staffMembers = resp.results.map((sm: any) => {
           return {...sm, hasAccess: this.currentFirmAssessorStaffWithAccess.includes(sm.id)};
@@ -253,9 +255,12 @@ export class FirmStaffMembers extends LitElement {
 
     this.showLoading = true;
     const baseUrl = getEndpoint(etoolsEndpoints.assessor, {id: this.assessmentId}).url!;
-    const endpointData = new RequestEndpoint(baseUrl + this.assessorId + '/', 'PATCH');
 
-    makeRequest(endpointData, {auditor_firm_staff: updatedStaffWithAccessIds})
+    sendRequest({
+      endpoint: {url: baseUrl + this.assessorId + '/'},
+      method: 'PATCH',
+      body: {auditor_firm_staff: updatedStaffWithAccessIds}
+    })
       .then((resp) => {
         this.currentFirmAssessorStaffWithAccess = [...resp.auditor_firm_staff];
         fireEvent(this, 'toast', {

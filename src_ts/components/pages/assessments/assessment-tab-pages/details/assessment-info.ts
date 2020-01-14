@@ -14,7 +14,7 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
-import {makeRequest} from '../../../../utils/request-helper';
+import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
 import {Assessment, AssessmentInvalidator, AssessmentPermissions, Assessor} from '../../../../../types/assessment';
 import {updateAppLocation} from '../../../../../routing/routes';
@@ -241,17 +241,19 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
       return;
     }
     this.showLoading = true;
-    const options = {
-      url: this._getUrl()!,
-      method: this.isNew ? 'POST' : 'PATCH'
-    };
 
     if (this.isNew) {
       this.assessment.status = 'draft';
     }
     const body = this.assessment;
 
-    makeRequest(options, body)
+    sendRequest({
+      endpoint: {
+        url: this._getUrl()!
+      },
+      method: this.isNew ? 'POST' : 'PATCH',
+      body: body
+    })
       .then((response: any) => {
         if (this.isNew) {
 

@@ -19,9 +19,9 @@ export const handleUsersNoLongerAssignedToCurrentCountry = (availableUsers: Unic
 };
 
 // The method will be used with bind(this)
-export function genericErrorHandling(error: any) {
+export function genericErrorHandling(error: any, component: any) {
   logError('genericErrorHandling', 'common-methods', error);
   /* eslint-disable-next-line */
-  fireEvent(this, 'toast', {text: formatServerErrorAsText(error), showCloseBtn: true});
+  fireEvent(component, 'toast', {text: formatServerErrorAsText(error), showCloseBtn: true});
 
 }

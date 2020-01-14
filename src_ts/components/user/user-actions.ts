@@ -1,7 +1,7 @@
 import {EtoolsUserPermissions} from '../../types/user-model';
 import {GenericObject} from '../../types/globals';
 import {store} from '../../redux/store';
-import {makeRequest, RequestEndpoint} from '../utils/request-helper';
+import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {setUserData, setUserPermissions} from '../../redux/actions/user';
 import {getEndpoint} from '../../endpoints/endpoints';
 import {etoolsEndpoints} from '../../endpoints/endpoints-list';
@@ -27,8 +27,9 @@ export const changeCurrentUserCountry = (countryId: number) => {
 };
 
 export function getUserData() {
-  const options = new RequestEndpoint(getEndpoint(etoolsEndpoints.userProfile).url!);
-  return makeRequest(options).then((response: GenericObject) => {
+  return sendRequest({
+    endpoint: {url: getEndpoint(etoolsEndpoints.userProfile).url}
+  }).then((response: GenericObject) => {
     // console.log('response', response);
     store.dispatch(setUserData(response));
     store.dispatch(setUserPermissions(getUserPermissions(response)));
@@ -43,8 +44,12 @@ export function getUserData() {
 }
 
 export function updateUserData(profile: GenericObject) {
-  const options = new RequestEndpoint(getEndpoint(etoolsEndpoints.userProfile).url!, 'PATCH');
-  return makeRequest(options, profile).then((response: GenericObject) => {
+  //const options = new RequestEndpoint(getEndpoint(etoolsEndpoints.userProfile).url!, 'PATCH');
+  return sendRequest({
+    endpoint: {url: getEndpoint(etoolsEndpoints.userProfile).url},
+    method: 'PATCH',
+    body: profile
+  }).then((response: GenericObject) => {
     store.dispatch(setUserData(response));
     store.dispatch(setUserPermissions(getUserPermissions(response)));
   }).catch((error: GenericObject) => {
@@ -56,15 +61,18 @@ export function updateUserData(profile: GenericObject) {
 function getUserPermissions(user: GenericObject): EtoolsUserPermissions {
   const permissions: EtoolsUserPermissions = {
     canAddAssessment: user && user.groups && Boolean(user.groups.find((group: any) => group.name === 'UNICEF User' ||
-                                                                          group.name === 'UNICEF Audit Focal Point')),
+      group.name === 'UNICEF Audit Focal Point')),
     canExportAssessment: user && user.groups
   };
   return permissions;
 }
 
 export function changeCountry(countryId: number) {
-  const options = new RequestEndpoint(getEndpoint(etoolsEndpoints.changeCountry).url!, 'POST');
-  return makeRequest(options, {country: countryId}).catch((error: GenericObject) => {
+  return sendRequest({
+    endpoint: {url: getEndpoint(etoolsEndpoints.changeCountry).url},
+    method: 'POST',
+    body: {country: countryId}
+  }).catch((error: GenericObject) => {
     logError('setUserData req error ', LOGS_PREFIX, error);
     throw error;
   });

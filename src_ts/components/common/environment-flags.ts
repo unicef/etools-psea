@@ -1,4 +1,4 @@
-import {makeRequest, RequestEndpoint} from '../utils/request-helper';
+import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {etoolsEndpoints} from '../../endpoints/endpoints-list';
 import {getEndpoint} from '../../endpoints/endpoints';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
@@ -7,7 +7,9 @@ import '../common/layout/etools-error-warn-box';
 
 
 export function checkEnvFlags() {
-  return makeRequest(getEndpoint(etoolsEndpoints.environmentFlags) as RequestEndpoint)
+  return sendRequest({
+    endpoint: getEndpoint(etoolsEndpoints.environmentFlags)
+  })
     .then((response: any) => {
       handleEnvFlagsReceived(response);
       return response;

@@ -8,7 +8,7 @@ import {ConfigObj, createDynamicDialog, removeDialog} from '@unicef-polymer/etoo
 import {Assessment} from '../../../../types/assessment';
 import {getEndpoint} from '../../../../endpoints/endpoints';
 import {etoolsEndpoints} from '../../../../endpoints/endpoints-list';
-import {makeRequest} from '../../../utils/request-helper';
+import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../../redux/store';
 import {updateAssessmentData} from '../../../../redux/actions/page-data';
@@ -119,11 +119,11 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
       case 'submitted':
         return html`
           ${this.canShowActionBtn(assessment.available_actions, 'reject')
-    ? this.rejectBtnHtml()
-    : ''}
+            ? this.rejectBtnHtml()
+            : ''}
           ${this.canShowActionBtn(assessment.available_actions, 'finalize')
-    ? this.finalizeBtnHtml()
-    : ''}
+            ? this.finalizeBtnHtml()
+            : ''}
           `;
       default:
         return '';
@@ -185,8 +185,8 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     let warnMsg = `Are you sure you want to ${action} this assessment?`;
     if (action === 'finalize') {
       warnMsg = 'Your finalisation of this Assessment confirms that you are satisfied that' +
-          ' the process followed by the Assessor is in line with expected procedure, and that the Proof of Evidence' +
-          ' provided by the Partner supports the rating against each Core Standard.';
+        ' the process followed by the Assessor is in line with expected procedure, and that the Proof of Evidence' +
+        ' provided by the Partner supports the rating against each Core Standard.';
     }
     this.confirmationMSg.innerText = warnMsg;
   }
@@ -213,7 +213,10 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   }
 
   requestStatusUpdate(url: string) {
-    makeRequest({url: url, method: 'PATCH'})
+    sendRequest({
+      endpoint: {url: url},
+      method: 'PATCH'
+    })
       .then((response) => {
         this.showLoading = false;
         // update assessment data in redux store
@@ -231,7 +234,11 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   rejectAssessment(url: string, reason: string) {
     const reqPayloadData = {comment: reason};
     this.rejectionDialog.spinnerLoading = true;
-    makeRequest({url: url, method: 'PATCH'}, reqPayloadData)
+    sendRequest({
+      endpoint: {url: url},
+      method: 'PATCH',
+      body: reqPayloadData
+    })
       .then((response) => {
         // update assessment data in redux store
         store.dispatch(updateAssessmentData(response));
@@ -243,6 +250,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
       }).then(() => {
         // req finalized...
         this.rejectionDialog.spinnerLoading = false;
+        this.showLoading = false;
       });
   }
 
