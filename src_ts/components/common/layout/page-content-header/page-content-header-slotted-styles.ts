@@ -15,7 +15,7 @@ export const pageContentHeaderSlottedStyles = html`
   }
    @media (max-width: 576px) {
       .content-header-actions {
-        --layout-horizontal_-_display: block;
+        display: block;
       }
     }
 </style>
