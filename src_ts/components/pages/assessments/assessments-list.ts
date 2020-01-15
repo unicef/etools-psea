@@ -23,13 +23,7 @@ import {
 import {EtoolsFilter} from '../../common/layout/filters/etools-filters';
 import {ROOT_PATH} from '../../../config/config';
 import {elevationStyles} from '../../styles/lit-styles/elevation-styles';
-import '../../common/layout/etools-table/etools-table';
-import {
-  EtoolsTableColumn,
-  EtoolsTableColumnSort,
-  EtoolsTableColumnType
-} from '../../common/layout/etools-table/etools-table';
-import {defaultPaginator, EtoolsPaginator, getPaginator} from '../../common/layout/etools-table/pagination/paginator';
+
 import {
   buildUrlQueryString,
   EtoolsTableSortItem,
@@ -37,7 +31,14 @@ import {
   getSortFields,
   getSortFieldsFromUrlSortParams,
   getUrlQueryStringSort
-} from '../../common/layout/etools-table/etools-table-utility';
+} from '../../common/layout/etools-table-utility';
+
+import '@unicef-polymer/etools-table/etools-table.js';
+import {EtoolsTableColumn, EtoolsTableColumnSort, EtoolsTableColumnType}
+  from '@unicef-polymer/etools-table/etools-table';
+import {EtoolsPaginator, defaultPaginator, getPaginator}
+  from '@unicef-polymer/etools-table/pagination/etools-pagination';
+
 import {RouteDetails, RouteQueryParams} from '../../../routing/router';
 import {updateAppLocation, replaceAppLocation} from '../../../routing/routes';
 import {buttonsStyles} from '../../styles/button-styles';

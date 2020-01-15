@@ -3,7 +3,10 @@ import '@unicef-polymer/etools-content-panel/etools-content-panel.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import './follow-up-dialog';
 import {FollowUpDialog} from './follow-up-dialog';
-import {EtoolsTableColumn, EtoolsTableColumnType} from '../../../../common/layout/etools-table/etools-table';
+
+import '@unicef-polymer/etools-table/etools-table.js';
+import {EtoolsTableColumn, EtoolsTableColumnType} from '@unicef-polymer/etools-table/etools-table';
+
 import {GenericObject, ActionPoint} from '../../../../../types/globals';
 import {Assessment} from '../../../../../types/assessment';
 import {cloneDeep} from '../../../../utils/utils';
