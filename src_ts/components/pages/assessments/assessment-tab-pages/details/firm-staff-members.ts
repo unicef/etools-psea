@@ -2,14 +2,12 @@ import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@polymer/paper-icon-button/paper-icon-button';
 import {LitElement, html, property, customElement} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
-import '@unicef-polymer/etools-table/etools-table.js';
+import '@unicef-polymer/etools-table/etools-table';
 import {EtoolsTableColumn, EtoolsTableColumnType} from '@unicef-polymer/etools-table/etools-table';
 import {EtoolsPaginator, defaultPaginator, getPaginator}
   from '@unicef-polymer/etools-table/pagination/etools-pagination';
-
-
 import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
+import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {buildUrlQueryString} from '../../../../common/layout/etools-table-utility';
 import {GenericObject} from '../../../../../types/globals';
 import './staff-member-dialog';
@@ -192,7 +190,9 @@ export class FirmStaffMembers extends LitElement {
     this.showLoading = true;
     const endpoint = getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId});
     endpoint.url += `?${buildUrlQueryString(this.paginator)}`;
-    makeRequest(endpoint as RequestEndpoint)
+    sendRequest({
+      endpoint: endpoint
+    })
       .then((resp: any) => {
         this.staffMembers = resp.results.map((sm: any) => {
           return {...sm, hasAccess: this.currentFirmAssessorStaffWithAccess.includes(sm.id)};
@@ -252,9 +252,12 @@ export class FirmStaffMembers extends LitElement {
 
     this.showLoading = true;
     const baseUrl = getEndpoint(etoolsEndpoints.assessor, {id: this.assessmentId}).url!;
-    const endpointData = new RequestEndpoint(baseUrl + this.assessorId + '/', 'PATCH');
 
-    makeRequest(endpointData, {auditor_firm_staff: updatedStaffWithAccessIds})
+    sendRequest({
+      endpoint: {url: baseUrl + this.assessorId + '/'},
+      method: 'PATCH',
+      body: {auditor_firm_staff: updatedStaffWithAccessIds}
+    })
       .then((resp) => {
         this.currentFirmAssessorStaffWithAccess = [...resp.auditor_firm_staff];
         fireEvent(this, 'toast', {

@@ -8,7 +8,7 @@ import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {radioButtonStyles} from '../../../../styles/radio-button-styles';
 import {Question, Answer, Rating} from '../../../../../types/assessment';
-import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
+import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {QuestionnaireAnswerElement} from './questionnaire-answer';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
@@ -159,8 +159,11 @@ export class QuestionnaireItemElement extends LitElement {
     }
     this.showLoading = true;
 
-    const endpointData = new RequestEndpoint(this._getUrl(), this._getMethod());
-    makeRequest(endpointData, answerBody)
+    sendRequest({
+      endpoint: {url: this._getUrl()},
+      method: this._getMethod(),
+      body: answerBody
+    })
       .then((resp) => {
         this.answer = resp;
         this.editMode = false;

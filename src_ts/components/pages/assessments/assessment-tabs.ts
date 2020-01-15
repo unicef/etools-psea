@@ -15,7 +15,7 @@ import {elevationStyles} from '../../styles/lit-styles/elevation-styles';
 import {RouteDetails} from '../../../routing/router';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {Assessment, Assessor} from '../../../types/assessment';
-import {requestAssessmentAndAssessor, updateAssessmentData, updateAssessorData, updateAssessmentAndAssessor} from '../../../redux/actions/page-data';
+import {requestAssessmentAndAssessor, updateAssessmentAndAssessor} from '../../../redux/actions/page-data';
 import {cloneDeep, isJsonStrMatch} from '../../utils/utils';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {EtoolsStatusModel} from '../../common/layout/status/etools-status';

@@ -1,9 +1,9 @@
-export interface EtoolsEndpoint {
+import {EtoolsRequestEndpoint} from '@unicef-polymer/etools-ajax';
+
+//@ts-ignore
+export interface EtoolsEndpoint extends EtoolsRequestEndpoint {
   url?: string;
   template?: string;
-  exp?: any;
-  cachingKey?: string;
-  cacheTableName?: string;
 }
 export interface EtoolsEndpoints {
   [key: string]: EtoolsEndpoint;

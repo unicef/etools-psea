@@ -4,13 +4,13 @@ import '@polymer/paper-icon-button/paper-icon-button.js';
 import './follow-up-dialog';
 import {FollowUpDialog} from './follow-up-dialog';
 
-import '@unicef-polymer/etools-table/etools-table.js';
+import '@unicef-polymer/etools-table/etools-table';
 import {EtoolsTableColumn, EtoolsTableColumnType} from '@unicef-polymer/etools-table/etools-table';
 
 import {GenericObject, ActionPoint} from '../../../../../types/globals';
 import {Assessment} from '../../../../../types/assessment';
 import {cloneDeep} from '../../../../utils/utils';
-import {makeRequest} from '../../../../utils/request-helper';
+import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {RootState, store} from '../../../../../redux/store';
@@ -132,9 +132,10 @@ export class FollowUpPage extends connect(store)(LitElement) {
 
   getFollowUpData() {
     this.showLoading = true;
-    const endpoint = getEndpoint(etoolsEndpoints.actionPoints, {id: this.assessmentId});
     // @ts-ignore
-    makeRequest(endpoint).then((response: any) => {
+    sendRequest({
+      endpoint: getEndpoint(etoolsEndpoints.actionPoints, {id: this.assessmentId})
+    }).then((response: any) => {
       this.dataItems = response;
     }).catch((err: any) => logError(
       'Get action points list data req failed', 'FollowUpPage', err))

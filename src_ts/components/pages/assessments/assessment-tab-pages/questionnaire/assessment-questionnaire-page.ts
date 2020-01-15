@@ -2,7 +2,7 @@ import {LitElement, html, property, customElement} from 'lit-element';
 import {repeat} from 'lit-html/directives/repeat';
 import './questionnaire-item';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
-import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
+import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {Question, Answer} from '../../../../../types/assessment';
@@ -221,7 +221,9 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   getQuestionnaire() {
     this.loadingQuestions = true;
     const url = etoolsEndpoints.questionnaire.url!;
-    makeRequest(new RequestEndpoint(url))
+    sendRequest({
+      endpoint: {url: url}
+    })
       .then((resp) => {
         resp.map((r: any) => r.stamp = Date.now());
         this.questionnaireItems = resp;
@@ -232,7 +234,9 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   getAnswers() {
     this.loadingAnswers = true;
     const url = getEndpoint(etoolsEndpoints.getQuestionnaireAnswers, {assessmentId: this.assessmentId}).url!;
-    makeRequest(new RequestEndpoint(url))
+    sendRequest({
+      endpoint: {url: url}
+    })
       .then((resp) => {
         this.answers = resp;
       }).catch((err: any) => logError('Get answers req failed', 'AssessmentQuestionnairePage', err))

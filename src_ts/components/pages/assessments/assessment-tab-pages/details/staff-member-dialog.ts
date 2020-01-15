@@ -7,7 +7,7 @@ import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-
 import {EtoolsStaffMemberModel} from '../../../../../types/user-model';
 import {PaperInputElement} from '@polymer/paper-input/paper-input';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {makeRequest} from '../../../../utils/request-helper';
+import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
@@ -258,15 +258,15 @@ export class StaffMemberDialog extends LitElement {
     this.getControlsData();
     this.requestInProgress = true;
 
-    const options = {
-      method: this.isNewRecord ? 'POST' : 'PATCH',
-      url: getEndpoint(
-        etoolsEndpoints.staffMembers,
-        {id: this.firmId}).url! + (this.editedItem.id ? this.editedItem.id + '/' : '')
-    };
-
     if (this._staffMemberDataHasChanged()) {
-      makeRequest(options, this.editedItem)
+      sendRequest({
+        endpoint: {
+          url: getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url!
+            + (this.editedItem.id ? this.editedItem.id + '/' : '')
+        },
+        method: this.isNewRecord ? 'POST' : 'PATCH',
+        body: this.editedItem
+      })
         .then((resp: any) => this._staffMemberDataUpdateComplete(resp))
         .catch((err: any) => this._handleError(err))
         .then(() => this.requestInProgress = false);
