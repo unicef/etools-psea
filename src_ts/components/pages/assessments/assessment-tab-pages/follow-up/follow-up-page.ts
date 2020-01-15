@@ -4,7 +4,7 @@ import '@polymer/paper-icon-button/paper-icon-button.js';
 import './follow-up-dialog';
 import {FollowUpDialog} from './follow-up-dialog';
 
-import '@unicef-polymer/etools-table/etools-table.js';
+import '@unicef-polymer/etools-table/etools-table';
 import {EtoolsTableColumn, EtoolsTableColumnType} from '@unicef-polymer/etools-table/etools-table';
 
 import {GenericObject, ActionPoint} from '../../../../../types/globals';

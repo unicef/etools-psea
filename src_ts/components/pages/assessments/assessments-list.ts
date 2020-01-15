@@ -33,7 +33,7 @@ import {
   getUrlQueryStringSort
 } from '../../common/layout/etools-table-utility';
 
-import '@unicef-polymer/etools-table/etools-table.js';
+import '@unicef-polymer/etools-table/etools-table';
 import {EtoolsTableColumn, EtoolsTableColumnSort, EtoolsTableColumnType}
   from '@unicef-polymer/etools-table/etools-table';
 import {EtoolsPaginator, defaultPaginator, getPaginator}
