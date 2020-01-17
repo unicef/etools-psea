@@ -86,7 +86,7 @@ export const pageHeaderStyles = css`
 
     @media (max-width: 576px) {
       #app-logo {
-        width: 60px;
+        display: none;
       }
       .titlebar img {
         margin: 0 8px 0 4px;
@@ -98,12 +98,6 @@ export const pageHeaderStyles = css`
       }
       app-toolbar {
         padding-right: 0px;
-      }
-    }
-
-    @media (max-width: 400px) {
-      etools-app-selector {
-        display: none;
       }
     }
 `;
