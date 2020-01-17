@@ -78,18 +78,18 @@ export class AnswerInstructions extends LitElement {
       <div class='rating-info-content elevation' elevation="1">
         <div class="rating-info red-border">
             <span class="primary">1 - Absent: The organization is not working towards this standard</span>
-            <span>Give this score if the organization meets one of the criteria</span>
+            <span>Give this score if the organization does not meet the standard.</span>
         </div>
         <div class="rating-info orange-border">
           <span class="primary">
           2 -Progressing: The organization has made some progress towards applying this standard, but certain
           aspecs need to be improved
           </span>
-          <span>Give this score if the organization meets one or two of the three criteria</span>
+          <span>Give this score if the organization partially meets the criteria.</span>
         </div>
         <div class="rating-info green-border">
           <span class="primary">3 - Adequate: The organization fully meets this standard</span>
-          <span>Give this score if the organization meets all of the three criteria</span>
+          <span>Give this score if the organization meets the standard.</span>
         </div>
       </div>
     `;
