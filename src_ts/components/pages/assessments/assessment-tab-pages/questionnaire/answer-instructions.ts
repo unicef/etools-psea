@@ -82,8 +82,8 @@ export class AnswerInstructions extends LitElement {
         </div>
         <div class="rating-info orange-border">
           <span class="primary">
-          2 -Progressing: The organization has made some progress towards applying this standard, but certain
-          aspecs need to be improved
+          2 - Progressing: The organization has made some progress towards applying this standard, but certain
+          aspects need to be improved
           </span>
           <span>Give this score if the organization partially meets the criteria.</span>
         </div>
