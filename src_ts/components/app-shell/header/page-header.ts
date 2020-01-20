@@ -46,7 +46,8 @@ export class PageHeader extends connect(store)(LitElement) {
         <div class="titlebar content-align">
           <etools-app-selector .user="${this.profile}"></etools-app-selector>
           <img id="app-logo" src="${this.rootPath}images/etools-logo-color-white.svg" alt="eTools">
-          ${!this.isProduction ? html`<div class="envWarning"> - ${this.environment} <span class='envLong'>TESTING ENVIRONMENT<span></div>` : ''}
+          ${!this.isProduction ? html`<div class="envWarning">
+          <span class='envLong'> - </span>${this.environment} <span class='envLong'>TESTING ENVIRONMENT<span></div>` : ''}
         </div>
         <div class="content-align">
           <countries-dropdown></countries-dropdown>
