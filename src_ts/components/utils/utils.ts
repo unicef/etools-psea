@@ -13,3 +13,8 @@ export const getFileNameFromURL = (url: string) => {
   // @ts-ignore
   return url.split('?').shift().split('/').pop();
 };
+
+export const onListPage = (routeDetails: any) => {
+  return routeDetails.routeName === 'assessments' &&
+    routeDetails.subRouteName == 'list';
+};

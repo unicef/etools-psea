@@ -15,7 +15,7 @@ import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
-import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
+import {isJsonStrMatch, cloneDeep, onListPage} from '../../../../utils/utils';
 import {Assessment, AssessmentInvalidator, AssessmentPermissions, Assessor} from '../../../../../types/assessment';
 import {updateAppLocation} from '../../../../../routing/routes';
 import {formatDate} from '../../../../utils/date-utility';
@@ -157,6 +157,11 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
   showLoading: boolean = false;
 
   stateChanged(state: RootState) {
+    if (onListPage(get(state, 'app.routeDetails'))) {
+      this.assessment = null;
+      return;
+    }
+
     if (state.commonData && !isJsonStrMatch(this.partners, state.commonData!.partners)) {
       this.partners = [...state.commonData!.partners];
     }
@@ -167,13 +172,11 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     const currentAssessment: Assessment = get(state, 'pageData.currentAssessment');
     if (currentAssessment && Object.keys(currentAssessment).length &&
       !isJsonStrMatch(this.assessment, currentAssessment)) {
-
       this.assessment = {...currentAssessment};
       this.originalAssessment = cloneDeep(this.assessment);
       this.isNew = !this.assessment.id;
       this.editMode = this.isNew;
       this.setAssessmentInfoPermissions(this.assessment.permissions);
-
       setTimeout(() => this.resetValidations(), 10);
     }
     this.populateUnicefFocalPointsDropdown(state);
