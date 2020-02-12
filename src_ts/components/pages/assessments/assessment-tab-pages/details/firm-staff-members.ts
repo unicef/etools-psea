@@ -234,7 +234,7 @@ export class FirmStaffMembers extends LitElement {
       this.paginator.count++;
       this.staffMembers.push(itemData);
     }
-    this.paginator = getPaginator(this.paginator, {count: this.paginator.count, data: this.staffMembers});
+    this.paginator = getPaginatorWithBackend(this.paginator, this.paginator.count);
   }
 
   saveFirmAssessorStaffAccess(staffMember: EtoolsStaffMemberModel) {
