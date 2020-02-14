@@ -36,7 +36,7 @@ import {
 import '@unicef-polymer/etools-table/etools-table';
 import {EtoolsTableColumn, EtoolsTableColumnSort, EtoolsTableColumnType}
   from '@unicef-polymer/etools-table/etools-table';
-import {EtoolsPaginator, defaultPaginator, getPaginator}
+import {EtoolsPaginator, defaultPaginator, getPaginatorWithBackend}
   from '@unicef-polymer/etools-table/pagination/etools-pagination';
 
 import {RouteDetails, RouteQueryParams} from '../../../routing/router';
@@ -368,7 +368,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
     return sendRequest({
       endpoint: {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`}
     }).then((response: GenericObject) => {
-      this.paginator = getPaginator(this.paginator, response);
+      this.paginator = getPaginatorWithBackend(this.paginator, response.count);
       const assessments = response.results;
       assessments.forEach((assessment: Assessment) => {
         if (assessment.status === 'in_progress') {

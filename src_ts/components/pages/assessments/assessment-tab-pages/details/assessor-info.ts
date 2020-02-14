@@ -412,7 +412,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   cancelAssessorUpdate() {
     this.assessor = cloneDeep(this.originalAssessor);
     this.editMode = this.isNew;
-    if (this.assessor.assessor_type === AssessorTypes.Firm) {
+    if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessingFirmElement) {
       this.assessingFirmElement.resetValidations();
     }
   }
