@@ -19,7 +19,7 @@ documentContainer.innerHTML = `
         --nonprod-header-color: #a94442;
         --nonprod-text-warn-color: #e6e600;
 
-        --light-divider-color: rgba(255, 255, 255, 0.12);
+        --light-divider-color: rgba(0, 0, 0, 0.12);
         --dark-divider-color: rgba(0, 0, 0, 0.40);
 
         --dark-icon-color: rgba(0, 0, 0, 0.65);
