@@ -23,13 +23,7 @@ import {
 import {EtoolsFilter} from '../../common/layout/filters/etools-filters';
 import {ROOT_PATH} from '../../../config/config';
 import {elevationStyles} from '../../styles/lit-styles/elevation-styles';
-import '../../common/layout/etools-table/etools-table';
-import {
-  EtoolsTableColumn,
-  EtoolsTableColumnSort,
-  EtoolsTableColumnType
-} from '../../common/layout/etools-table/etools-table';
-import {defaultPaginator, EtoolsPaginator, getPaginator} from '../../common/layout/etools-table/pagination/paginator';
+
 import {
   buildUrlQueryString,
   EtoolsTableSortItem,
@@ -37,13 +31,20 @@ import {
   getSortFields,
   getSortFieldsFromUrlSortParams,
   getUrlQueryStringSort
-} from '../../common/layout/etools-table/etools-table-utility';
+} from '../../common/layout/etools-table-utility';
+
+import '@unicef-polymer/etools-table/etools-table';
+import {EtoolsTableColumn, EtoolsTableColumnSort, EtoolsTableColumnType}
+  from '@unicef-polymer/etools-table/etools-table';
+import {EtoolsPaginator, defaultPaginator, getPaginatorWithBackend}
+  from '@unicef-polymer/etools-table/pagination/etools-pagination';
+
 import {RouteDetails, RouteQueryParams} from '../../../routing/router';
 import {updateAppLocation, replaceAppLocation} from '../../../routing/routes';
 import {buttonsStyles} from '../../styles/button-styles';
 import {SharedStylesLit} from '../../styles/shared-styles-lit';
 import {etoolsEndpoints} from '../../../endpoints/endpoints-list';
-import {makeRequest} from '../../utils/request-helper';
+import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import '../../common/layout/export-data';
 import '@unicef-polymer/etools-loading';
 import get from 'lodash-es/get';
@@ -364,9 +365,10 @@ export class AssessmentsList extends connect(store)(LitElement) {
    */
   getFilteredAssessments() {
     this.showLoading = true;
-    const endpoint = {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`};
-    return makeRequest(endpoint).then((response: GenericObject) => {
-      this.paginator = getPaginator(this.paginator, response);
+    return sendRequest({
+      endpoint: {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`}
+    }).then((response: GenericObject) => {
+      this.paginator = getPaginatorWithBackend(this.paginator, response.count);
       const assessments = response.results;
       assessments.forEach((assessment: Assessment) => {
         if (assessment.status === 'in_progress') {

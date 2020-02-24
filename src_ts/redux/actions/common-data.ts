@@ -1,5 +1,5 @@
 import {Action, ActionCreator} from 'redux';
-import {makeRequest, RequestEndpoint} from '../../components/utils/request-helper';
+import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {etoolsEndpoints} from '../../endpoints/endpoints-list';
 import {GenericObject} from '../../types/globals';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
@@ -67,7 +67,9 @@ export const setExternalIndividuals = (externalIndividuals: []) => {
 };
 
 export const loadSections = () => (dispatch: any) => {
-  makeRequest(new RequestEndpoint(etoolsEndpoints.sections.url!))
+  sendRequest({
+    endpoint: {url: etoolsEndpoints.sections.url!}
+  })
     .then((resp: any) => dispatch(setSections(resp)))
     .catch((error: GenericObject) => {
       logError('loadSections req error...', LOGS_PREFIX, error);
@@ -75,7 +77,9 @@ export const loadSections = () => (dispatch: any) => {
 };
 
 export const loadOffices = () => (dispatch: any) => {
-  makeRequest(new RequestEndpoint(etoolsEndpoints.offices.url!))
+  sendRequest({
+    endpoint: {url: etoolsEndpoints.offices.url!}
+  })
     .then((resp: any) => dispatch(setOffices(resp)))
     .catch((error: GenericObject) => {
       logError('loadOffices req error...', LOGS_PREFIX, error);
@@ -90,7 +94,9 @@ export const setAssessingFirms = (assessingFirms: []) => {
 };
 
 export const loadPartners = () => (dispatch: any) => {
-  makeRequest(new RequestEndpoint(etoolsEndpoints.partners.url!))
+  sendRequest({
+    endpoint: {url: etoolsEndpoints.partners.url!}
+  })
     .then((resp: any) => dispatch(setPartners(resp)))
     .catch((error: GenericObject) => {
       logError('loadPartners req error...', LOGS_PREFIX, error);
@@ -98,7 +104,9 @@ export const loadPartners = () => (dispatch: any) => {
 };
 
 export const loadExternalIndividuals = (callBack?: () => void) => (dispatch: any) => {
-  makeRequest(new RequestEndpoint(etoolsEndpoints.externalIndividuals.url!))
+  sendRequest({
+    endpoint: {url: etoolsEndpoints.externalIndividuals.url!}
+  })
     .then((resp: any) => {
       dispatch(setExternalIndividuals(resp));
     })
@@ -113,7 +121,9 @@ export const loadExternalIndividuals = (callBack?: () => void) => (dispatch: any
 };
 
 export const loadAssessingFirms = () => (dispatch: any) => {
-  makeRequest(new RequestEndpoint(etoolsEndpoints.auditorFirms.url!))
+  sendRequest({
+    endpoint: {url: etoolsEndpoints.auditorFirms.url!}
+  })
     .then((resp: any) => {
       dispatch(setAssessingFirms(resp));
     })
@@ -123,7 +133,9 @@ export const loadAssessingFirms = () => (dispatch: any) => {
 };
 
 export const loadUnicefUsers = () => (dispatch: any) => {
-  makeRequest(new RequestEndpoint(etoolsEndpoints.unicefUsers.url!))
+  sendRequest({
+    endpoint: {url: etoolsEndpoints.unicefUsers.url!}
+  })
     .then((resp: any) => {
       dispatch(updateUnicefUsersData(resp));
     })

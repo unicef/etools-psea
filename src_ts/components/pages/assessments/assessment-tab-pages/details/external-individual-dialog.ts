@@ -6,7 +6,7 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import {PaperInputElement} from '@polymer/paper-input/paper-input';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
+import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {cloneDeep} from '../../../../utils/utils';
@@ -214,9 +214,11 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
   private saveDialogData() {
     this.requestInProgress = true;
 
-    const options = new RequestEndpoint(getEndpoint(etoolsEndpoints.externalIndividuals).url!, 'POST');
-
-    makeRequest(options, this.editedItem)
+    sendRequest({
+      endpoint: {url: getEndpoint(etoolsEndpoints.externalIndividuals).url},
+      method: 'POST',
+      body: this.editedItem
+    })
       .then((resp: any) => this._handleResponse(resp))
       .catch((err: any) => this._handleError(err))
       .then(() => this.requestInProgress = false);

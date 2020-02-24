@@ -7,7 +7,7 @@ import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {PaperInputElement} from '@polymer/paper-input/paper-input';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
+import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {buttonsStyles} from '../../../../styles/button-styles';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
@@ -117,7 +117,9 @@ export class AssessingFirm extends LitElement {
 
     this.poRequestInProgress = true;
 
-    makeRequest(getEndpoint(etoolsEndpoints.auditorFirm, {id: this.assessor.order_number}) as RequestEndpoint)
+    sendRequest({
+      endpoint: getEndpoint(etoolsEndpoints.auditorFirm, {id: this.assessor.order_number})
+    })
       .then((response: any) => {
         this._handleFirmReceived(response);
       })

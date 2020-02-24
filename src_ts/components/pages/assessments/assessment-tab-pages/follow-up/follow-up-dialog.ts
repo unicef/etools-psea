@@ -9,7 +9,7 @@ import '@unicef-polymer/etools-date-time/datepicker-lite.js';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {makeRequest} from '../../../../utils/request-helper';
+import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 import {store, RootState} from '../../../../../redux/store';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
@@ -309,12 +309,12 @@ export class FollowUpDialog extends connect(store)(LitElement) {
     }
 
     this.requestInProcess = true;
-    const options: any = {
-      method: this.isNewRecord ? 'POST' : 'PATCH',
-      url: this._getUrl()
-    };
 
-    makeRequest(options, this.editedItem)
+    sendRequest({
+      endpoint: {url: this._getUrl()},
+      method: this.isNewRecord ? 'POST' : 'PATCH',
+      body: this.editedItem
+    })
       .then((resp: any) => this._handleResponse(resp))
       .catch((err: any) => this._handleError(err));
   }
