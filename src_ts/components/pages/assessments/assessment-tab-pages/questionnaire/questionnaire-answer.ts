@@ -23,7 +23,7 @@ import {PaperTextareaElement} from '@polymer/paper-input/paper-textarea';
 import {QuestionAttachmentsElement} from './question-attachments';
 import {PaperCheckboxElement} from '@polymer/paper-checkbox/paper-checkbox';
 import get from 'lodash-es/get';
-import {makeRequest, RequestEndpoint} from '../../../../utils/request-helper';
+import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {fireEvent} from '../../../../utils/fire-custom-event';
@@ -310,7 +310,10 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
     }).url!;
     url = url + attachmentId + '/';
 
-    return makeRequest(new RequestEndpoint(url, 'DELETE'))
+    return sendRequest({
+      endpoint: {url: url},
+      method: 'DELETE'
+    })
       .then(() => {
         this.answer = {...this.answer, attachments: this._filterOutDeletedAttachment(attachmentId)};
       })

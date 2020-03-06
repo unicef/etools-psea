@@ -1,6 +1,6 @@
 import {Action, ActionCreator} from 'redux';
 import {Assessment, Assessor} from '../../types/assessment';
-import {makeRequest, RequestEndpoint} from '../../components/utils/request-helper';
+import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {etoolsEndpoints} from '../../endpoints/endpoints-list';
 import {getEndpoint} from '../../endpoints/endpoints';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
@@ -46,7 +46,9 @@ export const updateAssessmentAndAssessor = (assessment: Assessment, assessor: As
 
 const requestAssessor = (assessmentId: number) => {
   const url = getEndpoint(etoolsEndpoints.assessor, {id: assessmentId}).url!;
-  return makeRequest({url: url})
+  return sendRequest({
+    endpoint: {url: url}
+  })
     .then((response: Assessor) => {
       return response;
     })
@@ -72,11 +74,15 @@ export const saveAssessorData = (assessmentId: number,
       throw new Error(`[updateAssessorData] Invalid assessment id ${assessmentId}`);
     }
     const baseUrl = getEndpoint(etoolsEndpoints.assessor, {id: assessmentId}).url!;
-    const reqOptions: RequestEndpoint = {
+    const reqOptions = {
       method: assessorId ? 'PATCH' : 'POST',
       url: assessorId ? (baseUrl + assessorId + '/') : baseUrl
     };
-    return makeRequest(reqOptions, data)
+    return sendRequest({
+      endpoint: {url: reqOptions.url},
+      method: reqOptions.method,
+      body: data
+    })
       .then((response) => {
         dispatch(updateAssessorData(response));
       })
@@ -95,7 +101,7 @@ export const requestAssessmentAndAssessor =
       throw new Error(`[requestAssessmentData] Invalid assessment id ${assessmentId}`);
     }
     const url = `${etoolsEndpoints.assessment.url!}${assessmentId}/`;
-    return makeRequest({url: url})
+    return sendRequest({endpoint: {url: url}})
       .then((assessment: Assessment) => {
 
         if (assessment.assessor) {
@@ -117,7 +123,7 @@ export const requestAssessment = (assessmentId: number, errorCallback: (...args:
     throw new Error(`[requestAssessmentData] Invalid assessment id ${assessmentId}`);
   }
   const url = `${etoolsEndpoints.assessment.url!}${assessmentId}/`;
-  return makeRequest({url: url})
+  return sendRequest({endpoint: {url: url}})
     .then((response: Assessment) => {
       dispatch(updateAssessmentData(response));
     })

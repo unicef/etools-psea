@@ -7,12 +7,10 @@ import './external-individual-dialog';
 import {ExternalIndividualDialog} from './external-individual-dialog';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
-import {isJsonStrMatch, cloneDeep} from '../../../../utils/utils';
 import {handleUsersNoLongerAssignedToCurrentCountry} from '../../../../common/common-methods';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
 import {UnicefUser} from '../../../../../types/user-model';
 import {Assessor, AssessorTypes} from '../../../../../types/assessment';
-import {updateAssessorData} from '../../../../../redux/actions/page-data';
 import {loadExternalIndividuals} from '../../../../../redux/actions/common-data';
 import get from 'lodash-es/get';
 import {fireEvent} from '../../../../utils/fire-custom-event';
@@ -99,6 +97,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
       return;
     }
 
+    this.setDefaultUserDetails();
     this.populateExternalIndividualsDropdown(state);
   }
 
@@ -135,6 +134,13 @@ export class ExternalIndividual extends connect(store)(LitElement) {
     this.dialogExtIndividual.openDialog();
   }
 
+  private setDefaultUserDetails() {
+    if (!this.assessor.user_details) {
+      // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
+      this.assessor.user_details = {email: ''} as UnicefUser;
+    }
+  }
+
   createExternalIndividualDialog() {
     this.dialogExtIndividual = document.createElement('external-individual-dialog') as ExternalIndividualDialog;
     this.dialogExtIndividual.setAttribute('id', 'externalIndividualDialog');
@@ -155,7 +161,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
       ...this.assessor,
       user: userId,
       assessor_type: AssessorTypes.ExternalIndividual
-    }
+    };
   }
 
   disconnectedCallback() {
@@ -171,12 +177,13 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   }
 
   _setSelectedExternalIndividual(event: CustomEvent) {
+
     const selectedUser = event.detail.selectedItem;
     if (selectedUser) {
       this.assessor.user = selectedUser.id;
       this.assessor.user_details.email = selectedUser.email;
     } else {
-      this.assessor.user_details.email = "";
+      this.assessor.user_details.email = '';
       this.assessor.user = null;
     }
     this.requestUpdate();
