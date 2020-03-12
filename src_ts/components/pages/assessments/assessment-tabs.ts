@@ -6,7 +6,6 @@ import {pageContentHeaderSlottedStyles}
   from '../../common/layout/page-content-header/page-content-header-slotted-styles';
 import '../../common/layout/status/etools-status';
 import {pageLayoutStyles} from '../../styles/page-layout-styles';
-
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../redux/store';
 import {updateAppLocation} from '../../../routing/routes';
@@ -18,6 +17,7 @@ import {Assessment, Assessor} from '../../../types/assessment';
 import {requestAssessmentAndAssessor, updateAssessmentAndAssessor} from '../../../redux/actions/page-data';
 import {cloneDeep, isJsonStrMatch} from '../../utils/utils';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import {EtoolsStatusModel} from '../../common/layout/status/etools-status';
 import './status-transitions/assessment-status-transition-actions';
 import isNil from 'lodash-es/isNil';
@@ -26,6 +26,7 @@ import '../../common/layout/etools-error-warn-box';
 import '../../common/layout/export-data';
 import {GenericObject} from '../../../types/globals';
 import get from 'lodash-es/get';
+import {cancellationTabStyles} from '../../styles/cancelation-tab-styles';
 
 /**
  * @LitElement
@@ -44,9 +45,12 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     return html`
       ${SharedStylesLit}${pageContentHeaderSlottedStyles}
       <style>
+        ${cancellationTabStyles}
         etools-status {
           justify-content: center;
         }
+
+
       </style>
       ${(this.assessment && this.assessment.id) ? html`<etools-status
         .statuses="${this.getAssessmentStatusesList(this.assessment.status_list)}"
@@ -69,12 +73,14 @@ export class AssessmentTabs extends connect(store)(LitElement) {
                      .activeTab="${this.activeTab}"
                      @iron-select="${this.handleTabChange}"></etools-tabs>
       </page-content-header>
-
-      <section class="elevation page-content no-padding" elevation="1">
-        <etools-error-warn-box
-          .messages="${(this.assessment && this.assessment.rejected_comment) ?
-        [this.assessment.rejected_comment] : []}">
-        </etools-error-warn-box>
+      <section class="elevation page-content no-padding" elevation="1" ?hidden="${!this.assessment.rejected_comment}" >
+        <etools-content-panel class="cancellation-tab" panel-title="">
+          <div slot="panel-btns" class="bookmark">
+            <iron-icon icon="bookmark"></iron-icon>
+          </div>
+          <div class="cancellation-title">Cancellation Note</div>
+          <div class="cancellation-text">${this.assessment.rejected_comment}</div>
+        </etools-content-panel>
       </section>
 
       <div class="page-content">
