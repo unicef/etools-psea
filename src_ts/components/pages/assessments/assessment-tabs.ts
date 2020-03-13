@@ -26,7 +26,7 @@ import '../../common/layout/etools-error-warn-box';
 import '../../common/layout/export-data';
 import {GenericObject} from '../../../types/globals';
 import get from 'lodash-es/get';
-import {cancellationTabStyles} from '../../styles/cancelation-tab-styles';
+import {rejectionTabStyles} from '../../styles/rejection-tab-styles';
 
 /**
  * @LitElement
@@ -45,7 +45,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     return html`
       ${SharedStylesLit}${pageContentHeaderSlottedStyles}
       <style>
-        ${cancellationTabStyles}
+        ${rejectionTabStyles}
         etools-status {
           justify-content: center;
         }
@@ -74,12 +74,12 @@ export class AssessmentTabs extends connect(store)(LitElement) {
                      @iron-select="${this.handleTabChange}"></etools-tabs>
       </page-content-header>
       <section class="elevation page-content no-padding" elevation="1" ?hidden="${!this.assessment.rejected_comment}" >
-        <etools-content-panel class="cancellation-tab" panel-title="">
+        <etools-content-panel class="rejection-tab" panel-title="">
           <div slot="panel-btns" class="bookmark">
             <iron-icon icon="bookmark"></iron-icon>
           </div>
-          <div class="cancellation-title">Rejection Note</div>
-          <div class="cancellation-text">${this.assessment.rejected_comment}</div>
+          <div class="rejection-title">Rejection Note</div>
+          <div class="rejection-text">${this.assessment.rejected_comment}</div>
         </etools-content-panel>
       </section>
 

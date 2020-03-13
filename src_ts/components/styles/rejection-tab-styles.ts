@@ -1,8 +1,8 @@
 import {css} from 'lit-element';
 
 // language=HTML
-export const cancellationTabStyles = css`
-  etools-content-panel.cancellation-tab {
+export const rejectionTabStyles = css`
+  etools-content-panel.rejection-tab {
     margin-bottom: 20px;
 
     --epc-header: {
@@ -11,27 +11,25 @@ export const cancellationTabStyles = css`
       --ecp-header-bg: var(--primary-shade-of-darkorange);
       --ecp-header-height: 2px;
 
-    --ecp-content: {
-      padding-left: 100px;
-    }
-
     --ecp-header-btns-wrapper: {
       opacity: 1;
     };
   }
 
-  etools-content-panel.cancellation-tab .cancellation-title {
+  etools-content-panel.rejection-tab .rejection-title {
     font-weight: 500;
     font-size: 19px;
     text-transform: uppercase;
     color: var(--primary-shade-of-darkorange);
     margin: 15px 0 26px;
+    padding-left: 70px;
   }
 
-  etools-content-panel.cancellation-tab .cancellation-text {
+  etools-content-panel.rejection-tab .rejection-text {
     font-size: 17px;
     white-space: pre-wrap;
     color: var(--gray-darkest);
+    padding-left: 70px;
   }
 
   div[slot="panel-btns"].bookmark {
