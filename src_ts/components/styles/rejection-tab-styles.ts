@@ -8,8 +8,8 @@ export const rejectionTabStyles = css`
     --epc-header: {
       padding: 2px;
     };
-      --ecp-header-bg: var(--primary-shade-of-darkorange);
-      --ecp-header-height: 2px;
+      --ecp-header-bg: var(--primary-shade-of-orange);
+      --ecp-header-height: 5px;
 
     --ecp-header-btns-wrapper: {
       opacity: 1;
@@ -20,7 +20,7 @@ export const rejectionTabStyles = css`
     font-weight: 500;
     font-size: 19px;
     text-transform: uppercase;
-    color: var(--primary-shade-of-darkorange);
+    color: var(--primary-shade-of-orange);
     margin: 15px 0 26px;
     padding-left: 70px;
   }
@@ -37,7 +37,7 @@ export const rejectionTabStyles = css`
     top: 5px;
     right: auto;
     left: 20px;
-    color: var(--primary-shade-of-darkorange);
+    color: var(--primary-shade-of-orange);
     -webkit-transform: scale(0.9, 1.5);
     -moz-transform: scale(0.9, 1.5);
     -ms-transform: scale(0.9, 1.5);
