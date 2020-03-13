@@ -85,8 +85,11 @@ export const pageHeaderStyles = css`
     }
 
     @media (max-width: 576px) {
+      etools-app-selector {
+        --app-selector-button-padding: 18px 8px;
+      }
       #app-logo {
-        width: 60px;
+        display: none;
       }
       .titlebar img {
         margin: 0 8px 0 4px;
@@ -95,15 +98,10 @@ export const pageHeaderStyles = css`
         font-size: 10px;
         line-height: 12px;
         white-space: nowrap;
+        margin-left: 2px;
       }
       app-toolbar {
         padding-right: 0px;
-      }
-    }
-
-    @media (max-width: 400px) {
-      etools-app-selector {
-        display: none;
       }
     }
 `;

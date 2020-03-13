@@ -4,7 +4,7 @@ import {LitElement, html, property, customElement} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import '@unicef-polymer/etools-table/etools-table';
 import {EtoolsTableColumn, EtoolsTableColumnType} from '@unicef-polymer/etools-table/etools-table';
-import {EtoolsPaginator, defaultPaginator, getPaginator}
+import {EtoolsPaginator, defaultPaginator, getPaginatorWithBackend}
   from '@unicef-polymer/etools-table/pagination/etools-pagination';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
@@ -201,16 +201,11 @@ export class FirmStaffMembers extends LitElement {
         if (!this.canEdit) {
           this.staffMembers = this.staffMembers.filter((staffMember) => staffMember.hasAccess === true);
         }
-        if (this.staffMembers.length < 5) {
-          this.paginator = getPaginator(this.paginator, {count: this.staffMembers.length, data: null});
-        } else {
-          this.paginator = getPaginator(this.paginator, {count: resp.count, data: this.staffMembers});
-        }
-
+        this.paginator = getPaginatorWithBackend(this.paginator, resp.count);
       })
       .catch((err: any) => {
         this.staffMembers = [];
-        this.paginator = getPaginator(this.paginator, {count: 0, data: this.staffMembers});
+        this.paginator = getPaginatorWithBackend(this.paginator, 0);
         logError('Firm staff members req failed', 'FirmStaffMembers', err);
       })
       .then(() => this.showLoading = false);
@@ -239,7 +234,7 @@ export class FirmStaffMembers extends LitElement {
       this.paginator.count++;
       this.staffMembers.push(itemData);
     }
-    this.paginator = getPaginator(this.paginator, {count: this.paginator.count, data: this.staffMembers});
+    this.paginator = getPaginatorWithBackend(this.paginator, this.paginator.count);
   }
 
   saveFirmAssessorStaffAccess(staffMember: EtoolsStaffMemberModel) {
