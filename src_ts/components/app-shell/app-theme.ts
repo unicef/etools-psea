@@ -34,6 +34,8 @@ documentContainer.innerHTML = `
         --primary-shade-of-red: #E32526;
         --primary-shade-of-orange: orange;
 
+        --primary-shade-of-darkorange: darkorange;
+
         --info-color: #cebc06;
         --light-info-color: #fff176;
         --warning-background-color: #fff3cd;

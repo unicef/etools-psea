@@ -78,7 +78,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
           <div slot="panel-btns" class="bookmark">
             <iron-icon icon="bookmark"></iron-icon>
           </div>
-          <div class="cancellation-title">Cancellation Note</div>
+          <div class="cancellation-title">Rejection Note</div>
           <div class="cancellation-text">${this.assessment.rejected_comment}</div>
         </etools-content-panel>
       </section>

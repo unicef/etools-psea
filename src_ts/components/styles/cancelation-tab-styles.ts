@@ -8,8 +8,8 @@ export const cancellationTabStyles = css`
     --epc-header: {
       padding: 2px;
     };
-      --ecp-header-bg: var(--warning-background-color);
-      --ecp-header-height: 51px;
+      --ecp-header-bg: var(--primary-shade-of-darkorange);
+      --ecp-header-height: 2px;
 
     --ecp-content: {
       padding-left: 100px;
@@ -24,7 +24,7 @@ export const cancellationTabStyles = css`
     font-weight: 500;
     font-size: 19px;
     text-transform: uppercase;
-    color: var(--warning-color);
+    color: var(--primary-shade-of-darkorange);
     margin: 15px 0 26px;
   }
 
@@ -36,10 +36,10 @@ export const cancellationTabStyles = css`
 
   div[slot="panel-btns"].bookmark {
     position: absolute;
-    top: 2px;
+    top: 5px;
     right: auto;
     left: 20px;
-    color: var(--warning-color);
+    color: var(--primary-shade-of-darkorange);
     -webkit-transform: scale(0.9, 1.5);
     -moz-transform: scale(0.9, 1.5);
     -ms-transform: scale(0.9, 1.5);
