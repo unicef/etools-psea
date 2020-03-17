@@ -320,7 +320,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       return;
     }
     this.showLoading = true;
-    store.dispatch(saveAssessorData(this.assessment.id as number,
+    store.dispatch<Promise<void>>(saveAssessorData(this.assessment.id as number,
       this.assessor.id, this.collectAssessorData(), this.handleError.bind(this)))
       .then(() => {
         // update permissions and available actions
