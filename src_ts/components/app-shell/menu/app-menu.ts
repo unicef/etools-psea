@@ -3,7 +3,8 @@ import '@polymer/iron-icons/maps-icons.js';
 import '@polymer/iron-selector/iron-selector.js';
 import '@polymer/paper-tooltip/paper-tooltip.js';
 import '@polymer/paper-ripple/paper-ripple.js';
-
+// import {pseaIcon} from '../../styles/app-icons';
+import {pseaIcon} from '@unicef-polymer/etools-app-selector/app-selector-icons';
 import {navMenuStyles} from './styles/nav-menu-styles';
 import {fireEvent} from '../../utils/fire-custom-event';
 import {ROOT_PATH, SMALL_MENU_ACTIVE_LOCALSTORAGE_KEY} from '../../../config/config';
@@ -33,8 +34,8 @@ export class AppMenu extends LitElement {
 
         <span class="ripple-wrapper main">
           <iron-icon id="menu-header-top-icon"
-                     icon="assignment-ind"
-                     @tap="${() => this._toggleSmallMenu()}"></iron-icon>
+                     icon="pseaIcon"
+                     @tap="${() => this._toggleSmallMenu()}">${pseaIcon}</iron-icon>
           <paper-ripple class="circle" center></paper-ripple>
         </span>
 
