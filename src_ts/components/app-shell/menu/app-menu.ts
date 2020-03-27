@@ -34,7 +34,7 @@ export class AppMenu extends LitElement {
 
         <span class="ripple-wrapper main">
           <iron-icon id="menu-header-top-icon"
-                     icon="psea-icon:psea-icon"
+                     icon="main-icon:psea-icon"
                      @tap="${() => this._toggleSmallMenu()}"></iron-icon>
           <paper-ripple class="circle" center></paper-ripple>
         </span>
