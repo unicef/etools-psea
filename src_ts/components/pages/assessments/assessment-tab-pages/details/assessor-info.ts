@@ -13,7 +13,7 @@ import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-
 import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../../../redux/store';
-import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
+import {cloneDeep, isJsonStrMatch, onListPage} from '../../../../utils/utils';
 import {handleUsersNoLongerAssignedToCurrentCountry} from '../../../../common/common-methods';
 import {Assessment, AssessmentPermissions, Assessor, AssessorTypes} from '../../../../../types/assessment';
 import {AssessingFirm} from './assessing-firm';
@@ -27,6 +27,7 @@ import {requestAssessment, saveAssessorData} from '../../../../../redux/actions/
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import PermissionsMixin from '../../../mixins/permissions-mixins';
 import '@unicef-polymer/etools-loading';
+import get from 'lodash-es/get';
 
 /**
  * @customElement
@@ -54,10 +55,10 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   }
   render() {
 
-    if (!this.assessment) {
+    if (!this.assessor || !this.assessment) {
       return html`
       ${SharedStylesLit}
-      `;
+      <etools-loading loading-text="Loading..." active></etools-loading>`;
     }
     // language=HTML
     return html`
@@ -202,6 +203,12 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   preventAssessorResetAfterExtIndividualAdd = false;
 
   stateChanged(state: RootState) {
+    if (onListPage(get(state, 'app.routeDetails'))) {
+      this.assessment = null;
+      this.assessor = null;
+      return;
+    }
+
     if (this.preventAssessorResetAfterExtIndividualAdd) {
       this.preventAssessorResetAfterExtIndividualAdd = false;
       return;
