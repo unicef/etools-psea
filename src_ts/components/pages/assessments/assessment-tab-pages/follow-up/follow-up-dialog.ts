@@ -50,6 +50,9 @@ export class FollowUpDialog extends connect(store)(LitElement) {
         .highPriority {
           padding: 16px 0;
         }
+        .p-relative {
+          position: relative;
+        }
       </style>
 
       <etools-dialog keep-dialog-open size="md"
@@ -145,7 +148,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
             </etools-dropdown>
           </div>
 
-          <div class="col col-6">
+          <div class="col col-6 p-relative">
             <datepicker-lite
                     id="dueDateInput"
                     value="${this.editedItem.due_date}"
