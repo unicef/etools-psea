@@ -165,7 +165,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     // set the rejection comment and show the section
     if (this.assessment !== undefined && this.assessment.rejected_comment !== '') {
       this.rejectMsg = this.assessment.rejected_comment;
-      this.showRejectionMsg = !this.showRejectionMsg;
+      this.showRejectionMsg = !!this.assessment.rejected_comment;
     }
 
     /**
