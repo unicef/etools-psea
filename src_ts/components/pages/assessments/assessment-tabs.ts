@@ -73,13 +73,13 @@ export class AssessmentTabs extends connect(store)(LitElement) {
                      .activeTab="${this.activeTab}"
                      @iron-select="${this.handleTabChange}"></etools-tabs>
       </page-content-header>
-      <section class="elevation page-content no-padding" elevation="1" ?hidden="${this.rejectTab}" >
+      <section class="elevation page-content no-padding" elevation="1" ?hidden="${this.showRejectionMsg}" >
         <etools-content-panel class="rejection-tab" panel-title="">
           <div slot="panel-btns" class="bookmark">
             <iron-icon icon="bookmark"></iron-icon>
           </div>
           <div class="rejection-title">Rejection Note</div>
-          <div class="rejection-text">${this.rejectTabMsg}</div>
+          <div class="rejection-text">${this.rejectMsg}</div>
         </etools-content-panel>
       </section>
 
@@ -132,10 +132,10 @@ export class AssessmentTabs extends connect(store)(LitElement) {
   canExport: boolean = false;
 
   @property({type: Boolean})
-  rejectTab: boolean = true;
+  showRejectionMsg: boolean = true;
 
   @property({type: String})
-  rejectTabMsg: string = '';
+  rejectMsg: string = '';
 
   isActiveTab(tab: string, expectedTab: string): boolean {
     return tab === expectedTab;
@@ -164,8 +164,8 @@ export class AssessmentTabs extends connect(store)(LitElement) {
 
     // set the rejection comment and show the section
     if (this.assessment !== undefined && this.assessment.rejected_comment !== '') {
-      this.rejectTabMsg = this.assessment.rejected_comment;
-      this.rejectTab = !this.rejectTab;
+      this.rejectMsg = this.assessment.rejected_comment;
+      this.showRejectionMsg = !this.showRejectionMsg;
     }
 
     /**
