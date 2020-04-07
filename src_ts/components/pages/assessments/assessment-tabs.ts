@@ -73,7 +73,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
                      .activeTab="${this.activeTab}"
                      @iron-select="${this.handleTabChange}"></etools-tabs>
       </page-content-header>
-      <section class="elevation page-content no-padding" elevation="1" ?hidden="${this.showRejectionMsg}" >
+      <section class="elevation page-content no-padding" elevation="1" ?hidden="${!this.showRejectionMsg}" >
         <etools-content-panel class="rejection-tab" panel-title="">
           <div slot="panel-btns" class="bookmark">
             <iron-icon icon="bookmark"></iron-icon>
@@ -132,7 +132,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
   canExport: boolean = false;
 
   @property({type: Boolean})
-  showRejectionMsg: boolean = true;
+  showRejectionMsg: boolean = false;
 
   @property({type: String})
   rejectMsg: string = '';
