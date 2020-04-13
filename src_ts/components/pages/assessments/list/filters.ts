@@ -8,6 +8,8 @@ export enum FilterKeys {
   unicef_focal_point = 'unicef_focal_point',
   partner = 'partner',
   assessment_date = 'assessment_date',
+  assessment_date__gt = 'assessment_date__gt',
+  assessment_date__lt = 'assessment_date__lt',
   assessor_staff = 'assessor_staff',
   assessor_firm = 'assessor_firm',
   assessor_external = 'assessor_external',
@@ -34,6 +36,8 @@ export const selectedValueTypeByFilterKey: GenericObject = {
   [FilterKeys.unicef_focal_point]: 'Array',
   [FilterKeys.partner]: 'Array',
   [FilterKeys.assessment_date]: 'string',
+  [FilterKeys.assessment_date__gt]: 'string',
+  [FilterKeys.assessment_date__lt]: 'string',
   [FilterKeys.assessor_staff]: 'Array',
   [FilterKeys.assessor_firm]: 'Array',
   [FilterKeys.assessor_external]: 'Array',
@@ -116,6 +120,20 @@ export const assessmentsFilters: EtoolsFilter[] = [
   {
     filterName: 'Assessment Date',
     filterKey: FilterKeys.assessment_date,
+    type: EtoolsFilterTypes.Date,
+    selectedValue: null,
+    selected: true
+  },
+  {
+    filterName: 'Assessment Date before',
+    filterKey: FilterKeys.assessment_date__gt,
+    type: EtoolsFilterTypes.Date,
+    selectedValue: null,
+    selected: true
+  },
+  {
+    filterName: 'Assessment Date after',
+    filterKey: FilterKeys.assessment_date__lt,
     type: EtoolsFilterTypes.Date,
     selectedValue: null,
     selected: true
