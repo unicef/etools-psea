@@ -125,18 +125,18 @@ export const assessmentsFilters: EtoolsFilter[] = [
     selected: true
   },
   {
-    filterName: 'Assessment Date before',
+    filterName: 'Assessment Date after',
     filterKey: FilterKeys.assessment_date__gt,
     type: EtoolsFilterTypes.Date,
     selectedValue: null,
-    selected: true
+    selected: false
   },
   {
-    filterName: 'Assessment Date after',
+    filterName: 'Assessment Date before',
     filterKey: FilterKeys.assessment_date__lt,
     type: EtoolsFilterTypes.Date,
     selectedValue: null,
-    selected: true
+    selected: false
   },
   {
     filterName: 'Assessor UNICEF Staff',
