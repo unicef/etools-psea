@@ -12,7 +12,7 @@ import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../../redux/store';
 import {updateAssessmentData} from '../../../../redux/actions/page-data';
-import {parseRequestErrorsAndShowAsToastMsgs} from '../../../utils/ajax-error-parser';
+import {parseRequestErrorsAndShowAsToastMsgs} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 import {buttonsStyles} from '../../../styles/button-styles';
 import './assessment-rejection-dialog';
 import {AssessmentRejectionDialog} from './assessment-rejection-dialog';

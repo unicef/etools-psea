@@ -16,7 +16,7 @@ import {cloneDeep} from '../../../../utils/utils';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {EtoolsStaffMemberModel} from '../../../../../types/user-model';
 import {fireEvent} from '../../../../utils/fire-custom-event';
-import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import {formatServerErrorAsText} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import '@unicef-polymer/etools-loading';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';

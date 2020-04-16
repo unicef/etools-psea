@@ -19,7 +19,7 @@ import {Assessment, AssessmentPermissions, Assessor, AssessorTypes} from '../../
 import {AssessingFirm} from './assessing-firm';
 import {ExternalIndividual} from './external-individual';
 import {fireEvent} from '../../../../utils/fire-custom-event';
-import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import {formatServerErrorAsText} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 import {FirmStaffMembers} from './firm-staff-members';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';

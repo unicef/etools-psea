@@ -12,7 +12,7 @@ import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
-import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import {formatServerErrorAsText} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 
 /**
  * @customElement

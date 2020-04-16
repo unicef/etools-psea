@@ -6,7 +6,7 @@ import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {fireEvent} from '../../../../utils/fire-custom-event';
-import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import {formatServerErrorAsText} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 import {getFileNameFromURL} from '../../../../utils/utils';
 import {prettyDate} from '../../../../utils/date-utility';
 import {AnswerAttachment, UploadedFileInfo} from '../../../../../types/assessment';
