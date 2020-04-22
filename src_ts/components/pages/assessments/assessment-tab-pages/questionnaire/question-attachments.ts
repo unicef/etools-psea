@@ -6,7 +6,7 @@ import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {fireEvent} from '../../../../utils/fire-custom-event';
-import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import {formatServerErrorAsText} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 import {getFileNameFromURL} from '../../../../utils/utils';
 import {prettyDate} from '../../../../utils/date-utility';
 import {AnswerAttachment, UploadedFileInfo} from '../../../../../types/assessment';
@@ -183,15 +183,15 @@ export class QuestionAttachmentsElement extends LitElement {
 
   handleUploadedFiles(e: CustomEvent) {
     if (e.detail.error && e.detail.error.length) {
-      fireEvent(this, 'toast', {text: formatServerErrorAsText(e.detail.error)});
+      fireEvent(this, 'toast', {text: formatServerErrorAsText({response: e.detail.error})});
     }
     const uploadedFiles = e.detail.success;
     if (!uploadedFiles || !uploadedFiles.length) {
       return;
     }
 
-    uploadedFiles.forEach((f: string) => {
-      this.attachments.push(this._parseUploadedFileResponse(JSON.parse(f)));
+    uploadedFiles.forEach((f: UploadedFileInfo) => {
+      this.attachments.push(this._parseUploadedFileResponse(f));
     });
     this.attachments = [...this.attachments];
   }

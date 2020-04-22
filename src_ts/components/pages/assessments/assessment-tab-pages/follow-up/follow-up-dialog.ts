@@ -14,7 +14,7 @@ import {connect} from 'pwa-helpers/connect-mixin.js';
 import {store, RootState} from '../../../../../redux/store';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
-import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import {formatServerErrorAsText} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import isEqual from 'lodash-es/isEqual';
