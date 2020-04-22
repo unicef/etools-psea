@@ -25,7 +25,7 @@ import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown'
 import {updateAssessmentData, updateAssessmentAndAssessor} from '../../../../../redux/actions/page-data';
 import PermissionsMixin from '../../../mixins/permissions-mixins';
 import get from 'lodash-es/get';
-import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import {formatServerErrorAsText} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 import '@unicef-polymer/etools-loading';
 import {handleUsersNoLongerAssignedToCurrentCountry} from '../../../../common/common-methods';
 import {UnicefUser} from '../../../../../types/user-model';

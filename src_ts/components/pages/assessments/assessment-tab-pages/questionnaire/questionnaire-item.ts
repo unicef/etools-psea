@@ -13,7 +13,7 @@ import {QuestionnaireAnswerElement} from './questionnaire-answer';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {fireEvent} from '../../../../utils/fire-custom-event';
-import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import {formatServerErrorAsText} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 import {buttonsStyles} from '../../../../styles/button-styles';
 
 @customElement('questionnaire-item')
