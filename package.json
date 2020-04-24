@@ -47,7 +47,7 @@
     "@types/lodash-es": "^4.17.3",
     "@unicef-polymer/etools-ajax": "^4.1.2",
     "@unicef-polymer/etools-dexie-caching": "^1.0.0",
-    "@unicef-polymer/etools-app-selector": "^3.1.4",
+    "@unicef-polymer/etools-app-selector": "^3.1.5",
     "@unicef-polymer/etools-behaviors": "^3.0.1",
     "@unicef-polymer/etools-content-panel": "^3.0.5",
     "@unicef-polymer/etools-date-time": "^1.0.0-rc.3",
