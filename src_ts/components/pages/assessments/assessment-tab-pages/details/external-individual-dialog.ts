@@ -14,7 +14,7 @@ import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {GenericObject} from '../../../../../types/globals';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../../../redux/store';
-import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import {formatServerErrorAsText} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 
 /**
  * @customElement

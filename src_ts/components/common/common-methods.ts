@@ -1,7 +1,7 @@
 import {UnicefUser} from '../../types/user-model';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import {fireEvent} from '../utils/fire-custom-event';
-import {formatServerErrorAsText} from '../utils/ajax-error-parser';
+import {formatServerErrorAsText} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 
 export const handleUsersNoLongerAssignedToCurrentCountry = (availableUsers: UnicefUser[], savedUsers?: UnicefUser[]) => {
   if (savedUsers && savedUsers.length > 0 && availableUsers && availableUsers.length > 0) {

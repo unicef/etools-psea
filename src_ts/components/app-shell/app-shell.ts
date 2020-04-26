@@ -163,7 +163,7 @@ export class AppShell extends connect(store)(LitElement) {
 
     checkEnvFlags().then((response) => {
       if (!this._pseaIsDisabled(response)) {
-        getCurrentUserData().then((user) =>{
+        getCurrentUserData().then((user) => {
           if (user && user.is_unicef_user) {
             store.dispatch(loadExternalIndividuals());
             store.dispatch(loadAssessingFirms());
@@ -184,7 +184,6 @@ export class AppShell extends connect(store)(LitElement) {
 
   public connectedCallback() {
     super.connectedCallback();
-
     installRouter(location => store.dispatch(
       navigate(decodeURIComponent(location.pathname + location.search))));
     installMediaQueryWatcher(`(min-width: 460px)`,
