@@ -125,14 +125,14 @@ export const assessmentsFilters: EtoolsFilter[] = [
     selected: true
   },
   {
-    filterName: 'Assessment Date after',
+    filterName: 'Assessment Date After',
     filterKey: FilterKeys.assessment_date__gt,
     type: EtoolsFilterTypes.Date,
     selectedValue: null,
     selected: false
   },
   {
-    filterName: 'Assessment Date before',
+    filterName: 'Assessment Date Before',
     filterKey: FilterKeys.assessment_date__lt,
     type: EtoolsFilterTypes.Date,
     selectedValue: null,
