@@ -124,7 +124,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
           <etools-dropdown id="unicefUser"
             label="UNICEF Staff" class="row-padding-v"
             .options="${this.unicefUsers}"
-            .selected="${this.assessor.user}"
+            .selected="${this.assessor!.user}"
             trigger-value-change-event
             @etools-selected-item-changed="${this.setSelectedUnicefUser}"
             option-label="name"
@@ -138,7 +138,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
         return html`
           <assessing-firm id="assessingFirm"
             .assessor="${cloneDeep(this.assessor)}"
-            .prevOrderNumber="${this.assessor.order_number}"
+            .prevOrderNumber="${this.assessor!.order_number}"
             .editMode="${editMode}"
             .isNew="${isNew}">
           </assessing-firm>
@@ -163,20 +163,20 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     return html`<firm-staff-members id="firmStaffMembers"
         ?hidden="${this.hideFirmStaffMembers(isNew, assessor, this.editMode)}"
         .canEdit="${canEditAssessorInfo}"
-        .assessorId="${this.assessor.id}"
-        .assessmentId="${this.assessment.id}"
-        .currentFirmAssessorStaffWithAccess="${this.assessor.auditor_firm_staff}">
+        .assessorId="${this.assessor!.id}"
+        .assessmentId="${this.assessment!.id}"
+        .currentFirmAssessorStaffWithAccess="${this.assessor!.auditor_firm_staff}">
       </firm-staff-members>`;
   }
 
   @property({type: Object})
-  assessor!: Assessor; // Initialization here causes eternal individual field reset on refresh
+  assessor!: Assessor | null; // Initialization here causes eternal individual field reset on refresh
 
   @property({type: Array})
   unicefUsers!: UnicefUser[];
 
   @property({type: Object})
-  assessment!: Assessment;
+  assessment!: Assessment | null;
 
   @property({type: Boolean})
   isNew: boolean = false;
@@ -222,8 +222,8 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       const newAssessment = state.pageData!.currentAssessment;
       if (!isJsonStrMatch(this.assessment, newAssessment)) {
         this.assessment = cloneDeep(newAssessment);
-        this.setEditAssessorPermissions(this.assessment.permissions);
-        this.isNew = !this.assessment.assessor;
+        this.setEditAssessorPermissions(this.assessment!.permissions);
+        this.isNew = !this.assessment!.assessor;
         // Checking canEditAssessorInfo also, for when assessment is canceled and assessor IsNew
         this.editMode = this.isNew && this.canEditAssessorInfo;
       }
@@ -234,9 +234,9 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       const newAssessor = state.pageData!.assessor;
       if (!isJsonStrMatch(this.assessor, newAssessor)) {
         this.assessor = cloneDeep(newAssessor);
-        if (this.assessor.assessor_type === AssessorTypes.Staff) {
+        if (this.assessor!.assessor_type === AssessorTypes.Staff) {
           // check if already saved Unicef staff exists on loaded data, if not they will be added
-          handleUsersNoLongerAssignedToCurrentCountry(this.unicefUsers, [this.assessor.user_details]);
+          handleUsersNoLongerAssignedToCurrentCountry(this.unicefUsers, [this.assessor!.user_details]);
           this.unicefUsers = [...this.unicefUsers];
         }
         this.initializeRelatedData();
@@ -255,12 +255,12 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   }
 
   protected initializeRelatedData(): void {
-    this.isNew = !this.assessor.id;
+    this.isNew = !this.assessor!.id;
     this.originalAssessor = cloneDeep(this.assessor);
     this.requestUpdate().then(() => {
       // load staff members after staff members element is initialized
-      if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessor.auditor_firm) {
-        this.loadFirmStaffMembers(this.assessor.auditor_firm!);
+      if (this.assessor!.assessor_type === AssessorTypes.Firm && this.assessor!.auditor_firm) {
+        this.loadFirmStaffMembers(this.assessor!.auditor_firm!);
       }
     });
   }
@@ -311,12 +311,12 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   }
 
   setSelectedUnicefUser(event: CustomEvent) {
-    if (this.assessor.assessor_type === AssessorTypes.Staff) {
+    if (this.assessor!.assessor_type === AssessorTypes.Staff) {
       const selectedUser = event.detail.selectedItem;
       if (selectedUser && selectedUser.id) {
-        this.assessor.user = selectedUser.id;
+        this.assessor!.user = selectedUser.id;
       } else {
-        this.assessor.user = null;
+        this.assessor!.user = null;
       }
       this.requestUpdate();
     }
@@ -327,11 +327,11 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       return;
     }
     this.showLoading = true;
-    store.dispatch<Promise<void>>(saveAssessorData(this.assessment.id as number,
-      this.assessor.id, this.collectAssessorData(), this.handleError.bind(this)))
+    store.dispatch<Promise<void>>(saveAssessorData(this.assessment!.id as number,
+      this.assessor!.id, this.collectAssessorData(), this.handleError.bind(this)))
       .then(() => {
         // update permissions and available actions
-        return store.dispatch(requestAssessment(this.assessment.id!, this.handleError.bind(this)));
+        return store.dispatch(requestAssessment(this.assessment!.id!, this.handleError.bind(this)));
       })
       .then(() => {
         this.showLoading = false;
@@ -349,9 +349,9 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   }
 
   collectAssessorData() {
-    const assessorPart1 = {assessor_type: this.assessor.assessor_type};
+    const assessorPart1 = {assessor_type: this.assessor!.assessor_type};
 
-    switch (this.assessor.assessor_type) {
+    switch (this.assessor!.assessor_type) {
       case AssessorTypes.Staff:
         return {
           ...assessorPart1,
@@ -373,7 +373,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   }
 
   _getDataForStaffAssessor() {
-    return {user: this.assessor.user};
+    return {user: this.assessor!.user};
   }
 
   _getDataForFirmAssessor() {
@@ -385,10 +385,10 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   }
 
   validate() {
-    if (!this.assessor.assessor_type) {
+    if (!this.assessor!.assessor_type) {
       return false;
     }
-    switch (this.assessor.assessor_type) {
+    switch (this.assessor!.assessor_type) {
       case AssessorTypes.Staff:
         return this._validateUnicefStaff();
       case AssessorTypes.Firm:
@@ -401,7 +401,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   }
 
   _validateUnicefStaff() {
-    if (!this.assessor.user) {
+    if (!this.assessor!.user) {
       (this.shadowRoot!.querySelector('#unicefUser') as EtoolsDropdownEl).invalid = true;
       return false;
     }
@@ -412,7 +412,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   cancelAssessorUpdate() {
     this.assessor = cloneDeep(this.originalAssessor);
     this.editMode = this.isNew;
-    if (this.assessor.assessor_type === AssessorTypes.Firm && this.assessingFirmElement) {
+    if (this.assessor!.assessor_type === AssessorTypes.Firm && this.assessingFirmElement) {
       this.assessingFirmElement.resetValidations();
     }
   }
