@@ -12,7 +12,7 @@ import {cloneDeep} from '../../../../utils/utils';
 import get from 'lodash-es/get';
 import {requestAssessmentAndAssessor} from '../../../../../redux/actions/page-data';
 import {fireEvent} from '../../../../utils/fire-custom-event';
-import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import {formatServerErrorAsText} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import '../../../../common/layout/etools-error-warn-box';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';

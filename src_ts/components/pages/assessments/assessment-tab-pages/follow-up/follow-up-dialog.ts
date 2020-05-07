@@ -14,7 +14,7 @@ import {connect} from 'pwa-helpers/connect-mixin.js';
 import {store, RootState} from '../../../../../redux/store';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
-import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import {formatServerErrorAsText} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import isEqual from 'lodash-es/isEqual';
@@ -49,6 +49,9 @@ export class FollowUpDialog extends connect(store)(LitElement) {
 
         .highPriority {
           padding: 16px 0;
+        }
+        .p-relative {
+          position: relative;
         }
       </style>
 
@@ -145,7 +148,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
             </etools-dropdown>
           </div>
 
-          <div class="col col-6">
+          <div class="col col-6 p-relative">
             <datepicker-lite
                     id="dueDateInput"
                     value="${this.editedItem.due_date}"

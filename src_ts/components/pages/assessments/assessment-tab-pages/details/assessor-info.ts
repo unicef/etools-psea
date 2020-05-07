@@ -13,13 +13,13 @@ import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-
 import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../../../redux/store';
-import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
+import {cloneDeep, isJsonStrMatch, onListPage} from '../../../../utils/utils';
 import {handleUsersNoLongerAssignedToCurrentCountry} from '../../../../common/common-methods';
 import {Assessment, AssessmentPermissions, Assessor, AssessorTypes} from '../../../../../types/assessment';
 import {AssessingFirm} from './assessing-firm';
 import {ExternalIndividual} from './external-individual';
 import {fireEvent} from '../../../../utils/fire-custom-event';
-import {formatServerErrorAsText} from '../../../../utils/ajax-error-parser';
+import {formatServerErrorAsText} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 import {FirmStaffMembers} from './firm-staff-members';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown';
@@ -27,6 +27,7 @@ import {requestAssessment, saveAssessorData} from '../../../../../redux/actions/
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import PermissionsMixin from '../../../mixins/permissions-mixins';
 import '@unicef-polymer/etools-loading';
+import get from 'lodash-es/get';
 
 /**
  * @customElement
@@ -54,10 +55,10 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   }
   render() {
 
-    if (!this.assessment) {
+    if (!this.assessor || !this.assessment) {
       return html`
       ${SharedStylesLit}
-      `;
+      <etools-loading loading-text="Loading..." active></etools-loading>`;
     }
     // language=HTML
     return html`
@@ -202,6 +203,12 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   preventAssessorResetAfterExtIndividualAdd = false;
 
   stateChanged(state: RootState) {
+    if (onListPage(get(state, 'app.routeDetails'))) {
+      this.assessment = null;
+      this.assessor = null;
+      return;
+    }
+
     if (this.preventAssessorResetAfterExtIndividualAdd) {
       this.preventAssessorResetAfterExtIndividualAdd = false;
       return;
@@ -320,7 +327,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
       return;
     }
     this.showLoading = true;
-    store.dispatch(saveAssessorData(this.assessment.id as number,
+    store.dispatch<Promise<void>>(saveAssessorData(this.assessment.id as number,
       this.assessor.id, this.collectAssessorData(), this.handleError.bind(this)))
       .then(() => {
         // update permissions and available actions
