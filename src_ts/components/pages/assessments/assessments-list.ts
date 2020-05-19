@@ -263,6 +263,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
       if (this.dataRequiredByFiltersHasBeenLoaded(state)) {
 
         const availableFilters = this.isUnicefUser ?
+        // @ts-ignore
           [...assessmentsFilters] : [...assessmentsFilters.filter(x => onlyForUnicefFilters.indexOf(x.filterKey) < 0)];
 
         this.populateDropdownFilterOptionsFromCommonData(state.commonData, availableFilters);
