@@ -124,7 +124,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
   }
 
   @property({type: Object})
-  assessment!: Assessment;
+  assessment!: Assessment | null;
 
   @property({type: Object})
   originalAssessment!: Assessment;
@@ -188,12 +188,12 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     if (get(state, 'pageData.currentAssessment') && get(state, 'user.data')) {
       if (!this.isUnicefUser) {
         // if user is not Unicef user, this is opened in read-only mode and we just display already saved
-        this.unicefFocalPointUsers = [...this.assessment.focal_points_details];
+        this.unicefFocalPointUsers = [...this.assessment!.focal_points_details];
       } else if (get(state, 'commonData.unicefUsers.length')) {
         this.unicefFocalPointUsers = [...state.commonData!.unicefUsers];
         // check if already saved users exists on loaded data, if not they will be added
         // (they might be missing if changed country)
-        handleUsersNoLongerAssignedToCurrentCountry(this.unicefFocalPointUsers, this.assessment.focal_points_details);
+        handleUsersNoLongerAssignedToCurrentCountry(this.unicefFocalPointUsers, this.assessment!.focal_points_details);
         this.unicefFocalPointUsers = [...this.unicefFocalPointUsers];
       }
     }
@@ -217,17 +217,17 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     this.selectedPartner = event.detail.selectedItem;
 
     if (this.selectedPartner) {
-      this.assessment.partner = this.selectedPartner.id;
+      this.assessment!.partner = this.selectedPartner.id;
     }
   }
 
   _setSelectedDate(selDate: Date) {
-    this.assessment.assessment_date = formatDate(selDate, 'YYYY-MM-DD');
+    this.assessment!.assessment_date = formatDate(selDate, 'YYYY-MM-DD');
     this.requestUpdate();
   }
 
   _setSelectedFocalPoints(e: CustomEvent) {
-    this.assessment.focal_points = e.detail.selectedItems.map((i: any) => i.id);
+    this.assessment!.focal_points = e.detail.selectedItems.map((i: any) => i.id);
   }
 
   cancelAssessment() {
@@ -246,7 +246,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     this.showLoading = true;
 
     if (this.isNew) {
-      this.assessment.status = 'draft';
+      this.assessment!.status = 'draft';
     }
     const body = this.assessment;
 
@@ -287,7 +287,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     let valid = true;
     const invalid = new AssessmentInvalidator();
 
-    if (!this.assessment.partner) {
+    if (!this.assessment!.partner) {
       valid = false;
       invalid.partner = true;
     }
@@ -301,7 +301,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     if (this.isNew) {
       return url;
     }
-    return url! + this.assessment.id + '/';
+    return url! + this.assessment!.id + '/';
   }
 
   getCurrentDate() {
