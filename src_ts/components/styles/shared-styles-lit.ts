@@ -41,6 +41,13 @@ export const SharedStylesLit = html`
     font-size: 12px;
     align-self: center;
   }
+  
+  etools-dialog {
+      --etools-dialog-scrollable: {
+        --etools-dialog-content_-_max-height: 40vh!important;
+        overflow: auto;
+      };
+    }
 
   paper-input-container {
       margin: 0 12px;
@@ -150,6 +157,10 @@ export const SharedStylesLit = html`
       --paper-input-container-input: {
         display: block;
       }
+      --iron-autogrow-textarea: {
+        overflow: hidden;
+        padding: 0;
+      };
     }
 
     label[required] {
