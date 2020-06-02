@@ -153,13 +153,14 @@ export const SharedStylesLit = html`
       }
     }
 
-    paper-textarea {
+    etools-dialog paper-textarea {
       --paper-input-container-input: {
         display: block;
       }
       --iron-autogrow-textarea: {
-        overflow: hidden;
+        overflow: auto;
         padding: 0;
+        max-height: 96px;
       };
     }
 
