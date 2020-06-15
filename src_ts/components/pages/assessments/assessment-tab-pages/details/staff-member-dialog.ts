@@ -33,32 +33,34 @@ export class StaffMemberDialog extends LitElement {
           padding: 16px 0;
         }
       </style>
-      <etools-dialog id="staffMemberDialog"
-                      ?opened="${this.dialogOpened}"
-                      dialog-title="${this.dialogTitle}"
-                      size="md"
-                      ?show-spinner="${this.requestInProgress}"
-                      @close="${this.handleDialogClosed}"
-                      ok-btn-text="${this.confirmBtnText}"
-                      ?disable-confirm-btn="${this.requestInProgress}"
-                      keep-dialog-open
-                      @confirm-btn-clicked="${this.onSaveClick}">
-
+      <etools-dialog
+        id="staffMemberDialog"
+        ?opened="${this.dialogOpened}"
+        dialog-title="${this.dialogTitle}"
+        size="md"
+        ?show-spinner="${this.requestInProgress}"
+        @close="${this.handleDialogClosed}"
+        ok-btn-text="${this.confirmBtnText}"
+        ?disable-confirm-btn="${this.requestInProgress}"
+        keep-dialog-open
+        @confirm-btn-clicked="${this.onSaveClick}"
+      >
         <div class="layout-horizontal">
           <div class="col col-4">
             <!-- Email address -->
             <paper-input
-                    id="emailInput"
-                    value="${this.editedItem.user.email}"
-                    label="E-mail"
-                    type="email"
-                    placeholder="Enter E-mail"
-                    ?required = "${this.isNewRecord}"
-                    ?disabled="${!this.isNewRecord}"
-                    maxlength="45"
-                    error-message="Email is required"
-                    @focus="${this.resetFieldError}"
-                    @tap="${this.resetFieldError}">
+              id="emailInput"
+              value="${this.editedItem.user.email}"
+              label="E-mail"
+              type="email"
+              placeholder="Enter E-mail"
+              ?required="${this.isNewRecord}"
+              ?disabled="${!this.isNewRecord}"
+              maxlength="45"
+              error-message="Email is required"
+              @focus="${this.resetFieldError}"
+              @tap="${this.resetFieldError}"
+            >
               <iron-icon slot="prefix" icon="communication:email"></iron-icon>
             </paper-input>
           </div>
@@ -66,30 +68,32 @@ export class StaffMemberDialog extends LitElement {
           <div class="col col-4">
             <!-- First Name -->
             <paper-input
-                    id="firstNameInput"
-                    value="${this.editedItem.user.first_name}"
-                    label="First Name"
-                    placeholder="Enter First Name"
-                    required
-                    maxlength="30"
-                    error-message="${this.requiredMessage}"
-                    @focus="${this.resetFieldError}"
-                    @tap="${this.resetFieldError}">
+              id="firstNameInput"
+              value="${this.editedItem.user.first_name}"
+              label="First Name"
+              placeholder="Enter First Name"
+              required
+              maxlength="30"
+              error-message="${this.requiredMessage}"
+              @focus="${this.resetFieldError}"
+              @tap="${this.resetFieldError}"
+            >
             </paper-input>
           </div>
 
           <div class="col col-4">
             <!-- Last Name -->
             <paper-input
-                    id="lastNameInput"
-                    value="${this.editedItem.user.last_name}"
-                    label="Last Name"
-                    placeholder="Enter Last Name"
-                    required
-                    maxlength="30"
-                    error-message="${this.requiredMessage}"
-                    @focus="${this.resetFieldError}"
-                    @tap="${this.resetFieldError}">
+              id="lastNameInput"
+              value="${this.editedItem.user.last_name}"
+              label="Last Name"
+              placeholder="Enter Last Name"
+              required
+              maxlength="30"
+              error-message="${this.requiredMessage}"
+              @focus="${this.resetFieldError}"
+              @tap="${this.resetFieldError}"
+            >
             </paper-input>
           </div>
         </div>
@@ -97,35 +101,35 @@ export class StaffMemberDialog extends LitElement {
           <div class="col col-4">
             <!-- Position -->
             <paper-input
-                    id="positionInput"
-                    value="${this.editedItem.user.profile.job_title}"
-                    label="Position"
-                    placeholder="Enter Position"
-                    maxlength="45"
-                    error-message="{{errors.profile.job_title}}">
+              id="positionInput"
+              value="${this.editedItem.user.profile.job_title}"
+              label="Position"
+              placeholder="Enter Position"
+              maxlength="45"
+              error-message="{{errors.profile.job_title}}"
+            >
             </paper-input>
           </div>
 
           <div class="col col-4">
             <!-- Phone number -->
             <paper-input
-                    id="phoneInput"
-                    value="${this.editedItem.user.profile.phone_number}"
-                    allowed-pattern="[0-9\\ \\.\\+\\-\\(\\)]"
-                    label="Phone number"
-                    placeholder="Enter Phone"
-                    maxlength="20"
-                    error-message="{{errors.user.profile.phone_number}}">
+              id="phoneInput"
+              value="${this.editedItem.user.profile.phone_number}"
+              allowed-pattern="[0-9\\ \\.\\+\\-\\(\\)]"
+              label="Phone number"
+              placeholder="Enter Phone"
+              maxlength="20"
+              error-message="{{errors.user.profile.phone_number}}"
+            >
               <iron-icon slot="prefix" icon="communication:phone"></iron-icon>
             </paper-input>
           </div>
         </div>
 
         <div id="has-access-checkbox-wrapper" class="layout-horizontal">
-          <paper-checkbox
-                  id="hasAccessInput"
-                  ?checked="${this.editedItem.hasAccess}">
-              Has Access
+          <paper-checkbox id="hasAccessInput" ?checked="${this.editedItem.hasAccess}">
+            Has Access
           </paper-checkbox>
         </div>
       </etools-dialog>
@@ -261,15 +265,16 @@ export class StaffMemberDialog extends LitElement {
     if (this._staffMemberDataHasChanged()) {
       sendRequest({
         endpoint: {
-          url: getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url!
-            + (this.editedItem.id ? this.editedItem.id + '/' : '')
+          url:
+            getEndpoint(etoolsEndpoints.staffMembers, {id: this.firmId}).url! +
+            (this.editedItem.id ? this.editedItem.id + '/' : '')
         },
         method: this.isNewRecord ? 'POST' : 'PATCH',
         body: this.editedItem
       })
         .then((resp: any) => this._staffMemberDataUpdateComplete(resp))
         .catch((err: any) => this._handleError(err))
-        .then(() => this.requestInProgress = false);
+        .then(() => (this.requestInProgress = false));
     } else {
       if (this.initialItem.hasAccess !== this.editedItem.hasAccess) {
         this._staffMemberDataUpdateComplete(this.editedItem);
@@ -278,7 +283,6 @@ export class StaffMemberDialog extends LitElement {
         fireEvent(this.toastEventSource, 'toast', {
           text: `No changes have been detected to ${this.editedItem.user.first_name} ${this.editedItem.user.last_name}.`
         });
-
       }
     }
   }
@@ -298,5 +302,4 @@ export class StaffMemberDialog extends LitElement {
     logError(msg, 'staff-member', err);
     fireEvent(this.toastEventSource, 'toast', {text: msg});
   }
-
 }

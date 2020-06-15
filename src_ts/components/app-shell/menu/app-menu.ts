@@ -16,7 +16,6 @@ import {customElement, html, LitElement, property} from 'lit-element';
  */
 @customElement('app-menu')
 export class AppMenu extends LitElement {
-
   static get styles() {
     return [navMenuStyles];
   }
@@ -25,17 +24,19 @@ export class AppMenu extends LitElement {
     // main template
     // language=HTML
     return html`
-        ${pseaIcon}
+      ${pseaIcon}
       <div class="menu-header">
         <span id="app-name">
-          PSEA <br>
+          PSEA <br />
           ASSURANCE
         </span>
 
         <span class="ripple-wrapper main">
-          <iron-icon id="menu-header-top-icon"
-                     icon="main-icon:psea-icon"
-                     @tap="${() => this._toggleSmallMenu()}"></iron-icon>
+          <iron-icon
+            id="menu-header-top-icon"
+            icon="main-icon:psea-icon"
+            @tap="${() => this._toggleSmallMenu()}"
+          ></iron-icon>
           <paper-ripple class="circle" center></paper-ripple>
         </span>
 
@@ -44,28 +45,20 @@ export class AppMenu extends LitElement {
         </paper-tooltip>
 
         <span class="ripple-wrapper">
-        <iron-icon id="minimize-menu"
-                   icon="chevron-left"
-                   @tap="${() => this._toggleSmallMenu()}"></iron-icon>
-        <paper-ripple class="circle" center></paper-ripple>
-      </span>
+          <iron-icon id="minimize-menu" icon="chevron-left" @tap="${() => this._toggleSmallMenu()}"></iron-icon>
+          <paper-ripple class="circle" center></paper-ripple>
+        </span>
       </div>
 
       <div class="nav-menu">
-        <iron-selector .selected="${this.selectedOption}"
-                       attr-for-selected="menu-name"
-                       role="navigation">
-
-          <a class="nav-menu-item"
-              href="${this.rootPath + 'assessments/list'}"
-              menu-name="assessments">
+        <iron-selector .selected="${this.selectedOption}" attr-for-selected="menu-name" role="navigation">
+          <a class="nav-menu-item" href="${this.rootPath + 'assessments/list'}" menu-name="assessments">
             <iron-icon id="assessments-list-opt" icon="settings-applications"></iron-icon>
             <paper-tooltip for="assessments-list-opt" position="right">
-             PSEA Assessments
+              PSEA Assessments
             </paper-tooltip>
-            <div class="name"> PSEA Assessments</div>
+            <div class="name">PSEA Assessments</div>
           </a>
-
         </iron-selector>
 
         <div class="nav-menu-item section-title">
@@ -80,9 +73,11 @@ export class AppMenu extends LitElement {
           <div class="name">Knowledge base</div>
         </a>
 
-        <a class="nav-menu-item lighter-item"
-           href="https://www.yammer.com/unicef.org/#/threads/inGroup?type=in_group&feedId=5782560"
-           target="_blank">
+        <a
+          class="nav-menu-item lighter-item"
+          href="https://www.yammer.com/unicef.org/#/threads/inGroup?type=in_group&feedId=5782560"
+          target="_blank"
+        >
           <iron-icon id="discussion-icon" icon="icons:question-answer"></iron-icon>
           <paper-tooltip for="discussion-icon" position="right">
             Discussion
@@ -97,7 +92,6 @@ export class AppMenu extends LitElement {
           </paper-tooltip>
           <div class="name">Information</div>
         </a>
-
       </div>
     `;
   }
@@ -117,5 +111,4 @@ export class AppMenu extends LitElement {
     localStorage.setItem(SMALL_MENU_ACTIVE_LOCALSTORAGE_KEY, String(localStorageVal));
     fireEvent(this, 'toggle-small-menu', {value: this.smallMenu});
   }
-
 }

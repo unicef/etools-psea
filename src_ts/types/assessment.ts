@@ -28,7 +28,7 @@ export class Assessment {
   status_list: string[][] = [];
   available_actions: string[] = [];
   partner: string | null = '';
-  focal_points?: string[] =[];
+  focal_points?: string[] = [];
   rejected_comment: string = '';
   permissions = new AssessmentPermissions();
   partner_details?: GenericObject;
@@ -100,7 +100,7 @@ export class AnswerAttachment {
   id?: string;
   created: string = '';
   file_type?: string = ''; // id
-  url?: string ='';
+  url?: string = '';
   _filename: string = ''; // temp prop , used only on frontend
 }
 

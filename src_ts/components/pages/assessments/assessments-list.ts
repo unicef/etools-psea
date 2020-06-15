@@ -4,8 +4,7 @@ import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../redux/store';
 
 import '../../common/layout/page-content-header/page-content-header';
-import {pageContentHeaderSlottedStyles} from
-  '../../common/layout/page-content-header/page-content-header-slotted-styles';
+import {pageContentHeaderSlottedStyles} from '../../common/layout/page-content-header/page-content-header-slotted-styles';
 
 import {pageLayoutStyles} from '../../styles/page-layout-styles';
 
@@ -34,10 +33,16 @@ import {
 } from '../../common/layout/etools-table-utility';
 
 import '@unicef-polymer/etools-table/etools-table';
-import {EtoolsTableColumn, EtoolsTableColumnSort, EtoolsTableColumnType}
-  from '@unicef-polymer/etools-table/etools-table';
-import {EtoolsPaginator, defaultPaginator, getPaginatorWithBackend}
-  from '@unicef-polymer/etools-table/pagination/etools-pagination';
+import {
+  EtoolsTableColumn,
+  EtoolsTableColumnSort,
+  EtoolsTableColumnType
+} from '@unicef-polymer/etools-table/etools-table';
+import {
+  EtoolsPaginator,
+  defaultPaginator,
+  getPaginatorWithBackend
+} from '@unicef-polymer/etools-table/pagination/etools-pagination';
 
 import {RouteDetails, RouteQueryParams} from '../../../routing/router';
 import {updateAppLocation, replaceAppLocation} from '../../../routing/routes';
@@ -58,7 +63,6 @@ let lastSelectedFilters: FilterKeysAndTheirSelectedValues = {...defaultSelectedF
  */
 @customElement('assessments-list')
 export class AssessmentsList extends connect(store)(LitElement) {
-
   static get styles() {
     return [elevationStyles, buttonsStyles, pageLayoutStyles];
   }
@@ -76,9 +80,9 @@ export class AssessmentsList extends connect(store)(LitElement) {
           .action {
             text-align: right;
           }
-          #addBtn{
+          #addBtn {
             padding-right: 16px;
-            margin-right: 32px
+            margin-right: 32px;
           }
           .shortAddText {
             display: block;
@@ -89,19 +93,18 @@ export class AssessmentsList extends connect(store)(LitElement) {
         }
       </style>
       <page-content-header>
-
         <h1 slot="page-title">Assessments list</h1>
 
         <div slot="title-row-actions" class="content-header-actions">
-            <div class="action" ?hidden="${!this.canExport}" >
-              <export-data .endpoint="${etoolsEndpoints.assessment.url!}" .params="${this.queryParams}"></export-data>
-            </div>
-            <div class="action" ?hidden="${!this.canAdd}" >
-              <paper-button id="addBtn" class="primary left-icon" raised @tap="${this.goToAddNewPage}">
-                <iron-icon icon="add"></iron-icon><span class='longAddText'>Add new assessment</span>
-                <span class='shortAddText'>Add</span>
-              </paper-button>
-            </div>
+          <div class="action" ?hidden="${!this.canExport}">
+            <export-data .endpoint="${etoolsEndpoints.assessment.url!}" .params="${this.queryParams}"></export-data>
+          </div>
+          <div class="action" ?hidden="${!this.canAdd}">
+            <paper-button id="addBtn" class="primary left-icon" raised @tap="${this.goToAddNewPage}">
+              <iron-icon icon="add"></iron-icon><span class="longAddText">Add new assessment</span>
+              <span class="shortAddText">Add</span>
+            </paper-button>
+          </div>
         </div>
       </page-content-header>
 
@@ -112,11 +115,13 @@ export class AssessmentsList extends connect(store)(LitElement) {
 
       <section class="elevation page-content no-padding" elevation="1">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
-        <etools-table .columns="${this.listColumns}"
-                      .items="${this.listData}"
-                      .paginator="${this.paginator}"
-                      @paginator-change="${this.paginatorChange}"
-                      @sort-change="${this.sortChange}"></etools-table>
+        <etools-table
+          .columns="${this.listColumns}"
+          .items="${this.listData}"
+          .paginator="${this.paginator}"
+          @paginator-change="${this.paginatorChange}"
+          @sort-change="${this.sortChange}"
+        ></etools-table>
       </section>
     `;
   }
@@ -145,8 +150,10 @@ export class AssessmentsList extends connect(store)(LitElement) {
   paginator: EtoolsPaginator = {...defaultPaginator};
 
   @property({type: Array})
-  sort: EtoolsTableSortItem[] = [{name: 'assessment_date', sort: EtoolsTableColumnSort.Desc},
-  {name: 'partner_name', sort: EtoolsTableColumnSort.Asc}];
+  sort: EtoolsTableSortItem[] = [
+    {name: 'assessment_date', sort: EtoolsTableColumnSort.Desc},
+    {name: 'partner_name', sort: EtoolsTableColumnSort.Asc}
+  ];
 
   @property({type: Array})
   filters!: EtoolsFilter[];
@@ -230,7 +237,6 @@ export class AssessmentsList extends connect(store)(LitElement) {
         this.updateUrlListQueryParams();
 
         return;
-
       } else {
         // init selectedFilters, sort, page, page_size from url params
         this.updateListParamsFromRouteDetails(this.routeDetails.queryParams);
@@ -261,10 +267,10 @@ export class AssessmentsList extends connect(store)(LitElement) {
     this.showFiltersLoading = true;
     try {
       if (this.dataRequiredByFiltersHasBeenLoaded(state)) {
-
-        const availableFilters = this.isUnicefUser ?
-        // @ts-ignore
-          [...assessmentsFilters] : [...assessmentsFilters.filter(x => onlyForUnicefFilters.indexOf(x.filterKey) < 0)];
+        const availableFilters = this.isUnicefUser
+          ? // @ts-ignore
+            [...assessmentsFilters]
+          : [...assessmentsFilters.filter((x) => onlyForUnicefFilters.indexOf(x.filterKey) < 0)];
 
         this.populateDropdownFilterOptionsFromCommonData(state.commonData, availableFilters);
 
@@ -280,18 +286,21 @@ export class AssessmentsList extends connect(store)(LitElement) {
   }
 
   /**
-    * TODO
-    * We might avoid the issues of waiting and also reduce multiple stateChanged execution by updating
-    * redux state only after all endpoint requests (currentUser, partners, unicefUsers, externals) have finished
-    */
+   * TODO
+   * We might avoid the issues of waiting and also reduce multiple stateChanged execution by updating
+   * redux state only after all endpoint requests (currentUser, partners, unicefUsers, externals) have finished
+   */
   private dataRequiredByFiltersHasBeenLoaded(state: RootState) {
-    if (get(state, 'user.data') && state.commonData &&
+    if (
+      get(state, 'user.data') &&
+      state.commonData &&
       // Avoid selectedValue being set before the dropdown is populated with options
       // And take into account that for non unicef users, the users endpoint returns 403
       (!this.isUnicefUser || get(state, 'commonData.unicefUsers.length')) &&
       (!this.isUnicefUser || get(state, 'commonData.partners.length')) &&
       this.routeDetails.queryParams &&
-      Object.keys(this.routeDetails.queryParams).length > 0) {
+      Object.keys(this.routeDetails.queryParams).length > 0
+    ) {
       return true;
     }
     return false;
@@ -368,21 +377,22 @@ export class AssessmentsList extends connect(store)(LitElement) {
     this.showLoading = true;
     return sendRequest({
       endpoint: {url: etoolsEndpoints.assessment.url + `?${this.getParamsForQuery()}`}
-    }).then((response: GenericObject) => {
-      this.paginator = getPaginatorWithBackend(this.paginator, response.count);
-      const assessments = response.results;
-      assessments.forEach((assessment: Assessment) => {
-        if (assessment.status === 'in_progress') {
-          assessment.status = 'in progress';
-        }
-      });
-      this.listData = [...assessments];
-    }).catch((err: any) => logError('Assessments list req error', 'AssessmentsList', err))
-      .then(() => this.showLoading = false);
+    })
+      .then((response: GenericObject) => {
+        this.paginator = getPaginatorWithBackend(this.paginator, response.count);
+        const assessments = response.results;
+        assessments.forEach((assessment: Assessment) => {
+          if (assessment.status === 'in_progress') {
+            assessment.status = 'in progress';
+          }
+        });
+        this.listData = [...assessments];
+      })
+      .catch((err: any) => logError('Assessments list req error', 'AssessmentsList', err))
+      .then(() => (this.showLoading = false));
   }
 
   goToAddNewPage() {
     updateAppLocation('/assessments/new/details', true);
   }
-
 }

@@ -2,8 +2,7 @@ import '@polymer/paper-button/paper-button';
 
 import '../../common/layout/page-content-header/page-content-header';
 import '../../common/layout/etools-tabs';
-import {pageContentHeaderSlottedStyles}
-  from '../../common/layout/page-content-header/page-content-header-slotted-styles';
+import {pageContentHeaderSlottedStyles} from '../../common/layout/page-content-header/page-content-header-slotted-styles';
 import '../../common/layout/status/etools-status';
 import {pageLayoutStyles} from '../../styles/page-layout-styles';
 import {connect} from 'pwa-helpers/connect-mixin';
@@ -34,7 +33,6 @@ import {rejectionTabStyles} from '../../styles/rejection-tab-styles';
  */
 @customElement('assessment-tabs')
 export class AssessmentTabs extends connect(store)(LitElement) {
-
   static get styles() {
     return [elevationStyles, pageLayoutStyles];
   }
@@ -45,35 +43,36 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     return html`
       ${SharedStylesLit}${pageContentHeaderSlottedStyles}
       <style>
-        ${rejectionTabStyles}
-        etools-status {
+        ${rejectionTabStyles} etools-status {
           justify-content: center;
         }
-
-
       </style>
-      ${(this.assessment && this.assessment.id) ? html`<etools-status
-        .statuses="${this.getAssessmentStatusesList(this.assessment.status_list)}"
-        .activeStatus="${this.assessment.status}"></etools-status>` : ''}
+      ${this.assessment && this.assessment.id
+        ? html`<etools-status
+            .statuses="${this.getAssessmentStatusesList(this.assessment.status_list)}"
+            .activeStatus="${this.assessment.status}"
+          ></etools-status>`
+        : ''}
 
       <page-content-header with-tabs-visible>
-
         <h1 slot="page-title">${this.getPageTitle(this.assessment)}</h1>
 
         <div slot="title-row-actions" class="content-header-actions">
-
-          ${(this.assessment && this.assessment.id && this.canExport) ? html`
-            <export-data .endpoint="${etoolsEndpoints.assessment.url!}${this.assessment.id}/"></export-data> ` : ''}
+          ${this.assessment && this.assessment.id && this.canExport
+            ? html` <export-data .endpoint="${etoolsEndpoints.assessment.url!}${this.assessment.id}/"></export-data> `
+            : ''}
 
           <assessment-status-transition-actions></assessment-status-transition-actions>
         </div>
 
-        <etools-tabs slot="tabs"
-                     .tabs="${this.pageTabs}"
-                     .activeTab="${this.activeTab}"
-                     @iron-select="${this.handleTabChange}"></etools-tabs>
+        <etools-tabs
+          slot="tabs"
+          .tabs="${this.pageTabs}"
+          .activeTab="${this.activeTab}"
+          @iron-select="${this.handleTabChange}"
+        ></etools-tabs>
       </page-content-header>
-      <section class="elevation page-content no-padding" elevation="1" ?hidden="${!this.assessment?.rejected_comment}" >
+      <section class="elevation page-content no-padding" elevation="1" ?hidden="${!this.assessment?.rejected_comment}">
         <etools-content-panel class="rejection-tab" panel-title="">
           <div slot="panel-btns" class="bookmark">
             <iron-icon icon="bookmark"></iron-icon>
@@ -85,13 +84,13 @@ export class AssessmentTabs extends connect(store)(LitElement) {
 
       <div class="page-content">
         <assessment-details-page ?hidden="${!this.isActiveTab(this.activeTab, 'details')}">
-            <etools-loading loading-text="Loading..." active></etools-loading>
+          <etools-loading loading-text="Loading..." active></etools-loading>
         </assessment-details-page>
         <assessment-questionnaire-page ?hidden="${!this.isActiveTab(this.activeTab, 'questionnaire')}">
-            <etools-loading loading-text="Loading..." active></etools-loading>
+          <etools-loading loading-text="Loading..." active></etools-loading>
         </assessment-questionnaire-page>
         <follow-up-page ?hidden="${!this.isActiveTab(this.activeTab, 'followup')}">
-            <etools-loading loading-text="Loading..." active></etools-loading>
+          <etools-loading loading-text="Loading..." active></etools-loading>
         </follow-up-page>
       </div>
     `;
@@ -182,7 +181,6 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     if (get(state, 'user.permissions')) {
       this.canExport = state.user!.permissions!.canExportAssessment;
     }
-
   }
 
   hideFollowUpTabForNonUnicefUsers(userData: any) {
@@ -196,8 +194,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
   }
 
   onListPage(routeDetails: any) {
-    return routeDetails.routeName === 'assessments' &&
-      routeDetails.subRouteName == 'list';
+    return routeDetails.routeName === 'assessments' && routeDetails.subRouteName == 'list';
   }
 
   setActiveTabs(assessmentId: string | number) {
@@ -234,9 +231,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     if (!assessment.id) {
       return 'New PSEA Assessment';
     }
-    return assessment.reference_number
-      ? `${assessment.reference_number}: ${assessment.partner_name}`
-      : '';
+    return assessment.reference_number ? `${assessment.reference_number}: ${assessment.partner_name}` : '';
   }
 
   enableTabs() {
@@ -248,7 +243,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
 
   resetTabs() {
     this.pageTabs.forEach((tab) => {
-      tab.tab == 'details' ? tab.disabled = false : tab.disabled = true;
+      tab.tab == 'details' ? (tab.disabled = false) : (tab.disabled = true);
     });
     this.pageTabs = [...this.pageTabs];
   }
@@ -267,8 +262,9 @@ export class AssessmentTabs extends connect(store)(LitElement) {
       return;
     }
     if (newTabName !== oldTabName) {
-      const newPath =
-        `assessments/${this.routeDetails!.params ? this.routeDetails!.params.assessmentId : 'new'}/${newTabName}`;
+      const newPath = `assessments/${
+        this.routeDetails!.params ? this.routeDetails!.params.assessmentId : 'new'
+      }/${newTabName}`;
       if (this.routeDetails.path === newPath) {
         return;
       }
@@ -284,5 +280,4 @@ export class AssessmentTabs extends connect(store)(LitElement) {
       return {status: s[0], label: s[1]} as EtoolsStatusModel;
     });
   }
-
 }

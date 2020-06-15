@@ -23,24 +23,21 @@ import '../../../../common/layout/etools-error-warn-box';
 
 @customElement('follow-up-dialog')
 export class FollowUpDialog extends connect(store)(LitElement) {
-
   static get styles() {
     return [gridLayoutStylesLit];
   }
 
   render() {
     if (!this.assessment) {
-      return html`
-      ${SharedStylesLit}`;
+      return html` ${SharedStylesLit}`;
     }
     return html`
-       ${SharedStylesLit}
+      ${SharedStylesLit}
       <style>
-
         etools-dropdown {
           --esmm-external-wrapper: {
             width: 100%;
-          };
+          }
         }
 
         paper-textarea {
@@ -55,82 +52,89 @@ export class FollowUpDialog extends connect(store)(LitElement) {
         }
       </style>
 
-      <etools-dialog keep-dialog-open size="md"
-                     ?opened="${this.dialogOpened}"
-                     dialog-title="${this.dialogTitle}"
-                     ok-btn-text="${this.confirmBtnTxt}"
-                     ?hide-confirm-btn="${!this.confirmBtnTxt}"
-                     ?show-spinner="${this.requestInProcess}"
-                     ?disable-confirm-btn="${this.requestInProcess}"
-                     @confirm-btn-clicked="${this.onConfirmBtnClick}"
-                     @close="${this.handleDialogClosed}">
+      <etools-dialog
+        keep-dialog-open
+        size="md"
+        ?opened="${this.dialogOpened}"
+        dialog-title="${this.dialogTitle}"
+        ok-btn-text="${this.confirmBtnTxt}"
+        ?hide-confirm-btn="${!this.confirmBtnTxt}"
+        ?show-spinner="${this.requestInProcess}"
+        ?disable-confirm-btn="${this.requestInProcess}"
+        @confirm-btn-clicked="${this.onConfirmBtnClick}"
+        @close="${this.handleDialogClosed}"
+      >
         <!-- TODO: The following warning may be replaced -->
 
-        <etools-error-warn-box .messages="${this.warningMessages}">
-        </etools-error-warn-box>
+        <etools-error-warn-box .messages="${this.warningMessages}"> </etools-error-warn-box>
 
         <div class="layout-horizontal">
           <div class="col col-6">
             <etools-dropdown
-                    id="partnerInput"
-                    required
-                    .selected="${this.editedItem.partner}"
-                    label="Partner"
-                    .options="${this.partners}"
-                    option-label="name"
-                    option-value="id"
-                    ?readOnly="${this.editedItem.partner}">
+              id="partnerInput"
+              required
+              .selected="${this.editedItem.partner}"
+              label="Partner"
+              .options="${this.partners}"
+              option-label="name"
+              option-value="id"
+              ?readOnly="${this.editedItem.partner}"
+            >
             </etools-dropdown>
           </div>
           <div class="col col-6">
             <etools-dropdown
-                    id="assessmentInput"
-                    required
-                    .selected="${this.assessment.id}"
-                    label="Assessment"
-                    .options="${[this.assessment]}"
-                    option-label="reference_number"
-                    option-value="id"
-                    ?readOnly="${this.assessment.id}">
+              id="assessmentInput"
+              required
+              .selected="${this.assessment.id}"
+              label="Assessment"
+              .options="${[this.assessment]}"
+              option-label="reference_number"
+              option-value="id"
+              ?readOnly="${this.assessment.id}"
+            >
             </etools-dropdown>
           </div>
         </div>
 
         <div class="layout-horizontal">
           <paper-textarea
-                  id="descriptionInput"
-                  always-float-label
-                  placeholder="—"
-                  required
-                  allowed-pattern="[\d\s]"
-                  value="${this.editedItem.description}"
-                  label="Description"
-                  max-rows="4">
+            id="descriptionInput"
+            always-float-label
+            placeholder="—"
+            required
+            allowed-pattern="[ds]"
+            value="${this.editedItem.description}"
+            label="Description"
+            max-rows="4"
+          >
           </paper-textarea>
         </div>
 
         <div class="layout-horizontal">
           <div class="col col-6">
             <etools-dropdown
-                    id="assignedToInput"
-                    .selected="${this.editedItem.assigned_to}"
-                    label="Assigned To"
-                    .options="${this.users}"
-                    option-label="name"
-                    required
-                    option-value="id">
+              id="assignedToInput"
+              .selected="${this.editedItem.assigned_to}"
+              label="Assigned To"
+              .options="${this.users}"
+              option-label="name"
+              required
+              option-value="id"
+            >
             </etools-dropdown>
           </div>
 
           <div class="col col-6">
             <etools-dropdown
-                    id="sectionInput"
-                    .selected="${this.editedItem.section}"
-                    label="Section"
-                    .options="${this.sections}"
-                    option-label="name"
-                    required
-                    option-value="id">
+              id="sectionInput"
+              .selected="${this.editedItem.section}"
+              label="Section"
+              .options="${this.sections}"
+              option-label="name"
+              required
+              option-value="id"
+            >
             </etools-dropdown>
           </div>
         </div>
@@ -138,32 +142,32 @@ export class FollowUpDialog extends connect(store)(LitElement) {
         <div class="layout-horizontal">
           <div class="col col-6">
             <etools-dropdown
-                    id="officeInput"
-                    .selected="${this.editedItem.office}"
-                    label="Office"
-                    .options="${this.offices}"
-                    option-label="name"
-                    required
-                    option-value="id">
+              id="officeInput"
+              .selected="${this.editedItem.office}"
+              label="Office"
+              .options="${this.offices}"
+              option-label="name"
+              required
+              option-value="id"
+            >
             </etools-dropdown>
           </div>
 
           <div class="col col-6 p-relative">
             <datepicker-lite
-                    id="dueDateInput"
-                    value="${this.editedItem.due_date}"
-                    label="Due Date"
-                    required
-                    selected-date-display-format="D MMM YYYY">
+              id="dueDateInput"
+              value="${this.editedItem.due_date}"
+              label="Due Date"
+              required
+              selected-date-display-format="D MMM YYYY"
+            >
             </datepicker-lite>
           </div>
         </div>
 
         <div class="layout-horizontal highPriority">
-          <paper-checkbox
-                  id="highPriorityInput"
-                  ?checked="${this.editedItem.high_priority}">
-                  This action point is high priority
+          <paper-checkbox id="highPriorityInput" ?checked="${this.editedItem.high_priority}">
+            This action point is high priority
           </paper-checkbox>
         </div>
       </etools-dialog>
@@ -182,8 +186,13 @@ export class FollowUpDialog extends connect(store)(LitElement) {
     high_priority: false
   };
 
-  private validationSelectors: string[] = ['#categoryInput', '#assignedToInput',
-    '#sectionInput', '#officeInput', '#dateInput'];
+  private validationSelectors: string[] = [
+    '#categoryInput',
+    '#assignedToInput',
+    '#sectionInput',
+    '#officeInput',
+    '#dateInput'
+  ];
 
   @property({type: Array})
   users: GenericObject[] = [];
@@ -253,7 +262,10 @@ export class FollowUpDialog extends connect(store)(LitElement) {
       }
     }
 
-    if (get(state, 'pageData.currentAssessment') && !isJsonStrMatch(this.assessment, state.pageData!.currentAssessment)) {
+    if (
+      get(state, 'pageData.currentAssessment') &&
+      !isJsonStrMatch(this.assessment, state.pageData!.currentAssessment)
+    ) {
       // initialize assessment object
       this.assessment = cloneDeep(state.pageData!.currentAssessment);
       this.resetEditedItem();
@@ -261,8 +273,11 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   }
 
   updated(changedProperties: GenericObject) {
-    if (this.warningMessages.length && !changedProperties.has('warningMessages') &&
-      !isEqual(this.editedItem, changedProperties.get('editedItem'))) {
+    if (
+      this.warningMessages.length &&
+      !changedProperties.has('warningMessages') &&
+      !isEqual(this.editedItem, changedProperties.get('editedItem'))
+    ) {
       this.warningMessages.pop();
     }
   }
@@ -324,7 +339,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
 
   _getUrl() {
     const actionPointsUrl = getEndpoint(etoolsEndpoints.actionPoints, {id: this.assessment.id}).url!;
-    return (this.isNewRecord ? actionPointsUrl : actionPointsUrl + this.editedItem.id + '/');
+    return this.isNewRecord ? actionPointsUrl : actionPointsUrl + this.editedItem.id + '/';
   }
 
   _handleResponse(resp: any) {

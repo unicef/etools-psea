@@ -20,27 +20,27 @@ import {ROOT_PATH} from '../../../config/config';
  */
 @customElement('countries-dropdown')
 export class CountriesDropdown extends connect(store)(LitElement) {
-
   public render() {
     // main template
     // language=HTML
     return html`
       ${countriesDropdownStyles}
       <!-- shown options limit set to 250 as there are currently 195 countries in the UN council and about 230 total -->
-      <etools-dropdown id="countrySelector"
-                       .selected="${this.currentCountry.id}"
-                       placeholder="Country"
-                       allow-outside-scroll
-                       no-label-float
-                       .options="${this.countries}"
-                       option-label="name"
-                       option-value="id"
-                       trigger-value-change-event
-                       @etools-selected-item-changed="${this.countrySelected}"
-                       shown-options-limit="250"
-                       ?hidden="${!this.countrySelectorVisible}"
-                       hide-search></etools-dropdown>
-
+      <etools-dropdown
+        id="countrySelector"
+        .selected="${this.currentCountry.id}"
+        placeholder="Country"
+        allow-outside-scroll
+        no-label-float
+        .options="${this.countries}"
+        option-label="name"
+        option-value="id"
+        trigger-value-change-event
+        @etools-selected-item-changed="${this.countrySelected}"
+        shown-options-limit="250"
+        ?hidden="${!this.countrySelectorVisible}"
+        hide-search
+      ></etools-dropdown>
     `;
   }
 
@@ -82,11 +82,10 @@ export class CountriesDropdown extends connect(store)(LitElement) {
 
       this.showCountrySelector(this.countries);
     }
-
   }
 
   protected showCountrySelector(countries: any) {
-    if (Array.isArray(countries) && (countries.length > 1)) {
+    if (Array.isArray(countries) && countries.length > 1) {
       this.countrySelectorVisible = true;
     }
   }
@@ -110,21 +109,24 @@ export class CountriesDropdown extends connect(store)(LitElement) {
       active: true,
       loadingSource: 'country-change'
     });
-    changeCurrentUserCountry(selectedCountryId).then(() => {
-      // country change req returns 204
-      // redirect to default page
-      // TODO: clear all cached data related to old country
-      updateAppLocation(DEFAULT_ROUTE);
-      // force page reload to load all data specific to the new country
-      document.location.assign(window.location.origin + ROOT_PATH);
-    }).catch((error: any) => {
-      this.handleCountryChangeError(error);
-    }).then(() => {
-      fireEvent(this, 'global-loading', {
-        active: false,
-        loadingSource: 'country-change'
+    changeCurrentUserCountry(selectedCountryId)
+      .then(() => {
+        // country change req returns 204
+        // redirect to default page
+        // TODO: clear all cached data related to old country
+        updateAppLocation(DEFAULT_ROUTE);
+        // force page reload to load all data specific to the new country
+        document.location.assign(window.location.origin + ROOT_PATH);
+      })
+      .catch((error: any) => {
+        this.handleCountryChangeError(error);
+      })
+      .then(() => {
+        fireEvent(this, 'global-loading', {
+          active: false,
+          loadingSource: 'country-change'
+        });
       });
-    });
   }
 
   protected handleCountryChangeError(error: any) {
@@ -132,5 +134,4 @@ export class CountriesDropdown extends connect(store)(LitElement) {
     this.countryDropdown.set('selected', this.currentCountry.id);
     fireEvent(this, 'toast', {text: 'Something went wrong changing your workspace. Please try again'});
   }
-
 }

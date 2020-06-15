@@ -5,7 +5,8 @@ import {
   SET_EXTERNAL_INDIVIDUALS,
   SET_OFFICES,
   SET_SECTIONS,
-  SET_ASSESSING_FIRMS} from '../actions/common-data';
+  SET_ASSESSING_FIRMS
+} from '../actions/common-data';
 import {RootAction} from '../store';
 import {UnicefUser} from '../../types/user-model';
 

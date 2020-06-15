@@ -11,7 +11,6 @@ import {buttonsStyles} from '../../styles/button-styles';
 
 @customElement('etools-error-warn-box')
 export class EtoolsErrorWarnBox extends LitElement {
-
   static get styles() {
     return [buttonsStyles];
   }
@@ -101,32 +100,31 @@ export class EtoolsErrorWarnBox extends LitElement {
   getHTML() {
     if (this.alertType === 'error') {
       return html`
-      <etools-content-panel class="errors-box" panel-title="${this.title}">
+        <etools-content-panel class="errors-box" panel-title="${this.title}">
           <ul>
-            ${this.messages.map(msg => this.getErrorHTML(msg))}
+            ${this.messages.map((msg) => this.getErrorHTML(msg))}
           </ul>
           <div class="errors-box-actions">
-            <paper-button raised class="error"
-                          @tap="${this.resetErrors}">
+            <paper-button raised class="error" @tap="${this.resetErrors}">
               Dismiss
             </paper-button>
           </div>
-      </etools-content-panel>
+        </etools-content-panel>
       `;
     } else {
       return html`
-       <div class="warning-container">
-          ${this.messages.map(msg => this.getWarningHTML(msg))}
-       </div>
+        <div class="warning-container">
+          ${this.messages.map((msg) => this.getWarningHTML(msg))}
+        </div>
       `;
     }
   }
 
   getWarningHTML(msg: string) {
     return html`
-    <div class="warning-item">
-      ${msg}
-    </div>
+      <div class="warning-item">
+        ${msg}
+      </div>
     `;
   }
 
@@ -137,5 +135,4 @@ export class EtoolsErrorWarnBox extends LitElement {
   resetErrors() {
     this.messages = [];
   }
-
 }

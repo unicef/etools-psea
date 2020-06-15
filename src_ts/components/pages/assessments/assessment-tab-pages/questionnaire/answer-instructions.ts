@@ -1,15 +1,13 @@
-import {
-  LitElement, html, customElement, css
-} from 'lit-element';
+import {LitElement, html, customElement, css} from 'lit-element';
 import {elevationStyles} from '../../../../styles/lit-styles/elevation-styles';
 
 @customElement('answer-instructions')
 export class AnswerInstructions extends LitElement {
-
   static get styles() {
-    return [elevationStyles,
+    return [
+      elevationStyles,
       css`
-        #rating-icon{
+        #rating-icon {
           color: var(--primary-color);
         }
 
@@ -52,7 +50,7 @@ export class AnswerInstructions extends LitElement {
     return html`
       <style>
         paper-tooltip {
-          --paper-tooltip-background: #FFFFFF;
+          --paper-tooltip-background: #ffffff;
           --paper-tooltip: {
             padding: 0;
           }
@@ -68,22 +66,22 @@ export class AnswerInstructions extends LitElement {
 
       <paper-icon-button id="rating-icon" icon="info"></paper-icon-button>
       <paper-tooltip for="rating-icon" animation-entry="noanimation" position="right">
-          ${this.getRatingInfoHtml()}
+        ${this.getRatingInfoHtml()}
       </paper-tooltip>
     `;
   }
 
   getRatingInfoHtml() {
     return html`
-      <div class='rating-info-content elevation' elevation="1">
+      <div class="rating-info-content elevation" elevation="1">
         <div class="rating-info red-border">
-            <span class="primary">1 - Absent: The organization is not working towards this standard</span>
-            <span>Give this score if the organization does not meet the standard.</span>
+          <span class="primary">1 - Absent: The organization is not working towards this standard</span>
+          <span>Give this score if the organization does not meet the standard.</span>
         </div>
         <div class="rating-info orange-border">
           <span class="primary">
-          2 - Progressing: The organization has made some progress towards applying this standard, but certain
-          aspects need to be improved
+            2 - Progressing: The organization has made some progress towards applying this standard, but certain aspects
+            need to be improved
           </span>
           <span>Give this score if the organization partially meets the criteria.</span>
         </div>

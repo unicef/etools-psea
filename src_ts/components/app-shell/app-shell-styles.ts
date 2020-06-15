@@ -5,23 +5,23 @@ import {appDrawerStyles} from './menu/styles/app-drawer-styles';
 // language=HTML
 export const AppShellStyles = css`
   ${appDrawerStyles}
-    :host {
-      display: block;
-    }
+  :host {
+    display: block;
+  }
 
-    app-header-layout {
-      position: relative;
-    }
+  app-header-layout {
+    position: relative;
+  }
 
-    .main-content {
-      ${layoutFlex}
-    }
+  .main-content {
+    ${layoutFlex}
+  }
 
-    .page {
-      display: none;
-    }
+  .page {
+    display: none;
+  }
 
-    .page[active] {
-      display: block;
-    }
+  .page[active] {
+    display: block;
+  }
 `;

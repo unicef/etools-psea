@@ -24,7 +24,6 @@ function PermissionsMixin<T extends Constructor<LitElement>>(baseClass: T) {
     isReadonly(editMode: boolean, canEdit: boolean) {
       return !(editMode && canEdit);
     }
-
   }
   return PermissionsClass;
 }

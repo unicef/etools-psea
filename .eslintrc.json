@@ -1,7 +1,11 @@
 {
   "extends": [
-    "eslint:recommended", "plugin:lit/recommended", "google",
-    "plugin:@typescript-eslint/recommended"
+    "eslint:recommended",
+    "plugin:lit/recommended",
+    "google",
+    "plugin:@typescript-eslint/recommended",
+    "prettier/@typescript-eslint", // Uses eslint-config-prettier to disable ESLint rules
+    "plugin:prettier/recommended" // Enables eslint-plugin-prettier and eslint-config-prettier.
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -15,9 +19,11 @@
   },
   "plugins": [
     "html",
-    "lit"
+    "lit",
+    "prettier"
   ],
   "rules": {
+    "prettier/prettier": "error",
     "linebreak-style": "off",
     "padded-blocks": "off",
     "brace-style": "off",

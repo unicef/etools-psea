@@ -12,37 +12,41 @@ import {PaperTextareaElement} from '@polymer/paper-input/paper-textarea';
  */
 @customElement('assessment-rejection-dialog')
 export class AssessmentRejectionDialog extends LitElement {
-
   static get styles() {
-    return [css`
-      #rejectionReason {
-        padding-bottom: 24px;
-      }
-    `];
+    return [
+      css`
+        #rejectionReason {
+          padding-bottom: 24px;
+        }
+      `
+    ];
   }
 
   render() {
     // language=HTML
     return html`
       ${SharedStylesLit}
-      <etools-dialog id="assessmentRejectionDialog"
-                    ?opened="${this.dialogOpened}"
-                    dialog-title="Are you sure you want to reject this assessment?"
-                    size="md"
-                    ok-btn-text="YES"
-                    cancel-btn-text="Cancel"
-                    keep-dialog-open 
-                    ?show-spinner="${this.spinnerLoading}"
-                    @close="${() => this.closeDialog()}"
-                    @confirm-btn-clicked="${this.onConfirm}">
-                    <paper-textarea id="rejectionReason"
-                        label="Reason for rejection"
-                        type="text"
-                        required auto-validate
-                        error-message="Please provide a rejection reason."
-                        placeholder="&#8212;"></paper-textarea>
-                    
-                    
+      <etools-dialog
+        id="assessmentRejectionDialog"
+        ?opened="${this.dialogOpened}"
+        dialog-title="Are you sure you want to reject this assessment?"
+        size="md"
+        ok-btn-text="YES"
+        cancel-btn-text="Cancel"
+        keep-dialog-open
+        ?show-spinner="${this.spinnerLoading}"
+        @close="${() => this.closeDialog()}"
+        @confirm-btn-clicked="${this.onConfirm}"
+      >
+        <paper-textarea
+          id="rejectionReason"
+          label="Reason for rejection"
+          type="text"
+          required
+          auto-validate
+          error-message="Please provide a rejection reason."
+          placeholder="&#8212;"
+        ></paper-textarea>
       </etools-dialog>
     `;
   }
@@ -70,5 +74,4 @@ export class AssessmentRejectionDialog extends LitElement {
     this.rejectionCommentEl.value = '';
     this.rejectionCommentEl.invalid = false;
   }
-
 }

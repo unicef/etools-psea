@@ -4,8 +4,11 @@ import {LitElement, html, property, customElement} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import '@unicef-polymer/etools-table/etools-table';
 import {EtoolsTableColumn, EtoolsTableColumnType} from '@unicef-polymer/etools-table/etools-table';
-import {EtoolsPaginator, defaultPaginator, getPaginatorWithBackend}
-  from '@unicef-polymer/etools-table/pagination/etools-pagination';
+import {
+  EtoolsPaginator,
+  defaultPaginator,
+  getPaginatorWithBackend
+} from '@unicef-polymer/etools-table/pagination/etools-pagination';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {buildUrlQueryString} from '../../../../common/layout/etools-table-utility';
@@ -27,7 +30,6 @@ import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
  */
 @customElement('firm-staff-members')
 export class FirmStaffMembers extends LitElement {
-
   static get styles() {
     return [gridLayoutStylesLit];
   }
@@ -41,12 +43,12 @@ export class FirmStaffMembers extends LitElement {
           display: block;
           --ecp-content-padding: 0;
         }
-        .header th{
+        .header th {
           font-size: 12px;
           font-weight: 600;
           color: var(--secondary-text-color);
         }
-        .row td{
+        .row td {
           font-size: 16px;
           color: var(--primary-text-color);
         }
@@ -67,21 +69,20 @@ export class FirmStaffMembers extends LitElement {
       <etools-content-panel panel-title="Firm Staff Members with Access">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
         <div slot="panel-btns">
-          <paper-icon-button
-                ?hidden="${!this.canEdit}"
-                @tap="${() => this.openStaffMemberDialog()}"
-                icon="add">
+          <paper-icon-button ?hidden="${!this.canEdit}" @tap="${() => this.openStaffMemberDialog()}" icon="add">
           </paper-icon-button>
         </div>
 
         <div class="w100">
-          <etools-table .columns="${this.listColumns}"
+          <etools-table
+            .columns="${this.listColumns}"
             .items="${this.staffMembers}"
             .paginator="${this.paginator}"
             @paginator-change="${this.paginatorChange}"
             .showEdit="${this.canEdit}"
             @edit-item="${this.openStaffMemberDialog}"
-            @item-changed="${this.itemChanged}">
+            @item-changed="${this.itemChanged}"
+          >
           </etools-table>
         </div>
       </etools-content-panel>
@@ -208,7 +209,7 @@ export class FirmStaffMembers extends LitElement {
         this.paginator = getPaginatorWithBackend(this.paginator, 0);
         logError('Firm staff members req failed', 'FirmStaffMembers', err);
       })
-      .then(() => this.showLoading = false);
+      .then(() => (this.showLoading = false));
   }
 
   createStaffMemberDialog() {
@@ -228,7 +229,8 @@ export class FirmStaffMembers extends LitElement {
 
   updateItemData(itemData: any) {
     const index = this.staffMembers.findIndex((r: any) => r.id === itemData.id);
-    if (index > -1) { // edit
+    if (index > -1) {
+      // edit
       this.staffMembers.splice(index, 1, itemData);
     } else {
       this.paginator.count++;
@@ -238,8 +240,10 @@ export class FirmStaffMembers extends LitElement {
   }
 
   saveFirmAssessorStaffAccess(staffMember: EtoolsStaffMemberModel) {
-    if ((staffMember.hasAccess && this.currentFirmAssessorStaffWithAccess.includes(parseInt(staffMember.id))) ||
-      (!staffMember.hasAccess && !this.currentFirmAssessorStaffWithAccess.includes(parseInt(staffMember.id)))) {
+    if (
+      (staffMember.hasAccess && this.currentFirmAssessorStaffWithAccess.includes(parseInt(staffMember.id))) ||
+      (!staffMember.hasAccess && !this.currentFirmAssessorStaffWithAccess.includes(parseInt(staffMember.id)))
+    ) {
       return;
     }
 
@@ -259,9 +263,8 @@ export class FirmStaffMembers extends LitElement {
           text: `${staffMember.user.first_name} ${staffMember.user.last_name}'s access has been updated`
         });
       })
-      .catch((err: any) =>
-        fireEvent(this, 'toast', {text: formatServerErrorAsText(err), showCloseBtn: true}))
-      .then(() => this.showLoading = false);
+      .catch((err: any) => fireEvent(this, 'toast', {text: formatServerErrorAsText(err), showCloseBtn: true}))
+      .then(() => (this.showLoading = false));
   }
 
   private addOrRemoveFromCurrentStaffMembersWithAccess(staffMember: EtoolsStaffMemberModel) {
@@ -279,5 +282,4 @@ export class FirmStaffMembers extends LitElement {
     this.updateItemData(e.detail);
     this.saveFirmAssessorStaffAccess(e.detail as EtoolsStaffMemberModel);
   }
-
 }

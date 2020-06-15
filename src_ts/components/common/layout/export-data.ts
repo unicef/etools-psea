@@ -15,10 +15,10 @@ export class ExportData extends LitElement {
   static get styles() {
     return [
       css`
-        paper-menu-button{
+        paper-menu-button {
           padding: 0px 24px;
         }
-        paper-button{
+        paper-button {
           height: 40px;
           padding: 0px 5px;
           margin-left: 10px;
@@ -44,39 +44,43 @@ export class ExportData extends LitElement {
   public render() {
     return html`
       <style>
-          #pdExportMenuBtn {
-            /* Prevent first item highlighted by default */
-            --paper-item-focused-before: {
-              background: none;
-              opacity: 0;
-            };
-            --paper-item-focused-after: {
-              background: none;
-              opacity: 0;
-            }
+        #pdExportMenuBtn {
+          /* Prevent first item highlighted by default */
+          --paper-item-focused-before: {
+            background: none;
+            opacity: 0;
           }
+          --paper-item-focused-after: {
+            background: none;
+            opacity: 0;
+          }
+        }
       </style>
       <paper-menu-button id="pdExportMenuBtn" close-on-activate horizontal-align="right">
-          <paper-button slot="dropdown-trigger" class="dropdown-trigger">
-            <iron-icon icon="file-download"></iron-icon>
-            Export
-          </paper-button>
-          <paper-listbox slot="dropdown-content">
-            ${this.exportLinks.map(item => html`
-            <paper-item @tap="${() => this.export(item.type)}">${item.name}</paper-item>`)}
-          </paper-listbox>
-        </paper-menu-button>
+        <paper-button slot="dropdown-trigger" class="dropdown-trigger">
+          <iron-icon icon="file-download"></iron-icon>
+          Export
+        </paper-button>
+        <paper-listbox slot="dropdown-content">
+          ${this.exportLinks.map(
+            (item) => html` <paper-item @tap="${() => this.export(item.type)}">${item.name}</paper-item>`
+          )}
+        </paper-listbox>
+      </paper-menu-button>
     `;
   }
 
   @property({type: Array})
-  exportLinks: GenericObject[] = [{
-    name: 'Export Excel',
-    type: 'xlsx'
-  }, {
-    name: 'Export CSV',
-    type: 'csv'
-  }];
+  exportLinks: GenericObject[] = [
+    {
+      name: 'Export Excel',
+      type: 'xlsx'
+    },
+    {
+      name: 'Export CSV',
+      type: 'csv'
+    }
+  ];
 
   @property({type: String})
   params: string = '';
@@ -88,5 +92,4 @@ export class ExportData extends LitElement {
     const url = this.endpoint + `export/${type}/` + (this.params ? `?${this.params}` : '');
     window.open(url, '_blank');
   }
-
 }
