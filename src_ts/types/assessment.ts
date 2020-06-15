@@ -49,7 +49,7 @@ export enum AssessorTypes {
 export class Assessor {
   id?: string;
   assessor_type: AssessorTypes = AssessorTypes.Staff;
-  order_number: string = '';
+  order_number: string | null = '';
   assessment: string | null = null;
   user: string | null = null;
   auditor_firm: string | null = null;

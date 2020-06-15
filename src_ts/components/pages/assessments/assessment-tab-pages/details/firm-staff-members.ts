@@ -238,8 +238,8 @@ export class FirmStaffMembers extends LitElement {
   }
 
   saveFirmAssessorStaffAccess(staffMember: EtoolsStaffMemberModel) {
-    if ((staffMember.hasAccess && this.currentFirmAssessorStaffWithAccess.includes(staffMember.id)) ||
-      (!staffMember.hasAccess && !this.currentFirmAssessorStaffWithAccess.includes(staffMember.id))) {
+    if ((staffMember.hasAccess && this.currentFirmAssessorStaffWithAccess.includes(parseInt(staffMember.id))) ||
+      (!staffMember.hasAccess && !this.currentFirmAssessorStaffWithAccess.includes(parseInt(staffMember.id)))) {
       return;
     }
 
@@ -267,9 +267,9 @@ export class FirmStaffMembers extends LitElement {
   private addOrRemoveFromCurrentStaffMembersWithAccess(staffMember: EtoolsStaffMemberModel) {
     let updatedStaffWithAccessIds: number[] = [...this.currentFirmAssessorStaffWithAccess];
     if (staffMember.hasAccess) {
-      updatedStaffWithAccessIds.push(staffMember.id);
+      updatedStaffWithAccessIds.push(parseInt(staffMember.id));
     } else {
-      updatedStaffWithAccessIds = updatedStaffWithAccessIds.filter((id: number) => id !== staffMember.id);
+      updatedStaffWithAccessIds = updatedStaffWithAccessIds.filter((id: number) => id !== parseInt(staffMember.id));
     }
 
     return updatedStaffWithAccessIds;
