@@ -128,6 +128,9 @@ export const SharedStylesLit = html`
       --paper-input-container-label-floating: {
         color: var(--secondary-text-color, #737373);
       }
+      --paper-input-container-input: {
+        display: block;
+      }
     }
 
     paper-input[required][label],
