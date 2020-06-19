@@ -16,13 +16,13 @@ export const radioButtonStyles = css`
     --paper-radio-button-checked-color: var(--primary-shade-of-green);
     --paper-radio-button-unchecked-color: var(--primary-shade-of-green);
   }
-  .red-border{
+  .red-border {
     border: solid 1px var(--primary-shade-of-red);
   }
-  .orange-border{
+  .orange-border {
     border: solid 1px var(--primary-shade-of-orange);
   }
-  .green-border{
+  .green-border {
     border: solid 1px var(--primary-shade-of-green);
   }
 `;

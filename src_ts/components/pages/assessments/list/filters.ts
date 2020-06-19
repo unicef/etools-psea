@@ -19,8 +19,12 @@ export enum FilterKeys {
 
 export type FilterKeysAndTheirSelectedValues = {[key in FilterKeys]?: any};
 
-export const onlyForUnicefFilters = [FilterKeys.assessor_staff, FilterKeys.assessor_firm,
-FilterKeys.assessor_external, FilterKeys.unicef_focal_point];
+export const onlyForUnicefFilters = [
+  FilterKeys.assessor_staff,
+  FilterKeys.assessor_firm,
+  FilterKeys.assessor_external,
+  FilterKeys.unicef_focal_point
+];
 
 export const defaultSelectedFilters: FilterKeysAndTheirSelectedValues = {
   q: '',
@@ -179,8 +183,10 @@ export const assessmentsFilters: EtoolsFilter[] = [
   }
 ];
 
-export const updateFiltersSelectedValues = (selectedFilters: FilterKeysAndTheirSelectedValues,
-  filters: EtoolsFilter[]) => {
+export const updateFiltersSelectedValues = (
+  selectedFilters: FilterKeysAndTheirSelectedValues,
+  filters: EtoolsFilter[]
+) => {
   const availableFilters = [...filters];
 
   for (const fKey in selectedFilters) {
@@ -189,9 +195,7 @@ export const updateFiltersSelectedValues = (selectedFilters: FilterKeysAndTheirS
       if (selectedValue) {
         const filter = availableFilters.find((f: EtoolsFilter) => f.filterKey === fKey);
         if (filter) {
-          filter.selectedValue = selectedValue instanceof Array
-            ? [...selectedValue]
-            : selectedValue;
+          filter.selectedValue = selectedValue instanceof Array ? [...selectedValue] : selectedValue;
 
           filter.selected = true;
         }

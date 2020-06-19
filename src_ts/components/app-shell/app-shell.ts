@@ -68,7 +68,6 @@ store.addReducers({
  */
 @customElement('app-shell')
 export class AppShell extends connect(store)(LitElement) {
-
   static get styles() {
     return [AppShellStyles];
   }
@@ -77,45 +76,61 @@ export class AppShell extends connect(store)(LitElement) {
     // main template
     // language=HTML
     return html`
-    <app-drawer-layout id="layout" responsive-width="850px"
-                       fullbleed ?narrow="${this.narrow}" ?small-menu="${this.smallMenu}">
-      <!-- Drawer content -->
-      <app-drawer id="drawer" slot="drawer" transition-duration="350"
-                  @app-drawer-transitioned="${this.onDrawerToggle}"
-                  ?opened="${this.drawerOpened}"
-                  ?swipe-open="${this.narrow}" ?small-menu="${this.smallMenu}">
-        <!-- App main menu(left sidebar) -->
-        <app-menu selected-option="${this.mainPage}"
-                  @toggle-small-menu="${(e: CustomEvent) => this.toggleMenu(e)}"
-                  ?small-menu="${this.smallMenu}"></app-menu>
-      </app-drawer>
-
-      <!-- Main content -->
-      <app-header-layout id="appHeadLayout" fullbleed has-scrolling-region>
-
-        <app-header slot="header" fixed shadow>
-          <page-header id="pageheader" title="eTools"></page-header>
-        </app-header>
+      <app-drawer-layout
+        id="layout"
+        responsive-width="850px"
+        fullbleed
+        ?narrow="${this.narrow}"
+        ?small-menu="${this.smallMenu}"
+      >
+        <!-- Drawer content -->
+        <app-drawer
+          id="drawer"
+          slot="drawer"
+          transition-duration="350"
+          @app-drawer-transitioned="${this.onDrawerToggle}"
+          ?opened="${this.drawerOpened}"
+          ?swipe-open="${this.narrow}"
+          ?small-menu="${this.smallMenu}"
+        >
+          <!-- App main menu(left sidebar) -->
+          <app-menu
+            selected-option="${this.mainPage}"
+            @toggle-small-menu="${(e: CustomEvent) => this.toggleMenu(e)}"
+            ?small-menu="${this.smallMenu}"
+          ></app-menu>
+        </app-drawer>
 
         <!-- Main content -->
-        <main role="main" class="main-content">
-          <assessments-list class="page"
-            ?active="${this.isActivePage(this.mainPage, 'assessments',
-      this.subPage, 'list')}">
-          </assessments-list>
-          <assessment-tabs class="page"
-            ?active="${this.isActivePage(this.mainPage, 'assessments',
-        this.subPage, 'details|questionnaire|followup')}">
-          </assessment-tabs>
-          <page-not-found class="page"
-            ?active="${this.isActivePage(this.mainPage, 'page-not-found')}">
-          </page-not-found>
-        </main>
+        <app-header-layout id="appHeadLayout" fullbleed has-scrolling-region>
+          <app-header slot="header" fixed shadow>
+            <page-header id="pageheader" title="eTools"></page-header>
+          </app-header>
 
-        <page-footer></page-footer>
+          <!-- Main content -->
+          <main role="main" class="main-content">
+            <assessments-list
+              class="page"
+              ?active="${this.isActivePage(this.mainPage, 'assessments', this.subPage, 'list')}"
+            >
+            </assessments-list>
+            <assessment-tabs
+              class="page"
+              ?active="${this.isActivePage(
+                this.mainPage,
+                'assessments',
+                this.subPage,
+                'details|questionnaire|followup'
+              )}"
+            >
+            </assessment-tabs>
+            <page-not-found class="page" ?active="${this.isActivePage(this.mainPage, 'page-not-found')}">
+            </page-not-found>
+          </main>
 
-      </app-header-layout>
-    </app-drawer-layout>
+          <page-footer></page-footer>
+        </app-header-layout>
+      </app-drawer-layout>
     `;
   }
 
@@ -184,10 +199,8 @@ export class AppShell extends connect(store)(LitElement) {
 
   public connectedCallback() {
     super.connectedCallback();
-    installRouter(location => store.dispatch(
-      navigate(decodeURIComponent(location.pathname + location.search))));
-    installMediaQueryWatcher(`(min-width: 460px)`,
-      () => store.dispatch(updateDrawerState(false)));
+    installRouter((location) => store.dispatch(navigate(decodeURIComponent(location.pathname + location.search))));
+    installMediaQueryWatcher(`(min-width: 460px)`, () => store.dispatch(updateDrawerState(false)));
 
     // this will prevent the header to overlap etools-dropdown
     customElements.whenDefined('app-header-layout').then(() => {
@@ -195,7 +208,6 @@ export class AppShell extends connect(store)(LitElement) {
         window.EtoolsEsmmFitIntoEl = this.appHeaderLayout!.shadowRoot!.querySelector('#contentContainer');
       }
     });
-
   }
 
   public disconnectedCallback() {
@@ -252,8 +264,12 @@ export class AppShell extends connect(store)(LitElement) {
     return subPages.indexOf(currentSubPageName) > -1;
   }
 
-  protected isActivePage(pageName: string, expectedPageName: string,
-    currentSubPageName?: string | null, expectedSubPageNames?: string): boolean {
+  protected isActivePage(
+    pageName: string,
+    expectedPageName: string,
+    currentSubPageName?: string | null,
+    expectedSubPageNames?: string
+  ): boolean {
     if (!this.isActiveMainPage(pageName, expectedPageName)) {
       return false;
     }

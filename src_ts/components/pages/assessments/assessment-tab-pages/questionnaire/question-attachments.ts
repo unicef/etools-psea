@@ -16,7 +16,9 @@ import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown';
 @customElement('question-attachments')
 export class QuestionAttachmentsElement extends LitElement {
   static get styles() {
-    return [labelAndvalueStylesLit, gridLayoutStylesLit,
+    return [
+      labelAndvalueStylesLit,
+      gridLayoutStylesLit,
       css`
         .container {
           background-color: var(--secondary-background-color);
@@ -31,7 +33,7 @@ export class QuestionAttachmentsElement extends LitElement {
           font-weight: 600;
           color: rgba(0, 0, 0, 0.64);
         }
-        div.header>div {
+        div.header > div {
           padding-right: 16px;
         }
 
@@ -47,11 +49,11 @@ export class QuestionAttachmentsElement extends LitElement {
           color: var(--error-color);
         }
 
-        div.att > div[class^="col-"] {
+        div.att > div[class^='col-'] {
           box-sizing: border-box;
         }
 
-        iron-icon[icon="file-download"] {
+        iron-icon[icon='file-download'] {
           color: var(--primary-color);
           margin-left: -4px;
         }
@@ -77,8 +79,8 @@ export class QuestionAttachmentsElement extends LitElement {
         etools-dropdown[required][no-star] {
           --paper-input-container-label: {
             background: none;
-            color: var(--secondary-text-color, #737373)
-          };
+            color: var(--secondary-text-color, #737373);
+          }
           --paper-input-container-label-floating: {
             background: none;
             color: var(--secondary-text-color, #737373);
@@ -88,16 +90,17 @@ export class QuestionAttachmentsElement extends LitElement {
       ${SharedStylesLit}
 
       <div class="row-padding-v">
-        <etools-upload-multi ?hidden="${!this.editMode}"
+        <etools-upload-multi
+          ?hidden="${!this.editMode}"
           .uploadEndpoint="${etoolsEndpoints.attachmentsUpload.url}"
           @upload-finished="${this.handleUploadedFiles}"
-          class="padd-top">
+          class="padd-top"
+        >
         </etools-upload-multi>
         <label class="paper-label" ?hidden="${this.editMode}">Files</label>
       </div>
       <div class="container">
         ${this._getAttachmentsHeaderTemplate(this.attachments)}
-
         ${this._getAttachmentsTemplate(this.attachments, this.editMode)}
       </div>
     `;
@@ -135,8 +138,9 @@ export class QuestionAttachmentsElement extends LitElement {
         <div class="layout-horizontal row-padding-v align-items-center att">
           <div class="col-2 padd-right">${prettyDate(att.created)}</div>
           <div class="col-4 extra-padd-right">
-            <etools-dropdown no-label-float
-               id="${'filetype' + att.id}"
+            <etools-dropdown
+              no-label-float
+              id="${'filetype' + att.id}"
               .options="${this.documentTypes}"
               .selected="${att.file_type}"
               option-value="id"
@@ -147,7 +151,8 @@ export class QuestionAttachmentsElement extends LitElement {
               required
               no-star
               trigger-value-change-event
-              @etools-selected-item-changed="${(e: CustomEvent) => this._setSelectedDocType(e, att)}">
+              @etools-selected-item-changed="${(e: CustomEvent) => this._setSelectedDocType(e, att)}"
+            >
             </etools-dropdown>
           </div>
           <div class="col-5 padd-right break-word">
@@ -164,14 +169,13 @@ export class QuestionAttachmentsElement extends LitElement {
   _getAttachmentNameTemplate(att: AnswerAttachment) {
     if (att.url) {
       return html`
-        <a target="_blank" href="${att.url}"><iron-icon icon="file-download"></iron-icon>
+        <a target="_blank" href="${att.url}"
+          ><iron-icon icon="file-download"></iron-icon>
           ${getFileNameFromURL(att.url)}
         </a>
       `;
     } else {
-      return html`
-        ${att._filename}
-      `;
+      return html` ${att._filename} `;
     }
   }
 
@@ -234,4 +238,3 @@ export class QuestionAttachmentsElement extends LitElement {
     fireEvent(this, 'delete-attachment', {attachmentId: attId, isNotSavedYet: isNotSavedYet});
   }
 }
-

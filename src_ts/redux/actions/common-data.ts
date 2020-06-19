@@ -26,17 +26,16 @@ export interface CommonDataActionSetSections extends Action<'SET_SECTIONS'> {
 }
 
 export type CommonDataAction =
-  CommonDataActionSetUnicefUsersData
+  | CommonDataActionSetUnicefUsersData
   | CommonDataActionSetOffices
   | CommonDataActionSetSections;
 
-export const updateUnicefUsersData: ActionCreator<CommonDataActionSetUnicefUsersData> =
-  (unicefUsersData: object[]) => {
-    return {
-      type: SET_UNICEF_USERS_DATA,
-      unicefUsersData
-    };
+export const updateUnicefUsersData: ActionCreator<CommonDataActionSetUnicefUsersData> = (unicefUsersData: object[]) => {
+  return {
+    type: SET_UNICEF_USERS_DATA,
+    unicefUsersData
   };
+};
 
 export const setPartners = (partners: []) => {
   return {
@@ -114,7 +113,7 @@ export const loadExternalIndividuals = (callBack?: () => void) => (dispatch: any
       logError('loadExternalIndividuals req error...', LOGS_PREFIX, error);
     })
     .then(() => {
-      if (callBack && typeof (callBack) === 'function') {
+      if (callBack && typeof callBack === 'function') {
         callBack();
       }
     });
