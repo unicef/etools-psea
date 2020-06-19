@@ -4,6 +4,7 @@ import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../redux/store';
 
 import '../../common/layout/page-content-header/page-content-header';
+// eslint-disable-next-line max-len
 import {pageContentHeaderSlottedStyles} from '../../common/layout/page-content-header/page-content-header-slotted-styles';
 
 import {pageLayoutStyles} from '../../styles/page-layout-styles';
