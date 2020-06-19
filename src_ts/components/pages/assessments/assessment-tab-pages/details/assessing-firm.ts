@@ -12,7 +12,6 @@ import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {buttonsStyles} from '../../../../styles/button-styles';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
-
 /**
  * @customElement
  * @LitElement
@@ -25,7 +24,7 @@ export class AssessingFirm extends LitElement {
   render() {
     // language=HTML
     return html`
-     ${SharedStylesLit}
+      ${SharedStylesLit}
       <style>
         .input-width {
           max-width: 230px;
@@ -45,30 +44,34 @@ export class AssessingFirm extends LitElement {
           width: 16px;
           height: 16px;
         }
-
       </style>
 
       <div class="layout-horizontal row-padding-v">
-        <paper-input id="poNumber" label="Enter PO Number" always-float-label
+        <paper-input
+          id="poNumber"
+          label="Enter PO Number"
+          always-float-label
           class="input-width"
           .value="${this.assessor.order_number}"
           @value-changed=${(e: CustomEvent) => this._updatePoNumber((e.target! as PaperInputElement).value!)}
           allowed-pattern="[0-9]"
-          maxlength=10
+          maxlength="10"
           error-message="${this.errMessage}"
           auto-validate
           required
-          ?readonly="${this.isReadonly(this.editMode)}">
+          ?readonly="${this.isReadonly(this.editMode)}"
+        >
         </paper-input>
-        <paper-button class="info left-icon"
-                      @tap="${this.getAssessorFirmByPoNumber}"
-                      ?hidden="${this.isReadonly(this.editMode) || this.poRequestInProgress}">
+        <paper-button
+          class="info left-icon"
+          @tap="${this.getAssessorFirmByPoNumber}"
+          ?hidden="${this.isReadonly(this.editMode) || this.poRequestInProgress}"
+        >
           <iron-icon icon="autorenew"></iron-icon>
           Get firm details
         </paper-button>
         <span class="po-loading" ?hidden="${!this.poRequestInProgress}">
-          <paper-spinner ?active="${this.poRequestInProgress}">
-          </paper-spinner>
+          <paper-spinner ?active="${this.poRequestInProgress}"> </paper-spinner>
           Loading...
         </span>
         <span class="no-details-warning error" ?hidden="${!this.showGetDetailsBtnWarn}">
@@ -125,7 +128,8 @@ export class AssessingFirm extends LitElement {
       })
       .catch((err: any) => {
         this._handleErrorOnGetFirm(err);
-      }).then(() => {
+      })
+      .then(() => {
         this.poRequestInProgress = false;
       });
   }
@@ -191,5 +195,4 @@ export class AssessingFirm extends LitElement {
   getFirmName() {
     return this.assessor.auditor_firm_name;
   }
-
 }

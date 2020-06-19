@@ -7,8 +7,12 @@ import {GenericObject} from '../../types/globals';
 export const SET_USER_DATA = 'SET_USER_DATA';
 export const SET_USER_PERMISSIONS = 'SET_USER_PERMISSIONS';
 
-export interface UserActionSet extends Action<'SET_USER_DATA'> {data: EtoolsUserModel}
-export interface UserActionSetPermissions extends Action<'SET_USER_PERMISSIONS'> {permissions: GenericObject}
+export interface UserActionSet extends Action<'SET_USER_DATA'> {
+  data: EtoolsUserModel;
+}
+export interface UserActionSetPermissions extends Action<'SET_USER_PERMISSIONS'> {
+  permissions: GenericObject;
+}
 
 export type UserAction = UserActionSet | UserActionSetPermissions;
 // @ts-ignore - for now

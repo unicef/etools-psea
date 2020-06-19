@@ -24,7 +24,8 @@ export const getSortFields = (columns: EtoolsTableColumn[]): EtoolsTableSortItem
   const sortedColumns: any[] = columns.filter((c: EtoolsTableColumn) => c.sort !== undefined);
   if (sortedColumns.length > 0) {
     sortItems = sortedColumns.map((c: EtoolsTableColumn) =>
-      Object.assign({}, {name: c.name, sort: c.sort})) as EtoolsTableSortItem[];
+      Object.assign({}, {name: c.name, sort: c.sort})
+    ) as EtoolsTableSortItem[];
   }
   return sortItems;
 };
@@ -57,11 +58,13 @@ export const buildUrlQueryString = (params: GenericObject): string => {
         filterUrlValue = paramValue.join(',');
       }
     } else if (typeof paramValue === 'boolean') {
-      if (paramValue) { // ignore if it's false
+      if (paramValue) {
+        // ignore if it's false
         filterUrlValue = 'true';
       }
     } else {
-      if (!(param === 'page' && paramValue === 1)) { // do not include page if page=1
+      if (!(param === 'page' && paramValue === 1)) {
+        // do not include page if page=1
         filterUrlValue = String(paramValue).trim();
       }
     }
@@ -73,7 +76,6 @@ export const buildUrlQueryString = (params: GenericObject): string => {
 
   return queryParams.join('&');
 };
-
 
 /**
  * TODO - probably should move out of etools-table-utility because it uses
@@ -87,7 +89,7 @@ export const getSelectedFiltersFromUrlParams = (params: GenericObject): FilterKe
       if (selectedValueTypeByFilterKey[filterKey] === 'Array') {
         selectedFilters[filterKey] = params[filterKey].split(',');
       } else if (selectedValueTypeByFilterKey[filterKey] === 'boolean') {
-        selectedFilters[filterKey] = (params[filterKey] === 'true');
+        selectedFilters[filterKey] = params[filterKey] === 'true';
       } else {
         selectedFilters[filterKey] = params[filterKey];
       }
@@ -95,5 +97,3 @@ export const getSelectedFiltersFromUrlParams = (params: GenericObject): FilterKe
   }
   return selectedFilters as FilterKeysAndTheirSelectedValues;
 };
-
-

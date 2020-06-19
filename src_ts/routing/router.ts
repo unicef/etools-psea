@@ -1,5 +1,9 @@
-export interface RouteQueryParam {[key: string]: string}
-export interface RouteParams {[key: string]: number | string}
+export interface RouteQueryParam {
+  [key: string]: string;
+}
+export interface RouteParams {
+  [key: string]: number | string;
+}
 
 export interface RouteQueryParams {
   [key: string]: string;
@@ -31,7 +35,7 @@ export class Router {
   }
 
   constructor(rootPath?: string) {
-    this.root = (rootPath && rootPath !== '/') ? ('/' + Router.clearSlashes(rootPath) + '/') : '/';
+    this.root = rootPath && rootPath !== '/' ? '/' + Router.clearSlashes(rootPath) + '/' : '/';
   }
 
   getLocationPath(path?: string): string {
@@ -48,12 +52,13 @@ export class Router {
 
   isRouteAdded(regex: RegExp | null): boolean {
     const filterKey: string = regex instanceof RegExp ? regex.toString() : '';
-    const route = this.routes.find(r => r.regex.toString() === filterKey);
+    const route = this.routes.find((r) => r.regex.toString() === filterKey);
     return !!route;
   }
 
   addRoute(regex: RegExp | null, handler: (params: RouteCallbackParams) => RouteDetails): Router {
-    if (!this.isRouteAdded(regex)) { // prevent adding the same route multiple times
+    if (!this.isRouteAdded(regex)) {
+      // prevent adding the same route multiple times
       this.routes.push({regex: regex === null ? '' : regex, handler: handler});
     }
     return this;
@@ -82,7 +87,7 @@ export class Router {
   getRouteDetails(path?: string): RouteDetails | null {
     let routeDetails: RouteDetails | null = null;
     let locationPath: string = path ? this.getLocationPath(path) : this.getLocationPath();
-    //logInfo(locationPath, 'Router.getRouteDetails.locationPath: ');
+    // logInfo(locationPath, 'Router.getRouteDetails.locationPath: ');
 
     const qsStartIndex: number = locationPath.indexOf('?');
     let qs = '';
@@ -107,7 +112,7 @@ export class Router {
   }
 
   prepareLocationPath(path: string): string {
-    return (path.indexOf(this.root) === -1) ? (this.root + Router.clearSlashes(path)) : path;
+    return path.indexOf(this.root) === -1 ? this.root + Router.clearSlashes(path) : path;
   }
 
   pushState(path?: string) {

@@ -15,6 +15,5 @@ export const getFileNameFromURL = (url: string) => {
 };
 
 export const onListPage = (routeDetails: any) => {
-  return routeDetails.routeName === 'assessments' &&
-    routeDetails.subRouteName == 'list';
+  return routeDetails.routeName === 'assessments' && routeDetails.subRouteName == 'list';
 };

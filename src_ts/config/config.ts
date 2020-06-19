@@ -1,7 +1,7 @@
 declare global {
   interface Window {
-    EtoolsLogsLevel: string,
-    EtoolsEsmmFitIntoEl: any
+    EtoolsLogsLevel: string;
+    EtoolsEsmmFitIntoEl: any;
   }
 }
 

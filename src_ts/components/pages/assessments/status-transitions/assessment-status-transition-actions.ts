@@ -1,6 +1,4 @@
-import {
-  LitElement, html, customElement, property
-} from 'lit-element';
+import {LitElement, html, customElement, property} from 'lit-element';
 import '@polymer/paper-input/paper-textarea.js';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 import EtoolsDialog from '@unicef-polymer/etools-dialog/etools-dialog';
@@ -27,8 +25,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     // language=HTML
     return html`
       <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
-      ${this.cancelAssessmentStatusActionTmpl(this.assessment)}
-      ${this.assessmentStatusActionBtnsTmpl(this.assessment)}
+      ${this.cancelAssessmentStatusActionTmpl(this.assessment)} ${this.assessmentStatusActionBtnsTmpl(this.assessment)}
     `;
   }
 
@@ -56,8 +53,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   assignBtnHtml() {
     return html`
-      <paper-button class="primary right-icon responsive"
-          raised @tap="${() => this.updateAssessmentStatus('assign')}">
+      <paper-button class="primary right-icon responsive" raised @tap="${() => this.updateAssessmentStatus('assign')}">
         Assign
         <iron-icon icon="assignment-ind"></iron-icon>
       </paper-button>
@@ -66,8 +62,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   submitBtnHtml() {
     return html`
-      <paper-button class="primary right-icon responsive"
-          raised @tap="${() => this.updateAssessmentStatus('submit')}">
+      <paper-button class="primary right-icon responsive" raised @tap="${() => this.updateAssessmentStatus('submit')}">
         Submit
         <iron-icon icon="chevron-right"></iron-icon>
       </paper-button>
@@ -76,8 +71,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   rejectBtnHtml() {
     return html`
-      <paper-button class="error right-icon responsive"
-        raised @tap="${() => this.updateAssessmentStatus('reject')}">
+      <paper-button class="error right-icon responsive" raised @tap="${() => this.updateAssessmentStatus('reject')}">
         Reject
         <iron-icon icon="assignment-return"></iron-icon>
       </paper-button>
@@ -86,8 +80,11 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   finalizeBtnHtml() {
     return html`
-      <paper-button class="success right-icon responsive"
-          raised @tap="${() => this.updateAssessmentStatus('finalize')}">
+      <paper-button
+        class="success right-icon responsive"
+        raised
+        @tap="${() => this.updateAssessmentStatus('finalize')}"
+      >
         Finalize
         <iron-icon icon="chevron-right"></iron-icon>
       </paper-button>
@@ -95,8 +92,11 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   }
 
   cancelAssessmentStatusActionTmpl(assessment: Assessment) {
-    if (!assessment || !assessment.available_actions ||
-      !this.canShowActionBtn(assessment.available_actions, 'cancel')) {
+    if (
+      !assessment ||
+      !assessment.available_actions ||
+      !this.canShowActionBtn(assessment.available_actions, 'cancel')
+    ) {
       return;
     }
     return this.cancelBtnHtml();
@@ -108,23 +108,15 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     }
     switch (assessment.status) {
       case 'draft':
-        return this.canShowActionBtn(assessment.available_actions, 'assign')
-          ? this.assignBtnHtml()
-          : '';
+        return this.canShowActionBtn(assessment.available_actions, 'assign') ? this.assignBtnHtml() : '';
       case 'in_progress':
       case 'rejected':
-        return this.canShowActionBtn(assessment.available_actions, 'submit')
-          ? this.submitBtnHtml()
-          : '';
+        return this.canShowActionBtn(assessment.available_actions, 'submit') ? this.submitBtnHtml() : '';
       case 'submitted':
         return html`
-          ${this.canShowActionBtn(assessment.available_actions, 'reject')
-            ? this.rejectBtnHtml()
-            : ''}
-          ${this.canShowActionBtn(assessment.available_actions, 'finalize')
-            ? this.finalizeBtnHtml()
-            : ''}
-          `;
+          ${this.canShowActionBtn(assessment.available_actions, 'reject') ? this.rejectBtnHtml() : ''}
+          ${this.canShowActionBtn(assessment.available_actions, 'finalize') ? this.finalizeBtnHtml() : ''}
+        `;
       default:
         return '';
     }
@@ -178,13 +170,13 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
       }
       this.statusChangeConfirmationDialog.opened = true;
     }
-
   }
 
   updateConfirmationMsgAction(action: string) {
     let warnMsg = `Are you sure you want to ${action} this assessment?`;
     if (action === 'finalize') {
-      warnMsg = 'Your finalisation of this Assessment confirms that you are satisfied that' +
+      warnMsg =
+        'Your finalisation of this Assessment confirms that you are satisfied that' +
         ' the process followed by the Assessor is in line with expected procedure, and that the Proof of Evidence' +
         ' provided by the Partner supports the rating against each Core Standard.';
     }
@@ -202,8 +194,10 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     if (!this.assessment || !this.currentStatusAction) {
       throw new Error('Assessment obj or statusAction not set!');
     }
-    const url = getEndpoint(etoolsEndpoints.assessmentStatusUpdate,
-      {id: this.assessment.id, statusAction: this.currentStatusAction}).url!;
+    const url = getEndpoint(etoolsEndpoints.assessmentStatusUpdate, {
+      id: this.assessment.id,
+      statusAction: this.currentStatusAction
+    }).url!;
 
     if (this.currentStatusAction === 'reject') {
       this.rejectAssessment(url, e.detail.reason);
@@ -221,11 +215,13 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
         this.showLoading = false;
         // update assessment data in redux store
         store.dispatch(updateAssessmentData(response));
-      }).catch((err: any) => {
+      })
+      .catch((err: any) => {
         this.showLoading = false;
         logError('Status update failed', 'AssessmentStatusTransitionActions', err);
         parseRequestErrorsAndShowAsToastMsgs(err, this);
-      }).then(() => {
+      })
+      .then(() => {
         // req finalized... reset data
         this.currentStatusAction = '';
       });
@@ -244,10 +240,12 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
         store.dispatch(updateAssessmentData(response));
         this.rejectionDialog.closeDialog();
         this.currentStatusAction = '';
-      }).catch((err: any) => {
+      })
+      .catch((err: any) => {
         logError('Reject req failed', 'AssessmentStatusTransitionActions', err);
         parseRequestErrorsAndShowAsToastMsgs(err, this);
-      }).then(() => {
+      })
+      .then(() => {
         // req finalized...
         this.rejectionDialog.spinnerLoading = false;
         this.showLoading = false;
@@ -271,8 +269,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   createRejectionDialog() {
     if (!this.rejectionDialog) {
-      this.rejectionDialog =
-        document.createElement('assessment-rejection-dialog') as AssessmentRejectionDialog;
+      this.rejectionDialog = document.createElement('assessment-rejection-dialog') as AssessmentRejectionDialog;
       this.rejectionDialog.fireEventSource = this;
       document.querySelector('body')!.appendChild(this.rejectionDialog);
     }

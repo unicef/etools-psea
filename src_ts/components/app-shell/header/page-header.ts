@@ -26,7 +26,6 @@ import {pageHeaderStyles} from './page-header-styles';
  */
 @customElement('page-header')
 export class PageHeader extends connect(store)(LitElement) {
-
   static get styles() {
     return [pageHeaderStyles];
   }
@@ -45,9 +44,11 @@ export class PageHeader extends connect(store)(LitElement) {
         <paper-icon-button id="menuButton" icon="menu" @tap="${() => this.menuBtnClicked()}"></paper-icon-button>
         <div class="titlebar content-align">
           <etools-app-selector .user="${this.profile}"></etools-app-selector>
-          <img id="app-logo" src="${this.rootPath}images/etools-logo-color-white.svg" alt="eTools">
-          ${!this.isProduction ? html`<div class="envWarning">
-          <span class='envLong'> - </span>${this.environment} <span class='envLong'>TESTING ENVIRONMENT<span></div>` : ''}
+          <img id="app-logo" src="${this.rootPath}images/etools-logo-color-white.svg" alt="eTools" />
+          ${!this.isProduction
+            ? html`<div class="envWarning">
+          <span class='envLong'> - </span>${this.environment} <span class='envLong'>TESTING ENVIRONMENT<span></div>`
+            : ''}
         </div>
         <div class="content-align">
           <countries-dropdown></countries-dropdown>
@@ -55,14 +56,14 @@ export class PageHeader extends connect(store)(LitElement) {
           <support-btn></support-btn>
 
           <etools-profile-dropdown
-              .sections="${this.profileDrSections}"
-              .offices="${this.profileDrOffices}"
-              .users="${this.profileDrUsers}"
-              .profile="${ this.profile ? {...this.profile} : {}}"
-              @save-profile="${this.handleSaveProfile}"
-              @sign-out="${this._signOut}">
+            .sections="${this.profileDrSections}"
+            .offices="${this.profileDrOffices}"
+            .users="${this.profileDrUsers}"
+            .profile="${this.profile ? {...this.profile} : {}}"
+            @save-profile="${this.handleSaveProfile}"
+            @sign-out="${this._signOut}"
+          >
           </etools-profile-dropdown>
-
         </div>
       </app-toolbar>
     `;
@@ -127,13 +128,16 @@ export class PageHeader extends connect(store)(LitElement) {
       return;
     }
     this.profileSaveLoadingMsgDisplay();
-    updateCurrentUserData(modifiedFields).then(() => {
-      this.showSaveNotification();
-    }).catch(() => {
-      this.showSaveNotification('Profile data not saved. Save profile error!');
-    }).then(() => {
-      this.profileSaveLoadingMsgDisplay(false);
-    });
+    updateCurrentUserData(modifiedFields)
+      .then(() => {
+        this.showSaveNotification();
+      })
+      .catch(() => {
+        this.showSaveNotification('Profile data not saved. Save profile error!');
+      })
+      .then(() => {
+        this.profileSaveLoadingMsgDisplay(false);
+      });
   }
 
   protected profileSaveLoadingMsgDisplay(show: boolean = true) {
@@ -163,10 +167,13 @@ export class PageHeader extends connect(store)(LitElement) {
 
   protected checkEnvironment() {
     this.isProduction = isProductionServer();
-    this.environment = isDevServer() ? 'DEVELOPMENT' :
-      isDemoServer() ? 'DEMO' :
-        isStagingServer() ? 'STAGING' :
-          'LOCAL';
+    this.environment = isDevServer()
+      ? 'DEVELOPMENT'
+      : isDemoServer()
+      ? 'DEMO'
+      : isStagingServer()
+      ? 'STAGING'
+      : 'LOCAL';
   }
 
   public menuBtnClicked() {

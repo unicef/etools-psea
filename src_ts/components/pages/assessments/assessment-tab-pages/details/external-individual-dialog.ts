@@ -37,31 +37,33 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
     // language=HTML
     return html`
       ${SharedStylesLit}
-      <etools-dialog id="externalIndividualDialog"
-                      ?opened="${this.dialogOpened}"
-                      dialog-title="${this.dialogTitle}"
-                      size="md"
-                      ?show-spinner="${this.requestInProgress}"
-                      @close="${this.handleDialogClosed}"
-                      ok-btn-text="${this.confirmBtnText}"
-                      ?disable-confirm-btn="${this.requestInProgress}"
-                      keep-dialog-open
-                      @confirm-btn-clicked="${this.onSaveClick}">
-
+      <etools-dialog
+        id="externalIndividualDialog"
+        ?opened="${this.dialogOpened}"
+        dialog-title="${this.dialogTitle}"
+        size="md"
+        ?show-spinner="${this.requestInProgress}"
+        @close="${this.handleDialogClosed}"
+        ok-btn-text="${this.confirmBtnText}"
+        ?disable-confirm-btn="${this.requestInProgress}"
+        keep-dialog-open
+        @confirm-btn-clicked="${this.onSaveClick}"
+      >
         <div id="ext-individual-details-row" class="layout-horizontal">
           <div class="col col-4">
             <!-- Email address -->
             <paper-input
-                    id="emailInput"
-                    value="${this.editedItem.email}"
-                    label="E-mail"
-                    type="email"
-                    placeholder="Enter E-mail"
-                    required
-                    maxlength="45"
-                    error-message="Email is required"
-                    @focus="${this.resetFieldError}"
-                    @tap="${this.resetFieldError}">
+              id="emailInput"
+              value="${this.editedItem.email}"
+              label="E-mail"
+              type="email"
+              placeholder="Enter E-mail"
+              required
+              maxlength="45"
+              error-message="Email is required"
+              @focus="${this.resetFieldError}"
+              @tap="${this.resetFieldError}"
+            >
               <iron-icon slot="prefix" icon="communication:email"></iron-icon>
             </paper-input>
           </div>
@@ -69,30 +71,32 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
           <div class="col col-4">
             <!-- First Name -->
             <paper-input
-                    id="firstNameInput"
-                    value="${this.editedItem.first_name}"
-                    label="First Name"
-                    placeholder="Enter First Name"
-                    required
-                    maxlength="30"
-                    error-message="${this.requiredMessage}"
-                    @focus="${this.resetFieldError}"
-                    @tap="${this.resetFieldError}">
+              id="firstNameInput"
+              value="${this.editedItem.first_name}"
+              label="First Name"
+              placeholder="Enter First Name"
+              required
+              maxlength="30"
+              error-message="${this.requiredMessage}"
+              @focus="${this.resetFieldError}"
+              @tap="${this.resetFieldError}"
+            >
             </paper-input>
           </div>
 
           <div class="col col-4">
             <!-- Last Name -->
             <paper-input
-                    id="lastNameInput"
-                    value="${this.editedItem.last_name}"
-                    label="Last Name"
-                    placeholder="Enter Last Name"
-                    required
-                    maxlength="30"
-                    error-message="${this.requiredMessage}"
-                    @focus="${this.resetFieldError}"
-                    @tap="${this.resetFieldError}">
+              id="lastNameInput"
+              value="${this.editedItem.last_name}"
+              label="Last Name"
+              placeholder="Enter Last Name"
+              required
+              maxlength="30"
+              error-message="${this.requiredMessage}"
+              @focus="${this.resetFieldError}"
+              @tap="${this.resetFieldError}"
+            >
             </paper-input>
           </div>
         </div>
@@ -136,7 +140,6 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
   @property({type: Array})
   externalIndividuals: any[] = [];
 
-
   stateChanged(state: RootState) {
     if (state.app!.routeDetails.routeName === 'assessments' && state.app!.routeDetails.subRouteName === 'details') {
       if (state.commonData) {
@@ -171,7 +174,7 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
     }
     this.getControlsData();
     // check if email is unique
-    const isValid = !this.externalIndividuals.find(x => x.email === this.editedItem.email);
+    const isValid = !this.externalIndividuals.find((x) => x.email === this.editedItem.email);
     if (!isValid) {
       fireEvent(this.toastEventSource, 'toast', {text: 'This email address is already being used!'});
     }
@@ -221,7 +224,7 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
     })
       .then((resp: any) => this._handleResponse(resp))
       .catch((err: any) => this._handleError(err))
-      .then(() => this.requestInProgress = false);
+      .then(() => (this.requestInProgress = false));
   }
 
   _handleResponse(resp: any) {
@@ -234,5 +237,4 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
     logError(msg, 'external-individual-dialog', err);
     fireEvent(this.toastEventSource, 'toast', {text: msg});
   }
-
 }

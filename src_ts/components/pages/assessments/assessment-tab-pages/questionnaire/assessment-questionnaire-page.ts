@@ -29,7 +29,6 @@ export enum EtoolsPseaOverallRating {
  */
 @customElement('assessment-questionnaire-page')
 export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
-
   static get styles() {
     return [gridLayoutStylesLit];
   }
@@ -49,9 +48,8 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
           font-size: 24px;
           color: white;
           background-color: var(--primary-color); /* fallback color */
-          box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
-                    0 1px 5px 0 rgba(0, 0, 0, 0.12),
-                    0 3px 1px -2px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12),
+            0 3px 1px -2px rgba(0, 0, 0, 0.2);
         }
         .red {
           background-color: var(--primary-shade-of-red);
@@ -71,10 +69,13 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
       </style>
       <etools-loading loading-text="Loading..." .active="${this.loadingQuestions || this.loadingAnswers}">
       </etools-loading>
-      <div class="overall layout-horizontal ${this._getColorClass(this.overallRatingDisplay)}"
-          ?hidden="${!this.overallRatingDisplay}">
-        <div class="col-5 r-align">SEA Risk Rating:</div><div class="col-1"></div>
-        <div class="col-6 l-align"> ${this.overallRatingDisplay}</div>
+      <div
+        class="overall layout-horizontal ${this._getColorClass(this.overallRatingDisplay)}"
+        ?hidden="${!this.overallRatingDisplay}"
+      >
+        <div class="col-5 r-align">SEA Risk Rating:</div>
+        <div class="col-1"></div>
+        <div class="col-6 l-align">${this.overallRatingDisplay}</div>
       </div>
       ${this._getQuestionnaireItemsTemplate(this.questionnaireItems, this.answers, this.canEditAnswers)}
     `;
@@ -105,13 +106,10 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   isUnicefUser: boolean = false;
 
   stateChanged(state: RootState) {
-
     const newAssessmentId = get(state, 'app.routeDetails.params.assessmentId');
-    if (newAssessmentId === 'new' ||
-      this.notOnQuestionnairePage(get(state, 'app.routeDetails'))) {
+    if (newAssessmentId === 'new' || this.notOnQuestionnairePage(get(state, 'app.routeDetails'))) {
       return;
     }
-
 
     if (newAssessmentId && newAssessmentId !== this.assessmentId) {
       this.assessmentId = newAssessmentId;
@@ -153,18 +151,24 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
       return;
     }
 
-    return repeat(questionnaireItems, question => question.stamp, (question: Question) => {
-      const answer = this._getAnswerByQuestionId(question.id, answers);
+    return repeat(
+      questionnaireItems,
+      (question) => question.stamp,
+      (question: Question) => {
+        const answer = this._getAnswerByQuestionId(question.id, answers);
 
-      return html`<questionnaire-item .question="${cloneDeep(question)}"
-        .answer="${cloneDeep(answer)}"
-        .canEditAnswers="${canEditAnswers}"
-        .assessmentId="${this.assessmentId}"
-        .isUnicefUser="${this.isUnicefUser}"
-        @answer-saved="${this.checkOverallRating}"
-        @cancel-answer="${this.cancelUnsavedChanges}">
-       </questionnaire-item>`;
-    });
+        return html`<questionnaire-item
+          .question="${cloneDeep(question)}"
+          .answer="${cloneDeep(answer)}"
+          .canEditAnswers="${canEditAnswers}"
+          .assessmentId="${this.assessmentId}"
+          .isUnicefUser="${this.isUnicefUser}"
+          @answer-saved="${this.checkOverallRating}"
+          @cancel-answer="${this.cancelUnsavedChanges}"
+        >
+        </questionnaire-item>`;
+      }
+    );
   }
 
   _getColorClass(overallRatingDisplay: string) {
@@ -181,7 +185,7 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   }
 
   cancelUnsavedChanges(e: CustomEvent) {
-    const q = this.questionnaireItems.find(q => q.id == e.detail)!;
+    const q = this.questionnaireItems.find((q) => q.id == e.detail)!;
     q.stamp = Date.now();
     this.requestUpdate();
   }
@@ -192,7 +196,7 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
       return;
     }
 
-    const index = this.answers.findIndex(a => Number(a.id) === Number(updatedAnswer.id));
+    const index = this.answers.findIndex((a) => Number(a.id) === Number(updatedAnswer.id));
     if (index > -1) {
       this.answers.splice(index, 1, updatedAnswer);
     } else {
@@ -200,8 +204,9 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     }
 
     if (this.answers.length === this.questionnaireItems.length) {
-      store.dispatch(requestAssessmentAndAssessor(Number(this.assessmentId),
-        this._handleErrOnGetAssessment.bind(this)));
+      store.dispatch(
+        requestAssessmentAndAssessor(Number(this.assessmentId), this._handleErrOnGetAssessment.bind(this))
+      );
     }
   }
 
@@ -213,7 +218,7 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     if (!answers || !answers.length) {
       return new Answer();
     }
-    const answer = answers.find(a => Number(a.indicator) === Number(questionId));
+    const answer = answers.find((a) => Number(a.indicator) === Number(questionId));
 
     return answer ? cloneDeep(answer) : new Answer();
   }
@@ -225,10 +230,11 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
       endpoint: {url: url}
     })
       .then((resp) => {
-        resp.map((r: any) => r.stamp = Date.now());
+        resp.map((r: any) => (r.stamp = Date.now()));
         this.questionnaireItems = resp;
-      }).catch((err: any) => logError('Questions req failed', 'AssessmentQuestionnairePage', err))
-      .then(() => this.loadingQuestions = false);
+      })
+      .catch((err: any) => logError('Questions req failed', 'AssessmentQuestionnairePage', err))
+      .then(() => (this.loadingQuestions = false));
   }
 
   getAnswers() {
@@ -239,8 +245,8 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     })
       .then((resp) => {
         this.answers = resp;
-      }).catch((err: any) => logError('Get answers req failed', 'AssessmentQuestionnairePage', err))
-      .then(() => this.loadingAnswers = false);
+      })
+      .catch((err: any) => logError('Get answers req failed', 'AssessmentQuestionnairePage', err))
+      .then(() => (this.loadingAnswers = false));
   }
-
 }

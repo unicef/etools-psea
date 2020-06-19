@@ -1,6 +1,6 @@
 import {EtoolsRequestEndpoint} from '@unicef-polymer/etools-ajax';
 
-//@ts-ignore
+// @ts-ignore
 export interface EtoolsEndpoint extends EtoolsRequestEndpoint {
   url?: string;
   template?: string;
@@ -78,5 +78,4 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   environmentFlags: {
     url: '/api/v2/environment/flags/'
   }
-
 };

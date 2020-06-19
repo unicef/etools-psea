@@ -7,7 +7,6 @@ import {LitElement} from 'lit-element';
  * Toasts notification messages queue utility class
  */
 export class ToastNotificationHelper {
-
   private appShellEl: LitElement;
   private readonly _toast: EtoolsToast;
   private _toastQueue: GenericObject[] = [];

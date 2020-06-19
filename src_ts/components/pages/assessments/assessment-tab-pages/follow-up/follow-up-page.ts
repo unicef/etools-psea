@@ -25,25 +25,24 @@ export class FollowUpPage extends connect(store)(LitElement) {
     return html`
       <style>
         :host {
-          --ecp-content-padding: 0
+          --ecp-content-padding: 0;
         }
       </style>
       <etools-content-panel panel-title="Action Points">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
 
         <div slot="panel-btns">
-          <paper-icon-button
-                @tap="${() => this.openFollowUpDialog()}"
-                icon="add">
-          </paper-icon-button>
+          <paper-icon-button @tap="${() => this.openFollowUpDialog()}" icon="add"> </paper-icon-button>
         </div>
 
-        <etools-table .items="${this.dataItems}"
-                      .columns="${this.columns}"
-                      @edit-item="${this.editActionPoint}"
-                      @copy-item="${this.copyActionPoint}"
-                      showEdit
-                      showCopy>
+        <etools-table
+          .items="${this.dataItems}"
+          .columns="${this.columns}"
+          @edit-item="${this.editActionPoint}"
+          @copy-item="${this.copyActionPoint}"
+          showEdit
+          showCopy
+        >
         </etools-table>
       </etools-content-panel>
     `;
@@ -63,23 +62,29 @@ export class FollowUpPage extends connect(store)(LitElement) {
       type: EtoolsTableColumnType.Link,
       link_tmpl: `/apd/action-points/detail/:id`,
       isExternalLink: true
-    }, {
+    },
+    {
       label: 'Assignee (Section / Office)',
       name: 'assigned_to.name',
       type: EtoolsTableColumnType.Text
-    }, {
+    },
+    {
       label: 'Status',
       name: 'status',
       type: EtoolsTableColumnType.Text
-    }, {
+    },
+    {
       label: 'Due Date',
       name: 'due_date',
       type: EtoolsTableColumnType.Date
-    }, {
+    },
+    {
       label: 'Priority',
       name: 'high_priority',
       type: EtoolsTableColumnType.Custom,
-      customMethod: (item: any) => {return item.high_priority ? 'High' : '';}
+      customMethod: (item: any) => {
+        return item.high_priority ? 'High' : '';
+      }
     }
   ];
 
@@ -119,8 +124,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
 
   updateActionPoints(event: GenericObject) {
     const oldActionPointsData = cloneDeep(this.dataItems);
-    const existingActionPointIndex: number = this.dataItems.findIndex(
-      (ap: GenericObject) => ap.id === event.detail.id);
+    const existingActionPointIndex: number = this.dataItems.findIndex((ap: GenericObject) => ap.id === event.detail.id);
     if (existingActionPointIndex > -1) {
       oldActionPointsData.splice(existingActionPointIndex, 1, event.detail);
     } else {
@@ -135,11 +139,12 @@ export class FollowUpPage extends connect(store)(LitElement) {
     // @ts-ignore
     sendRequest({
       endpoint: getEndpoint(etoolsEndpoints.actionPoints, {id: this.assessmentId})
-    }).then((response: any) => {
-      this.dataItems = response;
-    }).catch((err: any) => logError(
-      'Get action points list data req failed', 'FollowUpPage', err))
-      .then(() => this.showLoading = false);
+    })
+      .then((response: any) => {
+        this.dataItems = response;
+      })
+      .catch((err: any) => logError('Get action points list data req failed', 'FollowUpPage', err))
+      .then(() => (this.showLoading = false));
   }
 
   editActionPoint(event: GenericObject) {
@@ -149,8 +154,10 @@ export class FollowUpPage extends connect(store)(LitElement) {
 
   copyActionPoint(event: GenericObject) {
     this.extractActionPointData(event.detail);
-    this.followUpDialog.warningMessages = [...this.followUpDialog.warningMessages,
-      'It is required to change at least one of the fields below.'];
+    this.followUpDialog.warningMessages = [
+      ...this.followUpDialog.warningMessages,
+      'It is required to change at least one of the fields below.'
+    ];
     this.followUpDialog.editedItem.id = 'new';
     this.openFollowUpDialog();
   }
