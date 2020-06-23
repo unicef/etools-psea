@@ -76,9 +76,9 @@
   "devDependencies": {
     "@polymer/decorators": "^3.0.0",
     "@polymer/test-fixture": "^4.0.2",
-    "@typescript-eslint/eslint-plugin": "^1.11.0",
-    "@typescript-eslint/parser": "^1.11.0",
-    "@typescript-eslint/typescript-estree": "^1.11.0",
+    "@typescript-eslint/eslint-plugin": "^3.2.0",
+    "@typescript-eslint/parser": "^3.2.0",
+    "@typescript-eslint/typescript-estree": "^3.2.0",
     "axe-core": "^3.0.0",
     "chai": "^4.1.2",
     "del": "^3.0.0",
@@ -109,8 +109,7 @@
   },
   "lint-staged": {
     "*.ts": [
-      "eslint --fix",
-      "prettier --write"
+      "eslint --fix"
     ]
   }
 }
