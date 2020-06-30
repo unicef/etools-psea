@@ -10,7 +10,7 @@ export class ToastNotificationHelper {
   private appShellEl: LitElement;
   private readonly _toast: EtoolsToast;
   private _toastQueue: GenericObject[] = [];
-  private TOAST_EL_ID: string = 'toastNotificationQueueEl';
+  private TOAST_EL_ID = 'toastNotificationQueueEl';
 
   constructor(appShellEl: LitElement) {
     this.appShellEl = appShellEl;

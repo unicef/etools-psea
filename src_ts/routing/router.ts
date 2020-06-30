@@ -28,7 +28,7 @@ export interface RouteDetails {
  */
 export class Router {
   routes: {regex: RegExp | string; handler: (params: RouteCallbackParams) => RouteDetails}[] = [];
-  root: string = '/';
+  root = '/';
 
   static clearSlashes(path: string): string {
     return path.toString().replace(/\/$/, '').replace(/^\//, '');

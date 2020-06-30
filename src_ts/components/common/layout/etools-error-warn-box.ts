@@ -89,10 +89,10 @@ export class EtoolsErrorWarnBox extends LitElement {
   }
 
   @property({type: String})
-  alertType: string = 'warning';
+  alertType = 'warning';
 
   @property({type: String})
-  title: string = 'Error messages';
+  title = 'Error messages';
 
   @property({type: Array})
   messages: string[] = [];

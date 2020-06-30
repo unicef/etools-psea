@@ -97,13 +97,13 @@ export class AppMenu extends LitElement {
   }
 
   @property({type: String, attribute: 'selected-option'})
-  public selectedOption: string = '';
+  public selectedOption = '';
 
   @property({type: String})
   rootPath: string = ROOT_PATH;
 
   @property({type: Boolean, attribute: 'small-menu'})
-  public smallMenu: boolean = false;
+  public smallMenu = false;
 
   public _toggleSmallMenu(): void {
     this.smallMenu = !this.smallMenu;

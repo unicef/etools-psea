@@ -88,10 +88,10 @@ export class AssessingFirm extends LitElement {
   }
 
   @property({type: String})
-  errMessage: string = '10 digits expected';
+  errMessage = '10 digits expected';
 
   @property({type: String})
-  currentOrderNumber: string = '';
+  currentOrderNumber = '';
 
   @property({type: Object})
   assessor = {
@@ -101,10 +101,10 @@ export class AssessingFirm extends LitElement {
   };
 
   @property({type: Boolean})
-  showGetDetailsBtnWarn: boolean = false;
+  showGetDetailsBtnWarn = false;
 
   @property({type: Boolean})
-  poRequestInProgress: boolean = false;
+  poRequestInProgress = false;
 
   @property({type: Boolean, attribute: true, reflect: true})
   editMode!: boolean;

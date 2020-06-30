@@ -117,19 +117,19 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
   lastNameInputEl!: HTMLInputElement;
 
   @property({type: Boolean, reflect: true})
-  dialogOpened: boolean = false;
+  dialogOpened = false;
 
   @property({type: Boolean, reflect: true})
-  requestInProgress: boolean = false;
+  requestInProgress = false;
 
   @property({type: String})
-  dialogTitle: string = 'Add New External Individual';
+  dialogTitle = 'Add New External Individual';
 
   @property({type: String})
-  confirmBtnText: string = 'Add';
+  confirmBtnText = 'Add';
 
   @property({type: String})
-  requiredMessage: string = 'This field is required';
+  requiredMessage = 'This field is required';
 
   @property({type: Object})
   editedItem!: GenericObject;

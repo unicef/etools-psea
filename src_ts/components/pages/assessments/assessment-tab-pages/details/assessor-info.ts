@@ -194,10 +194,10 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   assessment!: Assessment | null;
 
   @property({type: Boolean})
-  isNew: boolean = false;
+  isNew = false;
 
   @property({type: Boolean})
-  editMode: boolean = false;
+  editMode = false;
 
   @property({type: Object})
   originalAssessor!: Assessor;
@@ -212,7 +212,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
   canEditAssessorInfo!: boolean;
 
   @property({type: Boolean})
-  showLoading: boolean = false;
+  showLoading = false;
 
   @property({type: Boolean})
   preventAssessorResetAfterExtIndividualAdd = false;
