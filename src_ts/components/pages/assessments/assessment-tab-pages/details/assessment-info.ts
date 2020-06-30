@@ -145,7 +145,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
   selectedPartner!: GenericObject;
 
   @property({type: Boolean})
-  editMode: boolean = false;
+  editMode = false;
 
   @property({type: Array})
   unicefFocalPointUsers!: UnicefUser[];
@@ -160,10 +160,10 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
   canEditAssessmentInfo!: boolean;
 
   @property({type: Boolean})
-  isUnicefUser: boolean = false;
+  isUnicefUser = false;
 
   @property({type: Boolean})
-  showLoading: boolean = false;
+  showLoading = false;
 
   stateChanged(state: RootState) {
     if (onListPage(get(state, 'app.routeDetails'))) {

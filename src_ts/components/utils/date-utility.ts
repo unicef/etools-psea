@@ -5,7 +5,7 @@ export function isValidDate(date: any) {
   return date instanceof Date === false ? false : date.toString() !== 'Invalid Date';
 }
 
-export function prettyDate(dateString: string, format?: string, placeholder: string = '-') {
+export function prettyDate(dateString: string, format?: string, placeholder = '-') {
   const date = convertDate(dateString);
   return !date ? (placeholder ? placeholder : '') : _utcDate(date, format);
 }

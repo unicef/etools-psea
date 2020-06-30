@@ -103,7 +103,7 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   loadingAnswers!: boolean;
 
   @property({type: Boolean})
-  isUnicefUser: boolean = false;
+  isUnicefUser = false;
 
   stateChanged(state: RootState) {
     const newAssessmentId = get(state, 'app.routeDetails.params.assessmentId');

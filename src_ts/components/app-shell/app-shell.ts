@@ -138,19 +138,19 @@ export class AppShell extends connect(store)(LitElement) {
   public narrow = true;
 
   @property({type: Boolean})
-  public drawerOpened: boolean = false;
+  public drawerOpened = false;
 
   @property({type: Object})
   public routeDetails!: RouteDetails;
 
   @property({type: String})
-  public mainPage: string = ''; // routeName
+  public mainPage = ''; // routeName
 
   @property({type: String})
   public subPage: string | null = null; // subRouteName
 
   @property({type: Boolean})
-  public smallMenu: boolean = false;
+  public smallMenu = false;
 
   @query('#layout') private drawerLayout!: AppDrawerLayoutElement;
   @query('#drawer') private drawer!: AppDrawerElement;

@@ -163,22 +163,22 @@ export class AssessmentsList extends connect(store)(LitElement) {
   selectedFilters!: FilterKeysAndTheirSelectedValues;
 
   @property({type: Boolean})
-  canAdd: boolean = false;
+  canAdd = false;
 
   @property({type: Boolean})
-  canExport: boolean = false;
+  canExport = false;
 
   @property({type: Boolean})
-  isUnicefUser: boolean = false;
+  isUnicefUser = false;
 
   @property({type: String})
-  queryParams: string = '';
+  queryParams = '';
 
   @property({type: Boolean})
-  showLoading: boolean = false;
+  showLoading = false;
 
   @property({type: Boolean})
-  showFiltersLoading: boolean = false;
+  showFiltersLoading = false;
 
   @property({type: Array})
   listColumns: EtoolsTableColumn[] = [

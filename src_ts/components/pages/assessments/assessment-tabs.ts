@@ -123,13 +123,13 @@ export class AssessmentTabs extends connect(store)(LitElement) {
   ];
 
   @property({type: String})
-  activeTab: string = 'details';
+  activeTab = 'details';
 
   @property({type: Object})
   assessment!: Assessment;
 
   @property({type: Boolean})
-  canExport: boolean = false;
+  canExport = false;
 
   isActiveTab(tab: string, expectedTab: string): boolean {
     return tab === expectedTab;

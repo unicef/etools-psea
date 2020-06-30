@@ -126,7 +126,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   answer = new Answer();
 
   @property({type: Boolean})
-  showOtherInput: boolean = false;
+  showOtherInput = false;
 
   @property({type: Boolean})
   hideRatingRequiredMsg = true;
@@ -138,7 +138,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   editMode!: boolean;
 
   @property({type: Boolean})
-  autoValidate: boolean = false;
+  autoValidate = false;
 
   @query('#ratingElement')
   ratingElement!: PaperRadioGroupElement;
