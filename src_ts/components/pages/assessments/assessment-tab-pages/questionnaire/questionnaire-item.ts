@@ -173,7 +173,8 @@ export class QuestionnaireItemElement extends LitElement {
       .catch((err: any) => {
         fireEvent(this, 'toast', {text: formatServerErrorAsText(err)});
       })
-      .then(() => this.showLoading = false);
+      .then(() => (this.showLoading = false))
+      .finally(() => location.reload());
   }
 
   /**
