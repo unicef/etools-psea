@@ -174,6 +174,7 @@ export class QuestionnaireItemElement extends LitElement {
         fireEvent(this, 'toast', {text: formatServerErrorAsText(err)});
       })
       .then(() => (this.showLoading = false))
+      // the code bellow fixes a slow db response issue on the production env
       .finally(() => location.reload());
   }
 
