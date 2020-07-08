@@ -42,5 +42,4 @@ export class PartnerDetails extends LitElement {
 
   @property({type: Object, reflect: true, attribute: true})
   partner: GenericObject = {};
-
 }

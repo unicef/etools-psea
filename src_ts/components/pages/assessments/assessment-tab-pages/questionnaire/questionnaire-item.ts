@@ -19,7 +19,10 @@ import {buttonsStyles} from '../../../../styles/button-styles';
 @customElement('questionnaire-item')
 export class QuestionnaireItemElement extends LitElement {
   static get styles() {
-    return [buttonsStyles, radioButtonStyles, gridLayoutStylesLit,
+    return [
+      buttonsStyles,
+      radioButtonStyles,
+      gridLayoutStylesLit,
       css`
         :host {
           display: block;
@@ -44,20 +47,28 @@ export class QuestionnaireItemElement extends LitElement {
   render() {
     return html`
       ${SharedStylesLit}
-      <etools-content-panel panel-title="${this.question.subject}"
-                            ?show-expand-btn=${!this.editMode} .open="${this.open}">
+      <etools-content-panel
+        panel-title="${this.question.subject}"
+        ?show-expand-btn=${!this.editMode}
+        .open="${this.open}"
+      >
         <etools-loading loading-text="Saving..." .active="${this.showLoading}"></etools-loading>
 
         <div slot="panel-btns">
-          <paper-radio-button checked class="epc-header-radio-button ${this._getRadioBtnClass(this.answer)} readonly"
-              ?hidden="${!this._answerIsSaved(this.answer)}">
+          <paper-radio-button
+            checked
+            class="epc-header-radio-button ${this._getRadioBtnClass(this.answer)} readonly"
+            ?hidden="${!this._answerIsSaved(this.answer)}"
+          >
             ${this._getSelectedRating(this.answer)}
           </paper-radio-button>
           <paper-icon-button
-                icon="create"
-                @tap="${this._allowEdit}"
-                style=${styleMap(this.hideEditIcon(this.editMode, this.canEditAnswers) ?
-      {visibility: 'hidden'} : {visibility: ''})}>
+            icon="create"
+            @tap="${this._allowEdit}"
+            style=${styleMap(
+              this.hideEditIcon(this.editMode, this.canEditAnswers) ? {visibility: 'hidden'} : {visibility: ''}
+            )}
+          >
           </paper-icon-button>
         </div>
         <div class="description">
@@ -65,11 +76,13 @@ export class QuestionnaireItemElement extends LitElement {
         </div>
 
         <div class="row-padding-v">
-          <questionnaire-answer id="questionnaireAnswerElement"
+          <questionnaire-answer
+            id="questionnaireAnswerElement"
             ?hidden="${this.hideAnswer(this.answer, this.canEditAnswers)}"
             .question="${this.question}"
             .answer="${this.answer}"
-            .editMode="${this.editMode && this.canEditAnswers}">
+            .editMode="${this.editMode && this.canEditAnswers}"
+          >
           </questionnaire-answer>
         </div>
 
@@ -81,7 +94,6 @@ export class QuestionnaireItemElement extends LitElement {
             Save
           </paper-button>
         </div>
-
       </etools-content-panel>
     `;
   }
@@ -115,7 +127,9 @@ export class QuestionnaireItemElement extends LitElement {
 
   _getRadioBtnClass(answer: Answer) {
     // TODO
-    switch (Number(answer.rating)) { // This is kind of hardcoded, see if this approach is reliable
+    switch (
+      Number(answer.rating) // This is kind of hardcoded, see if this approach is reliable
+    ) {
       case 1:
         return 'red';
       case 2:
@@ -198,7 +212,7 @@ export class QuestionnaireItemElement extends LitElement {
   }
 
   _getMethod() {
-    return (this.answer && this.answer.id) ? 'PATCH' : 'POST';
+    return this.answer && this.answer.id ? 'PATCH' : 'POST';
   }
 
   validate() {
@@ -224,7 +238,7 @@ export class QuestionnaireItemElement extends LitElement {
     if (canEditAnswers) {
       return false;
     } else {
-      return (!answer || !answer.id);
+      return !answer || !answer.id;
     }
   }
 }

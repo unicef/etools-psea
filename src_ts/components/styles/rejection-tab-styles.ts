@@ -7,13 +7,13 @@ export const rejectionTabStyles = css`
 
     --epc-header: {
       padding: 2px;
-    };
-      --ecp-header-bg: var(--primary-shade-of-orange);
-      --ecp-header-height: 5px;
+    }
+    --ecp-header-bg: var(--primary-shade-of-orange);
+    --ecp-header-height: 5px;
 
     --ecp-header-btns-wrapper: {
       opacity: 1;
-    };
+    }
   }
 
   etools-content-panel.rejection-tab .rejection-title {
@@ -32,7 +32,7 @@ export const rejectionTabStyles = css`
     padding-left: 70px;
   }
 
-  div[slot="panel-btns"].bookmark {
+  div[slot='panel-btns'].bookmark {
     position: absolute;
     top: 5px;
     right: auto;
@@ -45,7 +45,7 @@ export const rejectionTabStyles = css`
     transform: scale(0.9, 1.5);
   }
 
-  div[slot="panel-btns"].bookmark iron-icon {
+  div[slot='panel-btns'].bookmark iron-icon {
     width: 70px !important;
     height: 70px !important;
   }

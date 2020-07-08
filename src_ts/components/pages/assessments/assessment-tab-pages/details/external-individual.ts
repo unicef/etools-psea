@@ -38,12 +38,13 @@ export class ExternalIndividual extends connect(store)(LitElement) {
         }
 
         #emailInput {
-         width: 100%;
+          width: 100%;
         }
       </style>
       ${SharedStylesLit}
       <div class="row-padding-v">
-        <etools-dropdown id="externalIndiv"
+        <etools-dropdown
+          id="externalIndiv"
           label="External Individual"
           .options="${this.externalIndividuals}"
           .selected="${this.assessor.user}"
@@ -54,7 +55,8 @@ export class ExternalIndividual extends connect(store)(LitElement) {
           enable-none-option
           ?readonly="${this.isReadonly(this.editMode)}"
           trigger-value-change-event
-          @etools-selected-item-changed="${this._setSelectedExternalIndividual}">
+          @etools-selected-item-changed="${this._setSelectedExternalIndividual}"
+        >
         </etools-dropdown>
 
         <div ?hidden="${!this.editMode}" class="padd-top">
@@ -62,16 +64,17 @@ export class ExternalIndividual extends connect(store)(LitElement) {
         </div>
 
         <div class="row-padding-v">
-            <paper-input
-                    id="emailInput"
-                    value="${this.assessor.user_details.email}"
-                    label="E-mail"
-                    type="email"
-                    readonly
-                    placeholder="—"
-                    maxlength="45">
-              <iron-icon slot="prefix" icon="communication:email"></iron-icon>
-            </paper-input>
+          <paper-input
+            id="emailInput"
+            value="${this.assessor.user_details.email}"
+            label="E-mail"
+            type="email"
+            readonly
+            placeholder="—"
+            maxlength="45"
+          >
+            <iron-icon slot="prefix" icon="communication:email"></iron-icon>
+          </paper-input>
         </div>
       </div>
     `;
@@ -89,7 +92,6 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   @property({type: String})
   origAssessorType!: AssessorTypes;
 
-
   private dialogExtIndividual!: ExternalIndividualDialog;
 
   stateChanged(state: RootState) {
@@ -104,15 +106,16 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   private populateExternalIndividualsDropdown(state: RootState) {
     if (get(state, 'user.data')) {
       if (state.user!.data!.is_unicef_user) {
-
         const stateExternalIndivs = get(state, 'commonData.externalIndividuals');
         if (stateExternalIndivs) {
-
           this.externalIndividuals = [...stateExternalIndivs];
-          if (this.origAssessorType === AssessorTypes.ExternalIndividual) {// ?????
+          if (this.origAssessorType === AssessorTypes.ExternalIndividual) {
+            // ?????
             // check if already saved external individual exists on loaded data, if not they will be added
-            handleUsersNoLongerAssignedToCurrentCountry(this.externalIndividuals,
-              this.getSavedExternalDetailsAsArray(get(state, 'pageData.assessor')));
+            handleUsersNoLongerAssignedToCurrentCountry(
+              this.externalIndividuals,
+              this.getSavedExternalDetailsAsArray(get(state, 'pageData.assessor'))
+            );
             this.externalIndividuals = [...this.externalIndividuals];
           }
         }
@@ -123,7 +126,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   }
 
   private getSavedExternalDetailsAsArray(currentAssessor: Assessor) {
-    let savedExternal = currentAssessor.user_details;
+    const savedExternal = currentAssessor.user_details;
     return !!(savedExternal && Object.keys(savedExternal).length > 0) ? [savedExternal] : [];
   }
 
@@ -177,7 +180,6 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   }
 
   _setSelectedExternalIndividual(event: CustomEvent) {
-
     const selectedUser = event.detail.selectedItem;
     if (selectedUser) {
       this.assessor.user = selectedUser.id;
@@ -209,5 +211,4 @@ export class ExternalIndividual extends connect(store)(LitElement) {
     const extIndivDropdown = this.shadowRoot!.querySelector('#externalIndiv') as EtoolsDropdownEl;
     return extIndivDropdown ? (extIndivDropdown.selectedItem as UnicefUser).name : '';
   }
-
 }

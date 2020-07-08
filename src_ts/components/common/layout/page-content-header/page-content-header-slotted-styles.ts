@@ -8,16 +8,15 @@ import {layoutHorizontal, layoutEnd} from '../../../styles/lit-styles/flex-layou
 
 // language=HTML
 export const pageContentHeaderSlottedStyles = html`
-<style>
-  .content-header-actions {
-    ${layoutHorizontal}
-    ${layoutEnd}
-  }
-   @media (max-width: 576px) {
-      .content-header-actions {
-        display: block;
-      }
+  <style>
+    .content-header-actions {
+      ${layoutHorizontal}
+      ${layoutEnd}
     }
-</style>
+     @media (max-width: 576px) {
+        .content-header-actions {
+          display: block;
+        }
+      }
+  </style>
 `;
-

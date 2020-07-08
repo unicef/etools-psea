@@ -40,36 +40,38 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     return [
       buttonsStyles,
       css`
-      :host {
-        display: block;
-        margin-bottom: 24px;
-      }`,
+        :host {
+          display: block;
+          margin-bottom: 24px;
+        }
+      `,
       gridLayoutStylesLit
     ];
   }
 
   render() {
-
     if (!this.assessment) {
-      return html`
-      ${SharedStylesLit}
-      <etools-loading loading-text="Loading..." active></etools-loading>`;
+      return html` ${SharedStylesLit}
+        <etools-loading loading-text="Loading..." active></etools-loading>`;
     }
     // language=HTML
     return html`
-    ${SharedStylesLit}
+      ${SharedStylesLit}
       <etools-content-panel panel-title="Assessment Information">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
 
         <div slot="panel-btns">
           <paper-icon-button
-                ?hidden="${this.hideEditIcon(this.isNew, this.editMode, this.canEditAssessmentInfo)}"
-                @tap="${this._allowEdit}"
-                icon="create">
+            ?hidden="${this.hideEditIcon(this.isNew, this.editMode, this.canEditAssessmentInfo)}"
+            @tap="${this._allowEdit}"
+            icon="create"
+          >
           </paper-icon-button>
         </div>
 
-        <etools-dropdown id="partner" label="Partner Organization to Assess"
+        <etools-dropdown
+          id="partner"
+          label="Partner Organization to Assess"
           class="row-padding-v w100"
           .options="${this.partners}"
           .selected="${this.assessment.partner}"
@@ -80,12 +82,14 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.partner)}"
           required
           ?invalid="${this.invalid.partner}"
-          auto-validate>
+          auto-validate
+        >
         </etools-dropdown>
 
         ${this._showPartnerDetails(this.selectedPartner)}
 
-        <etools-dropdown-multi label="UNICEF Focal Point"
+        <etools-dropdown-multi
+          label="UNICEF Focal Point"
           class="row-padding-v"
           .selectedValues="${this.assessment.focal_points}"
           .options="${this.unicefFocalPointUsers}"
@@ -93,10 +97,13 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           option-value="id"
           trigger-value-change-event
           @etools-selected-items-changed="${this._setSelectedFocalPoints}"
-          ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.focal_points)}">
+          ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.focal_points)}"
+        >
         </etools-dropdown-multi>
 
-        <datepicker-lite id="assessmentDate" label="Assessment Date"
+        <datepicker-lite
+          id="assessmentDate"
+          label="Assessment Date"
           class="row-padding-v"
           .value="${this.assessment.assessment_date}"
           selected-date-display-format="D MMM YYYY"
@@ -106,11 +113,14 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           ?required="${this.assessment.permissions.required.assessment_date}"
           ?invalid="${this.invalid.assessment_date}"
           max-date=${this.getCurrentDate()}
-          auto-validate>
+          auto-validate
+        >
         </datepicker-lite>
 
-        <div class="layout-horizontal right-align row-padding-v"
-          ?hidden="${this.hideActionButtons(this.isNew, this.editMode, this.canEditAssessmentInfo)}">
+        <div
+          class="layout-horizontal right-align row-padding-v"
+          ?hidden="${this.hideActionButtons(this.isNew, this.editMode, this.canEditAssessmentInfo)}"
+        >
           <paper-button class="default" @tap="${this.cancelAssessment}">
             Cancel
           </paper-button>
@@ -118,13 +128,12 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
             Save
           </paper-button>
         </div>
-
       </etools-content-panel>
     `;
   }
 
   @property({type: Object})
-  assessment!: Assessment;
+  assessment!: Assessment | null;
 
   @property({type: Object})
   originalAssessment!: Assessment;
@@ -170,8 +179,11 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     }
 
     const currentAssessment: Assessment = get(state, 'pageData.currentAssessment');
-    if (currentAssessment && Object.keys(currentAssessment).length &&
-      !isJsonStrMatch(this.assessment, currentAssessment)) {
+    if (
+      currentAssessment &&
+      Object.keys(currentAssessment).length &&
+      !isJsonStrMatch(this.assessment, currentAssessment)
+    ) {
       this.assessment = {...currentAssessment};
       this.originalAssessment = cloneDeep(this.assessment);
       this.isNew = !this.assessment.id;
@@ -182,26 +194,25 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     this.populateUnicefFocalPointsDropdown(state);
   }
 
-
   populateUnicefFocalPointsDropdown(state: RootState) {
     // waiting for required data to be loaded from redux
     if (get(state, 'pageData.currentAssessment') && get(state, 'user.data')) {
       if (!this.isUnicefUser) {
         // if user is not Unicef user, this is opened in read-only mode and we just display already saved
-        this.unicefFocalPointUsers = [...this.assessment.focal_points_details];
+        this.unicefFocalPointUsers = [...this.assessment!.focal_points_details];
       } else if (get(state, 'commonData.unicefUsers.length')) {
         this.unicefFocalPointUsers = [...state.commonData!.unicefUsers];
         // check if already saved users exists on loaded data, if not they will be added
         // (they might be missing if changed country)
-        handleUsersNoLongerAssignedToCurrentCountry(this.unicefFocalPointUsers, this.assessment.focal_points_details);
+        handleUsersNoLongerAssignedToCurrentCountry(this.unicefFocalPointUsers, this.assessment!.focal_points_details);
         this.unicefFocalPointUsers = [...this.unicefFocalPointUsers];
       }
     }
   }
 
   setAssessmentInfoPermissions(permissions: AssessmentPermissions) {
-    this.canEditAssessmentInfo = permissions.edit.partner || permissions.edit.focal_points ||
-      permissions.edit.assessment_date;
+    this.canEditAssessmentInfo =
+      permissions.edit.partner || permissions.edit.focal_points || permissions.edit.assessment_date;
   }
 
   _allowEdit() {
@@ -209,25 +220,24 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
   }
 
   _showPartnerDetails(selectedPartner: GenericObject) {
-    return selectedPartner ?
-      html`<partner-details .partner="${selectedPartner}"></partner-details>` : '';
+    return selectedPartner ? html`<partner-details .partner="${selectedPartner}"></partner-details>` : '';
   }
 
   _setSelectedPartner(event: CustomEvent) {
     this.selectedPartner = event.detail.selectedItem;
 
     if (this.selectedPartner) {
-      this.assessment.partner = this.selectedPartner.id;
+      this.assessment!.partner = this.selectedPartner.id;
     }
   }
 
   _setSelectedDate(selDate: Date) {
-    this.assessment.assessment_date = formatDate(selDate, 'YYYY-MM-DD');
+    this.assessment!.assessment_date = formatDate(selDate, 'YYYY-MM-DD');
     this.requestUpdate();
   }
 
   _setSelectedFocalPoints(e: CustomEvent) {
-    this.assessment.focal_points = e.detail.selectedItems.map((i: any) => i.id);
+    this.assessment!.focal_points = e.detail.selectedItems.map((i: any) => i.id);
   }
 
   cancelAssessment() {
@@ -246,7 +256,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     this.showLoading = true;
 
     if (this.isNew) {
-      this.assessment.status = 'draft';
+      this.assessment!.status = 'draft';
     }
     const body = this.assessment;
 
@@ -259,9 +269,8 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     })
       .then((response: any) => {
         if (this.isNew) {
-
-          let newAssessor = new Assessor();
-          newAssessor.assessment = response.id;//To pass stateChanged dirty check
+          const newAssessor = new Assessor();
+          newAssessor.assessment = response.id; // To pass stateChanged dirty check
 
           store.dispatch(updateAssessmentAndAssessor(response, newAssessor));
           updateAppLocation(`/assessments/${response.id}/details`, true);
@@ -269,8 +278,8 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           store.dispatch(updateAssessmentData(response));
         }
       })
-      .catch(err => fireEvent(this, 'toast', {text: formatServerErrorAsText(err)}))
-      .then(() => this.showLoading = false);
+      .catch((err) => fireEvent(this, 'toast', {text: formatServerErrorAsText(err)}))
+      .then(() => (this.showLoading = false));
   }
 
   resetValidations() {
@@ -287,7 +296,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     let valid = true;
     const invalid = new AssessmentInvalidator();
 
-    if (!this.assessment.partner) {
+    if (!this.assessment!.partner) {
       valid = false;
       invalid.partner = true;
     }
@@ -301,11 +310,10 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     if (this.isNew) {
       return url;
     }
-    return url! + this.assessment.id + '/';
+    return url! + this.assessment!.id + '/';
   }
 
   getCurrentDate() {
     return new Date();
   }
-
 }

@@ -33,7 +33,10 @@ import './answer-instructions';
 @customElement('questionnaire-answer')
 export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   static get styles() {
-    return [radioButtonStyles, labelAndvalueStylesLit, gridLayoutStylesLit,
+    return [
+      radioButtonStyles,
+      labelAndvalueStylesLit,
+      gridLayoutStylesLit,
       css`
         .padd-right {
           padding-right: 24px;
@@ -63,20 +66,25 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
           <answer-instructions></answer-instructions>
         </div>
         <div>
-          <paper-radio-group id="ratingElement"
-              .selected="${this.answer.rating}"
-              @change="${((e: CustomEvent) => this._selectedRatingChanged(e.target as PaperRadioButtonElement))}">
+          <paper-radio-group
+            id="ratingElement"
+            .selected="${this.answer.rating}"
+            @change="${(e: CustomEvent) => this._selectedRatingChanged(e.target as PaperRadioButtonElement)}"
+          >
             ${this._getRatingRadioButtonsTemplate(this.question)}
           </paper-radio-group>
           <span class="invalid-color" ?hidden="${this.hideRatingRequiredMsg}">Please select Rating</span>
         </div>
       </div>
-      <paper-textarea id="commentsElement"
+      <paper-textarea
+        id="commentsElement"
         label="Comments"
-        always-float-label class="row-padding-v"
+        always-float-label
+        class="row-padding-v"
         placeholder="—"
         .value="${this.answer.comments}"
-        ?readonly="${!this.editMode}">
+        ?readonly="${!this.editMode}"
+      >
       </paper-textarea>
       <div class="layout-vertical row-padding-v">
         <label class="paper-label">Proof of Evidence</label>
@@ -85,26 +93,29 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       ${this._getProofOfEvidenceTemplate(this.question.evidences, this.answer)}
 
       <div class="row-padding-v" ?hidden="${!this.showOtherInput}">
-        <paper-textarea id="otherEvidenceInput"
+        <paper-textarea
+          id="otherEvidenceInput"
           label="Please specify other"
           always-float-label
           required
           .autoValidate="${this.autoValidate}"
           placeholder="—"
           .value="${this._getOtherEvidenceInputValue(this.answer)}"
-          ?readonly="${!this.editMode}">
+          ?readonly="${!this.editMode}"
+        >
         </paper-textarea>
       </div>
 
       <div class="row-padding-v">
-        <question-attachments id="attachmentsElement"
+        <question-attachments
+          id="attachmentsElement"
           .documentTypes="${this.question.document_types}"
           .editMode="${this.editMode}"
           .attachments="${this.answer.attachments}"
-          @delete-attachment="${this.deleteAnswerAttachment}">
+          @delete-attachment="${this.deleteAnswerAttachment}"
+        >
         </question-attachments>
       </div>
-
     `;
   }
 
@@ -151,7 +162,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   stateChanged(state: RootState) {
     if (get(state, 'app.routeDetails.params.assessmentId')) {
       const id = state.app!.routeDetails.params!.assessmentId;
-      this.assessmentId = (id === 'new' ? null : id);
+      this.assessmentId = id === 'new' ? null : id;
       this.clearControls();
     }
   }
@@ -161,7 +172,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
       this.ratingElement.selected = '';
       this.commentsElement.value = '';
       this.otherEvidenceInput.value = '';
-      this.checkedEvidenceBoxes.forEach(el => el.checked = false);
+      this.checkedEvidenceBoxes.forEach((el) => (el.checked = false));
     }
   }
 
@@ -175,24 +186,26 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
 
   _getProofOfEvidenceTemplate(evidences: ProofOfEvidence[], answer: Answer) {
     return evidences.map((evidence: ProofOfEvidence) => {
-      return html`
-        <paper-checkbox class="proofOfEvidence padd-right ${this._getReadonlyStyle(this.editMode)}"
-            ?checked="${this._isChecked(evidence.id, answer.evidences)}"
-            evidenceid="${evidence.id}"
-            ?requires-description="${evidence.requires_description}"
-            @checked-changed="${(e: CustomEvent) => this._checkedEvidenceChanged(evidence,
-        (e.target as PaperCheckboxElement).checked!, answer)}">
-            ${evidence.label}
-        </paper-checkbox>`;
-
+      return html` <paper-checkbox
+        class="proofOfEvidence padd-right ${this._getReadonlyStyle(this.editMode)}"
+        ?checked="${this._isChecked(evidence.id, answer.evidences)}"
+        evidenceid="${evidence.id}"
+        ?requires-description="${evidence.requires_description}"
+        @checked-changed="${(e: CustomEvent) =>
+          this._checkedEvidenceChanged(evidence, (e.target as PaperCheckboxElement).checked!, answer)}"
+      >
+        ${evidence.label}
+      </paper-checkbox>`;
     });
   }
 
   _getRatingRadioButtonsTemplate(question: Question) {
-    return question.ratings.map((r: Rating, index: number) =>
-      html`<paper-radio-button class="${this._getRatingRadioClass(index)}" name="${r.id}">
-             ${r.label}
-           </paper-radio-button>`);
+    return question.ratings.map(
+      (r: Rating, index: number) =>
+        html`<paper-radio-button class="${this._getRatingRadioClass(index)}" name="${r.id}">
+          ${r.label}
+        </paper-radio-button>`
+    );
   }
 
   _getRatingRadioClass(index: number) {
@@ -321,7 +334,6 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   }
 
   _filterOutDeletedAttachment(attachmentId: string) {
-    return this.answer.attachments.filter(att => Number(att.id) !== Number(attachmentId));
+    return this.answer.attachments.filter((att) => Number(att.id) !== Number(attachmentId));
   }
-
 }
