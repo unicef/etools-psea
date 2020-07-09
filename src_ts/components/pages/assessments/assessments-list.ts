@@ -18,7 +18,8 @@ import {
   updateFilterSelectionOptions,
   updateFiltersSelectedValues,
   onlyForUnicefFilters,
-  FilterKeysAndTheirSelectedValues
+  FilterKeysAndTheirSelectedValues,
+  FilterKeys
 } from './list/filters';
 import {EtoolsFilter} from '../../common/layout/filters/etools-filters';
 import {ROOT_PATH} from '../../../config/config';
@@ -269,9 +270,8 @@ export class AssessmentsList extends connect(store)(LitElement) {
     try {
       if (this.dataRequiredByFiltersHasBeenLoaded(state)) {
         const availableFilters = this.isUnicefUser
-          ? // @ts-ignore
-            [...assessmentsFilters]
-          : [...assessmentsFilters.filter((x) => onlyForUnicefFilters.indexOf(x.filterKey) < 0)];
+          ? [...assessmentsFilters]
+          : [...assessmentsFilters.filter((x) => onlyForUnicefFilters.indexOf(x.filterKey as FilterKeys) < 0)];
 
         this.populateDropdownFilterOptionsFromCommonData(state.commonData, availableFilters);
 
