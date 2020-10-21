@@ -204,7 +204,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   offices: GenericObject[] = [];
 
   @property({type: Boolean})
-  dialogOpened: boolean = false;
+  dialogOpened = false;
 
   @property({type: Array})
   partners: object[] = [];
@@ -213,13 +213,13 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   assessment!: Assessment;
 
   @property({type: String})
-  dialogTitle: string = 'Add Action Point';
+  dialogTitle = 'Add Action Point';
 
   @property({type: String})
-  confirmBtnTxt: string = 'Save';
+  confirmBtnTxt = 'Save';
 
   @property({type: String})
-  cancelBtnText: string = 'Cancel';
+  cancelBtnText = 'Cancel';
 
   @property({type: Object})
   editedItem!: ActionPoint;
@@ -228,10 +228,10 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   categories: GenericObject[] = [];
 
   @property({type: Boolean})
-  requestInProcess: boolean = false;
+  requestInProcess = false;
 
   @property({type: Boolean})
-  isNewRecord: boolean = true;
+  isNewRecord = true;
 
   @property({type: Object})
   toastEventSource!: LitElement;

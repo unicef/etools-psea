@@ -21,15 +21,15 @@ export class AssessmentPermissions {
 export class Assessment {
   id?: number;
   assessment_date: string | null = '';
-  assessor: string = '';
+  assessor = '';
   reference_number?: string;
   partner_name?: string;
-  status: string = '';
+  status = '';
   status_list: string[][] = [];
   available_actions: string[] = [];
   partner: string | null = '';
   focal_points?: string[] = [];
-  rejected_comment: string = '';
+  rejected_comment = '';
   permissions = new AssessmentPermissions();
   partner_details?: GenericObject;
   focal_points_details: UnicefUser[] = [];
@@ -53,7 +53,7 @@ export class Assessor {
   assessment: string | null = null;
   user: string | null = null;
   auditor_firm: string | null = null;
-  auditor_firm_name: string = '';
+  auditor_firm_name = '';
   auditor_firm_staff: string[] = [];
   // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
   user_details: UnicefUser = {} as UnicefUser;
@@ -61,8 +61,8 @@ export class Assessor {
 
 export class Question {
   id!: string | number;
-  subject: string = '';
-  content: string = '';
+  subject = '';
+  content = '';
   ratings: Rating[] = [];
   evidences: ProofOfEvidence[] = [];
   document_types = [];
@@ -71,14 +71,14 @@ export class Question {
 
 export class ProofOfEvidence {
   id!: string;
-  label: string = '';
-  requires_description: boolean = false;
+  label = '';
+  requires_description = false;
 }
 
 export class Rating {
   id!: string | number;
-  label: string = '';
-  weight: string = '';
+  label = '';
+  weight = '';
 }
 
 export class Answer {
@@ -86,7 +86,7 @@ export class Answer {
   assessment: string | number | null = null;
   indicator: string | number | null = null;
   rating: string | null = null;
-  comments: string = '';
+  comments = '';
   evidences: AnswerEvidence[] = [];
   attachments: AnswerAttachment[] = [];
 }
@@ -98,10 +98,10 @@ export class AnswerEvidence {
 
 export class AnswerAttachment {
   id?: string;
-  created: string = '';
+  created = '';
   file_type?: string = ''; // id
   url?: string = '';
-  _filename: string = ''; // temp prop , used only on frontend
+  _filename = ''; // temp prop , used only on frontend
 }
 
 export interface UploadedFileInfo {

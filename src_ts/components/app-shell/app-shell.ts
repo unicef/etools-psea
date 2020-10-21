@@ -42,7 +42,7 @@ import user from '../../redux/reducers/user';
 import commonData from '../../redux/reducers/common-data';
 import pageData from '../../redux/reducers/page-data';
 import {setLoggingLevel, SMALL_MENU_ACTIVE_LOCALSTORAGE_KEY} from '../../config/config';
-import {getCurrentUserData} from '../user/user-actions';
+import {getCurrentUser} from '../user/user-actions';
 import {EtoolsRouter} from '../../routing/routes';
 import {RouteDetails} from '../../routing/router';
 import {
@@ -138,19 +138,19 @@ export class AppShell extends connect(store)(LitElement) {
   public narrow = true;
 
   @property({type: Boolean})
-  public drawerOpened: boolean = false;
+  public drawerOpened = false;
 
   @property({type: Object})
   public routeDetails!: RouteDetails;
 
   @property({type: String})
-  public mainPage: string = ''; // routeName
+  public mainPage = ''; // routeName
 
   @property({type: String})
   public subPage: string | null = null; // subRouteName
 
   @property({type: Boolean})
-  public smallMenu: boolean = false;
+  public smallMenu = false;
 
   @query('#layout') private drawerLayout!: AppDrawerLayoutElement;
   @query('#drawer') private drawer!: AppDrawerElement;
@@ -178,7 +178,7 @@ export class AppShell extends connect(store)(LitElement) {
 
     checkEnvFlags().then((response) => {
       if (!this._pseaIsDisabled(response)) {
-        getCurrentUserData().then((user) => {
+        getCurrentUser().then((user) => {
           if (user && user.is_unicef_user) {
             store.dispatch(loadExternalIndividuals());
             store.dispatch(loadAssessingFirms());

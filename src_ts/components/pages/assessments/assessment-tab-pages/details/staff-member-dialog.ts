@@ -167,10 +167,10 @@ export class StaffMemberDialog extends LitElement {
   hasAccessInputEl!: HTMLInputElement;
 
   @property({type: Boolean, reflect: true})
-  dialogOpened: boolean = false;
+  dialogOpened = false;
 
   @property({type: Boolean, reflect: true})
-  requestInProgress: boolean = false;
+  requestInProgress = false;
 
   @property({type: String})
   dialogTitle!: string;
@@ -179,7 +179,7 @@ export class StaffMemberDialog extends LitElement {
   confirmBtnText!: string;
 
   @property({type: String})
-  requiredMessage: string = 'This field is required';
+  requiredMessage = 'This field is required';
 
   @property({type: Object})
   editedItem!: EtoolsStaffMemberModel;

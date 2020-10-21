@@ -52,7 +52,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
   dataItems: object[] = [];
 
   @property({type: Boolean})
-  showLoading: boolean = false;
+  showLoading = false;
 
   @property({type: Array})
   columns: EtoolsTableColumn[] = [

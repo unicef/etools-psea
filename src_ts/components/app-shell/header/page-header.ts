@@ -70,13 +70,13 @@ export class PageHeader extends connect(store)(LitElement) {
   }
 
   @property({type: Boolean})
-  public isProduction: boolean = false;
+  public isProduction = false;
 
   @property({type: String})
   rootPath: string = ROOT_PATH;
 
   @property({type: String})
-  public headerColor: string = 'var(--header-bg-color)';
+  public headerColor = 'var(--header-bg-color)';
 
   @property({type: Object})
   profile!: EtoolsUserModel;
@@ -103,7 +103,7 @@ export class PageHeader extends connect(store)(LitElement) {
   profileDrUsers: any[] = [];
 
   @property({type: String})
-  environment: string = 'LOCAL';
+  environment = 'LOCAL';
 
   @property({type: Array})
   editableFields: string[] = ['office', 'section', 'job_title', 'phone_number', 'oic', 'supervisor'];
@@ -140,7 +140,7 @@ export class PageHeader extends connect(store)(LitElement) {
       });
   }
 
-  protected profileSaveLoadingMsgDisplay(show: boolean = true) {
+  protected profileSaveLoadingMsgDisplay(show = true) {
     fireEvent(this, 'global-loading', {
       active: show,
       loadingSource: 'profile-save'

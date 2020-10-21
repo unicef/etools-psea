@@ -127,7 +127,7 @@ export class ExternalIndividual extends connect(store)(LitElement) {
 
   private getSavedExternalDetailsAsArray(currentAssessor: Assessor) {
     const savedExternal = currentAssessor.user_details;
-    return !!(savedExternal && Object.keys(savedExternal).length > 0) ? [savedExternal] : [];
+    return savedExternal && Object.keys(savedExternal).length > 0 ? [savedExternal] : [];
   }
 
   private openAddDialog() {

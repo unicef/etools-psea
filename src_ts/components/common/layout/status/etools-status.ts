@@ -76,10 +76,10 @@ export class EtoolsStatus extends LitElement {
   }
 
   @property({type: String})
-  activeStatus: string = 'submitted-accepted';
+  activeStatus = 'submitted-accepted';
 
   @property({type: Number})
-  activeStatusIndex: number = 0;
+  activeStatusIndex = 0;
 
   // init with a default list of statuses (for testing)
   @property({type: Array})

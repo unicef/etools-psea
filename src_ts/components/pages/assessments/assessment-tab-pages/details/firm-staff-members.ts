@@ -105,7 +105,7 @@ export class FirmStaffMembers extends LitElement {
   paginator: EtoolsPaginator = {...defaultPaginator};
 
   @property({type: Boolean})
-  showLoading: boolean = false;
+  showLoading = false;
 
   @property({type: Array})
   listColumns: EtoolsTableColumn[] = [

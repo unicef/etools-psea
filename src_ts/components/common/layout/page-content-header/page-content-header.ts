@@ -98,5 +98,5 @@ export class PageContentHeader extends LitElement {
   }
 
   @property({type: Boolean, reflect: true})
-  withTabsVisible: boolean = false;
+  withTabsVisible = false;
 }
