@@ -209,13 +209,9 @@ export class QuestionAttachmentsElement extends LitElement {
   handlePossibleRandomBackendFailure(uploadedFiles: UploadedFileInfo[]) {
     const validUploadedFiles = uploadedFiles.filter((u: UploadedFileInfo) => !this.allObjectValuesAreEmpty(u));
 
-    if (validUploadedFiles.length === 0) {
-      fireEvent(this, 'toast', {text: 'Upload unsuccessful. Please try again.'});
-    } else if (validUploadedFiles.length < uploadedFiles.length) {
+    if (validUploadedFiles.length !== uploadedFiles.length) {
       fireEvent(this, 'toast', {
-        text: `${
-          uploadedFiles.length - validUploadedFiles.length
-        } files were not successfully uploaded. Please try again.`
+        text: `Unsuccessful upload for ${uploadedFiles.length - validUploadedFiles.length} file(s). Please try again.`
       });
     }
 
