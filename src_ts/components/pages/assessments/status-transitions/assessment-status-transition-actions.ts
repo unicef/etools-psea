@@ -36,7 +36,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   rejectionDialog!: AssessmentRejectionDialog;
 
   @property({type: Boolean})
-  showLoading: boolean = false;
+  showLoading = false;
 
   private statusChangeConfirmationDialog: EtoolsDialog | null = null;
   private confirmationMSg: HTMLSpanElement = document.createElement('span');

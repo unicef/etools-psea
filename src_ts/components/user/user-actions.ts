@@ -1,4 +1,4 @@
-import {EtoolsUserPermissions} from '../../types/user-model';
+import {EtoolsUserPermissions, EtoolsUserModel} from '../../types/user-model';
 import {GenericObject} from '../../types/globals';
 import {store} from '../../redux/store';
 import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
@@ -9,11 +9,6 @@ import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
 const LOGS_PREFIX = 'user-actions';
 
-export const getCurrentUserData = () => {
-  // TODO: find a better way of getting user data or continue with this
-  return getUserData(); // should req data and polpuate redux state...
-};
-
 export const updateCurrentUserData = (profile: any) => {
   return updateUserData(profile);
 };
@@ -22,16 +17,15 @@ export const changeCurrentUserCountry = (countryId: number) => {
   return changeCountry(countryId);
   // .then(() => {
   //   // refresh user data (no other way, country change req returns 204)
-  //   getCurrentUserData();
+  //   getCurrentUser();
   // });
 };
 
-export function getUserData() {
+export function getCurrentUser() {
   return sendRequest({
     endpoint: {url: getEndpoint(etoolsEndpoints.userProfile).url}
   })
-    .then((response: GenericObject) => {
-      // console.log('response', response);
+    .then((response: EtoolsUserModel) => {
       store.dispatch(setUserData(response));
       store.dispatch(setUserPermissions(getUserPermissions(response)));
       return response;

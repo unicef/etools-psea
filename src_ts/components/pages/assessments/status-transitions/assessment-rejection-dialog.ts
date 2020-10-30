@@ -52,10 +52,10 @@ export class AssessmentRejectionDialog extends LitElement {
   }
 
   @property({type: Boolean, reflect: true})
-  dialogOpened: boolean = false;
+  dialogOpened = false;
 
   @property({type: Boolean})
-  spinnerLoading: boolean = false;
+  spinnerLoading = false;
 
   @property({type: Object})
   fireEventSource!: HTMLElement;

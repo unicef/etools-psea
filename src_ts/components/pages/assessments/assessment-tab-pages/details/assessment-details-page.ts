@@ -29,7 +29,7 @@ export class AssessmentDetailsPage extends connect(store)(LitElement) {
   }
 
   @property({type: Boolean, reflect: true})
-  isNew: boolean = false;
+  isNew = false;
 
   stateChanged(state: RootState) {
     if (state.app!.routeDetails && state.app!.routeDetails.params) {

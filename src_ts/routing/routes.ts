@@ -61,7 +61,7 @@ EtoolsRouter.addRoute(
  * Utility used to update location based on routes and dispatch navigate action (optional)
  */
 // TODO this method calls app.ts/navigate and app.ts/navigate calls this method ?!!
-export const updateAppLocation = (newLocation: string, dispatchNavigation: boolean = true): void => {
+export const updateAppLocation = (newLocation: string, dispatchNavigation = true): void => {
   const _newLocation = EtoolsRouter.prepareLocationPath(newLocation);
 
   EtoolsRouter.pushState(_newLocation);
@@ -71,7 +71,7 @@ export const updateAppLocation = (newLocation: string, dispatchNavigation: boole
   }
 };
 
-export const replaceAppLocation = (newLocation: string, dispatchNavigation: boolean = true): void => {
+export const replaceAppLocation = (newLocation: string, dispatchNavigation = true): void => {
   const _newLocation = EtoolsRouter.prepareLocationPath(newLocation);
 
   EtoolsRouter.replaceState(_newLocation);

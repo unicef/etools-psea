@@ -1,8 +1,10 @@
+import {GenericObject} from './globals';
+
 // TODO: improve this user model
 export interface EtoolsUserModel {
-  countries_available: object[];
-  groups: object[];
-  country: object;
+  countries_available: GenericObject[];
+  groups: GenericObject[];
+  country: GenericObject;
   country_override: number;
   email: string;
   first_name: string;
@@ -20,7 +22,7 @@ export interface EtoolsUserModel {
   user: number;
   username: string;
   vendor_number: string | null;
-  [key: string]: any;
+  is_unicef_user: boolean;
 }
 export interface EtoolsUserPermissions {
   canAddAssessment: boolean;

@@ -12,6 +12,7 @@ import {prettyDate} from '../../../../utils/date-utility';
 import {AnswerAttachment, UploadedFileInfo} from '../../../../../types/assessment';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown';
+import {GenericObject} from '../../../../../types/globals';
 
 @customElement('question-attachments')
 export class QuestionAttachmentsElement extends LitElement {
@@ -194,10 +195,35 @@ export class QuestionAttachmentsElement extends LitElement {
       return;
     }
 
-    uploadedFiles.forEach((f: UploadedFileInfo) => {
+    const validUploadedFiles = this.handlePossibleRandomBackendFailure(uploadedFiles);
+    if (validUploadedFiles.length === 0) {
+      return;
+    }
+
+    validUploadedFiles.forEach((f: UploadedFileInfo) => {
       this.attachments.push(this._parseUploadedFileResponse(f));
     });
     this.attachments = [...this.attachments];
+  }
+
+  handlePossibleRandomBackendFailure(uploadedFiles: UploadedFileInfo[]) {
+    const validUploadedFiles = uploadedFiles.filter((u: UploadedFileInfo) => !this.allObjectValuesAreEmpty(u));
+
+    if (validUploadedFiles.length !== uploadedFiles.length) {
+      fireEvent(this, 'toast', {
+        text: `Unsuccessful upload for ${uploadedFiles.length - validUploadedFiles.length} file(s). Please try again.`
+      });
+    }
+
+    return validUploadedFiles;
+  }
+
+  allObjectValuesAreEmpty(u: GenericObject) {
+    return Object.values(u ? u : {}).every((u: any) => this._isEmptyVal(u));
+  }
+
+  _isEmptyVal(val: any) {
+    return val === '' || val === null;
   }
 
   _parseUploadedFileResponse(response: UploadedFileInfo) {

@@ -71,7 +71,7 @@ export class EtoolsTabs extends LitElement {
   }
 
   @property({type: String})
-  activeTab: string = '';
+  activeTab = '';
 
   @property({type: Array})
   tabs!: GenericObject[];
