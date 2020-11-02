@@ -23,12 +23,8 @@ import {PaperTextareaElement} from '@polymer/paper-input/paper-textarea';
 import {QuestionAttachmentsElement} from './question-attachments';
 import {PaperCheckboxElement} from '@polymer/paper-checkbox/paper-checkbox';
 import get from 'lodash-es/get';
-import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
-import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
-import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {fireEvent} from '../../../../utils/fire-custom-event';
-import {formatServerErrorAsText} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 import './answer-instructions';
+import {cloneDeep} from '../../../../utils/utils';
 
 @customElement('questionnaire-answer')
 export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
@@ -111,8 +107,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
           id="attachmentsElement"
           .documentTypes="${this.question.document_types}"
           .editMode="${this.editMode}"
-          .attachments="${this.answer.attachments}"
-          @delete-attachment="${this.deleteAnswerAttachment}"
+          .attachments="${cloneDeep(this.answer.attachments)}"
         >
         </question-attachments>
       </div>
@@ -308,32 +303,5 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
 
   _getReadonlyStyle(editMode: boolean) {
     return editMode ? '' : 'readonly';
-  }
-
-  deleteAnswerAttachment(e: CustomEvent) {
-    const attachmentId = e.detail.attachmentId;
-    if (e.detail.isNotSavedYet) {
-      this.answer = {...this.answer, attachments: this._filterOutDeletedAttachment(attachmentId)};
-      return;
-    }
-
-    let url = getEndpoint(etoolsEndpoints.answerAttachment, {
-      assessmentId: this.assessmentId,
-      indicatorId: this.question.id
-    }).url!;
-    url = url + attachmentId + '/';
-
-    return sendRequest({
-      endpoint: {url: url},
-      method: 'DELETE'
-    })
-      .then(() => {
-        this.answer = {...this.answer, attachments: this._filterOutDeletedAttachment(attachmentId)};
-      })
-      .catch((err: any) => fireEvent(this, 'toast', formatServerErrorAsText(err)));
-  }
-
-  _filterOutDeletedAttachment(attachmentId: string) {
-    return this.answer.attachments.filter((att) => Number(att.id) !== Number(attachmentId));
   }
 }

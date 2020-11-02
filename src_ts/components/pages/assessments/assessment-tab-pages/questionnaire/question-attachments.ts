@@ -203,7 +203,8 @@ export class QuestionAttachmentsElement extends LitElement {
     validUploadedFiles.forEach((f: UploadedFileInfo) => {
       this.attachments.push(this._parseUploadedFileResponse(f));
     });
-    this.attachments = [...this.attachments];
+
+    this.attachmentsUploaded();
   }
 
   handlePossibleRandomBackendFailure(uploadedFiles: UploadedFileInfo[]) {
@@ -261,6 +262,21 @@ export class QuestionAttachmentsElement extends LitElement {
   }
 
   deleteAttachment(attId: string, isNotSavedYet: boolean) {
-    fireEvent(this, 'delete-attachment', {attachmentId: attId, isNotSavedYet: isNotSavedYet});
+    fireEvent(this, 'delete-attachment', {
+      attachmentId: attId,
+      isNotSavedYet: isNotSavedYet,
+      attachments: isNotSavedYet ? this._filterOutDeletedAttachment(attId) : this.attachments
+    });
+  }
+
+  _filterOutDeletedAttachment(attachmentId: string) {
+    return this.attachments.filter((att) => Number(att.id) !== Number(attachmentId));
+  }
+
+  /**
+   * Have to update from parent component to avoid weird bugs
+   */
+  attachmentsUploaded() {
+    fireEvent(this, 'attachments-uploaded', {attachments: this.attachments});
   }
 }
