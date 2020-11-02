@@ -13,6 +13,8 @@ import {AnswerAttachment, UploadedFileInfo} from '../../../../../types/assessmen
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown';
 import {GenericObject} from '../../../../../types/globals';
+import {openDialog} from '../../../../utils/dialog';
+import '../../../../common/layout/are-you-sure';
 
 @customElement('question-attachments')
 export class QuestionAttachmentsElement extends LitElement {
@@ -116,6 +118,10 @@ export class QuestionAttachmentsElement extends LitElement {
   @property({type: Array})
   documentTypes = [];
 
+
+@property({type: String})
+deleteConfirmationMessage = 'Are you sure you want to delete this attachment?';
+
   _getAttachmentsHeaderTemplate(attachments: any) {
     if (!attachments || !attachments.length) {
       return '';
@@ -160,7 +166,7 @@ export class QuestionAttachmentsElement extends LitElement {
             ${this._getAttachmentNameTemplate(att)}
           </div>
           <div class="col-1 delete" ?hidden="${!editMode}">
-            <paper-button @tap="${() => this.deleteAttachment(att.id!, !att.url)}">DELETE</paper-button>
+            <paper-button @tap="${() => this.openDeleteConfirmation(att.id!, !att.url)}">DELETE</paper-button>
           </div>
         </div>
       `;
@@ -259,6 +265,21 @@ export class QuestionAttachmentsElement extends LitElement {
       }
     });
     return valid;
+  }
+
+  async openDeleteConfirmation(attId: string, isNotSavedYet: boolean) {
+    const confirmed = await openDialog({
+      dialog: 'are-you-sure',
+      dialogData: {
+        content: this.deleteConfirmationMessage,
+        confirmBtnText: 'Yes'
+      }
+    }).then(({confirmed}) => {
+      return confirmed;
+    });
+    if (confirmed) {
+      this.deleteAttachment(attId, isNotSavedYet);
+    }
   }
 
   deleteAttachment(attId: string, isNotSavedYet: boolean) {
