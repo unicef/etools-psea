@@ -15,6 +15,7 @@ import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 import {buttonsStyles} from '../../../../styles/button-styles';
+import {cloneDeep} from '../../../../utils/utils';
 
 @customElement('questionnaire-item')
 export class QuestionnaireItemElement extends LitElement {
@@ -79,9 +80,11 @@ export class QuestionnaireItemElement extends LitElement {
           <questionnaire-answer
             id="questionnaireAnswerElement"
             ?hidden="${this.hideAnswer(this.answer, this.canEditAnswers)}"
-            .question="${this.question}"
-            .answer="${this.answer}"
+            .question="${cloneDeep(this.question)}"
+            .answer="${cloneDeep(this.answer)}"
             .editMode="${this.editMode && this.canEditAnswers}"
+            @delete-attachment="${this.deleteAnswerAttachment}"
+            @attachments-uploaded="${this.attachmentsUploaded}"
           >
           </questionnaire-answer>
         </div>
@@ -157,7 +160,7 @@ export class QuestionnaireItemElement extends LitElement {
   }
 
   cancel() {
-    fireEvent(this, 'cancel-answer', this.question.id);
+    fireEvent(this, 'cancel-answer', {questionId: this.question.id, attachments: this.answer.attachments});
     this.editMode = false;
     this.open = false;
   }
@@ -240,5 +243,36 @@ export class QuestionnaireItemElement extends LitElement {
     } else {
       return !answer || !answer.id;
     }
+  }
+
+  deleteAnswerAttachment(e: CustomEvent) {
+    const attachmentId = e.detail.attachmentId;
+    if (e.detail.isNotSavedYet) {
+      this.answer = {...this.answer, attachments: e.detail.attachments};
+      return;
+    }
+
+    let url = getEndpoint(etoolsEndpoints.answerAttachment, {
+      assessmentId: this.assessmentId,
+      indicatorId: this.question.id
+    }).url!;
+    url = url + attachmentId + '/';
+
+    return sendRequest({
+      endpoint: {url: url},
+      method: 'DELETE'
+    })
+      .then(() => {
+        this.answer = {...this.answer, attachments: this._filterOutDeletedAttachment(attachmentId)};
+      })
+      .catch((err: any) => fireEvent(this, 'toast', formatServerErrorAsText(err)));
+  }
+
+  _filterOutDeletedAttachment(attachmentId: string) {
+    return this.answer.attachments.filter((att) => Number(att.id) !== Number(attachmentId));
+  }
+
+  attachmentsUploaded(e: CustomEvent) {
+    this.answer = {...this.answer, attachments: e.detail.attachments};
   }
 }
