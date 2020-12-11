@@ -197,7 +197,7 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
       this.answers[index].attachments = this._filterOutUnsaved(atts);
       this.answers = [...this.answers];
     } catch (error) {
-      /** do not care */
+      /** irrelevant */
     }
   }
 

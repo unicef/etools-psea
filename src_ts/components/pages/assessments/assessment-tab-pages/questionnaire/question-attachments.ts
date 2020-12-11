@@ -118,9 +118,8 @@ export class QuestionAttachmentsElement extends LitElement {
   @property({type: Array})
   documentTypes = [];
 
-
-@property({type: String})
-deleteConfirmationMessage = 'Are you sure you want to delete this attachment?';
+  @property({type: String})
+  deleteConfirmationMessage = 'Are you sure you want to delete this attachment?';
 
   _getAttachmentsHeaderTemplate(attachments: any) {
     if (!attachments || !attachments.length) {

@@ -248,7 +248,7 @@ export class QuestionnaireItemElement extends LitElement {
   deleteAnswerAttachment(e: CustomEvent) {
     const attachmentId = e.detail.attachmentId;
     if (e.detail.isNotSavedYet) {
-      this.answer = {...this.answer, attachments: e.detail.attachments};
+      this.answer = {...this.questionnaireAnswerElement.getEditedAnswer(), attachments: e.detail.attachments};
       return;
     }
 
@@ -263,7 +263,10 @@ export class QuestionnaireItemElement extends LitElement {
       method: 'DELETE'
     })
       .then(() => {
-        this.answer = {...this.answer, attachments: this._filterOutDeletedAttachment(attachmentId)};
+        this.answer = {
+          ...this.questionnaireAnswerElement.getEditedAnswer(),
+          attachments: this._filterOutDeletedAttachment(attachmentId)
+        };
       })
       .catch((err: any) => fireEvent(this, 'toast', formatServerErrorAsText(err)));
   }
@@ -273,6 +276,6 @@ export class QuestionnaireItemElement extends LitElement {
   }
 
   attachmentsUploaded(e: CustomEvent) {
-    this.answer = {...this.answer, attachments: e.detail.attachments};
+    this.answer = {...this.questionnaireAnswerElement.getEditedAnswer(), attachments: e.detail.attachments};
   }
 }
