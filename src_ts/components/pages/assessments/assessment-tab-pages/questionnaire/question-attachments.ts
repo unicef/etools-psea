@@ -188,6 +188,7 @@ export class QuestionAttachmentsElement extends LitElement {
   _setSelectedDocType(e: CustomEvent, attachment: any) {
     if (e.detail.selectedItem) {
       attachment.file_type = e.detail.selectedItem && e.detail.selectedItem.id;
+      fireEvent(this, 'file-type-changed', {attachments: this.attachments});
     }
   }
 
