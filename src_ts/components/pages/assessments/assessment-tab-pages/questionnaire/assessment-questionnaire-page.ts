@@ -194,15 +194,19 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
   _handleDeletedOrUnsavedAtt(atts: AnswerAttachment[], questionId: string | number) {
     const index = (this.answers || []).findIndex((a: Answer) => a.indicator == questionId);
     try {
-      this.answers[index].attachments = this._filterOutUnsaved(atts);
+      this.answers[index].attachments = this._filterOutUnsaved(atts, index);
       this.answers = [...this.answers];
     } catch (error) {
-      /** do not care */
+      /** irrelevant */
     }
   }
 
-  _filterOutUnsaved(atts: AnswerAttachment[]) {
-    return (atts || []).filter((a: AnswerAttachment) => a.url && !a._filename);
+  _filterOutUnsaved(atts: AnswerAttachment[], index: number) {
+    const uneditedAtts = (atts || []).filter((a: AnswerAttachment) => a.url && !a._filename);
+    uneditedAtts.forEach((a: AnswerAttachment) => {
+      a.file_type = this.answers[index].attachments.filter((t: AnswerAttachment) => t.id == a.id)[0].file_type;
+    });
+    return uneditedAtts;
   }
 
   checkOverallRating(e: CustomEvent) {
