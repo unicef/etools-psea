@@ -118,9 +118,8 @@ export class QuestionAttachmentsElement extends LitElement {
   @property({type: Array})
   documentTypes = [];
 
-
-@property({type: String})
-deleteConfirmationMessage = 'Are you sure you want to delete this attachment?';
+  @property({type: String})
+  deleteConfirmationMessage = 'Are you sure you want to delete this attachment?';
 
   _getAttachmentsHeaderTemplate(attachments: any) {
     if (!attachments || !attachments.length) {
@@ -189,6 +188,7 @@ deleteConfirmationMessage = 'Are you sure you want to delete this attachment?';
   _setSelectedDocType(e: CustomEvent, attachment: any) {
     if (e.detail.selectedItem) {
       attachment.file_type = e.detail.selectedItem && e.detail.selectedItem.id;
+      fireEvent(this, 'file-type-changed', {attachments: this.attachments});
     }
   }
 

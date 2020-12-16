@@ -7,7 +7,7 @@ import './questionnaire-answer';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {radioButtonStyles} from '../../../../styles/radio-button-styles';
-import {Question, Answer, Rating} from '../../../../../types/assessment';
+import {Question, Answer, Rating, AnswerAttachment} from '../../../../../types/assessment';
 import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {QuestionnaireAnswerElement} from './questionnaire-answer';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
@@ -15,7 +15,7 @@ import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {fireEvent} from '../../../../utils/fire-custom-event';
 import {formatServerErrorAsText} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 import {buttonsStyles} from '../../../../styles/button-styles';
-import {cloneDeep} from '../../../../utils/utils';
+import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
 
 @customElement('questionnaire-item')
 export class QuestionnaireItemElement extends LitElement {
@@ -85,6 +85,7 @@ export class QuestionnaireItemElement extends LitElement {
             .editMode="${this.editMode && this.canEditAnswers}"
             @delete-attachment="${this.deleteAnswerAttachment}"
             @attachments-uploaded="${this.attachmentsUploaded}"
+            @file-type-changed="${this.fileTypeChanged}"
           >
           </questionnaire-answer>
         </div>
@@ -248,7 +249,7 @@ export class QuestionnaireItemElement extends LitElement {
   deleteAnswerAttachment(e: CustomEvent) {
     const attachmentId = e.detail.attachmentId;
     if (e.detail.isNotSavedYet) {
-      this.answer = {...this.answer, attachments: e.detail.attachments};
+      this.answer = {...this.questionnaireAnswerElement.getEditedAnswer(), attachments: e.detail.attachments};
       return;
     }
 
@@ -263,7 +264,10 @@ export class QuestionnaireItemElement extends LitElement {
       method: 'DELETE'
     })
       .then(() => {
-        this.answer = {...this.answer, attachments: this._filterOutDeletedAttachment(attachmentId)};
+        this.answer = {
+          ...this.questionnaireAnswerElement.getEditedAnswer(),
+          attachments: this._filterOutDeletedAttachment(attachmentId)
+        };
       })
       .catch((err: any) => fireEvent(this, 'toast', formatServerErrorAsText(err)));
   }
@@ -273,6 +277,16 @@ export class QuestionnaireItemElement extends LitElement {
   }
 
   attachmentsUploaded(e: CustomEvent) {
-    this.answer = {...this.answer, attachments: e.detail.attachments};
+    this._attachmentsChanged(e.detail.attachments);
+  }
+  fileTypeChanged(e: CustomEvent) {
+    this._attachmentsChanged(e.detail.attachments);
+  }
+
+  _attachmentsChanged(editedAttachments: AnswerAttachment[]) {
+    if (isJsonStrMatch(editedAttachments, this.answer.attachments)) {
+      return;
+    }
+    this.answer = {...this.questionnaireAnswerElement.getEditedAnswer(), attachments: editedAttachments};
   }
 }
