@@ -5,7 +5,7 @@ import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
-import {Question, Answer} from '../../../../../types/assessment';
+import {Question, Answer, AnswerAttachment} from '../../../../../types/assessment';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {cloneDeep} from '../../../../utils/utils';
@@ -164,7 +164,7 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
           .assessmentId="${this.assessmentId}"
           .isUnicefUser="${this.isUnicefUser}"
           @answer-saved="${this.checkOverallRating}"
-          @cancel-answer="${this.cancelUnsavedChanges}"
+          @cancel-answer="${this.cancel}"
         >
         </questionnaire-item>`;
       }
@@ -184,10 +184,29 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     }
   }
 
-  cancelUnsavedChanges(e: CustomEvent) {
-    const q = this.questionnaireItems.find((q) => q.id == e.detail)!;
+  cancel(e: CustomEvent) {
+    const q = this.questionnaireItems.find((q) => q.id == e.detail.questionId)!;
+
+    this._handleDeletedOrUnsavedAtt(e.detail.attachments, q.id);
     q.stamp = Date.now();
     this.requestUpdate();
+  }
+  _handleDeletedOrUnsavedAtt(atts: AnswerAttachment[], questionId: string | number) {
+    const index = (this.answers || []).findIndex((a: Answer) => a.indicator == questionId);
+    try {
+      this.answers[index].attachments = this._filterOutUnsaved(atts, index);
+      this.answers = [...this.answers];
+    } catch (error) {
+      /** irrelevant */
+    }
+  }
+
+  _filterOutUnsaved(atts: AnswerAttachment[], index: number) {
+    const uneditedAtts = (atts || []).filter((a: AnswerAttachment) => a.url && !a._filename);
+    uneditedAtts.forEach((a: AnswerAttachment) => {
+      a.file_type = this.answers[index].attachments.filter((t: AnswerAttachment) => t.id == a.id)[0].file_type;
+    });
+    return uneditedAtts;
   }
 
   checkOverallRating(e: CustomEvent) {
