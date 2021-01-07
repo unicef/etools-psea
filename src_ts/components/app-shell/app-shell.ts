@@ -55,6 +55,10 @@ import {
 } from '../../redux/actions/common-data';
 import {checkEnvFlags} from '../common/environment-flags';
 import {logInfo} from '@unicef-polymer/etools-behaviors/etools-logging';
+declare const dayjs: any;
+declare const dayjs_plugin_utc: any;
+
+dayjs.extend(dayjs_plugin_utc);
 
 store.addReducers({
   user,
