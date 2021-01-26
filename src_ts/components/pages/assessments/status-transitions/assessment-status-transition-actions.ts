@@ -184,6 +184,8 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   }
 
   onStatusChangeConfirmation(e: CustomEvent) {
+    const containerHeight = document.querySelector('app-shell')!.shadowRoot!.querySelector("#appHeadLayout")!.shadowRoot!.querySelector("#contentContainer")!.scrollHeight;
+    this.shadowRoot!.querySelector("etools-loading")!.style.height = `${containerHeight}px`;
     this.showLoading = true;
     if (!e.detail.confirmed) {
       this.showLoading = false;
