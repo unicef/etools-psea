@@ -71,7 +71,7 @@
     "@typescript-eslint/no-unused-vars": ["error", {"argsIgnorePattern": "^_"}]
   },
   "globals": {
-    "moment": true,
+    "dayjs": true,
     "Promise": true,
     "Polymer": true,
     "EtoolsPmpApp": true,

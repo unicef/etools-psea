@@ -173,5 +173,10 @@ export const SharedStylesLit = html`
     .font-bold {
       font-weight: bold;
     }
+
+    paper-input,
+    paper-textarea {
+      outline: none;
+    }
   </style>
 `;
