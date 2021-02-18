@@ -2,6 +2,7 @@ import '@polymer/paper-button/paper-button';
 
 import '../../common/layout/page-content-header/page-content-header';
 import '../../common/layout/etools-tabs';
+import '@unicef-polymer/etools-loading';
 // eslint-disable-next-line max-len
 import {pageContentHeaderSlottedStyles} from '../../common/layout/page-content-header/page-content-header-slotted-styles';
 import '../../common/layout/status/etools-status';
@@ -47,9 +48,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
         ${rejectionTabStyles} etools-status {
           justify-content: center;
         }
-        .page-content > * {
-          position: relative;
-        }
+
       </style>
       ${this.assessment && this.assessment.id
         ? html`<etools-status
