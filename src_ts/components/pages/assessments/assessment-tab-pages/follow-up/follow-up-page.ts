@@ -16,6 +16,7 @@ import {getEndpoint} from '../../../../../endpoints/endpoints';
 import {RootState, store} from '../../../../../redux/store';
 import {connect} from 'pwa-helpers/connect-mixin';
 import '@unicef-polymer/etools-loading';
+import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import get from 'lodash-es/get';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 
@@ -23,6 +24,7 @@ import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
 export class FollowUpPage extends connect(store)(LitElement) {
   render() {
     return html`
+      ${SharedStylesLit}
       <style>
         :host {
           --ecp-content-padding: 0;

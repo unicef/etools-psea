@@ -178,5 +178,17 @@ export const SharedStylesLit = html`
     paper-textarea {
       outline: none;
     }
+
+    etools-content-panel::part(ecp-header) {
+      background-color: var(--primary-background-color);
+      border-bottom: 1px groove var(--dark-divider-color);
+    }
+
+    etools-content-panel::part(ecp-header-title) {
+      padding: 0 24px 0 0;
+      text-align: left;
+      font-size: 18px;
+      font-weight: 500;
+    }
   </style>
 `;
