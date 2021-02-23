@@ -10,10 +10,10 @@ export const rejectionTabStyles = css`
 
   etools-content-panel.rejection-tab {
     margin-bottom: 20px;
+  }
 
-    --ecp-header-btns-wrapper: {
-      opacity: 1;
-    }
+  etools-content-panel.rejection-tab::part(ecp-header-btns-wrapper) {
+    opacity: 1;
   }
 
   etools-content-panel.rejection-tab .rejection-title {
