@@ -57,7 +57,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     // language=HTML
     return html`
       ${SharedStylesLit}
-      <etools-content-panel panel-title="Assessment Information">
+      <etools-content-panel panel-title="Partner Details">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
 
         <div slot="panel-btns">
