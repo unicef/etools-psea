@@ -47,17 +47,8 @@ documentContainer.innerHTML = `
         --error-box-border-color: #ebccd1;
         --error-box-text-color: var(--error-color);
 
-        --epc-header: {
-          background-color: var( --primary-background-color);
-          border-bottom: 1px groove var(--dark-divider-color);
-        }
-        --epc-header-color: var(--primary-text-color);
-        --ecp-header-title: {
-          padding: 0 24px 0 0;
-          text-align: left;
-          font-size: 18px;
-          font-weight: 500;
-        }
+        --ecp-header-color: var(--primary-text-color);
+
         --paper-input-container-label: {
           color: var(--secondary-text-color, #737373);
         }

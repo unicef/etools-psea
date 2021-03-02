@@ -58,7 +58,7 @@ export class QuestionnaireItemElement extends LitElement {
         <div slot="panel-btns">
           <paper-radio-button
             checked
-            class="epc-header-radio-button ${this._getRadioBtnClass(this.answer)} readonly"
+            class="ecp-header-radio-button ${this._getRadioBtnClass(this.answer)} readonly"
             ?hidden="${!this._answerIsSaved(this.answer)}"
           >
             ${this._getSelectedRating(this.answer)}

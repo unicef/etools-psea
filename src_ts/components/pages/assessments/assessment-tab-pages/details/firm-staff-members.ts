@@ -61,8 +61,8 @@ export class FirmStaffMembers extends LitElement {
           visibility: visible;
         }
         @media (max-width: 760px) {
-          etools-content-panel {
-            --epc-header_-_border-bottom: none;
+          etools-content-panel::part(ecp-header) {
+            border-bottom: none;
           }
         }
       </style>

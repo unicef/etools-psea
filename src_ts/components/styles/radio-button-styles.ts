@@ -1,7 +1,7 @@
 import {css} from 'lit-element';
 // language=HTML
 export const radioButtonStyles = css`
-  .epc-header-radio-button {
+  .ecp-header-radio-button {
     min-width: 120px;
   }
   paper-radio-button.red {
