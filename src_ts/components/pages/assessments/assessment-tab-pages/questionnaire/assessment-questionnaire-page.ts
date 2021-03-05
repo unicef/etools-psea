@@ -35,6 +35,11 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
 
   render() {
     // language=HTML
+    if (this.loadingQuestions || this.loadingAnswers) {
+      return html` ${SharedStylesLit}
+        <etools-loading loading-text="Loading..." active></etools-loading>`;
+    }
+
     return html`
       ${SharedStylesLit}
       <style>
@@ -67,8 +72,6 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
           text-align: left;
         }
       </style>
-      <etools-loading loading-text="Loading..." .active="${this.loadingQuestions || this.loadingAnswers}">
-      </etools-loading>
       <div
         class="overall layout-horizontal ${this._getColorClass(this.overallRatingDisplay)}"
         ?hidden="${!this.overallRatingDisplay}"
@@ -150,6 +153,8 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     if (!questionnaireItems) {
       return;
     }
+    // set stamp to trigger new render every time
+    questionnaireItems.map((q: any) => (q.stamp = Date.now()));
 
     return repeat(
       questionnaireItems,
@@ -249,7 +254,6 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
       endpoint: {url: url}
     })
       .then((resp) => {
-        resp.map((r: any) => (r.stamp = Date.now()));
         this.questionnaireItems = resp;
       })
       .catch((err: any) => logError('Questions req failed', 'AssessmentQuestionnairePage', err))
