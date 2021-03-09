@@ -117,6 +117,10 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     if (newAssessmentId && newAssessmentId !== this.assessmentId) {
       this.assessmentId = newAssessmentId;
       this.getAnswers();
+      if (this.questionnaireItems) {
+        // set stamp to trigger new render every time AssessmentId changed
+        this.setQuestionsStamp(this.questionnaireItems);
+      }
     }
     const currentAssessment = get(state, 'pageData.currentAssessment');
     if (currentAssessment) {
@@ -153,8 +157,6 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     if (!questionnaireItems) {
       return;
     }
-    // set stamp to trigger new render every time
-    questionnaireItems.map((q: any) => (q.stamp = Date.now()));
 
     return repeat(
       questionnaireItems,
@@ -254,10 +256,15 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
       endpoint: {url: url}
     })
       .then((resp) => {
+        this.setQuestionsStamp(resp);
         this.questionnaireItems = resp;
       })
       .catch((err: any) => logError('Questions req failed', 'AssessmentQuestionnairePage', err))
       .then(() => (this.loadingQuestions = false));
+  }
+
+  setQuestionsStamp(questionnaireItems: Question[]) {
+    (questionnaireItems || []).map((q: Question) => (q.stamp = Date.now()));
   }
 
   getAnswers() {
