@@ -124,13 +124,6 @@ export const assessmentsFilters: EtoolsFilter[] = [
     optionLabel: 'name'
   },
   {
-    filterName: 'Assessment Date',
-    filterKey: FilterKeys.assessment_date,
-    type: EtoolsFilterTypes.Date,
-    selectedValue: null,
-    selected: true
-  },
-  {
     filterName: 'Assessment Date After',
     filterKey: FilterKeys.assessment_date__gt,
     type: EtoolsFilterTypes.Date,

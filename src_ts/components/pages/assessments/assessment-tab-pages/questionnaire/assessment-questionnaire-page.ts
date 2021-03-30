@@ -35,6 +35,11 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
 
   render() {
     // language=HTML
+    if (this.loadingQuestions || this.loadingAnswers) {
+      return html` ${SharedStylesLit}
+        <etools-loading loading-text="Loading..." active></etools-loading>`;
+    }
+
     return html`
       ${SharedStylesLit}
       <style>
@@ -67,8 +72,6 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
           text-align: left;
         }
       </style>
-      <etools-loading loading-text="Loading..." .active="${this.loadingQuestions || this.loadingAnswers}">
-      </etools-loading>
       <div
         class="overall layout-horizontal ${this._getColorClass(this.overallRatingDisplay)}"
         ?hidden="${!this.overallRatingDisplay}"
@@ -114,6 +117,10 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
     if (newAssessmentId && newAssessmentId !== this.assessmentId) {
       this.assessmentId = newAssessmentId;
       this.getAnswers();
+      if (this.questionnaireItems) {
+        // set stamp to trigger new render every time AssessmentId changed
+        this.setQuestionsStamp(this.questionnaireItems);
+      }
     }
     const currentAssessment = get(state, 'pageData.currentAssessment');
     if (currentAssessment) {
@@ -249,11 +256,15 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
       endpoint: {url: url}
     })
       .then((resp) => {
-        resp.map((r: any) => (r.stamp = Date.now()));
+        this.setQuestionsStamp(resp);
         this.questionnaireItems = resp;
       })
       .catch((err: any) => logError('Questions req failed', 'AssessmentQuestionnairePage', err))
       .then(() => (this.loadingQuestions = false));
+  }
+
+  setQuestionsStamp(questionnaireItems: Question[]) {
+    (questionnaireItems || []).map((q: Question) => (q.stamp = Date.now()));
   }
 
   getAnswers() {

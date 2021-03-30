@@ -2,18 +2,18 @@ import {css} from 'lit-element';
 
 // language=HTML
 export const rejectionTabStyles = css`
+  etools-content-panel.rejection-tab::part(ecp-header) {
+    height: 5px;
+    background-color: var(--primary-shade-of-orange);
+    border-bottom: none;
+  }
+
   etools-content-panel.rejection-tab {
     margin-bottom: 20px;
+  }
 
-    --epc-header: {
-      padding: 2px;
-    }
-    --ecp-header-bg: var(--primary-shade-of-orange);
-    --ecp-header-height: 5px;
-
-    --ecp-header-btns-wrapper: {
-      opacity: 1;
-    }
+  etools-content-panel.rejection-tab::part(ecp-header-btns-wrapper) {
+    opacity: 1;
   }
 
   etools-content-panel.rejection-tab .rejection-title {
