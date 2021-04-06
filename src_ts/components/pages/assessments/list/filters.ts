@@ -13,6 +13,7 @@ export enum FilterKeys {
   assessor_staff = 'assessor_staff',
   assessor_firm = 'assessor_firm',
   assessor_external = 'assessor_external',
+  sea_risk_rating = 'sea_risk_rating',
   page_size = 'page_size',
   sort = 'sort'
 }
@@ -45,6 +46,7 @@ export const selectedValueTypeByFilterKey: GenericObject = {
   [FilterKeys.assessor_staff]: 'Array',
   [FilterKeys.assessor_firm]: 'Array',
   [FilterKeys.assessor_external]: 'Array',
+  [FilterKeys.sea_risk_rating]: 'Array',
   [FilterKeys.page_size]: 'string',
   [FilterKeys.sort]: 'string'
 };
@@ -173,6 +175,19 @@ export const assessmentsFilters: EtoolsFilter[] = [
     disabled: false,
     optionValue: 'id',
     optionLabel: 'name'
+  },
+  {
+    filterName: 'SEA Risk Rating',
+    filterKey: FilterKeys.sea_risk_rating,
+    type: EtoolsFilterTypes.DropdownMulti,
+    selectionOptions: [],
+    selectedValue: [],
+    selected: false,
+    minWidth: '350px',
+    hideSearch: false,
+    disabled: false,
+    optionValue: 'value',
+    optionLabel: 'label'
   }
 ];
 

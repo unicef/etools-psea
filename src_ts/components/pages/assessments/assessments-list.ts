@@ -315,6 +315,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
     }
     updateFilterSelectionOptions(currentFilters, 'unicef_focal_point', commonData.unicefUsers);
     updateFilterSelectionOptions(currentFilters, 'partner', commonData.partners);
+    updateFilterSelectionOptions(currentFilters, 'sea_risk_rating', commonData.seaRiskRatings);
   }
 
   updateUrlListQueryParams() {
