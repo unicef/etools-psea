@@ -12,7 +12,6 @@ export const SET_OFFICES = 'SET_OFFICES';
 export const SET_SECTIONS = 'SET_SECTIONS';
 export const SET_EXTERNAL_INDIVIDUALS = 'SET_EXTERNAL_INDIVIDUALS';
 export const SET_ASSESSING_FIRMS = 'SET_ASSESSING_FIRMS';
-export const SET_SEA_RISK_RATINGS = 'SET_SEA_RISK_RATINGS';
 
 export interface CommonDataActionSetUnicefUsersData extends Action<'SET_UNICEF_USERS_DATA'> {
   unicefUsersData: object[];
@@ -81,23 +80,6 @@ export const loadOffices = () => (dispatch: any) => {
     endpoint: {url: etoolsEndpoints.offices.url!}
   })
     .then((resp: any) => dispatch(setOffices(resp)))
-    .catch((error: GenericObject) => {
-      logError('loadOffices req error...', LOGS_PREFIX, error);
-    });
-};
-
-const setSEARiskRatings = (seaRiskRatings: {label: string; value: string}[]) => {
-  return {
-    type: SET_SEA_RISK_RATINGS,
-    seaRiskRatings
-  };
-};
-
-export const loadStaticData = () => (dispatch: any) => {
-  sendRequest({
-    endpoint: {url: etoolsEndpoints.dropdownsStatic.url!}
-  })
-    .then((resp: any) => dispatch(setSEARiskRatings(resp.sea_risk_ratings)))
     .catch((error: GenericObject) => {
       logError('loadOffices req error...', LOGS_PREFIX, error);
     });

@@ -222,6 +222,8 @@ export class AssessmentsList extends connect(store)(LitElement) {
   @property({type: Array})
   listData: GenericObject[] = [];
 
+  availableSeaRiskRatings = [{value: 'low', label: 'Low'}, {value: 'moderate', label: 'Moderate'}, {value: 'high', label: 'High'}];
+
   stateChanged(state: RootState) {
     const routeDetails = get(state, 'app.routeDetails');
     if (!(routeDetails.routeName === 'assessments' && routeDetails.subRouteName === 'list')) {
@@ -315,7 +317,7 @@ export class AssessmentsList extends connect(store)(LitElement) {
     }
     updateFilterSelectionOptions(currentFilters, 'unicef_focal_point', commonData.unicefUsers);
     updateFilterSelectionOptions(currentFilters, 'partner', commonData.partners);
-    updateFilterSelectionOptions(currentFilters, 'sea_risk_rating', commonData.seaRiskRatings);
+    updateFilterSelectionOptions(currentFilters, 'sea_risk_rating', this.availableSeaRiskRatings);
   }
 
   updateUrlListQueryParams() {
