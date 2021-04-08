@@ -51,8 +51,7 @@ import {
   loadSections,
   loadExternalIndividuals,
   loadAssessingFirms,
-  loadUnicefUsers,
-  loadStaticData
+  loadUnicefUsers
 } from '../../redux/actions/common-data';
 import {checkEnvFlags} from '../common/environment-flags';
 import {logInfo} from '@unicef-polymer/etools-behaviors/etools-logging';
@@ -193,7 +192,6 @@ export class AppShell extends connect(store)(LitElement) {
         store.dispatch(loadPartners());
         store.dispatch(loadOffices());
         store.dispatch(loadSections());
-        store.dispatch(loadStaticData());
       }
     });
   }

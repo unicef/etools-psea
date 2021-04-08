@@ -26,10 +26,7 @@ export const etoolsEndpoints: EtoolsEndpoints = {
     url: '/api/v3/users/?verbosity=minimal',
     exp: 60 * 60 * 1000, // 1h
     cachingKey: 'unicefUsers'
-  },
-  dropdownsStatic: {
-    url: '/api/v2/dropdowns/static'
-  },
+  },  
   assessment: {
     url: '/api/psea/assessment/'
   },

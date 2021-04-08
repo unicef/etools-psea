@@ -5,8 +5,7 @@ import {
   SET_EXTERNAL_INDIVIDUALS,
   SET_OFFICES,
   SET_SECTIONS,
-  SET_ASSESSING_FIRMS,
-  SET_SEA_RISK_RATINGS
+  SET_ASSESSING_FIRMS
 } from '../actions/common-data';
 import {RootAction} from '../store';
 import {UnicefUser} from '../../types/user-model';
@@ -18,7 +17,6 @@ export interface CommonDataState {
   sections: [];
   externalIndividuals: [];
   assessingFirms: [];
-  seaRiskRatings: {label: string; value: string}[];
 }
 
 const INITIAL_COMMON_DATA: CommonDataState = {
@@ -27,8 +25,7 @@ const INITIAL_COMMON_DATA: CommonDataState = {
   offices: [],
   sections: [],
   externalIndividuals: [],
-  assessingFirms: [],
-  seaRiskRatings: []
+  assessingFirms: []
 };
 
 const commonData: Reducer<CommonDataState, RootAction> = (state = INITIAL_COMMON_DATA, action) => {
@@ -62,12 +59,7 @@ const commonData: Reducer<CommonDataState, RootAction> = (state = INITIAL_COMMON
       return {
         ...state,
         assessingFirms: action.assessingFirms
-      };
-    case SET_SEA_RISK_RATINGS:
-      return {
-        ...state,
-        seaRiskRatings: action.seaRiskRatings
-      };
+      };    
     default:
       return state;
   }
