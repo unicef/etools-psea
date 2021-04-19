@@ -59,7 +59,7 @@ const commonData: Reducer<CommonDataState, RootAction> = (state = INITIAL_COMMON
       return {
         ...state,
         assessingFirms: action.assessingFirms
-      };
+      };    
     default:
       return state;
   }

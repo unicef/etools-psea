@@ -11,7 +11,7 @@ import {getFileNameFromURL} from '../../../../utils/utils';
 import {prettyDate} from '../../../../utils/date-utility';
 import {AnswerAttachment, UploadedFileInfo} from '../../../../../types/assessment';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
-import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown';
+import {EtoolsDropdownEl} from '@unicef-polymer/etools-dropdown/etools-dropdown.js';
 import {GenericObject} from '../../../../../types/globals';
 import {openDialog} from '../../../../utils/dialog';
 import '../../../../common/layout/are-you-sure';

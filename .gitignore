@@ -3,6 +3,7 @@ build/
 bower_components/
 .tmp
 .idea
+.vscode/
 *.sublime-project
 *.sublime-workspace
 src/**/*.js

@@ -53,18 +53,18 @@ export class EtoolsErrorWarnBox extends LitElement {
         }
 
         .errors-box {
-          --epc-header: {
+          etools-content-panel::part(ecp-header) {
             background-color: var(--error-box-heading-color);
           }
-          --epc-header-color: var(---primary-background-color);
-          --ecp-header-title: {
+          --ecp-header-color: var(---primary-background-color);
+          etools-content-panel::part(ecp-header-title) {
             text-align: center;
           }
-          --ecp-content: {
+          etools-content-panel::part(ecp-content) {
             color: var(--error-box-text-color);
             background-color: var(--error-box-bg-color);
             border: 1px solid var(--error-box-border-color);
-          };
+          }
         }
         ul {
           padding: 0 0 0 20px;
