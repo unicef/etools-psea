@@ -177,11 +177,13 @@ export class AssessingFirm extends LitElement {
   }
 
   _updatePoNumber(newVal: string) {
-    this.errMessage = '10 digits expected';
-    this.assessor.order_number = newVal;
-    this.assessor.auditor_firm = null;
-    this.assessor.auditor_firm_name = '';
-    this.requestUpdate();
+    if (this.editMode && this.assessor.order_number != newVal) {
+      this.errMessage = '10 digits expected';
+      this.assessor.order_number = newVal;
+      this.assessor.auditor_firm = null;
+      this.assessor.auditor_firm_name = '';
+      this.requestUpdate();
+    }
   }
 
   getAssessorForSave() {
