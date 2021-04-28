@@ -20,6 +20,9 @@ export class PartnerDetails extends LitElement {
         .input-label p {
           margin: 0;
         }
+        iron-icon {
+          color: var(--secondary-text-color);
+        }
       </style>
       <div class="layout-horizontal row-padding-v">
         <div class="layout-vertical col-4">
