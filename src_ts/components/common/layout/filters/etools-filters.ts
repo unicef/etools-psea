@@ -226,9 +226,7 @@ export class EtoolsFilters extends LitElement {
 
     // language=HTML
     return html`
-      <div id="filters">
-        ${this.selectedFiltersTmpl(this.filters)}
-      </div>
+      <div id="filters">${this.selectedFiltersTmpl(this.filters)}</div>
 
       <div id="filters-selector">
         <paper-menu-button id="filterMenu" ignore-select horizontal-align="right">
@@ -241,9 +239,7 @@ export class EtoolsFilters extends LitElement {
               CLEAR ALL
             </paper-button>
           </div>
-          <paper-listbox slot="dropdown-content" multi>
-            ${this.filterMenuOptions(this.filters)}
-          </paper-listbox>
+          <paper-listbox slot="dropdown-content" multi> ${this.filterMenuOptions(this.filters)} </paper-listbox>
         </paper-menu-button>
       </div>
     `;
@@ -261,6 +257,7 @@ export class EtoolsFilters extends LitElement {
     }
     this.filters.forEach((f: EtoolsFilter) => {
       f.selectedValue = this.getFilterEmptyValue(f.type);
+      f.selected = false;
     });
     // repaint
     this.requestUpdate().then(() => this.fireFiltersChangeEvent());
