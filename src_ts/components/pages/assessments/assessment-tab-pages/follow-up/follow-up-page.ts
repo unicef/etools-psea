@@ -42,8 +42,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
           .columns="${this.columns}"
           @edit-item="${this.editActionPoint}"
           @copy-item="${this.copyActionPoint}"
-          showEdit
-          showCopy
+          .setRowActionsVisibility="${this.setRowActionsVisibility.bind(this)}"
         >
         </etools-table>
       </etools-content-panel>
@@ -147,6 +146,11 @@ export class FollowUpPage extends connect(store)(LitElement) {
       })
       .catch((err: any) => logError('Get action points list data req failed', 'FollowUpPage', err))
       .then(() => (this.showLoading = false));
+  }
+
+  setRowActionsVisibility(item: GenericObject) {
+    const isEditable = item && item.status !== 'completed';
+    return {showEdit: isEditable, showCopy: isEditable};
   }
 
   editActionPoint(event: GenericObject) {
