@@ -105,7 +105,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           <div class="col col-6">
             <etools-dropdown
               id="seaType"
-              label="PSEA assessment type"
+              label="PSEA Assessment Type"
               class="w100"
               .options="${this.assessment_types}"
               .selected="${this.assessment.assessment_type}"
@@ -125,7 +125,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           <div class="col col-6">
             <etools-dropdown
               id="reasonIngo"
-              label="Reason for country-level INGO assessment"
+              label="Reason for Country-level INGO Assessment"
               class="w100"
               .options="${this.ingo_reasons}"
               .selected="${this.assessment.assessment_ingo_reason}"
