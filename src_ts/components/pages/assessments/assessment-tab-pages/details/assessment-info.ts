@@ -101,6 +101,46 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
         >
         </etools-dropdown-multi>
 
+        <div class="layout-horizontal row-padding-v">
+          <div class="col col-6">
+            <etools-dropdown
+              id="seaType"
+              label="PSEA assessment type"
+              class="w100"
+              .options="${this.assessment_types}"
+              .selected="${this.assessment.assessment_type}"
+              option-value="value"
+              option-label="label"
+              trigger-value-change-event
+              @etools-selected-item-changed="${({detail}: CustomEvent) => {
+                this.assessment!.assessment_type = detail.selectedItem?.value;
+              }}"
+              ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.assessment_type)}"
+              ?required="${this.assessment.permissions.required.assessment_type}"
+              ?invalid="${this.invalid.assessment_type}"
+              auto-validate
+            >
+            </etools-dropdown>
+          </div>
+          <div class="col col-6">
+            <etools-dropdown
+              id="reasonIngo"
+              label="Reason for country-level INGO assessment"
+              class="w100"
+              .options="${this.ingo_reasons}"
+              .selected="${this.assessment.assessment_ingo_reason}"
+              option-value="value"
+              option-label="label"
+              trigger-value-change-event
+              @etools-selected-item-changed="${({detail}: CustomEvent) => {
+                this.assessment!.assessment_ingo_reason = detail.selectedItem?.value;
+              }}"
+              ?required="${this.assessment.permissions.required.assessment_ingo_reason}"
+              ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.assessment_ingo_reason)}"
+            >
+            </etools-dropdown>
+          </div>
+        </div>
         <datepicker-lite
           id="assessmentDate"
           label="Assessment Date"
@@ -121,12 +161,8 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           class="layout-horizontal right-align row-padding-v"
           ?hidden="${this.hideActionButtons(this.isNew, this.editMode, this.canEditAssessmentInfo)}"
         >
-          <paper-button class="default" @tap="${this.cancelAssessment}">
-            Cancel
-          </paper-button>
-          <paper-button class="primary" @tap="${this.saveAssessment}">
-            Save
-          </paper-button>
+          <paper-button class="default" @tap="${this.cancelAssessment}">Cancel</paper-button>
+          <paper-button class="primary" @tap="${this.saveAssessment}">Save</paper-button>
         </div>
       </etools-content-panel>
     `;
@@ -149,6 +185,12 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
 
   @property({type: Array})
   unicefFocalPointUsers!: UnicefUser[];
+
+  @property({type: Array})
+  assessment_types!: [];
+
+  @property({type: Array})
+  ingo_reasons!: [];
 
   @property({type: Boolean})
   isNew!: boolean;
@@ -173,6 +215,12 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
 
     if (state.commonData && !isJsonStrMatch(this.partners, state.commonData!.partners)) {
       this.partners = [...state.commonData!.partners];
+    }
+    if (state.commonData && !isJsonStrMatch(this.assessment_types, state.commonData!.assessment_types)) {
+      this.assessment_types = [...state.commonData!.assessment_types];
+    }
+    if (state.commonData && !isJsonStrMatch(this.ingo_reasons, state.commonData!.ingo_reasons)) {
+      this.ingo_reasons = [...state.commonData!.ingo_reasons];
     }
     if (state.user && state.user.data) {
       this.isUnicefUser = state.user.data.is_unicef_user;
@@ -299,6 +347,10 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
     if (!this.assessment!.partner) {
       valid = false;
       invalid.partner = true;
+    }
+    if (!this.assessment!.assessment_type) {
+      valid = false;
+      invalid.assessment_type = true;
     }
 
     this.invalid = cloneDeep(invalid);

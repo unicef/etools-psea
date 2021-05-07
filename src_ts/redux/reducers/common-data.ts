@@ -5,6 +5,9 @@ import {
   SET_EXTERNAL_INDIVIDUALS,
   SET_OFFICES,
   SET_SECTIONS,
+  SET_RATINGS,
+  SET_ASSESSMENT_TYPES,
+  SET_INGO_REASONS,
   SET_ASSESSING_FIRMS
 } from '../actions/common-data';
 import {RootAction} from '../store';
@@ -15,6 +18,9 @@ export interface CommonDataState {
   partners: [];
   offices: [];
   sections: [];
+  ratings: [];
+  assessment_types: [];
+  ingo_reasons: [];
   externalIndividuals: [];
   assessingFirms: [];
 }
@@ -24,6 +30,9 @@ const INITIAL_COMMON_DATA: CommonDataState = {
   partners: [],
   offices: [],
   sections: [],
+  ratings: [],
+  assessment_types: [],
+  ingo_reasons: [],
   externalIndividuals: [],
   assessingFirms: []
 };
@@ -50,6 +59,21 @@ const commonData: Reducer<CommonDataState, RootAction> = (state = INITIAL_COMMON
         ...state,
         sections: action.sections
       };
+    case SET_RATINGS:
+      return {
+        ...state,
+        ratings: action.ratings
+      };
+    case SET_ASSESSMENT_TYPES:
+      return {
+        ...state,
+        assessment_types: action.assessment_types
+      };
+    case SET_INGO_REASONS:
+      return {
+        ...state,
+        ingo_reasons: action.ingo_reasons
+      };
     case SET_EXTERNAL_INDIVIDUALS:
       return {
         ...state,
@@ -59,7 +83,7 @@ const commonData: Reducer<CommonDataState, RootAction> = (state = INITIAL_COMMON
       return {
         ...state,
         assessingFirms: action.assessingFirms
-      };    
+      };
     default:
       return state;
   }

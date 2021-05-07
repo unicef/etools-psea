@@ -49,6 +49,7 @@ import {
   loadPartners,
   loadOffices,
   loadSections,
+  loadStaticData,
   loadExternalIndividuals,
   loadAssessingFirms,
   loadUnicefUsers
@@ -192,6 +193,7 @@ export class AppShell extends connect(store)(LitElement) {
         store.dispatch(loadPartners());
         store.dispatch(loadOffices());
         store.dispatch(loadSections());
+        store.dispatch(loadStaticData());
       }
     });
   }
