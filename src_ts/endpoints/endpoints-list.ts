@@ -26,7 +26,7 @@ export const etoolsEndpoints: EtoolsEndpoints = {
     url: '/api/v3/users/?verbosity=minimal',
     exp: 60 * 60 * 1000, // 1h
     cachingKey: 'unicefUsers'
-  },  
+  },
   assessment: {
     url: '/api/psea/assessment/'
   },
@@ -77,5 +77,8 @@ export const etoolsEndpoints: EtoolsEndpoints = {
   },
   environmentFlags: {
     url: '/api/v2/environment/flags/'
+  },
+  staticData: {
+    url: '/api/psea/static/'
   }
 };
