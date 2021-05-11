@@ -150,7 +150,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
 
   setRowActionsVisibility(item: GenericObject) {
     const isEditable = item && item.status !== 'completed';
-    return {showEdit: isEditable, showCopy: isEditable};
+    return {showEdit: isEditable, showCopy: true};
   }
 
   editActionPoint(event: GenericObject) {
