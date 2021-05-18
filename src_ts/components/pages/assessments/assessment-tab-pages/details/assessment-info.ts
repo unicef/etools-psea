@@ -105,7 +105,7 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
           <div class="col col-6">
             <etools-dropdown
               id="seaType"
-              label="PSEA Assessment Type"
+              label="Assessment Type"
               class="w100"
               .options="${this.assessment_types}"
               .selected="${this.assessment.assessment_type}"
