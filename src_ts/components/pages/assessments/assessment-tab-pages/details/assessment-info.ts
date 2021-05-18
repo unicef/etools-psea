@@ -113,7 +113,9 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
               option-label="label"
               trigger-value-change-event
               @etools-selected-item-changed="${({detail}: CustomEvent) => {
-                this.assessment!.assessment_type = detail.selectedItem?.value;
+                if (detail.selectedItem) {
+                  this.assessment!.assessment_type = detail.selectedItem.value;
+                }
               }}"
               ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.assessment_type)}"
               ?required="${this.assessment.permissions.required.assessment_type}"
