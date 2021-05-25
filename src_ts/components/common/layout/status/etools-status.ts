@@ -1,6 +1,5 @@
 import {LitElement, html, property, customElement} from 'lit-element';
 import '@polymer/iron-icons/iron-icons';
-import {layoutHorizontal, layoutCenter} from '../../../styles/lit-styles/flex-layout-styles';
 import {completedStatusIcon} from './status-icons';
 
 export interface EtoolsStatusItem {
@@ -25,18 +24,23 @@ export class EtoolsStatus extends LitElement {
     return html`
       <style>
         :host {
-          ${layoutHorizontal}
-          ${layoutCenter}
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          flex-wrap: wrap;
           border-bottom: 1px solid var(--dark-divider-color);
           padding: 24px;
+          padding-bottom: 16px !important;
           background-color: var(--primary-background-color);
         }
 
         .status {
-          ${layoutHorizontal}
-          ${layoutCenter}
+          display: flex;
+          flex-direction: row;
+          align-items: center;
           color: var(--secondary-text-color);
           font-size: 16px;
+          margin-bottom: 6px;
         }
 
         .status:not(:last-of-type)::after {
@@ -119,9 +123,7 @@ export class EtoolsStatus extends LitElement {
     const completed = this.isCompleted(index, this.activeStatusIndex);
     return html`
       <div class="status ${this.getStatusClasses(index, this.activeStatusIndex)}">
-        <span class="icon">
-          ${completed ? html`${completedStatusIcon}` : html`${this.getBaseOneIndex(index)}`}
-        </span>
+        <span class="icon"> ${completed ? html`${completedStatusIcon}` : html`${this.getBaseOneIndex(index)}`} </span>
         <span class="label">${item.label}</span>
       </div>
     `;
