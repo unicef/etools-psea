@@ -40,9 +40,12 @@ export class AppMenu extends LitElement {
           <paper-ripple class="circle" center></paper-ripple>
         </span>
 
-        <paper-tooltip for="menu-header-top-icon" position="right">
-          PSEA Assessments
-        </paper-tooltip>
+        <paper-tooltip for="menu-header-top-icon" position="right"> PSEA Assessments </paper-tooltip>
+
+        <span class="chev-right">
+          <iron-icon id="expand-menu" icon="chevron-right" @tap="${() => this._toggleSmallMenu()}"></iron-icon>
+          <paper-ripple class="circle" center></paper-ripple>
+        </span>
 
         <span class="ripple-wrapper">
           <iron-icon id="minimize-menu" icon="chevron-left" @tap="${() => this._toggleSmallMenu()}"></iron-icon>
@@ -54,9 +57,7 @@ export class AppMenu extends LitElement {
         <iron-selector .selected="${this.selectedOption}" attr-for-selected="menu-name" role="navigation">
           <a class="nav-menu-item" href="${this.rootPath + 'assessments/list'}" menu-name="assessments">
             <iron-icon id="assessments-list-opt" icon="settings-applications"></iron-icon>
-            <paper-tooltip for="assessments-list-opt" position="right">
-              PSEA Assessments
-            </paper-tooltip>
+            <paper-tooltip for="assessments-list-opt" position="right"> PSEA Assessments </paper-tooltip>
             <div class="name">PSEA Assessments</div>
           </a>
         </iron-selector>
@@ -67,9 +68,7 @@ export class AppMenu extends LitElement {
 
         <a class="nav-menu-item lighter-item" href="http://etools.zendesk.com" target="_blank">
           <iron-icon id="knoledge-icon" icon="maps:local-library"></iron-icon>
-          <paper-tooltip for="knoledge-icon" position="right">
-            Knowledge base
-          </paper-tooltip>
+          <paper-tooltip for="knoledge-icon" position="right"> Knowledge base </paper-tooltip>
           <div class="name">Knowledge base</div>
         </a>
 
@@ -79,17 +78,13 @@ export class AppMenu extends LitElement {
           target="_blank"
         >
           <iron-icon id="discussion-icon" icon="icons:question-answer"></iron-icon>
-          <paper-tooltip for="discussion-icon" position="right">
-            Discussion
-          </paper-tooltip>
+          <paper-tooltip for="discussion-icon" position="right"> Discussion </paper-tooltip>
           <div class="name">Discussion</div>
         </a>
 
         <a class="nav-menu-item lighter-item last-one" href="http://etoolsinfo.unicef.org" target="_blank">
           <iron-icon id="information-icon" icon="icons:info"></iron-icon>
-          <paper-tooltip for="information-icon" position="right">
-            Information
-          </paper-tooltip>
+          <paper-tooltip for="information-icon" position="right"> Information </paper-tooltip>
           <div class="name">Information</div>
         </a>
       </div>

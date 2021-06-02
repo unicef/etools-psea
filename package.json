@@ -71,8 +71,8 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
-    "web-animations-js": "^2.3.2",
-    "ua-parser-js": ">=0.7.24"
+    "ua-parser-js": ">=0.7.24",
+    "web-animations-js": "^2.3.2"
   },
   "devDependencies": {
     "@polymer/decorators": "^3.0.0",
