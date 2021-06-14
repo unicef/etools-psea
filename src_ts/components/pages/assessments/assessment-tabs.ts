@@ -62,7 +62,12 @@ export class AssessmentTabs extends connect(store)(LitElement) {
 
         <div slot="title-row-actions" class="content-header-actions">
           ${this.assessment && this.assessment.id && this.canExport
-            ? html` <export-data .endpoint="${etoolsEndpoints.assessment.url!}${this.assessment.id}/"></export-data> `
+            ? html`
+                <export-data
+                  exportPdf
+                  .endpoint="${etoolsEndpoints.assessment.url!}${this.assessment.id}/"
+                ></export-data>
+              `
             : ''}
 
           <assessment-status-transition-actions></assessment-status-transition-actions>

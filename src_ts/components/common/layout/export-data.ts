@@ -88,6 +88,17 @@ export class ExportData extends LitElement {
   @property({type: String})
   endpoint = '';
 
+  @property({type: Boolean})
+  exportPdf = false;
+
+  public connectedCallback() {
+    super.connectedCallback();
+
+    if (this.exportPdf) {
+      this.exportLinks.push({name: 'Export PDF', type: 'pdf'});
+    }
+  }
+
   export(type: string) {
     const url = this.endpoint + `export/${type}/` + (this.params ? `?${this.params}` : '');
     window.open(url, '_blank');
