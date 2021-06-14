@@ -317,13 +317,6 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     }
   }
 
-  createNFRDialog() {
-    if (!this.nfrFinalizeDialog) {
-      this.nfrFinalizeDialog = document.createElement('nfr-finalize-dialog') as NfrFinalizeDialog;
-      document.querySelector('body')!.appendChild(this.nfrFinalizeDialog);
-    }
-  }
-
   removeStatusChangeConfirmationsDialog() {
     if (this.statusChangeConfirmationDialog !== null) {
       removeDialog(this.statusChangeConfirmationDialog);

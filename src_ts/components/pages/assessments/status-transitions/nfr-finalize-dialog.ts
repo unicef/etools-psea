@@ -37,7 +37,6 @@ export class NfrFinalizeDialog extends LitElement {
         opened
         cancel-btn-text="Cancel"
         keep-dialog-open
-        ?show-spinner="${this.spinnerLoading}"
         @close="${() => this.onClose()}"
         @confirm-btn-clicked="${this.onSave}"
       >
@@ -59,12 +58,6 @@ export class NfrFinalizeDialog extends LitElement {
   }
 
   @query('#nfrUpload') private nfrUploadEl!: EtoolsUpload;
-
-  @property({type: Boolean, reflect: true})
-  dialogOpened = false;
-
-  @property({type: Boolean})
-  spinnerLoading = false;
 
   @property({type: Number})
   nfrAttachmentId!: number;
