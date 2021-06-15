@@ -19,9 +19,14 @@ import '@unicef-polymer/etools-loading';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import get from 'lodash-es/get';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
+import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 
 @customElement('follow-up-page')
 export class FollowUpPage extends connect(store)(LitElement) {
+  static get styles() {
+    return [gridLayoutStylesLit, labelAndvalueStylesLit];
+  }
   render() {
     return html`
       ${SharedStylesLit}
@@ -29,8 +34,15 @@ export class FollowUpPage extends connect(store)(LitElement) {
         :host {
           --ecp-content-padding: 0;
         }
+        .container {
+          padding: 24px 24px;
+        }
+
+        .margin-b {
+          margin-bottom: 24px;
+        }
       </style>
-      <etools-content-panel panel-title="Action Points">
+      <etools-content-panel panel-title="Action Points" class="margin-b">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
 
         <div slot="panel-btns">
@@ -46,11 +58,31 @@ export class FollowUpPage extends connect(store)(LitElement) {
         >
         </etools-table>
       </etools-content-panel>
+
+      <etools-content-panel
+        panel-title="Note for Record"
+        ?hidden="${this.assessment?.overall_rating?.display != 'High'}"
+      >
+        <div class="layout-horizontal row-padding-v container">
+          <div class="col-3">
+            <div class="paper-label">Date Uploaded</div>
+            <div class="input-label" ?empty="${!this.assessment.nfr_attachment?.date}">
+              ${this.assessment.nfr_attachment?.date}
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="paper-label">NFR Attachment</div>
+            <div class="input-label" ?empty="${!this.assessment.nfr_attachment?.filename}">
+              ${this.assessment.nfr_attachment?.filename}
+            </div>
+          </div>
+        </div>
+      </etools-content-panel>
     `;
   }
 
   @property({type: Array})
-  dataItems: object[] = [];
+  dataItems: any[] = [];
 
   @property({type: Boolean})
   showLoading = false;
@@ -106,6 +138,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
         this.getFollowUpData();
       }
     }
+    this.assessment = state.pageData?.currentAssessment!;
   }
 
   connectedCallback() {
