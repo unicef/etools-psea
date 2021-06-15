@@ -128,9 +128,7 @@ export class StaffMemberDialog extends LitElement {
         </div>
 
         <div id="has-access-checkbox-wrapper" class="layout-horizontal">
-          <paper-checkbox id="hasAccessInput" ?checked="${this.editedItem.hasAccess}">
-            Has Access
-          </paper-checkbox>
+          <paper-checkbox id="hasAccessInput" ?checked="${this.editedItem.hasAccess}"> Has Access </paper-checkbox>
         </div>
       </etools-dialog>
     `;
@@ -189,9 +187,6 @@ export class StaffMemberDialog extends LitElement {
 
   @property({type: String})
   firmId!: string;
-
-  @property({type: Object})
-  toastEventSource!: LitElement;
 
   private initialItem!: EtoolsStaffMemberModel;
 
@@ -280,7 +275,7 @@ export class StaffMemberDialog extends LitElement {
         this._staffMemberDataUpdateComplete(this.editedItem);
       } else {
         this.requestInProgress = false;
-        fireEvent(this.toastEventSource, 'toast', {
+        fireEvent(this, 'toast', {
           text: `No changes have been detected to ${this.editedItem.user.first_name} ${this.editedItem.user.last_name}.`
         });
       }
@@ -300,6 +295,6 @@ export class StaffMemberDialog extends LitElement {
   _handleError(err: any) {
     const msg = formatServerErrorAsText(err);
     logError(msg, 'staff-member', err);
-    fireEvent(this.toastEventSource, 'toast', {text: msg});
+    fireEvent(this, 'toast', {text: msg});
   }
 }
