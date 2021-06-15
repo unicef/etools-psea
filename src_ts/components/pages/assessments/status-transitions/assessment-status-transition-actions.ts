@@ -16,7 +16,6 @@ import './assessment-rejection-dialog';
 import {AssessmentRejectionDialog} from './assessment-rejection-dialog';
 import './nfr-finalize-dialog.js';
 import {openDialog} from '../../../utils/dialog';
-import {NfrFinalizeDialog} from './nfr-finalize-dialog.js';
 
 @customElement('assessment-status-transition-actions')
 export class AssessmentStatusTransitionActions extends connect(store)(LitElement) {
@@ -41,7 +40,6 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   @property({type: Boolean})
   showLoading = false;
 
-  private nfrFinalizeDialog: NfrFinalizeDialog | null = null;
   private statusChangeConfirmationDialog: EtoolsDialog | null = null;
   private confirmationMSg: HTMLSpanElement = document.createElement('span');
   private currentStatusAction = '';
@@ -191,15 +189,13 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   }
 
   async openNFRFinalize() {
-    const nfrAttId = await openDialog({dialog: 'nfr-finalize-dialog', dialogData: {}}).then(
-      ({confirmed, nfrAttachmentId}) => {
-        if (confirmed) {
-          return nfrAttachmentId;
-        } else {
-          return null;
-        }
+    const nfrAttId = await openDialog({dialog: 'nfr-finalize-dialog'}).then(({confirmed, response}) => {
+      if (confirmed) {
+        return response.nfrAttachmentId;
+      } else {
+        return null;
       }
-    );
+    });
     return nfrAttId;
   }
 
@@ -221,7 +217,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     }
 
     let nfrAttachmentId = '';
-    if (this.currentStatusAction == 'finalize') {
+    if (this.currentStatusAction == 'finalize' && this.assessment.overall_rating?.display == 'High') {
       nfrAttachmentId = await this.openNFRFinalize();
       if (!nfrAttachmentId) {
         return;

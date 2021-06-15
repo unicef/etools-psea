@@ -40,7 +40,8 @@ export class NfrFinalizeDialog extends LitElement {
         @close="${() => this.onClose()}"
         @confirm-btn-clicked="${this.onSave}"
       >
-      <div class="container">As of July 1, 2021, partners who are assessed as 'high risk' require a Note for the Record approved by the Head of the Office. If this partner is 'high risk', please attach the NFR here to ensure that GSSC can enter the results of this PSEA assessment in VISION.</div>
+      <div class="container">As of July 1, 2021, partners who are assessed as 'high risk' require a Note for the Record approved by the Head of the Office. If this partner is 'high risk', 
+      please attach the NFR here to ensure that GSSC can enter the results of this PSEA assessment in VISION.</div>
       <div class="container">
           <etools-upload
             id="nfrUpload"
@@ -70,7 +71,7 @@ export class NfrFinalizeDialog extends LitElement {
     if (!this.nfrUploadEl.validate()) {
       return;
     }
-    fireEvent(this, 'dialog-closed', {confirmed: true, nfrAttachmentId: this.nfrAttachmentId});
+    fireEvent(this, 'dialog-closed', {confirmed: true, response: {nfrAttachmentId: this.nfrAttachmentId}});
   }
 
   _uploadFinished(e: CustomEvent) {

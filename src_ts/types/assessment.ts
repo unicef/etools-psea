@@ -39,6 +39,7 @@ export class Assessment {
   permissions = new AssessmentPermissions();
   partner_details?: GenericObject;
   focal_points_details: UnicefUser[] = [];
+  overall_rating?: {display: string; value: number};
 }
 
 export class AssessmentInvalidator {
