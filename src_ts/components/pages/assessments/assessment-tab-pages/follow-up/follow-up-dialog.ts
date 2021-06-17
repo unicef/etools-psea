@@ -233,9 +233,6 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   @property({type: Boolean})
   isNewRecord = true;
 
-  @property({type: Object})
-  toastEventSource!: LitElement;
-
   @property({type: Array, reflect: true})
   warningMessages: string[] = [];
 
@@ -320,7 +317,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
     this.getControlsData();
     if (!this._editedItemHasChanged()) {
       this.handleDialogClosed();
-      fireEvent(this.toastEventSource, 'toast', {
+      fireEvent(this, 'toast', {
         text: `No changes have been detected on this action point.`
       });
       return;
@@ -352,7 +349,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
     this.requestInProcess = false;
     const msg = 'Failed to save/update new Action Point!';
     logError(msg, 'action-point', err);
-    fireEvent(this.toastEventSource, 'toast', {text: formatServerErrorAsText(err)});
+    fireEvent(this, 'toast', {text: formatServerErrorAsText(err)});
   }
 
   private handleDialogClosed() {

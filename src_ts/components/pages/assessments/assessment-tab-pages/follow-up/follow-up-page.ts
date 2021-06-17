@@ -187,7 +187,6 @@ export class FollowUpPage extends connect(store)(LitElement) {
   createFollowUpDialog() {
     this.followUpDialog = document.createElement('follow-up-dialog') as FollowUpDialog;
     this.followUpDialog.setAttribute('id', 'followUpDialog');
-    this.followUpDialog.toastEventSource = this;
     document.querySelector('body')!.appendChild(this.followUpDialog);
   }
 

@@ -176,16 +176,19 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     let warnMsg = `Are you sure you want to ${action} this assessment?`;
     if (action === 'finalize') {
       warnMsg =
-        'Your finalisation of this Assessment confirms that you are satisfied that' +
-        ' the process followed by the Assessor is in line with expected procedure, and that the Proof of Evidence' +
-        ' provided by the Partner supports the rating against each Core Standard.';
+        'Your finalisation of this Assessment confirms that you are satisfied that: <br/>' +
+        ' - The process followed by the Assessor is in line with expected procedure <br/>' +
+        ' - The Proof of Evidence provided by the Partner supports the rating against each Core Standard';
     }
-    this.confirmationMSg.innerText = warnMsg;
+    this.confirmationMSg.innerHTML = warnMsg;
   }
 
   onStatusChangeConfirmation(e: CustomEvent) {
-    const containerHeight = document.querySelector('app-shell')!.shadowRoot!.querySelector("#appHeadLayout")!.shadowRoot!.querySelector("#contentContainer")!.scrollHeight;
-    this.shadowRoot!.querySelector("etools-loading")!.style.height = `${containerHeight}px`;
+    const containerHeight = document
+      .querySelector('app-shell')!
+      .shadowRoot!.querySelector('#appHeadLayout')!
+      .shadowRoot!.querySelector('#contentContainer')!.scrollHeight;
+    this.shadowRoot!.querySelector('etools-loading')!.style.height = `${containerHeight}px`;
     this.showLoading = true;
     if (!e.detail.confirmed) {
       this.showLoading = false;

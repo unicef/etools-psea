@@ -134,9 +134,6 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
   @property({type: Object})
   editedItem!: GenericObject;
 
-  @property({type: Object})
-  toastEventSource!: LitElement;
-
   @property({type: Array})
   externalIndividuals: any[] = [];
 
@@ -176,7 +173,7 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
     // check if email is unique
     const isValid = !this.externalIndividuals.find((x) => x.email === this.editedItem.email);
     if (!isValid) {
-      fireEvent(this.toastEventSource, 'toast', {text: 'This email address is already being used!'});
+      fireEvent(this, 'toast', {text: 'This email address is already being used!'});
     }
     return isValid;
   }
@@ -235,6 +232,6 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
   _handleError(err: any) {
     const msg = formatServerErrorAsText(err);
     logError(msg, 'external-individual-dialog', err);
-    fireEvent(this.toastEventSource, 'toast', {text: msg});
+    fireEvent(this, 'toast', {text: msg});
   }
 }
