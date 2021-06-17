@@ -9,7 +9,7 @@ import {EtoolsTableColumn, EtoolsTableColumnType} from '@unicef-polymer/etools-t
 
 import {GenericObject, ActionPoint} from '../../../../../types/globals';
 import {Assessment} from '../../../../../types/assessment';
-import {cloneDeep} from '../../../../utils/utils';
+import {cloneDeep, getFileNameFromURL} from '../../../../utils/utils';
 import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
@@ -63,17 +63,13 @@ export class FollowUpPage extends connect(store)(LitElement) {
         panel-title="Note for Record"
         ?hidden="${this.assessment?.overall_rating?.display != 'High'}"
       >
-        <div class="layout-horizontal row-padding-v container">
-          <div class="col-3">
-            <div class="paper-label">Date Uploaded</div>
-            <div class="input-label" ?empty="${!this.assessment.nfr_attachment?.date}">
-              ${this.assessment.nfr_attachment?.date}
-            </div>
-          </div>
+        <div class="layout-horizontal container">
           <div class="col-4">
             <div class="paper-label">NFR Attachment</div>
-            <div class="input-label" ?empty="${!this.assessment.nfr_attachment?.filename}">
-              ${this.assessment.nfr_attachment?.filename}
+            <div class="input-label" ?empty="${!this.assessment.nfr_attachment}">
+              <a href="${this.assessment.nfr_attachment}" target="_blank">
+                ${getFileNameFromURL(this.assessment.nfr_attachment)}</a
+              >
             </div>
           </div>
         </div>

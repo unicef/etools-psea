@@ -40,6 +40,7 @@ export class Assessment {
   partner_details?: GenericObject;
   focal_points_details: UnicefUser[] = [];
   overall_rating?: {display: string; value: number};
+  nfr_attachment?: string;
 }
 
 export class AssessmentInvalidator {
