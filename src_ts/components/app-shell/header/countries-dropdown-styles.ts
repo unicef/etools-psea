@@ -55,6 +55,8 @@ export const countriesDropdownStyles = html`
       --paper-menu-button-dropdown: {
         max-height: 380px;
       }
+
+      --paper-input-container-shared-input-style_-_color: var(--header-icon-color);
     }
 
     @media (max-width: 768px) {

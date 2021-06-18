@@ -14,6 +14,8 @@ import {parseRequestErrorsAndShowAsToastMsgs} from '@unicef-polymer/etools-ajax/
 import {buttonsStyles} from '../../../styles/button-styles';
 import './assessment-rejection-dialog';
 import {AssessmentRejectionDialog} from './assessment-rejection-dialog';
+import './nfr-finalize-dialog.js';
+import {openDialog} from '../../../utils/dialog';
 
 @customElement('assessment-status-transition-actions')
 export class AssessmentStatusTransitionActions extends connect(store)(LitElement) {
@@ -161,14 +163,17 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   updateAssessmentStatus(action: string) {
     this.currentStatusAction = action;
 
-    if (this.currentStatusAction === 'reject') {
-      this.rejectionDialog.dialogOpened = true;
-    } else {
-      this.updateConfirmationMsgAction(this.currentStatusAction);
-      if (!this.statusChangeConfirmationDialog) {
-        throw new Error('statusChangeConfirmationDialog is not created!');
-      }
-      this.statusChangeConfirmationDialog.opened = true;
+    switch (action) {
+      case 'reject':
+        this.rejectionDialog.dialogOpened = true;
+        break;
+      default:
+        this.updateConfirmationMsgAction(this.currentStatusAction);
+        if (!this.statusChangeConfirmationDialog) {
+          throw new Error('statusChangeConfirmationDialog is not created!');
+        }
+        this.statusChangeConfirmationDialog.opened = true;
+        break;
     }
   }
 
@@ -176,19 +181,33 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     let warnMsg = `Are you sure you want to ${action} this assessment?`;
     if (action === 'finalize') {
       warnMsg =
-        'Your finalisation of this Assessment confirms that you are satisfied that' +
-        ' the process followed by the Assessor is in line with expected procedure, and that the Proof of Evidence' +
-        ' provided by the Partner supports the rating against each Core Standard.';
+        'Your finalisation of this Assessment confirms that you are satisfied that: <br/>' +
+        ' - The process followed by the Assessor is in line with expected procedure <br/>' +
+        ' - The Proof of Evidence provided by the Partner supports the rating against each Core Standard';
     }
-    this.confirmationMSg.innerText = warnMsg;
+    this.confirmationMSg.innerHTML = warnMsg;
   }
 
-  onStatusChangeConfirmation(e: CustomEvent) {
-    const containerHeight = document.querySelector('app-shell')!.shadowRoot!.querySelector("#appHeadLayout")!.shadowRoot!.querySelector("#contentContainer")!.scrollHeight;
-    this.shadowRoot!.querySelector("etools-loading")!.style.height = `${containerHeight}px`;
-    this.showLoading = true;
+  async openNFRFinalize() {
+    const nfrAttId = await openDialog({dialog: 'nfr-finalize-dialog'}).then(({confirmed, response}) => {
+      if (confirmed) {
+        return response.nfrAttachmentId;
+      } else {
+        return null;
+      }
+    });
+    return nfrAttId;
+  }
+
+  async onStatusChangeConfirmation(e: CustomEvent) {
+    const containerHeight = document
+      .querySelector('app-shell')!
+      .shadowRoot!.querySelector('#appHeadLayout')!
+      .shadowRoot!.querySelector('#contentContainer')!.scrollHeight;
+
+    this.shadowRoot!.querySelector('etools-loading')!.style.height = `${containerHeight}px`; // why is this here?
+
     if (!e.detail.confirmed) {
-      this.showLoading = false;
       // cancel status update action
       this.currentStatusAction = '';
       return;
@@ -196,22 +215,41 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     if (!this.assessment || !this.currentStatusAction) {
       throw new Error('Assessment obj or statusAction not set!');
     }
+
+    let nfrAttachmentId = '';
+    if (this.currentStatusAction == 'finalize' && this.assessment.overall_rating?.display == 'High') {
+      nfrAttachmentId = await this.openNFRFinalize();
+      if (!nfrAttachmentId) {
+        return;
+      }
+    }
+
+    this.showLoading = true;
+
     const url = getEndpoint(etoolsEndpoints.assessmentStatusUpdate, {
       id: this.assessment.id,
       statusAction: this.currentStatusAction
     }).url!;
 
-    if (this.currentStatusAction === 'reject') {
-      this.rejectAssessment(url, e.detail.reason);
-    } else {
-      this.requestStatusUpdate(url);
+    switch (this.currentStatusAction) {
+      case 'reject':
+        this.rejectAssessment(url, {comment: e.detail.reason}, this.rejectionDialog);
+        break;
+      case 'finalize':
+        this.requestStatusUpdate(url, {nfr_attachment: nfrAttachmentId});
+        break;
+
+      default:
+        this.requestStatusUpdate(url);
+        break;
     }
   }
 
-  requestStatusUpdate(url: string) {
+  requestStatusUpdate(url: string, body = {}) {
     sendRequest({
       endpoint: {url: url},
-      method: 'PATCH'
+      method: 'PATCH',
+      body: body
     })
       .then((response) => {
         this.showLoading = false;
@@ -229,18 +267,17 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
       });
   }
 
-  rejectAssessment(url: string, reason: string) {
-    const reqPayloadData = {comment: reason};
-    this.rejectionDialog.spinnerLoading = true;
+  rejectAssessment(url: string, body: any, dialog: any) {
+    dialog.spinnerLoading = true;
     sendRequest({
       endpoint: {url: url},
       method: 'PATCH',
-      body: reqPayloadData
+      body: body
     })
       .then((response) => {
         // update assessment data in redux store
         store.dispatch(updateAssessmentData(response));
-        this.rejectionDialog.closeDialog();
+        dialog.closeDialog();
         this.currentStatusAction = '';
       })
       .catch((err: any) => {
@@ -249,7 +286,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
       })
       .then(() => {
         // req finalized...
-        this.rejectionDialog.spinnerLoading = false;
+        dialog.spinnerLoading = false;
         this.showLoading = false;
       });
   }
@@ -272,7 +309,6 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   createRejectionDialog() {
     if (!this.rejectionDialog) {
       this.rejectionDialog = document.createElement('assessment-rejection-dialog') as AssessmentRejectionDialog;
-      this.rejectionDialog.fireEventSource = this;
       document.querySelector('body')!.appendChild(this.rejectionDialog);
     }
   }
