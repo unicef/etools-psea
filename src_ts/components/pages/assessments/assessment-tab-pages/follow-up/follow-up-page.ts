@@ -68,7 +68,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
             <div class="paper-label">NFR Attachment</div>
             <div class="input-label" ?empty="${!this.assessment?.nfr_attachment}">
               <a href="${this.assessment?.nfr_attachment}" target="_blank">
-                ${getFileNameFromURL(this.assessment.nfr_attachment)}</a
+                ${getFileNameFromURL(this.assessment?.nfr_attachment)}</a
               >
             </div>
           </div>
