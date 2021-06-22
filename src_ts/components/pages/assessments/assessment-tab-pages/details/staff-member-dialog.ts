@@ -212,18 +212,6 @@ export class StaffMemberDialog extends LitElement {
     }
   }
 
-  // private resetControls() {
-  //   this.validationSelectors.forEach((selector: string) => {
-  //     const el = this.shadowRoot!.querySelector(selector) as PaperInputElement;
-  //     el.invalid = false;
-  //     el.value = '';
-  //   });
-  //   this.positionInputEl.value = '';
-  //   this.phoneInputEl.value = '';
-  //   this.hasAccessInputEl.checked = false;
-  //   this.editedItem = cloneDeep(this.defaultItem);
-  // }
-
   private validate() {
     let isValid = true;
     this.validationSelectors.forEach((selector: string) => {
