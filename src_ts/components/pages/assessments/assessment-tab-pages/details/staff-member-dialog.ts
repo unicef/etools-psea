@@ -128,9 +128,7 @@ export class StaffMemberDialog extends LitElement {
         </div>
 
         <div id="has-access-checkbox-wrapper" class="layout-horizontal">
-          <paper-checkbox id="hasAccessInput" ?checked="${this.editedItem.hasAccess}">
-            Has Access
-          </paper-checkbox>
+          <paper-checkbox id="hasAccessInput" ?checked="${this.editedItem.hasAccess}"> Has Access </paper-checkbox>
         </div>
       </etools-dialog>
     `;
