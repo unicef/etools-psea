@@ -147,7 +147,6 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   createExternalIndividualDialog() {
     this.dialogExtIndividual = document.createElement('external-individual-dialog') as ExternalIndividualDialog;
     this.dialogExtIndividual.setAttribute('id', 'externalIndividualDialog');
-    this.dialogExtIndividual.toastEventSource = this;
     this.onDialogIndividualSaved = this.onDialogIndividualSaved.bind(this);
     this.dialogExtIndividual.addEventListener('external-individual-updated', this.onDialogIndividualSaved);
     document.querySelector('body')!.appendChild(this.dialogExtIndividual);

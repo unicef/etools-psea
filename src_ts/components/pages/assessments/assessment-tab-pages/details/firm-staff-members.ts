@@ -215,7 +215,6 @@ export class FirmStaffMembers extends LitElement {
   createStaffMemberDialog() {
     this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialog;
     this.dialogStaffMember.setAttribute('id', 'dialogStaffMember');
-    this.dialogStaffMember.toastEventSource = this;
     this.onStaffMemberSaved = this.onStaffMemberSaved.bind(this);
     this.dialogStaffMember.addEventListener('staff-member-updated', this.onStaffMemberSaved as any);
     document.querySelector('body')!.appendChild(this.dialogStaffMember);

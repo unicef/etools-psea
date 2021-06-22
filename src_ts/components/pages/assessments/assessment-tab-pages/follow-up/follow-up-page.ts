@@ -9,7 +9,7 @@ import {EtoolsTableColumn, EtoolsTableColumnType} from '@unicef-polymer/etools-t
 
 import {GenericObject, ActionPoint} from '../../../../../types/globals';
 import {Assessment} from '../../../../../types/assessment';
-import {cloneDeep} from '../../../../utils/utils';
+import {cloneDeep, getFileNameFromURL} from '../../../../utils/utils';
 import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
@@ -19,9 +19,14 @@ import '@unicef-polymer/etools-loading';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import get from 'lodash-es/get';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
+import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 
 @customElement('follow-up-page')
 export class FollowUpPage extends connect(store)(LitElement) {
+  static get styles() {
+    return [gridLayoutStylesLit, labelAndvalueStylesLit];
+  }
   render() {
     return html`
       ${SharedStylesLit}
@@ -29,8 +34,15 @@ export class FollowUpPage extends connect(store)(LitElement) {
         :host {
           --ecp-content-padding: 0;
         }
+        .container {
+          padding: 24px 24px;
+        }
+
+        .margin-b {
+          margin-bottom: 24px;
+        }
       </style>
-      <etools-content-panel panel-title="Action Points">
+      <etools-content-panel panel-title="Action Points" class="margin-b">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
 
         <div slot="panel-btns">
@@ -46,11 +58,27 @@ export class FollowUpPage extends connect(store)(LitElement) {
         >
         </etools-table>
       </etools-content-panel>
+
+      <etools-content-panel
+        panel-title="Note for Record"
+        ?hidden="${this.assessment?.overall_rating?.display != 'High'}"
+      >
+        <div class="layout-horizontal container">
+          <div class="col-4">
+            <div class="paper-label">NFR Attachment</div>
+            <div class="input-label" ?empty="${!this.assessment?.nfr_attachment}">
+              <a href="${this.assessment?.nfr_attachment}" target="_blank">
+                ${getFileNameFromURL(this.assessment?.nfr_attachment)}</a
+              >
+            </div>
+          </div>
+        </div>
+      </etools-content-panel>
     `;
   }
 
   @property({type: Array})
-  dataItems: object[] = [];
+  dataItems: any[] = [];
 
   @property({type: Boolean})
   showLoading = false;
@@ -106,6 +134,7 @@ export class FollowUpPage extends connect(store)(LitElement) {
         this.getFollowUpData();
       }
     }
+    this.assessment = state.pageData?.currentAssessment!;
   }
 
   connectedCallback() {
@@ -187,7 +216,6 @@ export class FollowUpPage extends connect(store)(LitElement) {
   createFollowUpDialog() {
     this.followUpDialog = document.createElement('follow-up-dialog') as FollowUpDialog;
     this.followUpDialog.setAttribute('id', 'followUpDialog');
-    this.followUpDialog.toastEventSource = this;
     document.querySelector('body')!.appendChild(this.followUpDialog);
   }
 
