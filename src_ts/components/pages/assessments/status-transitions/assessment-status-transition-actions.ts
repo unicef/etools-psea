@@ -123,6 +123,12 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   connectedCallback(): void {
     super.connectedCallback();
     this.onStatusChangeConfirmation = this.onStatusChangeConfirmation.bind(this);
+    this.createStatusChangeConfirmationsDialog();
+  }
+
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.removeStatusChangeConfirmationsDialog();
   }
 
   public stateChanged(state: RootState) {
