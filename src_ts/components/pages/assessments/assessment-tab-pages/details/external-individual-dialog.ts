@@ -39,11 +39,11 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
       ${SharedStylesLit}
       <etools-dialog
         id="externalIndividualDialog"
-        ?opened="${this.dialogOpened}"
+        opened
         dialog-title="${this.dialogTitle}"
         size="md"
         ?show-spinner="${this.requestInProgress}"
-        @close="${this.handleDialogClosed}"
+        @close="${this.onClose}"
         ok-btn-text="${this.confirmBtnText}"
         ?disable-confirm-btn="${this.requestInProgress}"
         keep-dialog-open
@@ -117,9 +117,6 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
   lastNameInputEl!: HTMLInputElement;
 
   @property({type: Boolean, reflect: true})
-  dialogOpened = false;
-
-  @property({type: Boolean, reflect: true})
   requestInProgress = false;
 
   @property({type: String})
@@ -137,6 +134,10 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
   @property({type: Array})
   externalIndividuals: any[] = [];
 
+  set dialogData(_data: GenericObject) {
+    this.editedItem = cloneDeep(this.defaultItem);
+  }
+
   stateChanged(state: RootState) {
     if (state.app!.routeDetails.routeName === 'assessments' && state.app!.routeDetails.subRouteName === 'details') {
       if (state.commonData) {
@@ -145,18 +146,8 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
     }
   }
 
-  connectedCallback(): void {
-    super.connectedCallback();
-    this.editedItem = cloneDeep(this.defaultItem);
-  }
-
-  public openDialog() {
-    this.dialogOpened = true;
-  }
-
-  private handleDialogClosed() {
-    this.dialogOpened = false;
-    this.resetControls();
+  onClose() {
+    fireEvent(this, 'dialog-closed', {confirmed: false});
   }
 
   private onSaveClick() {
@@ -176,15 +167,6 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
       fireEvent(this, 'toast', {text: 'This email address is already being used!'});
     }
     return isValid;
-  }
-
-  private resetControls() {
-    this.validationSelectors.forEach((selector: string) => {
-      const el = this.shadowRoot!.querySelector(selector) as PaperInputElement;
-      el.invalid = false;
-      el.value = '';
-    });
-    this.editedItem = cloneDeep(this.defaultItem);
   }
 
   private validateInput() {
@@ -225,8 +207,7 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
   }
 
   _handleResponse(resp: any) {
-    fireEvent(this, 'external-individual-updated', resp);
-    this.handleDialogClosed();
+    fireEvent(this, 'dialog-closed', {confirmed: true, response: resp});
   }
 
   _handleError(err: any) {
