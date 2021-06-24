@@ -39,7 +39,7 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
       ${SharedStylesLit}
       <etools-dialog
         id="externalIndividualDialog"
-        ?opened="${this.dialogOpened}"
+        opened
         dialog-title="${this.dialogTitle}"
         size="md"
         ?show-spinner="${this.requestInProgress}"
@@ -115,9 +115,6 @@ export class ExternalIndividualDialog extends connect(store)(LitElement) {
 
   @query('#lastNameInput')
   lastNameInputEl!: HTMLInputElement;
-
-  @property({type: Boolean})
-  dialogOpened = true;
 
   @property({type: Boolean, reflect: true})
   requestInProgress = false;

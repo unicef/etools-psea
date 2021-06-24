@@ -54,7 +54,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
       <etools-dialog
         keep-dialog-open
         size="md"
-        ?opened="${this.dialogOpened}"
+        opened
         dialog-title="${this.dialogTitle}"
         ok-btn-text="${this.confirmBtnTxt}"
         ?hide-confirm-btn="${!this.confirmBtnTxt}"
@@ -201,9 +201,6 @@ export class FollowUpDialog extends connect(store)(LitElement) {
 
   @property({type: Array})
   offices: GenericObject[] = [];
-
-  @property({type: Boolean})
-  dialogOpened = true;
 
   @property({type: Array})
   partners: object[] = [];

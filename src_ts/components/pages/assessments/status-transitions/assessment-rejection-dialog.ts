@@ -34,7 +34,7 @@ export class AssessmentRejectionDialog extends LitElement {
       ${SharedStylesLit}
       <etools-dialog
         id="assessmentRejectionDialog"
-        ?opened="${this.dialogOpened}"
+        opened
         dialog-title="Are you sure you want to reject this assessment?"
         size="md"
         ok-btn-text="YES"
@@ -56,9 +56,6 @@ export class AssessmentRejectionDialog extends LitElement {
       </etools-dialog>
     `;
   }
-
-  @property({type: Boolean})
-  dialogOpened = true;
 
   @property({type: Boolean})
   spinnerLoading = false;

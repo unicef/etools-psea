@@ -35,7 +35,7 @@ export class StaffMemberDialog extends LitElement {
       </style>
       <etools-dialog
         id="staffMemberDialog"
-        ?opened="${this.dialogOpened}"
+        opened
         dialog-title="${this.dialogTitle}"
         size="md"
         ?show-spinner="${this.requestInProgress}"
@@ -163,9 +163,6 @@ export class StaffMemberDialog extends LitElement {
 
   @query('#hasAccessInput')
   hasAccessInputEl!: HTMLInputElement;
-
-  @property({type: Boolean})
-  dialogOpened = true;
 
   @property({type: Boolean, reflect: true})
   requestInProgress = false;
