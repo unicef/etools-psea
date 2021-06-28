@@ -4,7 +4,6 @@ import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import './external-individual-dialog';
-import {ExternalIndividualDialog} from './external-individual-dialog';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {handleUsersNoLongerAssignedToCurrentCountry} from '../../../../common/common-methods';
@@ -14,6 +13,7 @@ import {Assessor, AssessorTypes} from '../../../../../types/assessment';
 import {loadExternalIndividuals} from '../../../../../redux/actions/common-data';
 import get from 'lodash-es/get';
 import {fireEvent} from '../../../../utils/fire-custom-event';
+import {openDialog} from '../../../../utils/dialog';
 
 /**
  * @customElement
@@ -92,8 +92,6 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   @property({type: String})
   origAssessorType!: AssessorTypes;
 
-  private dialogExtIndividual!: ExternalIndividualDialog;
-
   stateChanged(state: RootState) {
     if (get(state, 'app.routeDetails.subRouteName') !== 'details') {
       return;
@@ -131,31 +129,27 @@ export class ExternalIndividual extends connect(store)(LitElement) {
   }
 
   private openAddDialog() {
-    if (!this.dialogExtIndividual) {
-      this.createExternalIndividualDialog();
-    }
-    this.dialogExtIndividual.openDialog();
+    openDialog({
+      dialog: 'external-individual-dialog',
+      dialogData: {}
+    }).then(({confirmed, response}) => {
+      if (!confirmed || !response) {
+        return null;
+      }
+      this.onDialogIndividualSaved(response.id);
+      return null;
+    });
   }
 
   private setDefaultUserDetails() {
     if (!this.assessor.user_details) {
-      // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
       this.assessor.user_details = {email: ''} as UnicefUser;
     }
   }
 
-  createExternalIndividualDialog() {
-    this.dialogExtIndividual = document.createElement('external-individual-dialog') as ExternalIndividualDialog;
-    this.dialogExtIndividual.setAttribute('id', 'externalIndividualDialog');
-    this.onDialogIndividualSaved = this.onDialogIndividualSaved.bind(this);
-    this.dialogExtIndividual.addEventListener('external-individual-updated', this.onDialogIndividualSaved);
-    document.querySelector('body')!.appendChild(this.dialogExtIndividual);
-  }
-
-  onDialogIndividualSaved(e: any) {
-    const extIndId = e.detail.id;
+  onDialogIndividualSaved(id: string) {
     fireEvent(this, 'external-individuals-updated-in-redux');
-    store.dispatch(loadExternalIndividuals(this.updateAssessor.bind(this, extIndId)));
+    store.dispatch(loadExternalIndividuals(this.updateAssessor.bind(this, id)));
   }
 
   updateAssessor(userId: string) {
@@ -164,18 +158,6 @@ export class ExternalIndividual extends connect(store)(LitElement) {
       user: userId,
       assessor_type: AssessorTypes.ExternalIndividual
     };
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    this.removeListeners();
-  }
-
-  removeListeners() {
-    if (this.dialogExtIndividual) {
-      this.dialogExtIndividual.removeEventListener('external-individual-updated', this.onDialogIndividualSaved);
-      document.querySelector('body')!.removeChild(this.dialogExtIndividual);
-    }
   }
 
   _setSelectedExternalIndividual(event: CustomEvent) {

@@ -17,7 +17,6 @@ import {cloneDeep, isJsonStrMatch} from '../../../../utils/utils';
 import {formatServerErrorAsText} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
-import isEqual from 'lodash-es/isEqual';
 import get from 'lodash-es/get';
 import '../../../../common/layout/etools-error-warn-box';
 
@@ -55,14 +54,14 @@ export class FollowUpDialog extends connect(store)(LitElement) {
       <etools-dialog
         keep-dialog-open
         size="md"
-        ?opened="${this.dialogOpened}"
+        opened
         dialog-title="${this.dialogTitle}"
         ok-btn-text="${this.confirmBtnTxt}"
         ?hide-confirm-btn="${!this.confirmBtnTxt}"
         ?show-spinner="${this.requestInProcess}"
         ?disable-confirm-btn="${this.requestInProcess}"
         @confirm-btn-clicked="${this.onConfirmBtnClick}"
-        @close="${this.handleDialogClosed}"
+        @close="${this.onClose}"
       >
         <!-- TODO: The following warning may be replaced -->
 
@@ -203,9 +202,6 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   @property({type: Array})
   offices: GenericObject[] = [];
 
-  @property({type: Boolean})
-  dialogOpened = false;
-
   @property({type: Array})
   partners: object[] = [];
 
@@ -238,9 +234,23 @@ export class FollowUpDialog extends connect(store)(LitElement) {
 
   private initialItem!: ActionPoint;
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.editedItem = cloneDeep(this.defaultItem);
+  set dialogData(data: any) {
+    if (!data) {
+      return;
+    }
+
+    if (data.item) {
+      this.editedItem = data.item;
+    } else {
+      this.resetEditedItem();
+    }
+    if (data.warningMessage) {
+      this.warningMessages = [data.warningMessage];
+    }
+    this.isNewRecord = !this.editedItem.id || this.editedItem.id == 'new';
+    this.dialogTitle = this.isNewRecord ? 'Add Action Point' : 'Edit Action Point';
+    this.confirmBtnTxt = this.isNewRecord ? 'Add' : 'Save';
+    this.initialItem = cloneDeep(this.editedItem);
   }
 
   stateChanged(state: RootState) {
@@ -266,16 +276,6 @@ export class FollowUpDialog extends connect(store)(LitElement) {
       // initialize assessment object
       this.assessment = cloneDeep(state.pageData!.currentAssessment);
       this.resetEditedItem();
-    }
-  }
-
-  updated(changedProperties: GenericObject) {
-    if (
-      this.warningMessages.length &&
-      !changedProperties.has('warningMessages') &&
-      !isEqual(this.editedItem, changedProperties.get('editedItem'))
-    ) {
-      this.warningMessages.pop();
     }
   }
 
@@ -316,10 +316,10 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   private saveDialogData() {
     this.getControlsData();
     if (!this._editedItemHasChanged()) {
-      this.handleDialogClosed();
       fireEvent(this, 'toast', {
         text: `No changes have been detected on this action point.`
       });
+      this.onClose();
       return;
     }
 
@@ -341,8 +341,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
 
   _handleResponse(resp: any) {
     this.requestInProcess = false;
-    fireEvent(this, 'action-point-updated', {...resp});
-    this.handleDialogClosed();
+    fireEvent(this, 'dialog-closed', {confirmed: true, response: resp});
   }
 
   _handleError(err: any) {
@@ -352,9 +351,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
     fireEvent(this, 'toast', {text: formatServerErrorAsText(err)});
   }
 
-  private handleDialogClosed() {
-    this.dialogOpened = false;
-    this.resetEditedItem();
+  onClose() {
+    fireEvent(this, 'dialog-closed', {confirmed: false});
   }
 
   resetEditedItem() {
@@ -362,17 +360,6 @@ export class FollowUpDialog extends connect(store)(LitElement) {
     this.editedItem.psea_assessment = this.assessment.id;
     // @ts-ignore
     this.editedItem.partner = this.assessment.partner;
-  }
-
-  public openDialog() {
-    if (!this.editedItem.id) {
-      this.resetEditedItem();
-    }
-    this.isNewRecord = !this.editedItem.id || this.editedItem.id == 'new';
-    this.dialogTitle = this.isNewRecord ? 'Add Action Point' : 'Edit Action Point';
-    this.confirmBtnTxt = this.isNewRecord ? 'Add' : 'Save';
-    this.initialItem = cloneDeep(this.editedItem);
-    this.dialogOpened = true;
   }
 
   getEl(elName: string): HTMLInputElement {
