@@ -133,9 +133,10 @@ export class AssessmentInfo extends connect(store)(PermissionsMixin(LitElement))
               .selected="${this.assessment.assessment_ingo_reason}"
               option-value="value"
               option-label="label"
+              enable-none-option
               trigger-value-change-event
               @etools-selected-item-changed="${({detail}: CustomEvent) => {
-                this.assessment!.assessment_ingo_reason = detail.selectedItem?.value;
+                this.assessment!.assessment_ingo_reason = detail.selectedItem ? detail.selectedItem.value : '';
               }}"
               ?required="${this.assessment.permissions.required.assessment_ingo_reason}"
               ?readonly="${this.isReadonly(this.editMode, this.assessment.permissions.edit.assessment_ingo_reason)}"
