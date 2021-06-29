@@ -13,7 +13,6 @@ import {updateAssessmentData} from '../../../../redux/actions/page-data';
 import {parseRequestErrorsAndShowAsToastMsgs} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 import {buttonsStyles} from '../../../styles/button-styles';
 import './assessment-rejection-dialog';
-import {AssessmentRejectionDialog} from './assessment-rejection-dialog';
 import './nfr-finalize-dialog.js';
 import {openDialog} from '../../../utils/dialog';
 
@@ -33,9 +32,6 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   @property({type: Object})
   assessment!: Assessment;
-
-  @property({type: Object})
-  rejectionDialog!: AssessmentRejectionDialog;
 
   @property({type: Boolean})
   showLoading = false;
@@ -128,17 +124,11 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     super.connectedCallback();
     this.onStatusChangeConfirmation = this.onStatusChangeConfirmation.bind(this);
     this.createStatusChangeConfirmationsDialog();
-    this.createRejectionDialog();
-    // @ts-ignore
-    this.addEventListener('rejection-confirmed', this.onStatusChangeConfirmation);
   }
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
     this.removeStatusChangeConfirmationsDialog();
-    this.removeRejectionDialog();
-    // @ts-ignore
-    this.removeEventListener('rejection-confirmed', this.onStatusChangeConfirmation);
   }
 
   public stateChanged(state: RootState) {
@@ -162,10 +152,9 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   updateAssessmentStatus(action: string) {
     this.currentStatusAction = action;
-
     switch (action) {
       case 'reject':
-        this.rejectionDialog.dialogOpened = true;
+        this.openRejectDialog();
         break;
       default:
         this.updateConfirmationMsgAction(this.currentStatusAction);
@@ -175,6 +164,21 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
         this.statusChangeConfirmationDialog.opened = true;
         break;
     }
+  }
+
+  openRejectDialog() {
+    openDialog({
+      dialog: 'assessment-rejection-dialog',
+      dialogData: {
+        assessmentId: this.assessment.id
+      }
+    }).then(({confirmed, response}) => {
+      if (!confirmed || !response) {
+        return null;
+      }
+      this.onStatusChangeConfirmation({detail: {confirmed: confirmed, response: response}} as CustomEvent);
+      return null;
+    });
   }
 
   updateConfirmationMsgAction(action: string) {
@@ -233,7 +237,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
     switch (this.currentStatusAction) {
       case 'reject':
-        this.rejectAssessment(url, {comment: e.detail.reason}, this.rejectionDialog);
+        this.rejectAssessment(e.detail.response);
         break;
       case 'finalize':
         this.requestStatusUpdate(url, {nfr_attachment: nfrAttachmentId});
@@ -267,28 +271,10 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
       });
   }
 
-  rejectAssessment(url: string, body: any, dialog: any) {
-    dialog.spinnerLoading = true;
-    sendRequest({
-      endpoint: {url: url},
-      method: 'PATCH',
-      body: body
-    })
-      .then((response) => {
-        // update assessment data in redux store
-        store.dispatch(updateAssessmentData(response));
-        dialog.closeDialog();
-        this.currentStatusAction = '';
-      })
-      .catch((err: any) => {
-        logError('Reject req failed', 'AssessmentStatusTransitionActions', err);
-        parseRequestErrorsAndShowAsToastMsgs(err, this);
-      })
-      .then(() => {
-        // req finalized...
-        dialog.spinnerLoading = false;
-        this.showLoading = false;
-      });
+  rejectAssessment(response: any) {
+    store.dispatch(updateAssessmentData(response));
+    this.currentStatusAction = '';
+    this.showLoading = false;
   }
 
   createStatusChangeConfirmationsDialog() {
@@ -306,22 +292,9 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     }
   }
 
-  createRejectionDialog() {
-    if (!this.rejectionDialog) {
-      this.rejectionDialog = document.createElement('assessment-rejection-dialog') as AssessmentRejectionDialog;
-      document.querySelector('body')!.appendChild(this.rejectionDialog);
-    }
-  }
-
   removeStatusChangeConfirmationsDialog() {
     if (this.statusChangeConfirmationDialog !== null) {
       removeDialog(this.statusChangeConfirmationDialog);
-    }
-  }
-
-  removeRejectionDialog() {
-    if (this.rejectionDialog) {
-      document.querySelector('body')!.removeChild(this.rejectionDialog);
     }
   }
 }
