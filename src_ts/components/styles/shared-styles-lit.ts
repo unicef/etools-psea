@@ -163,11 +163,10 @@ export const SharedStylesLit = html`
     }
 
     etools-dialog::part(ed-scrollable) {
-      padding: 0 24px;
-      margin-top: 0 !important;
       --paper-dialog-scrollable: {
         overflow-x: visible !important;
         overflow-y: visible !important;
+        display: block;
       }
     }
 
