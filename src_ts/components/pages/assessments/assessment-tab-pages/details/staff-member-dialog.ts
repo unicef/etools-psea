@@ -35,11 +35,11 @@ export class StaffMemberDialog extends LitElement {
       </style>
       <etools-dialog
         id="staffMemberDialog"
-        ?opened="${this.dialogOpened}"
+        opened
         dialog-title="${this.dialogTitle}"
         size="md"
         ?show-spinner="${this.requestInProgress}"
-        @close="${this.handleDialogClosed}"
+        @close="${this.onClose}"
         ok-btn-text="${this.confirmBtnText}"
         ?disable-confirm-btn="${this.requestInProgress}"
         keep-dialog-open
@@ -128,9 +128,7 @@ export class StaffMemberDialog extends LitElement {
         </div>
 
         <div id="has-access-checkbox-wrapper" class="layout-horizontal">
-          <paper-checkbox id="hasAccessInput" ?checked="${this.editedItem.hasAccess}">
-            Has Access
-          </paper-checkbox>
+          <paper-checkbox id="hasAccessInput" ?checked="${this.editedItem.hasAccess}"> Has Access </paper-checkbox>
         </div>
       </etools-dialog>
     `;
@@ -167,9 +165,6 @@ export class StaffMemberDialog extends LitElement {
   hasAccessInputEl!: HTMLInputElement;
 
   @property({type: Boolean, reflect: true})
-  dialogOpened = false;
-
-  @property({type: Boolean, reflect: true})
   requestInProgress = false;
 
   @property({type: String})
@@ -190,45 +185,28 @@ export class StaffMemberDialog extends LitElement {
   @property({type: String})
   firmId!: string;
 
-  @property({type: Object})
-  toastEventSource!: LitElement;
-
   private initialItem!: EtoolsStaffMemberModel;
 
-  connectedCallback(): void {
-    super.connectedCallback();
-    this.editedItem = cloneDeep(this.defaultItem);
-  }
-
-  public openDialog() {
+  set dialogData(data: any) {
+    if (!data) {
+      return;
+    }
+    this.firmId = data.firmId;
+    this.editedItem = data.item ? data.item : cloneDeep(this.defaultItem);
     this.isNewRecord = !(parseInt(this.editedItem.id as string) > 0);
     this.dialogTitle = this.isNewRecord ? 'Add New Firm Staff Member' : 'Edit Firm Staff Member';
     this.confirmBtnText = this.isNewRecord ? 'Add' : 'Save';
-    this.dialogOpened = true;
     this.initialItem = cloneDeep(this.editedItem);
   }
 
-  private handleDialogClosed() {
-    this.dialogOpened = false;
-    this.resetControls();
+  onClose() {
+    fireEvent(this, 'dialog-closed', {confirmed: false});
   }
 
   private onSaveClick() {
     if (this.validate()) {
       this.saveDialogData();
     }
-  }
-
-  private resetControls() {
-    this.validationSelectors.forEach((selector: string) => {
-      const el = this.shadowRoot!.querySelector(selector) as PaperInputElement;
-      el.invalid = false;
-      el.value = '';
-    });
-    this.positionInputEl.value = '';
-    this.phoneInputEl.value = '';
-    this.hasAccessInputEl.checked = false;
-    this.editedItem = cloneDeep(this.defaultItem);
   }
 
   private validate() {
@@ -261,7 +239,6 @@ export class StaffMemberDialog extends LitElement {
   private saveDialogData() {
     this.getControlsData();
     this.requestInProgress = true;
-
     if (this._staffMemberDataHasChanged()) {
       sendRequest({
         endpoint: {
@@ -280,7 +257,7 @@ export class StaffMemberDialog extends LitElement {
         this._staffMemberDataUpdateComplete(this.editedItem);
       } else {
         this.requestInProgress = false;
-        fireEvent(this.toastEventSource, 'toast', {
+        fireEvent(this, 'toast', {
           text: `No changes have been detected to ${this.editedItem.user.first_name} ${this.editedItem.user.last_name}.`
         });
       }
@@ -293,13 +270,13 @@ export class StaffMemberDialog extends LitElement {
 
   _staffMemberDataUpdateComplete(resp: any) {
     this.requestInProgress = false;
-    fireEvent(this, 'staff-member-updated', {...resp, hasAccess: this.editedItem.hasAccess});
-    this.handleDialogClosed();
+    resp.hasAccess = this.editedItem.hasAccess;
+    fireEvent(this, 'dialog-closed', {confirmed: true, response: resp});
   }
 
   _handleError(err: any) {
     const msg = formatServerErrorAsText(err);
     logError(msg, 'staff-member', err);
-    fireEvent(this.toastEventSource, 'toast', {text: msg});
+    fireEvent(this, 'toast', {text: msg});
   }
 }

@@ -1,30 +1,27 @@
 import {EtoolsToast} from './etools-toast';
 import './etools-toast'; // element loaded (if not, etools-toast will not render)
 import {GenericObject} from '../../../types/globals';
-import {LitElement} from 'lit-element';
 
 /**
  * Toasts notification messages queue utility class
  */
 export class ToastNotificationHelper {
-  private appShellEl: LitElement;
   private readonly _toast: EtoolsToast;
   private _toastQueue: GenericObject[] = [];
   private TOAST_EL_ID = 'toastNotificationQueueEl';
 
-  constructor(appShellEl: LitElement) {
-    this.appShellEl = appShellEl;
+  constructor() {
     const toast = document.querySelector(this.TOAST_EL_ID) as EtoolsToast;
     this._toast = toast ? toast : this.createToastNotificationElement();
   }
 
   public addToastNotificationListeners() {
     this.queueToast = this.queueToast.bind(this);
-    this.appShellEl.addEventListener('toast', this.queueToast);
+    document.body.addEventListener('toast', this.queueToast);
   }
 
   public removeToastNotificationListeners() {
-    this.appShellEl.removeEventListener('toast', this.queueToast);
+    document.body.removeEventListener('toast', this.queueToast);
     if (this._toast) {
       this._toast.removeEventListener('toast-confirm', this._toggleToast);
       this._toast.removeEventListener('toast-closed', this.dequeueToast);

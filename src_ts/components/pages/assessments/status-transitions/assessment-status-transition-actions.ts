@@ -13,7 +13,8 @@ import {updateAssessmentData} from '../../../../redux/actions/page-data';
 import {parseRequestErrorsAndShowAsToastMsgs} from '@unicef-polymer/etools-ajax/ajax-error-parser';
 import {buttonsStyles} from '../../../styles/button-styles';
 import './assessment-rejection-dialog';
-import {AssessmentRejectionDialog} from './assessment-rejection-dialog';
+import './nfr-finalize-dialog.js';
+import {openDialog} from '../../../utils/dialog';
 
 @customElement('assessment-status-transition-actions')
 export class AssessmentStatusTransitionActions extends connect(store)(LitElement) {
@@ -31,9 +32,6 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   @property({type: Object})
   assessment!: Assessment;
-
-  @property({type: Object})
-  rejectionDialog!: AssessmentRejectionDialog;
 
   @property({type: Boolean})
   showLoading = false;
@@ -126,17 +124,11 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     super.connectedCallback();
     this.onStatusChangeConfirmation = this.onStatusChangeConfirmation.bind(this);
     this.createStatusChangeConfirmationsDialog();
-    this.createRejectionDialog();
-    // @ts-ignore
-    this.addEventListener('rejection-confirmed', this.onStatusChangeConfirmation);
   }
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
     this.removeStatusChangeConfirmationsDialog();
-    this.removeRejectionDialog();
-    // @ts-ignore
-    this.removeEventListener('rejection-confirmed', this.onStatusChangeConfirmation);
   }
 
   public stateChanged(state: RootState) {
@@ -160,35 +152,66 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   updateAssessmentStatus(action: string) {
     this.currentStatusAction = action;
-
-    if (this.currentStatusAction === 'reject') {
-      this.rejectionDialog.dialogOpened = true;
-    } else {
-      this.updateConfirmationMsgAction(this.currentStatusAction);
-      if (!this.statusChangeConfirmationDialog) {
-        throw new Error('statusChangeConfirmationDialog is not created!');
-      }
-      this.statusChangeConfirmationDialog.opened = true;
+    switch (action) {
+      case 'reject':
+        this.openRejectDialog();
+        break;
+      default:
+        this.updateConfirmationMsgAction(this.currentStatusAction);
+        if (!this.statusChangeConfirmationDialog) {
+          throw new Error('statusChangeConfirmationDialog is not created!');
+        }
+        this.statusChangeConfirmationDialog.opened = true;
+        break;
     }
+  }
+
+  openRejectDialog() {
+    openDialog({
+      dialog: 'assessment-rejection-dialog',
+      dialogData: {
+        assessmentId: this.assessment.id
+      }
+    }).then(({confirmed, response}) => {
+      if (!confirmed || !response) {
+        return null;
+      }
+      this.onStatusChangeConfirmation({detail: {confirmed: confirmed, response: response}} as CustomEvent);
+      return null;
+    });
   }
 
   updateConfirmationMsgAction(action: string) {
     let warnMsg = `Are you sure you want to ${action} this assessment?`;
     if (action === 'finalize') {
       warnMsg =
-        'Your finalisation of this Assessment confirms that you are satisfied that' +
-        ' the process followed by the Assessor is in line with expected procedure, and that the Proof of Evidence' +
-        ' provided by the Partner supports the rating against each Core Standard.';
+        'Your finalisation of this Assessment confirms that you are satisfied that: <br/>' +
+        ' - The process followed by the Assessor is in line with expected procedure <br/>' +
+        ' - The Proof of Evidence provided by the Partner supports the rating against each Core Standard';
     }
-    this.confirmationMSg.innerText = warnMsg;
+    this.confirmationMSg.innerHTML = warnMsg;
   }
 
-  onStatusChangeConfirmation(e: CustomEvent) {
-    const containerHeight = document.querySelector('app-shell')!.shadowRoot!.querySelector("#appHeadLayout")!.shadowRoot!.querySelector("#contentContainer")!.scrollHeight;
-    this.shadowRoot!.querySelector("etools-loading")!.style.height = `${containerHeight}px`;
-    this.showLoading = true;
+  async openNFRFinalize() {
+    const nfrAttId = await openDialog({dialog: 'nfr-finalize-dialog'}).then(({confirmed, response}) => {
+      if (confirmed) {
+        return response.nfrAttachmentId;
+      } else {
+        return null;
+      }
+    });
+    return nfrAttId;
+  }
+
+  async onStatusChangeConfirmation(e: CustomEvent) {
+    const containerHeight = document
+      .querySelector('app-shell')!
+      .shadowRoot!.querySelector('#appHeadLayout')!
+      .shadowRoot!.querySelector('#contentContainer')!.scrollHeight;
+
+    this.shadowRoot!.querySelector('etools-loading')!.style.height = `${containerHeight}px`; // why is this here?
+
     if (!e.detail.confirmed) {
-      this.showLoading = false;
       // cancel status update action
       this.currentStatusAction = '';
       return;
@@ -196,22 +219,41 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     if (!this.assessment || !this.currentStatusAction) {
       throw new Error('Assessment obj or statusAction not set!');
     }
+
+    let nfrAttachmentId = '';
+    if (this.currentStatusAction == 'finalize' && this.assessment.overall_rating?.display == 'High') {
+      nfrAttachmentId = await this.openNFRFinalize();
+      if (!nfrAttachmentId) {
+        return;
+      }
+    }
+
+    this.showLoading = true;
+
     const url = getEndpoint(etoolsEndpoints.assessmentStatusUpdate, {
       id: this.assessment.id,
       statusAction: this.currentStatusAction
     }).url!;
 
-    if (this.currentStatusAction === 'reject') {
-      this.rejectAssessment(url, e.detail.reason);
-    } else {
-      this.requestStatusUpdate(url);
+    switch (this.currentStatusAction) {
+      case 'reject':
+        this.rejectAssessment(e.detail.response);
+        break;
+      case 'finalize':
+        this.requestStatusUpdate(url, {nfr_attachment: nfrAttachmentId});
+        break;
+
+      default:
+        this.requestStatusUpdate(url);
+        break;
     }
   }
 
-  requestStatusUpdate(url: string) {
+  requestStatusUpdate(url: string, body = {}) {
     sendRequest({
       endpoint: {url: url},
-      method: 'PATCH'
+      method: 'PATCH',
+      body: body
     })
       .then((response) => {
         this.showLoading = false;
@@ -229,29 +271,10 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
       });
   }
 
-  rejectAssessment(url: string, reason: string) {
-    const reqPayloadData = {comment: reason};
-    this.rejectionDialog.spinnerLoading = true;
-    sendRequest({
-      endpoint: {url: url},
-      method: 'PATCH',
-      body: reqPayloadData
-    })
-      .then((response) => {
-        // update assessment data in redux store
-        store.dispatch(updateAssessmentData(response));
-        this.rejectionDialog.closeDialog();
-        this.currentStatusAction = '';
-      })
-      .catch((err: any) => {
-        logError('Reject req failed', 'AssessmentStatusTransitionActions', err);
-        parseRequestErrorsAndShowAsToastMsgs(err, this);
-      })
-      .then(() => {
-        // req finalized...
-        this.rejectionDialog.spinnerLoading = false;
-        this.showLoading = false;
-      });
+  rejectAssessment(response: any) {
+    store.dispatch(updateAssessmentData(response));
+    this.currentStatusAction = '';
+    this.showLoading = false;
   }
 
   createStatusChangeConfirmationsDialog() {
@@ -269,23 +292,9 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
     }
   }
 
-  createRejectionDialog() {
-    if (!this.rejectionDialog) {
-      this.rejectionDialog = document.createElement('assessment-rejection-dialog') as AssessmentRejectionDialog;
-      this.rejectionDialog.fireEventSource = this;
-      document.querySelector('body')!.appendChild(this.rejectionDialog);
-    }
-  }
-
   removeStatusChangeConfirmationsDialog() {
     if (this.statusChangeConfirmationDialog !== null) {
       removeDialog(this.statusChangeConfirmationDialog);
-    }
-  }
-
-  removeRejectionDialog() {
-    if (this.rejectionDialog) {
-      document.querySelector('body')!.removeChild(this.rejectionDialog);
     }
   }
 }

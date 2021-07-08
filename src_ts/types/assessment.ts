@@ -6,6 +6,8 @@ export class AssessmentPermissions {
     partner: true,
     focal_points: true,
     assessment_date: true,
+    assessment_type: true,
+    assessment_ingo_reason: true,
     answers: false,
     assessor: false
   };
@@ -14,7 +16,9 @@ export class AssessmentPermissions {
     focal_points: true,
     assessment_date: false,
     answers: false,
-    assessor: false
+    assessor: false,
+    assessment_type: true,
+    assessment_ingo_reason: false
   };
 }
 
@@ -30,14 +34,19 @@ export class Assessment {
   partner: string | null = '';
   focal_points?: string[] = [];
   rejected_comment = '';
+  assessment_ingo_reason: string | null = null;
+  assessment_type: string | null = null;
   permissions = new AssessmentPermissions();
   partner_details?: GenericObject;
   focal_points_details: UnicefUser[] = [];
+  overall_rating?: {display: string; value: number};
+  nfr_attachment?: string;
 }
 
 export class AssessmentInvalidator {
   partner = false;
   assessment_date = false;
+  assessment_type = false;
 }
 
 export enum AssessorTypes {

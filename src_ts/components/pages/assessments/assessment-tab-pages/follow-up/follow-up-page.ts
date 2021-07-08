@@ -2,14 +2,13 @@ import {LitElement, html, property, customElement} from 'lit-element';
 import '@unicef-polymer/etools-content-panel/etools-content-panel.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import './follow-up-dialog';
-import {FollowUpDialog} from './follow-up-dialog';
 
 import '@unicef-polymer/etools-table/etools-table';
 import {EtoolsTableColumn, EtoolsTableColumnType} from '@unicef-polymer/etools-table/etools-table';
 
 import {GenericObject, ActionPoint} from '../../../../../types/globals';
 import {Assessment} from '../../../../../types/assessment';
-import {cloneDeep} from '../../../../utils/utils';
+import {cloneDeep, getFileNameFromURL} from '../../../../utils/utils';
 import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {getEndpoint} from '../../../../../endpoints/endpoints';
@@ -19,9 +18,15 @@ import '@unicef-polymer/etools-loading';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import get from 'lodash-es/get';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+import {openDialog} from '../../../../utils/dialog';
+import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
+import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 
 @customElement('follow-up-page')
 export class FollowUpPage extends connect(store)(LitElement) {
+  static get styles() {
+    return [gridLayoutStylesLit, labelAndvalueStylesLit];
+  }
   render() {
     return html`
       ${SharedStylesLit}
@@ -29,8 +34,15 @@ export class FollowUpPage extends connect(store)(LitElement) {
         :host {
           --ecp-content-padding: 0;
         }
+        .container {
+          padding: 24px 24px;
+        }
+
+        .margin-b {
+          margin-bottom: 24px;
+        }
       </style>
-      <etools-content-panel panel-title="Action Points">
+      <etools-content-panel panel-title="Action Points" class="margin-b">
         <etools-loading loading-text="Loading..." .active="${this.showLoading}"></etools-loading>
 
         <div slot="panel-btns">
@@ -42,16 +54,31 @@ export class FollowUpPage extends connect(store)(LitElement) {
           .columns="${this.columns}"
           @edit-item="${this.editActionPoint}"
           @copy-item="${this.copyActionPoint}"
-          showEdit
-          showCopy
+          .setRowActionsVisibility="${this.setRowActionsVisibility.bind(this)}"
         >
         </etools-table>
+      </etools-content-panel>
+
+      <etools-content-panel
+        panel-title="Note for Record"
+        ?hidden="${this.assessment?.overall_rating?.display != 'High'}"
+      >
+        <div class="layout-horizontal container">
+          <div class="col-4">
+            <div class="paper-label">NFR Attachment</div>
+            <div class="input-label" ?empty="${!this.assessment?.nfr_attachment}">
+              <a href="${this.assessment?.nfr_attachment}" target="_blank">
+                ${getFileNameFromURL(this.assessment?.nfr_attachment)}</a
+              >
+            </div>
+          </div>
+        </div>
       </etools-content-panel>
     `;
   }
 
   @property({type: Array})
-  dataItems: object[] = [];
+  dataItems: any[] = [];
 
   @property({type: Boolean})
   showLoading = false;
@@ -90,9 +117,6 @@ export class FollowUpPage extends connect(store)(LitElement) {
     }
   ];
 
-  @property({type: Object})
-  followUpDialog!: FollowUpDialog;
-
   @property({type: String})
   assessmentId: string | number | null = null;
 
@@ -107,30 +131,16 @@ export class FollowUpPage extends connect(store)(LitElement) {
         this.getFollowUpData();
       }
     }
+    this.assessment = state.pageData?.currentAssessment!;
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.createFollowUpDialog();
-    this.updateActionPoints = this.updateActionPoints.bind(this);
-    document.addEventListener('action-point-updated', this.updateActionPoints);
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    document.removeEventListener('action-point-updated', this.updateActionPoints);
-    if (this.followUpDialog) {
-      document.querySelector('body')!.removeChild(this.followUpDialog);
-    }
-  }
-
-  updateActionPoints(event: GenericObject) {
+  updateActionPoints(actionPoint: GenericObject) {
     const oldActionPointsData = cloneDeep(this.dataItems);
-    const existingActionPointIndex: number = this.dataItems.findIndex((ap: GenericObject) => ap.id === event.detail.id);
+    const existingActionPointIndex: number = this.dataItems.findIndex((ap: GenericObject) => ap.id === actionPoint.id);
     if (existingActionPointIndex > -1) {
-      oldActionPointsData.splice(existingActionPointIndex, 1, event.detail);
+      oldActionPointsData.splice(existingActionPointIndex, 1, actionPoint);
     } else {
-      oldActionPointsData.push(event.detail);
+      oldActionPointsData.push(actionPoint);
     }
     this.dataItems = oldActionPointsData;
     this.requestUpdate();
@@ -149,19 +159,22 @@ export class FollowUpPage extends connect(store)(LitElement) {
       .then(() => (this.showLoading = false));
   }
 
+  setRowActionsVisibility(item: GenericObject) {
+    const isEditable = item && item.status !== 'completed';
+    return {showEdit: isEditable, showCopy: true};
+  }
+
   editActionPoint(event: GenericObject) {
-    this.extractActionPointData(event.detail);
-    this.openFollowUpDialog();
+    const editedItem = this.extractActionPointData(event.detail);
+    this.openFollowUpDialog(editedItem);
   }
 
   copyActionPoint(event: GenericObject) {
-    this.extractActionPointData(event.detail);
-    this.followUpDialog.warningMessages = [
-      ...this.followUpDialog.warningMessages,
-      'It is required to change at least one of the fields below.'
-    ];
-    this.followUpDialog.editedItem.id = 'new';
-    this.openFollowUpDialog();
+    const item = this.extractActionPointData(event.detail);
+    item.id = 'new';
+    const warningMessage = 'It is required to change at least one of the fields below.';
+
+    this.openFollowUpDialog(item, warningMessage);
   }
 
   extractActionPointData(item: ActionPoint) {
@@ -177,17 +190,22 @@ export class FollowUpPage extends connect(store)(LitElement) {
       due_date: item.due_date,
       high_priority: item.high_priority
     };
-    this.followUpDialog.editedItem = newEditedItem;
+    return newEditedItem;
   }
 
-  createFollowUpDialog() {
-    this.followUpDialog = document.createElement('follow-up-dialog') as FollowUpDialog;
-    this.followUpDialog.setAttribute('id', 'followUpDialog');
-    this.followUpDialog.toastEventSource = this;
-    document.querySelector('body')!.appendChild(this.followUpDialog);
-  }
-
-  openFollowUpDialog() {
-    this.followUpDialog.openDialog();
+  openFollowUpDialog(item?: ActionPoint, warningMessage?: string) {
+    openDialog({
+      dialog: 'follow-up-dialog',
+      dialogData: {
+        item: item,
+        warningMessage: warningMessage
+      }
+    }).then(({confirmed, response}) => {
+      if (!confirmed || !response) {
+        return null;
+      }
+      this.updateActionPoints(response);
+      return null;
+    });
   }
 }

@@ -12,6 +12,9 @@ export const SET_OFFICES = 'SET_OFFICES';
 export const SET_SECTIONS = 'SET_SECTIONS';
 export const SET_EXTERNAL_INDIVIDUALS = 'SET_EXTERNAL_INDIVIDUALS';
 export const SET_ASSESSING_FIRMS = 'SET_ASSESSING_FIRMS';
+export const SET_RATINGS = 'SET_RATINGS';
+export const SET_ASSESSMENT_TYPES = 'SET_ASSESSMENT_TYPES';
+export const SET_INGO_REASONS = 'SET_INGO_REASONS';
 
 export interface CommonDataActionSetUnicefUsersData extends Action<'SET_UNICEF_USERS_DATA'> {
   unicefUsersData: object[];
@@ -25,10 +28,25 @@ export interface CommonDataActionSetSections extends Action<'SET_SECTIONS'> {
   sections: object[];
 }
 
+export interface CommonDataActionSetRatings extends Action<'SET_RATINGS'> {
+  ratings: object[];
+}
+
+export interface CommonDataActionSetAssessmentTypes extends Action<'SET_ASSESSMENT_TYPES'> {
+  assessment_types: object[];
+}
+
+export interface CommonDataActionSetReasons extends Action<'SET_INGO_REASONS'> {
+  ingo_reasons: object[];
+}
+
 export type CommonDataAction =
   | CommonDataActionSetUnicefUsersData
   | CommonDataActionSetOffices
-  | CommonDataActionSetSections;
+  | CommonDataActionSetSections
+  | CommonDataActionSetRatings
+  | CommonDataActionSetAssessmentTypes
+  | CommonDataActionSetReasons;
 
 export const updateUnicefUsersData: ActionCreator<CommonDataActionSetUnicefUsersData> = (unicefUsersData: object[]) => {
   return {
@@ -58,6 +76,27 @@ export const setSections = (sections: []) => {
   };
 };
 
+export const setRatings = (ratings: []) => {
+  return {
+    type: SET_RATINGS,
+    ratings
+  };
+};
+
+export const setAssessmentTypes = (assessment_types: []) => {
+  return {
+    type: SET_ASSESSMENT_TYPES,
+    assessment_types
+  };
+};
+
+export const setIngoReasons = (ingo_reasons: []) => {
+  return {
+    type: SET_INGO_REASONS,
+    ingo_reasons
+  };
+};
+
 export const setExternalIndividuals = (externalIndividuals: []) => {
   return {
     type: SET_EXTERNAL_INDIVIDUALS,
@@ -82,6 +121,20 @@ export const loadOffices = () => (dispatch: any) => {
     .then((resp: any) => dispatch(setOffices(resp)))
     .catch((error: GenericObject) => {
       logError('loadOffices req error...', LOGS_PREFIX, error);
+    });
+};
+
+export const loadStaticData = () => (dispatch: any) => {
+  sendRequest({
+    endpoint: {url: etoolsEndpoints.staticData.url!}
+  })
+    .then((resp: any) => {
+      dispatch(setRatings(resp.ratings || []));
+      dispatch(setAssessmentTypes(resp.types || []));
+      dispatch(setIngoReasons(resp.ingo_reasons || []));
+    })
+    .catch((error: GenericObject) => {
+      logError('loadStaticData req error...', LOGS_PREFIX, error);
     });
 };
 

@@ -14,7 +14,6 @@ import {sendRequest} from '@unicef-polymer/etools-ajax/etools-ajax-request';
 import {buildUrlQueryString} from '../../../../common/layout/etools-table-utility';
 import {GenericObject} from '../../../../../types/globals';
 import './staff-member-dialog';
-import {StaffMemberDialog} from './staff-member-dialog';
 import {cloneDeep} from '../../../../utils/utils';
 import {etoolsEndpoints} from '../../../../../endpoints/endpoints-list';
 import {EtoolsStaffMemberModel} from '../../../../../types/user-model';
@@ -23,6 +22,7 @@ import {formatServerErrorAsText} from '@unicef-polymer/etools-ajax/ajax-error-pa
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import '@unicef-polymer/etools-loading';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+import {openDialog} from '../../../../utils/dialog';
 
 /**
  * @customElement
@@ -144,33 +144,8 @@ export class FirmStaffMembers extends LitElement {
   @property({type: Boolean})
   canEdit!: boolean;
 
-  private dialogStaffMember!: StaffMemberDialog;
-
   @property({type: String})
   firmId!: string;
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    this.removeListeners();
-  }
-
-  removeListeners() {
-    if (this.dialogStaffMember) {
-      this.dialogStaffMember.removeEventListener('staff-member-updated', this.onStaffMemberSaved as any);
-      document.querySelector('body')!.removeChild(this.dialogStaffMember);
-    }
-  }
-
-  openStaffMemberDialog(event?: any) {
-    if (!this.dialogStaffMember) {
-      this.createStaffMemberDialog();
-    }
-    if (event && event.detail) {
-      this.dialogStaffMember.editedItem = cloneDeep(event.detail);
-    }
-    this.dialogStaffMember.firmId = this.firmId;
-    this.dialogStaffMember.openDialog();
-  }
 
   populateStaffMembersList(firmId: string) {
     this.firmId = firmId;
@@ -212,19 +187,29 @@ export class FirmStaffMembers extends LitElement {
       .then(() => (this.showLoading = false));
   }
 
-  createStaffMemberDialog() {
-    this.dialogStaffMember = document.createElement('staff-member-dialog') as StaffMemberDialog;
-    this.dialogStaffMember.setAttribute('id', 'dialogStaffMember');
-    this.dialogStaffMember.toastEventSource = this;
-    this.onStaffMemberSaved = this.onStaffMemberSaved.bind(this);
-    this.dialogStaffMember.addEventListener('staff-member-updated', this.onStaffMemberSaved as any);
-    document.querySelector('body')!.appendChild(this.dialogStaffMember);
+  openStaffMemberDialog(event?: any) {
+    let editedItem;
+    if (event && event.detail) {
+      editedItem = cloneDeep(event.detail);
+    }
+    openDialog({
+      dialog: 'staff-member-dialog',
+      dialogData: {
+        item: editedItem,
+        firmId: this.firmId
+      }
+    }).then(({confirmed, response}) => {
+      if (!confirmed || !response) {
+        return null;
+      }
+      this.onStaffMemberSaved(response);
+      return null;
+    });
   }
 
-  onStaffMemberSaved(e: CustomEvent) {
-    const savedItem = e.detail;
-    this.updateItemData(savedItem);
-    this.saveFirmAssessorStaffAccess(savedItem as EtoolsStaffMemberModel);
+  onStaffMemberSaved(response: GenericObject) {
+    this.updateItemData(response);
+    this.saveFirmAssessorStaffAccess(response as EtoolsStaffMemberModel);
   }
 
   updateItemData(itemData: any) {
