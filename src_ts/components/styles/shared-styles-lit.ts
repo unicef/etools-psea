@@ -162,6 +162,14 @@ export const SharedStylesLit = html`
       }
     }
 
+    etools-dialog::part(ed-scrollable) {
+      --paper-dialog-scrollable: {
+        overflow-x: visible !important;
+        overflow-y: visible !important;
+        display: block;
+      }
+    }
+
     label[required] {
       @apply --required-star-style;
       background: url('./images/required.svg') no-repeat 87% 40%/6px;
