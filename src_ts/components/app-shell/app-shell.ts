@@ -24,6 +24,7 @@ import '@polymer/app-layout/app-drawer/app-drawer.js';
 import '@polymer/app-layout/app-header-layout/app-header-layout.js';
 import '@polymer/app-layout/app-header/app-header.js';
 import '@polymer/app-layout/app-toolbar/app-toolbar.js';
+import {createDynamicDialog} from '@unicef-polymer/etools-dialog/dynamic-dialog';
 
 import {AppDrawerLayoutElement} from '@polymer/app-layout/app-drawer-layout/app-drawer-layout';
 import {AppHeaderLayoutElement} from '@polymer/app-layout/app-header-layout/app-header-layout';
@@ -205,6 +206,8 @@ export class AppShell extends connect(store)(LitElement) {
 
   public connectedCallback() {
     super.connectedCallback();
+
+    this.checkAppVersion();
     installRouter((location) => store.dispatch(navigate(decodeURIComponent(location.pathname + location.search))));
     installMediaQueryWatcher(`(min-width: 460px)`, () => store.dispatch(updateDrawerState(false)));
 
@@ -284,4 +287,42 @@ export class AppShell extends connect(store)(LitElement) {
     }
     return true;
   }
+
+  protected checkAppVersion() {
+    fetch('version.json')
+      .then((res) => res.json())
+      .then((version) => {
+        if (version.revision != document.getElementById('buildRevNo')!.innerText) {
+          console.log('version.json', version.revision);
+          console.log('buildRevNo ', document.getElementById('buildRevNo')!.innerText);
+          this._showConfirmNewVersionDialog();
+        }
+      });
+  }
+
+  private _showConfirmNewVersionDialog() {
+    const msg = document.createElement('span');
+    msg.innerText = 'A new version of the app is available. Refresh page?';
+    const conf: any = {
+      size: 'md',
+      closeCallback: this._onConfirmNewVersion.bind(this),
+      content: msg
+    };
+    const confirmNewVersionDialog = createDynamicDialog(conf);
+    confirmNewVersionDialog.opened = true;
+  }
+
+  private _onConfirmNewVersion(e: CustomEvent) {
+    if (e.detail.confirmed) {
+      if (navigator.serviceWorker) {
+        caches.keys().then((cacheNames) => {
+          cacheNames.forEach((cacheName) => {
+            caches.delete(cacheName);
+          });
+          location.reload();
+        });
+      }
+    }
+  }
+
 }

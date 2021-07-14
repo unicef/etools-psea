@@ -16,6 +16,7 @@
   ],
   "extraDependencies": [
     "manifest.json",
+    "version.json",
     "push-manifest.json",
     "node_modules/@webcomponents/webcomponentsjs/**",
     "node_modules/web-animations-js/web-animations-next-lite.min.js",
