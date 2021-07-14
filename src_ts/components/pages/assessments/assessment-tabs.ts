@@ -80,7 +80,11 @@ export class AssessmentTabs extends connect(store)(LitElement) {
           @iron-select="${this.handleTabChange}"
         ></etools-tabs>
       </page-content-header>
-      <section class="elevation page-content no-padding" elevation="1" ?hidden="${!this.assessment?.rejected_comment}">
+      <section
+        class="elevation page-content no-padding"
+        elevation="1"
+        ?hidden="${!this.showRejectionNote(this.assessment)}"
+      >
         <etools-content-panel class="rejection-tab" panel-title="">
           <div slot="panel-btns" class="bookmark">
             <iron-icon icon="bookmark"></iron-icon>
@@ -287,5 +291,9 @@ export class AssessmentTabs extends connect(store)(LitElement) {
       // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
       return {status: s[0], label: s[1]} as EtoolsStatusModel;
     });
+  }
+
+  showRejectionNote(assessment: Assessment) {
+    return assessment?.rejected_comment && assessment.status !== 'final';
   }
 }
