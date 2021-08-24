@@ -72,9 +72,7 @@ export class QuestionnaireItemElement extends LitElement {
           >
           </paper-icon-button>
         </div>
-        <div class="description">
-          ${unsafeHTML(this.question.content)}
-        </div>
+        <div class="description">${unsafeHTML(this.question.content)}</div>
 
         <div class="row-padding-v">
           <questionnaire-answer
@@ -90,13 +88,9 @@ export class QuestionnaireItemElement extends LitElement {
           </questionnaire-answer>
         </div>
 
-        <div class="layout-horizontal right-align row-padding-v" ?hidden="${!this.editMode}">
-          <paper-button class="default" @tap="${this.cancel}">
-            Cancel
-          </paper-button>
-          <paper-button class="primary" @tap="${this.saveAnswer}">
-            Save
-          </paper-button>
+        <div class="layout-horizontal right-align row-padding-v" ?hidden="${!this.editMode || !this.canEditAnswers}">
+          <paper-button class="default" @tap="${this.cancel}"> Cancel </paper-button>
+          <paper-button class="primary" @tap="${this.saveAnswer}"> Save </paper-button>
         </div>
       </etools-content-panel>
     `;
