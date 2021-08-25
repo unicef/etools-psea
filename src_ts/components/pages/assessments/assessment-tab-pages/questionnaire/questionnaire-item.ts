@@ -121,11 +121,11 @@ export class QuestionnaireItemElement extends LitElement {
     if (!this.canEditAnswers) {
       this.editMode = false;
       this.open = false;
-      try {
-        // this is because `this.open = false` doesn't work
-        this.shadowRoot!.querySelector('etools-content-panel')!.open = false;
-      } catch (error) {
-        console.log(error);
+
+      // backup for  `this.open = false` not working
+      const panel = this.shadowRoot!.querySelector('etools-content-panel');
+      if (panel) {
+        panel.open = false;
       }
     }
   }
