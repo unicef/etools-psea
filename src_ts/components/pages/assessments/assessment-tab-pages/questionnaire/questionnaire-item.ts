@@ -111,8 +111,24 @@ export class QuestionnaireItemElement extends LitElement {
   @property({type: String})
   assessmentId!: string;
 
+  private _canEditAnswers!: boolean;
   @property({type: Boolean})
-  canEditAnswers!: boolean;
+  get canEditAnswers() {
+    return this._canEditAnswers;
+  }
+  set canEditAnswers(can: boolean) {
+    this._canEditAnswers = can;
+    if (!this.canEditAnswers) {
+      this.editMode = false;
+      this.open = false;
+      try {
+        // this is because `this.open = false` doesn't work
+        this.shadowRoot!.querySelector('etools-content-panel')!.open = false;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
 
   @property({type: Boolean})
   isUnicefUser!: boolean;
