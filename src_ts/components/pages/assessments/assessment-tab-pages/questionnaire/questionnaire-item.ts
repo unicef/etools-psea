@@ -52,6 +52,7 @@ export class QuestionnaireItemElement extends LitElement {
         panel-title="${this.question.subject}"
         ?show-expand-btn=${!this.editMode}
         .open="${this.open}"
+        @open-changed="${(ev: CustomEvent) => this.openChanged(ev)}"
       >
         <etools-loading loading-text="Saving..." .active="${this.showLoading}"></etools-loading>
 
@@ -121,12 +122,6 @@ export class QuestionnaireItemElement extends LitElement {
     if (!this.canEditAnswers) {
       this.editMode = false;
       this.open = false;
-
-      // backup for  `this.open = false` not working
-      const panel = this.shadowRoot!.querySelector('etools-content-panel');
-      if (panel) {
-        panel.open = false;
-      }
     }
   }
 
@@ -296,5 +291,8 @@ export class QuestionnaireItemElement extends LitElement {
       return;
     }
     this.answer = {...this.questionnaireAnswerElement.getEditedAnswer(), attachments: editedAttachments};
+  }
+  openChanged(ev: CustomEvent<any>) {
+    this.open = ev.detail.value;
   }
 }
