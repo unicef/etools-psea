@@ -125,14 +125,16 @@ export class FollowUpDialog extends connect(store)(LitElement) {
           </div>
 
           <div class="col col-6">
-            <datepicker-lite
-              id="dueDateInput"
-              value="${this.editedItem.due_date}"
-              label="Due Date"
+            <etools-dropdown
+              id="sectionInput"
+              .selected="${this.editedItem.section}"
+              label="Section"
+              .options="${this.sections}"
+              option-label="name"
               required
-              selected-date-display-format="D MMM YYYY"
+              option-value="id"
             >
-            </datepicker-lite>
+            </etools-dropdown>
           </div>
         </div>
 
@@ -151,16 +153,14 @@ export class FollowUpDialog extends connect(store)(LitElement) {
           </div>
 
           <div class="col col-6 p-relative">
-            <etools-dropdown
-              id="sectionInput"
-              .selected="${this.editedItem.section}"
-              label="Section"
-              .options="${this.sections}"
-              option-label="name"
+            <datepicker-lite
+              id="dueDateInput"
+              value="${this.editedItem.due_date}"
+              label="Due Date"
               required
-              option-value="id"
+              selected-date-display-format="D MMM YYYY"
             >
-            </etools-dropdown>
+            </datepicker-lite>
           </div>
         </div>
 
