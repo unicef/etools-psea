@@ -105,27 +105,17 @@ export class EtoolsErrorWarnBox extends LitElement {
             ${this.messages.map((msg) => this.getErrorHTML(msg))}
           </ul>
           <div class="errors-box-actions">
-            <paper-button raised class="error" @tap="${this.resetErrors}">
-              Dismiss
-            </paper-button>
+            <paper-button raised class="error" @tap="${this.resetErrors}"> Dismiss </paper-button>
           </div>
         </etools-content-panel>
       `;
     } else {
-      return html`
-        <div class="warning-container">
-          ${this.messages.map((msg) => this.getWarningHTML(msg))}
-        </div>
-      `;
+      return html` <div class="warning-container">${this.messages.map((msg) => this.getWarningHTML(msg))}</div> `;
     }
   }
 
   getWarningHTML(msg: string) {
-    return html`
-      <div class="warning-item">
-        ${msg}
-      </div>
-    `;
+    return html` <div class="warning-item">${msg}</div> `;
   }
 
   getErrorHTML(msg: string) {

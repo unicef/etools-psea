@@ -324,5 +324,4 @@ export class AppShell extends connect(store)(LitElement) {
       }
     }
   }
-
 }

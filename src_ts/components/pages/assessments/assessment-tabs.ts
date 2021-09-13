@@ -48,7 +48,6 @@ export class AssessmentTabs extends connect(store)(LitElement) {
         ${rejectionTabStyles} etools-status {
           justify-content: center;
         }
-
       </style>
       ${this.assessment && this.assessment.id
         ? html`<etools-status
