@@ -25,5 +25,6 @@ export const handleUsersNoLongerAssignedToCurrentCountry = (
 export function genericErrorHandling(error: any) {
   logError('genericErrorHandling', 'common-methods', error);
   // @ts-ignore
+  // eslint-disable-next-line no-invalid-this
   fireEvent(this, 'toast', {text: formatServerErrorAsText(error), showCloseBtn: true});
 }

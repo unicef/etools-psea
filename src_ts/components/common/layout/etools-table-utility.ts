@@ -33,7 +33,6 @@ export const getSortFields = (columns: EtoolsTableColumn[]): EtoolsTableSortItem
 export const getSortFieldsFromUrlSortParams = (param: string): EtoolsTableSortItem[] => {
   const sortFields: EtoolsTableSortItem[] = param.split('|').map((sort: string) => {
     const s = sort.split('.');
-    // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
     const sortItem = {
       name: s[0],
       sort: s[1]
