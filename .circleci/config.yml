@@ -8,12 +8,12 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
-          name: Install npm wee
-          command: rm -rf node_modules/@unicef-polymer & npm install
+          name: Install npm
+          command: npm ci
       - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
       - run:
@@ -75,6 +75,7 @@ workflows:
                 - master
                 - staging
                 - develop
+                - circleci-tweak
       - build_and_deploy:
           filters:
             branches:
@@ -82,3 +83,4 @@ workflows:
                 - master
                 - staging
                 - develop
+                - circleci-tweak
