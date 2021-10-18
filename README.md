@@ -81,9 +81,3 @@ TBD
            }
         ```
 
-#### TODO:
-
-- Update page header element to use countries dropdown, profile menu and refresh data button
-- Improve documentation
-- Update tests
-- Test build
