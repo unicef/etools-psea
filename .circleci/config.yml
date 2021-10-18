@@ -10,7 +10,7 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
-          name: Install npm
+          name: Install node modules
           command: npm ci
       - save_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
@@ -68,14 +68,10 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - lint:
-          filters:
-            branches:
-              ignore:
-                - master
-                - staging
-                - develop
+      - lint
       - build_and_deploy:
+          requires:
+            - lint
           filters:
             branches:
               only:
