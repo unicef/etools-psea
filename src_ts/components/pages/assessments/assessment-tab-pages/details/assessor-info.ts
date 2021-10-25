@@ -88,12 +88,8 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
           class="layout-horizontal right-align row-padding-v"
           ?hidden="${this.hideActionButtons(this.isNew, this.editMode, this.canEditAssessorInfo)}"
         >
-          <paper-button class="default" @tap="${this.cancelAssessorUpdate}">
-            Cancel
-          </paper-button>
-          <paper-button class="primary" @tap="${this.saveAssessor}">
-            Save
-          </paper-button>
+          <paper-button class="default" @tap="${this.cancelAssessorUpdate}"> Cancel </paper-button>
+          <paper-button class="primary" @tap="${this.saveAssessor}"> Save </paper-button>
         </div>
       </etools-content-panel>
 

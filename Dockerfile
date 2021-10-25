@@ -1,4 +1,4 @@
-FROM node:11.9.0-alpine as psea_builder
+FROM node:12-alpine3.12 as psea_builder
 RUN apk update
 RUN apk add --update bash
 
@@ -8,13 +8,12 @@ RUN npm install -g typescript
 
 WORKDIR /tmp
 ADD . /tmp/
-RUN npm cache verify
-RUN npm i
+RUN npm ci
 # echo done is used because tsc returns a non 0 status (tsc has some errors)
 RUN tsc || echo done
 RUN export NODE_OPTIONS=--max_old_space_size=4096 && polymer build
 
-FROM node:11.9.0-alpine as psea_prod
+FROM node:12-alpine3.12 as psea_prod
 RUN apk update
 RUN apk add --update bash
 
