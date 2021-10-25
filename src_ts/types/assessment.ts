@@ -64,7 +64,6 @@ export class Assessor {
   auditor_firm: string | null = null;
   auditor_firm_name = '';
   auditor_firm_staff: string[] = [];
-  // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
   user_details: UnicefUser = {} as UnicefUser;
 }
 

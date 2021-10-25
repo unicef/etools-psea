@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import {customElement, LitElement, html, property, query, css} from 'lit-element';
 import '@unicef-polymer/etools-dialog/etools-dialog.js';
 import '@polymer/paper-input/paper-textarea.js';

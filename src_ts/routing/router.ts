@@ -65,7 +65,6 @@ export class Router {
   }
 
   buildQueryParams(paramsStr: string): RouteQueryParams {
-    // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
     const qParams: RouteQueryParams = {} as RouteQueryParams;
     if (paramsStr) {
       const qs: string[] = paramsStr.split('&');
