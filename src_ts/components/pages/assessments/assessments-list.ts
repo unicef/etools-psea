@@ -222,7 +222,11 @@ export class AssessmentsList extends connect(store)(LitElement) {
   @property({type: Array})
   listData: GenericObject[] = [];
 
-  availableSeaRiskRatings = [{value: 'low', label: 'Low'}, {value: 'moderate', label: 'Moderate'}, {value: 'high', label: 'High'}];
+  availableSeaRiskRatings = [
+    {value: 'low', label: 'Low'},
+    {value: 'moderate', label: 'Moderate'},
+    {value: 'high', label: 'High'}
+  ];
 
   stateChanged(state: RootState) {
     const routeDetails = get(state, 'app.routeDetails');

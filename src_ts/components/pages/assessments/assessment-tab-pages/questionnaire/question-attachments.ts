@@ -161,9 +161,7 @@ export class QuestionAttachmentsElement extends LitElement {
             >
             </etools-dropdown>
           </div>
-          <div class="col-5 padd-right break-word">
-            ${this._getAttachmentNameTemplate(att)}
-          </div>
+          <div class="col-5 padd-right break-word">${this._getAttachmentNameTemplate(att)}</div>
           <div class="col-1 delete" ?hidden="${!editMode}">
             <paper-button @tap="${() => this.openDeleteConfirmation(att.id!, !att.url)}">DELETE</paper-button>
           </div>

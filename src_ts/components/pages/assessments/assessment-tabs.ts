@@ -48,7 +48,6 @@ export class AssessmentTabs extends connect(store)(LitElement) {
         ${rejectionTabStyles} etools-status {
           justify-content: center;
         }
-
       </style>
       ${this.assessment && this.assessment.id
         ? html`<etools-status
@@ -288,7 +287,6 @@ export class AssessmentTabs extends connect(store)(LitElement) {
   getAssessmentStatusesList(statusesList: string[][]): EtoolsStatusModel[] {
     if (statusesList.length === 0) return [];
     return statusesList.map((s: string[]) => {
-      // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
       return {status: s[0], label: s[1]} as EtoolsStatusModel;
     });
   }

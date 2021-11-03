@@ -52,6 +52,7 @@ export class QuestionnaireItemElement extends LitElement {
         panel-title="${this.question.subject}"
         ?show-expand-btn=${!this.editMode}
         .open="${this.open}"
+        @open-changed="${(ev: CustomEvent) => this.openChanged(ev)}"
       >
         <etools-loading loading-text="Saving..." .active="${this.showLoading}"></etools-loading>
 
@@ -72,9 +73,7 @@ export class QuestionnaireItemElement extends LitElement {
           >
           </paper-icon-button>
         </div>
-        <div class="description">
-          ${unsafeHTML(this.question.content)}
-        </div>
+        <div class="description">${unsafeHTML(this.question.content)}</div>
 
         <div class="row-padding-v">
           <questionnaire-answer
@@ -90,13 +89,9 @@ export class QuestionnaireItemElement extends LitElement {
           </questionnaire-answer>
         </div>
 
-        <div class="layout-horizontal right-align row-padding-v" ?hidden="${!this.editMode}">
-          <paper-button class="default" @tap="${this.cancel}">
-            Cancel
-          </paper-button>
-          <paper-button class="primary" @tap="${this.saveAnswer}">
-            Save
-          </paper-button>
+        <div class="layout-horizontal right-align row-padding-v" ?hidden="${!this.editMode || !this.canEditAnswers}">
+          <paper-button class="default" @tap="${this.cancel}"> Cancel </paper-button>
+          <paper-button class="primary" @tap="${this.saveAnswer}"> Save </paper-button>
         </div>
       </etools-content-panel>
     `;
@@ -117,8 +112,18 @@ export class QuestionnaireItemElement extends LitElement {
   @property({type: String})
   assessmentId!: string;
 
+  private _canEditAnswers!: boolean;
   @property({type: Boolean})
-  canEditAnswers!: boolean;
+  get canEditAnswers() {
+    return this._canEditAnswers;
+  }
+  set canEditAnswers(can: boolean) {
+    this._canEditAnswers = can;
+    if (!this.canEditAnswers) {
+      this.editMode = false;
+      this.open = false;
+    }
+  }
 
   @property({type: Boolean})
   isUnicefUser!: boolean;
@@ -286,5 +291,8 @@ export class QuestionnaireItemElement extends LitElement {
       return;
     }
     this.answer = {...this.questionnaireAnswerElement.getEditedAnswer(), attachments: editedAttachments};
+  }
+  openChanged(ev: CustomEvent<any>) {
+    this.open = ev.detail.value;
   }
 }

@@ -68,6 +68,18 @@ documentContainer.innerHTML = `
         --paper-radio-button-checked-color: var(--primary-color);
         --paper-radio-button-unchecked-color: var(--secondary-text-color);
 
+        --paper-button-flat-keyboard-focus: {
+          outline: 0;
+          box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12),
+           0 3px 5px -1px rgba(0, 0, 0, 0.4);
+        }
+
+        --paper-button-raised-keyboard-focus: {
+          outline: 0;
+          box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12),
+           0 3px 5px -1px rgba(0, 0, 0, 0.4);
+        }    
+
       }
     </style>
   </custom-style>`;
