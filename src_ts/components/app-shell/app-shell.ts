@@ -24,6 +24,7 @@ import '@polymer/app-layout/app-drawer/app-drawer.js';
 import '@polymer/app-layout/app-header-layout/app-header-layout.js';
 import '@polymer/app-layout/app-header/app-header.js';
 import '@polymer/app-layout/app-toolbar/app-toolbar.js';
+import '@unicef-polymer/etools-piwik-analytics/etools-piwik-analytics';
 import {createDynamicDialog} from '@unicef-polymer/etools-dialog/dynamic-dialog';
 
 import {AppDrawerLayoutElement} from '@polymer/app-layout/app-drawer-layout/app-drawer-layout';
@@ -42,7 +43,7 @@ import {ToastNotificationHelper} from '../common/toast-notifications/toast-notif
 import user from '../../redux/reducers/user';
 import commonData from '../../redux/reducers/common-data';
 import pageData from '../../redux/reducers/page-data';
-import {setLoggingLevel, SMALL_MENU_ACTIVE_LOCALSTORAGE_KEY} from '../../config/config';
+import {ROOT_PATH, setLoggingLevel, SMALL_MENU_ACTIVE_LOCALSTORAGE_KEY} from '../../config/config';
 import {getCurrentUser} from '../user/user-actions';
 import {EtoolsRouter} from '../../routing/routes';
 import {RouteDetails} from '../../routing/router';
@@ -82,6 +83,13 @@ export class AppShell extends connect(store)(LitElement) {
     // main template
     // language=HTML
     return html`
+      <etools-piwik-analytics
+        .page="${ROOT_PATH + this.mainPage}"
+        .user="${this.user}"
+        .toast="${this.currentToastMessage}"
+      >
+      </etools-piwik-analytics>
+
       <app-drawer-layout
         id="layout"
         responsive-width="850px"
@@ -158,6 +166,12 @@ export class AppShell extends connect(store)(LitElement) {
   @property({type: Boolean})
   public smallMenu = false;
 
+  @property({type: Object})
+  user!: any;
+
+  @property({type: String})
+  currentToastMessage!: string;
+
   @query('#layout') private drawerLayout!: AppDrawerLayoutElement;
   @query('#drawer') private drawer!: AppDrawerElement;
   @query('#appHeadLayout') private appHeaderLayout!: AppHeaderLayoutElement;
@@ -172,7 +186,7 @@ export class AppShell extends connect(store)(LitElement) {
     // preventable, allowing for better scrolling performance.
     setPassiveTouchGestures(true);
     // init toasts notifications queue
-    this.appToastsNotificationsHelper = new ToastNotificationHelper();
+    this.appToastsNotificationsHelper = new ToastNotificationHelper(this);
     this.appToastsNotificationsHelper.addToastNotificationListeners();
 
     const menuTypeStoredVal: string | null = localStorage.getItem(SMALL_MENU_ACTIVE_LOCALSTORAGE_KEY);
@@ -185,6 +199,7 @@ export class AppShell extends connect(store)(LitElement) {
     checkEnvFlags().then((response) => {
       if (!this._pseaIsDisabled(response)) {
         getCurrentUser().then((user) => {
+          this.user = user;
           if (user && user.is_unicef_user) {
             store.dispatch(loadExternalIndividuals());
             store.dispatch(loadAssessingFirms());
