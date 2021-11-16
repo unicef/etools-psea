@@ -156,6 +156,4 @@ export class AppMenu extends LitElement {
       body.classList.add('default');
     }
   }
-
-
 }
