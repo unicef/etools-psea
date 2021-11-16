@@ -124,9 +124,11 @@ export const SharedStylesLit = html`
     etools-currency-amount-input {
       --paper-input-container-label: {
         color: var(--secondary-text-color, #737373);
+        font-size: var(--input-label-font-size);
       }
       --paper-input-container-label-floating: {
         color: var(--secondary-text-color, #737373);
+        font-size: var(--input-label-font-size);
       }
       --paper-input-container-input: {
         display: block;
@@ -144,10 +146,12 @@ export const SharedStylesLit = html`
       --paper-input-container-label: {
         @apply --required-star-style;
         color: var(--secondary-text-color, #737373);
+        font-size: var(--input-label-font-size);
       }
       --paper-input-container-label-floating: {
         @apply --required-star-style;
         color: var(--secondary-text-color, #737373);
+        font-size: var(--input-label-font-size);
       }
     }
 
