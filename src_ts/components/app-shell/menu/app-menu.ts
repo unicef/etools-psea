@@ -72,12 +72,15 @@ export class AppMenu extends LitElement {
           <span>Accesibility Tools</span>
         </div>
         <div class="pnl-toggle">
+          <paper-tooltip for="toggleTheme" offset="0" position="right" ?hidden="${!this.smallMenu}">
+            Increase Text Contrast
+          </paper-tooltip>
           <paper-toggle-button
             id="toggleTheme"
             ?checked="${this.isAccessibilityTheme}"
             @iron-change="${this.toggleTheme}"
           >
-            Increase Text Contrast
+            ${this.getToggleText(this.smallMenu)}
           </paper-toggle-button>
         </div>
 
@@ -155,5 +158,9 @@ export class AppMenu extends LitElement {
       body.classList.remove('accessible');
       body.classList.add('default');
     }
+  }
+
+  private getToggleText(smallMenu: boolean) {
+    return smallMenu ? '' : ' Increase Text Contrast';
   }
 }
