@@ -186,11 +186,11 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   };
 
   private validationSelectors: string[] = [
-    '#categoryInput',
+    '#descriptionInput',
     '#assignedToInput',
     '#sectionInput',
     '#officeInput',
-    '#dateInput'
+    '#dueDateInput'
   ];
 
   @property({type: Array})
@@ -297,7 +297,6 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   }
 
   private getControlsData() {
-    // this.editedItem.category = this.getEl('#categoryInput').selected;
     // @ts-ignore
     this.editedItem.assigned_to = this.getEl('#assignedToInput').selected;
     // @ts-ignore
