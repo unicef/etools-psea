@@ -61,6 +61,7 @@ export class AssessmentQuestionnairePage extends connect(store)(LitElement) {
         }
         .orange {
           background-color: var(--primary-shade-of-orange);
+          color: var(--text-color-on-orange);
         }
         .green {
           background-color: var(--primary-shade-of-green);

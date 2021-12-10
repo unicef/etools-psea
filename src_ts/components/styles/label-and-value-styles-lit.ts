@@ -3,7 +3,7 @@ import {css} from 'lit-element';
 // language=HTML
 export const labelAndvalueStylesLit = css`
   .paper-label {
-    font-size: 12px;
+    font-size: var(--paper-label-font-size);
     color: var(--secondary-text-color);
     padding-top: 6px;
   }

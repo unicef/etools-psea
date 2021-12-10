@@ -3,10 +3,16 @@ import '@polymer/iron-icons/maps-icons.js';
 import '@polymer/iron-selector/iron-selector.js';
 import '@polymer/paper-tooltip/paper-tooltip.js';
 import '@polymer/paper-ripple/paper-ripple.js';
+import '@polymer/paper-toggle-button/paper-toggle-button';
+import {PaperToggleButtonElement} from '@polymer/paper-toggle-button';
 import {pseaIcon} from '../../styles/app-icons';
 import {navMenuStyles} from './styles/nav-menu-styles';
 import {fireEvent} from '../../utils/fire-custom-event';
-import {ROOT_PATH, SMALL_MENU_ACTIVE_LOCALSTORAGE_KEY} from '../../../config/config';
+import {
+  ACCESIBILITY_MODE_LOCALSTORAGE_KEY,
+  ROOT_PATH,
+  SMALL_MENU_ACTIVE_LOCALSTORAGE_KEY
+} from '../../../config/config';
 import {customElement, html, LitElement, property} from 'lit-element';
 
 /**
@@ -63,6 +69,22 @@ export class AppMenu extends LitElement {
         </iron-selector>
 
         <div class="nav-menu-item section-title">
+          <span>Accesibility Tools</span>
+        </div>
+        <div class="pnl-toggle">
+          <paper-tooltip for="toggleTheme" offset="0" position="right" ?hidden="${!this.smallMenu}">
+            Increase Text Contrast
+          </paper-tooltip>
+          <paper-toggle-button
+            id="toggleTheme"
+            ?checked="${this.isAccessibilityTheme}"
+            @iron-change="${this.toggleTheme}"
+          >
+            ${this.getToggleText(this.smallMenu)}
+          </paper-toggle-button>
+        </div>
+
+        <div class="nav-menu-item section-title">
           <span>eTools Community Channels</span>
         </div>
 
@@ -100,10 +122,45 @@ export class AppMenu extends LitElement {
   @property({type: Boolean, attribute: 'small-menu'})
   public smallMenu = false;
 
+  @property({type: Boolean})
+  isAccessibilityTheme = false;
+
+  public connectedCallback() {
+    super.connectedCallback();
+
+    this.isAccessibilityTheme = localStorage.getItem(ACCESIBILITY_MODE_LOCALSTORAGE_KEY) === 'true';
+    this.setAppTheme();
+  }
+
   public _toggleSmallMenu(): void {
     this.smallMenu = !this.smallMenu;
     const localStorageVal: number = this.smallMenu ? 1 : 0;
     localStorage.setItem(SMALL_MENU_ACTIVE_LOCALSTORAGE_KEY, String(localStorageVal));
     fireEvent(this, 'toggle-small-menu', {value: this.smallMenu});
+  }
+
+  protected toggleTheme(e: any) {
+    const isAccessibilityTheme = (e.target as PaperToggleButtonElement).checked;
+    if (this.isAccessibilityTheme !== isAccessibilityTheme) {
+      this.isAccessibilityTheme = !this.isAccessibilityTheme;
+      localStorage.setItem(ACCESIBILITY_MODE_LOCALSTORAGE_KEY, String(this.isAccessibilityTheme));
+      this.setAppTheme();
+    }
+  }
+
+  private setAppTheme() {
+    const body = document.body;
+
+    if (this.isAccessibilityTheme) {
+      body.classList.remove('default');
+      body.classList.add('accessible');
+    } else {
+      body.classList.remove('accessible');
+      body.classList.add('default');
+    }
+  }
+
+  private getToggleText(smallMenu: boolean) {
+    return smallMenu ? '' : ' Increase Text Contrast';
   }
 }
