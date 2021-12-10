@@ -19,6 +19,7 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import get from 'lodash-es/get';
 import '../../../../common/layout/etools-error-warn-box';
+import {resetRequiredField} from '../../../../utils/utils';
 
 @customElement('follow-up-dialog')
 export class FollowUpDialog extends connect(store)(LitElement) {
@@ -78,6 +79,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
               option-label="name"
               option-value="id"
               ?readOnly="${this.editedItem.partner}"
+              @focus="${resetRequiredField}"
+              @tap="${resetRequiredField}"
             >
             </etools-dropdown>
           </div>
@@ -91,6 +94,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
               option-label="reference_number"
               option-value="id"
               ?readOnly="${this.assessment.id}"
+              @focus="${resetRequiredField}"
+              @tap="${resetRequiredField}"
             >
             </etools-dropdown>
           </div>
@@ -106,6 +111,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
             value="${this.editedItem.description}"
             label="Description"
             max-rows="4"
+            @focus="${resetRequiredField}"
+            @tap="${resetRequiredField}"
           >
           </paper-textarea>
         </div>
@@ -120,6 +127,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
               option-label="name"
               required
               option-value="id"
+              @focus="${resetRequiredField}"
+              @tap="${resetRequiredField}"
             >
             </etools-dropdown>
           </div>
@@ -133,6 +142,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
               option-label="name"
               required
               option-value="id"
+              @focus="${resetRequiredField}"
+              @tap="${resetRequiredField}"
             >
             </etools-dropdown>
           </div>
@@ -148,6 +159,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
               option-label="name"
               required
               option-value="id"
+              @focus="${resetRequiredField}"
+              @tap="${resetRequiredField}"
             >
             </etools-dropdown>
           </div>
@@ -159,6 +172,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
               label="Due Date"
               required
               selected-date-display-format="D MMM YYYY"
+              @focus="${resetRequiredField}"
+              @tap="${resetRequiredField}"
             >
             </datepicker-lite>
           </div>
