@@ -19,6 +19,7 @@ import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import get from 'lodash-es/get';
 import '../../../../common/layout/etools-error-warn-box';
+import {resetRequiredField} from '../../../../utils/utils';
 
 @customElement('follow-up-dialog')
 export class FollowUpDialog extends connect(store)(LitElement) {
