@@ -64,57 +64,58 @@ const requestAssessor = (assessmentId: number) => {
  * @param data
  * @param errorCallback
  */
-export const saveAssessorData = (
-  assessmentId: number,
-  assessorId: string | number | undefined | null,
-  data: any,
-  errorCallback: (...args: any[]) => void
-) => (dispatch: any) => {
-  if (!assessmentId) {
-    throw new Error(`[updateAssessorData] Invalid assessment id ${assessmentId}`);
-  }
-  const baseUrl = getEndpoint(etoolsEndpoints.assessor, {id: assessmentId}).url!;
-  const reqOptions = {
-    method: assessorId ? 'PATCH' : 'POST',
-    url: assessorId ? baseUrl + assessorId + '/' : baseUrl
-  };
-  return sendRequest({
-    endpoint: {url: reqOptions.url},
-    method: reqOptions.method,
-    body: data
-  })
-    .then((response) => {
-      dispatch(updateAssessorData(response));
+export const saveAssessorData =
+  (
+    assessmentId: number,
+    assessorId: string | number | undefined | null,
+    data: any,
+    errorCallback: (...args: any[]) => void
+  ) =>
+  (dispatch: any) => {
+    if (!assessmentId) {
+      throw new Error(`[updateAssessorData] Invalid assessment id ${assessmentId}`);
+    }
+    const baseUrl = getEndpoint(etoolsEndpoints.assessor, {id: assessmentId}).url!;
+    const reqOptions = {
+      method: assessorId ? 'PATCH' : 'POST',
+      url: assessorId ? baseUrl + assessorId + '/' : baseUrl
+    };
+    return sendRequest({
+      endpoint: {url: reqOptions.url},
+      method: reqOptions.method,
+      body: data
     })
-    .catch((err: any) => errorCallback(err));
-};
+      .then((response) => {
+        dispatch(updateAssessorData(response));
+      })
+      .catch((err: any) => errorCallback(err));
+  };
 
 /**
  * Request assessment and assessor and update redux store
  * @param assessmentId
  * @param errorCallback
  */
-export const requestAssessmentAndAssessor = (assessmentId: number, errorCallback: (...args: any[]) => void) => (
-  dispatch: any
-) => {
-  if (!assessmentId || isNaN(assessmentId)) {
-    throw new Error(`[requestAssessmentData] Invalid assessment id ${assessmentId}`);
-  }
-  const url = `${etoolsEndpoints.assessment.url!}${assessmentId}/`;
-  return sendRequest({endpoint: {url: url}})
-    .then((assessment: Assessment) => {
-      if (assessment.assessor) {
-        // request assessor details
-        requestAssessor(assessmentId).then((assessor) => {
-          dispatch(updateAssessmentAndAssessor(assessment, assessor));
-        });
-      } else {
-        // no assessor saved, init a new one
-        dispatch(updateAssessmentAndAssessor(assessment, new Assessor()));
-      }
-    })
-    .catch((err) => errorCallback(err));
-};
+export const requestAssessmentAndAssessor =
+  (assessmentId: number, errorCallback: (...args: any[]) => void) => (dispatch: any) => {
+    if (!assessmentId || isNaN(assessmentId)) {
+      throw new Error(`[requestAssessmentData] Invalid assessment id ${assessmentId}`);
+    }
+    const url = `${etoolsEndpoints.assessment.url!}${assessmentId}/`;
+    return sendRequest({endpoint: {url: url}})
+      .then((assessment: Assessment) => {
+        if (assessment.assessor) {
+          // request assessor details
+          requestAssessor(assessmentId).then((assessor) => {
+            dispatch(updateAssessmentAndAssessor(assessment, assessor));
+          });
+        } else {
+          // no assessor saved, init a new one
+          dispatch(updateAssessmentAndAssessor(assessment, new Assessor()));
+        }
+      })
+      .catch((err) => errorCallback(err));
+  };
 
 export const requestAssessment = (assessmentId: number, errorCallback: (...args: any[]) => void) => (dispatch: any) => {
   if (!assessmentId || isNaN(assessmentId)) {
