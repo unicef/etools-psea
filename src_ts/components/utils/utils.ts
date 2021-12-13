@@ -17,3 +17,10 @@ export const getFileNameFromURL = (url?: string) => {
 export const onListPage = (routeDetails: any) => {
   return routeDetails.routeName === 'assessments' && routeDetails.subRouteName == 'list';
 };
+
+export const resetRequiredField = (e: CustomEvent) => {
+  if (!e || !e.target) {
+    return;
+  }
+  (e.target as any).invalid = false;
+};
