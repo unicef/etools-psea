@@ -78,6 +78,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
               option-label="name"
               option-value="id"
               ?readOnly="${this.editedItem.partner}"
+              auto-validate
             >
             </etools-dropdown>
           </div>
@@ -91,6 +92,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
               option-label="reference_number"
               option-value="id"
               ?readOnly="${this.assessment.id}"
+              auto-validate
             >
             </etools-dropdown>
           </div>
@@ -106,6 +108,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
             value="${this.editedItem.description}"
             label="Description"
             max-rows="4"
+            auto-validate
           >
           </paper-textarea>
         </div>
@@ -120,6 +123,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
               option-label="name"
               required
               option-value="id"
+              auto-validate
             >
             </etools-dropdown>
           </div>
@@ -133,6 +137,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
               option-label="name"
               required
               option-value="id"
+              auto-validate
             >
             </etools-dropdown>
           </div>
@@ -148,6 +153,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
               option-label="name"
               required
               option-value="id"
+              auto-validate
             >
             </etools-dropdown>
           </div>
@@ -159,6 +165,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
               label="Due Date"
               required
               selected-date-display-format="D MMM YYYY"
+              auto-validate
             >
             </datepicker-lite>
           </div>
