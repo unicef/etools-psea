@@ -108,7 +108,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
             value="${this.editedItem.description}"
             label="Description"
             max-rows="4"
-            auto-validate
+            @focus="${() => (this.autoValidate = true)}"
+            .autoValidate="${this.autoValidate}"
           >
           </paper-textarea>
         </div>
@@ -232,6 +233,9 @@ export class FollowUpDialog extends connect(store)(LitElement) {
 
   @property({type: Boolean})
   requestInProcess = false;
+
+  @property({type: Boolean})
+  autoValidate = false;
 
   @property({type: Boolean})
   isNewRecord = true;
