@@ -53,9 +53,10 @@ export class PageHeader extends connect(store)(LitElement) {
         <div class="content-align">
           <countries-dropdown></countries-dropdown>
 
-          <support-btn></support-btn>
+          <support-btn title="Support"></support-btn>
 
           <etools-profile-dropdown
+            title="Profile and Sign out"
             .sections="${this.profileDrSections}"
             .offices="${this.profileDrOffices}"
             .users="${this.profileDrUsers}"

@@ -78,6 +78,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
               option-label="name"
               option-value="id"
               ?readOnly="${this.editedItem.partner}"
+              auto-validate
             >
             </etools-dropdown>
           </div>
@@ -91,6 +92,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
               option-label="reference_number"
               option-value="id"
               ?readOnly="${this.assessment.id}"
+              auto-validate
             >
             </etools-dropdown>
           </div>
@@ -106,6 +108,8 @@ export class FollowUpDialog extends connect(store)(LitElement) {
             value="${this.editedItem.description}"
             label="Description"
             max-rows="4"
+            @focus="${() => (this.autoValidate = true)}"
+            .autoValidate="${this.autoValidate}"
           >
           </paper-textarea>
         </div>
@@ -120,6 +124,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
               option-label="name"
               required
               option-value="id"
+              auto-validate
             >
             </etools-dropdown>
           </div>
@@ -133,6 +138,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
               option-label="name"
               required
               option-value="id"
+              auto-validate
             >
             </etools-dropdown>
           </div>
@@ -148,6 +154,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
               option-label="name"
               required
               option-value="id"
+              auto-validate
             >
             </etools-dropdown>
           </div>
@@ -159,6 +166,7 @@ export class FollowUpDialog extends connect(store)(LitElement) {
               label="Due Date"
               required
               selected-date-display-format="D MMM YYYY"
+              auto-validate
             >
             </datepicker-lite>
           </div>
@@ -186,11 +194,11 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   };
 
   private validationSelectors: string[] = [
-    '#categoryInput',
+    '#descriptionInput',
     '#assignedToInput',
     '#sectionInput',
     '#officeInput',
-    '#dateInput'
+    '#dueDateInput'
   ];
 
   @property({type: Array})
@@ -225,6 +233,9 @@ export class FollowUpDialog extends connect(store)(LitElement) {
 
   @property({type: Boolean})
   requestInProcess = false;
+
+  @property({type: Boolean})
+  autoValidate = false;
 
   @property({type: Boolean})
   isNewRecord = true;
@@ -297,7 +308,6 @@ export class FollowUpDialog extends connect(store)(LitElement) {
   }
 
   private getControlsData() {
-    // this.editedItem.category = this.getEl('#categoryInput').selected;
     // @ts-ignore
     this.editedItem.assigned_to = this.getEl('#assignedToInput').selected;
     // @ts-ignore

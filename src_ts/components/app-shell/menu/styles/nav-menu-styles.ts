@@ -188,4 +188,10 @@ export const navMenuStyles = css`
   .ripple-wrapper {
     position: relative;
   }
+
+  .pnl-toggle {
+    margin: 0 auto;
+    margin-top: 12px;
+    margin-bottom: 20px;
+  }
 `;
