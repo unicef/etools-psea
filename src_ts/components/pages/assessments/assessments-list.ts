@@ -56,6 +56,7 @@ import '../../common/layout/export-data';
 import '@unicef-polymer/etools-loading';
 import get from 'lodash-es/get';
 import {logError} from '@unicef-polymer/etools-behaviors/etools-logging';
+import {debounce} from '../../utils/utils';
 
 let lastSelectedFilters: FilterKeysAndTheirSelectedValues = {...defaultSelectedFilters};
 
@@ -227,6 +228,11 @@ export class AssessmentsList extends connect(store)(LitElement) {
     {value: 'moderate', label: 'Moderate'},
     {value: 'high', label: 'High'}
   ];
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.getFilteredAssessments = debounce(this.getFilteredAssessments.bind(this), 400) as any;
+  }
 
   stateChanged(state: RootState) {
     const routeDetails = get(state, 'app.routeDetails');

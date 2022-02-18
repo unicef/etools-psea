@@ -17,3 +17,12 @@ export const getFileNameFromURL = (url?: string) => {
 export const onListPage = (routeDetails: any) => {
   return routeDetails.routeName === 'assessments' && routeDetails.subRouteName == 'list';
 };
+
+export function debounce(fn: any, time: number): any {
+  let timeout: any;
+
+  return (...args: any[]) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn(...args), time);
+  };
+}
