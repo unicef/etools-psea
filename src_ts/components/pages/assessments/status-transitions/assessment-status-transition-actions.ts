@@ -288,7 +288,6 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
         content: this.confirmationMSg
       };
       this.statusChangeConfirmationDialog = createDynamicDialog(confirmationDialogConf);
-      this.statusChangeConfirmationDialog.updateStyles({'--etools-dialog-confirm-btn-bg': 'var(--primary-color)'});
     }
   }
 
