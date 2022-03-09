@@ -6,18 +6,15 @@ import {ROOT_PATH} from '../config/config';
 export const EtoolsRouter = new Router(ROOT_PATH);
 const routeParamRegex = '([^\\/?#=+]+)';
 
-EtoolsRouter.addRoute(
-  new RegExp('^assessments/list$'),
-  (params: RouteCallbackParams): RouteDetails => {
-    return {
-      routeName: 'assessments',
-      subRouteName: 'list',
-      path: params.matchDetails[0],
-      queryParams: params.queryParams,
-      params: null
-    };
-  }
-)
+EtoolsRouter.addRoute(new RegExp('^assessments/list$'), (params: RouteCallbackParams): RouteDetails => {
+  return {
+    routeName: 'assessments',
+    subRouteName: 'list',
+    path: params.matchDetails[0],
+    queryParams: params.queryParams,
+    params: null
+  };
+})
   .addRoute(
     new RegExp(`^assessments\\/${routeParamRegex}\\/${routeParamRegex}$`),
     (params: RouteCallbackParams): RouteDetails => {
@@ -32,30 +29,24 @@ EtoolsRouter.addRoute(
       };
     }
   )
-  .addRoute(
-    new RegExp(`^page-not-found$`),
-    (params: RouteCallbackParams): RouteDetails => {
-      return {
-        routeName: 'page-not-found',
-        subRouteName: null,
-        path: params.matchDetails[0],
-        queryParams: null,
-        params: null
-      };
-    }
-  )
-  .addRoute(
-    new RegExp(`^page-two$`),
-    (params: RouteCallbackParams): RouteDetails => {
-      return {
-        routeName: 'page-two',
-        subRouteName: null,
-        path: params.matchDetails[0],
-        queryParams: null,
-        params: null
-      };
-    }
-  );
+  .addRoute(new RegExp(`^page-not-found$`), (params: RouteCallbackParams): RouteDetails => {
+    return {
+      routeName: 'page-not-found',
+      subRouteName: null,
+      path: params.matchDetails[0],
+      queryParams: null,
+      params: null
+    };
+  })
+  .addRoute(new RegExp(`^page-two$`), (params: RouteCallbackParams): RouteDetails => {
+    return {
+      routeName: 'page-two',
+      subRouteName: null,
+      path: params.matchDetails[0],
+      queryParams: null,
+      params: null
+    };
+  });
 
 /**
  * Utility used to update location based on routes and dispatch navigate action (optional)
