@@ -104,7 +104,7 @@ export class AppMenu extends LitElement {
           <div class="name">Discussion</div>
         </a>
 
-        <a class="nav-menu-item lighter-item last-one" href="http://etoolsinfo.unicef.org" target="_blank">
+        <a class="nav-menu-item lighter-item last-one" href="https://etools.unicef.org/landing" target="_blank">
           <iron-icon id="information-icon" icon="icons:info"></iron-icon>
           <paper-tooltip for="information-icon" position="right"> Information </paper-tooltip>
           <div class="name">Information</div>
