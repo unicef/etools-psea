@@ -5,13 +5,14 @@ import '@polymer/iron-icon/iron-icon';
 import '@polymer/paper-listbox/paper-listbox';
 import {GenericObject} from '../../../types/globals';
 import {elevation2} from '../../styles/lit-styles/elevation-styles';
+import MatomoMixin from '@unicef-polymer/etools-piwik-analytics/matomo-mixin';
 
 /**
  * @customElement
  * @LitElement
  */
 @customElement('export-data')
-export class ExportData extends LitElement {
+export class ExportData extends MatomoMixin(LitElement) {
   static get styles() {
     return [
       css`
@@ -63,7 +64,10 @@ export class ExportData extends LitElement {
         </paper-button>
         <paper-listbox slot="dropdown-content">
           ${this.exportLinks.map(
-            (item) => html` <paper-item @tap="${() => this.export(item.type)}">${item.name}</paper-item>`
+            (item) =>
+              html` <paper-item tracker="Export ${item.type}" @tap="${(e: CustomEvent) => this.export(e, item.type)}">
+                ${item.name}
+              </paper-item>`
           )}
         </paper-listbox>
       </paper-menu-button>
@@ -99,7 +103,8 @@ export class ExportData extends LitElement {
     }
   }
 
-  export(type: string) {
+  export(e: CustomEvent, type: string) {
+    this.trackAnalytics(e);
     const url = this.endpoint + `export/${type}/` + (this.params ? `?${this.params}` : '');
     window.open(url, '_blank');
   }
