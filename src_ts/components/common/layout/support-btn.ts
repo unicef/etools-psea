@@ -1,5 +1,6 @@
 import {LitElement, html, customElement} from 'lit-element';
 import '@polymer/iron-icons/communication-icons';
+import MatomoMixin from '@unicef-polymer/etools-piwik-analytics/matomo-mixin';
 
 /* eslint-disable max-len */
 
@@ -8,7 +9,7 @@ import '@polymer/iron-icons/communication-icons';
  * @customElement
  */
 @customElement('support-btn')
-export class SupportBtn extends LitElement {
+export class SupportBtn extends MatomoMixin(LitElement) {
   public render() {
     return html`
       <style>
@@ -34,6 +35,8 @@ export class SupportBtn extends LitElement {
       <a
         href="https://unicef.service-now.com/cc?id=sc_cat_item&sys_id=c8e43760db622450f65a2aea4b9619ad&sysparm_category=99c51053db0a6f40f65a2aea4b9619af"
         target="_blank"
+        @tap="${this.trackAnalytics}"
+        tracker="Support"
       >
         <iron-icon icon="communication:textsms"></iron-icon><span id="supportTxt">Support</span>
       </a>
