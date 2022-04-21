@@ -84,7 +84,7 @@ export class ProofOfEvidence {
 }
 
 export class Rating {
-  id!: string | number;
+  id!: number;
   label = '';
   weight = '';
 }
@@ -93,7 +93,7 @@ export class Answer {
   id?: string | null = null;
   assessment: string | number | null = null;
   indicator: string | number | null = null;
-  rating: string | null = null;
+  rating: number | null = null;
   comments = '';
   evidences: AnswerEvidence[] = [];
   attachments: AnswerAttachment[] = [];

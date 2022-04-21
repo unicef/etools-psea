@@ -202,5 +202,11 @@ export const SharedStylesLit = html`
       font-size: 18px;
       font-weight: 500;
     }
+    mwc-radio {
+      --mdc-theme-secondary: var(--primary-color);
+    }
+    mwc-formfield {
+      --mdc-typography-body2-font-size: 16px;
+    }
   </style>
 `;

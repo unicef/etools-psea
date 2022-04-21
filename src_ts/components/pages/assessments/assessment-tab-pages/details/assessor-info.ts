@@ -1,16 +1,16 @@
-import '@polymer/paper-radio-group';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@unicef-polymer/etools-dropdown/etools-dropdown';
 import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-radio';
+import '@material/mwc-formfield';
 import './assessing-firm';
 import './external-individual';
 import './firm-staff-members';
 import {UnicefUser} from '../../../../../types/user-model';
-import {LitElement, html, property, query, customElement, css} from 'lit-element';
+import {css, customElement, html, LitElement, property, query} from 'lit-element';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {buttonsStyles} from '../../../../styles/button-styles';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
-import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {RootState, store} from '../../../../../redux/store';
 import {cloneDeep, isJsonStrMatch, onListPage} from '../../../../utils/utils';
@@ -48,9 +48,8 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
           display: block;
           margin-bottom: 24px;
         }
-
-        paper-radio-group[readonly] paper-radio-button:not([checked]) {
-          display: none;
+        .paper-label {
+          padding: 0;
         }
       `,
       gridLayoutStylesLit
@@ -77,7 +76,7 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
           </paper-icon-button>
         </div>
 
-        <div class="row-padding-v">
+        <div class="row-padding-v layout-horizontal align-items-center">
           <label class="paper-label">Assessor is:</label>
           ${this._getAssessorTypeTemplate(this.canEditAssessorInfo, this.isNew, this.editMode, this.assessor)}
         </div>
@@ -103,16 +102,30 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     }
 
     return html`
-      <paper-radio-group
-        .selected="${this.getAssessorType(assessor)}"
-        ?readonly="${!editMode}"
-        @selected-changed="${(e: CustomEvent) =>
-          this.setSelectedAssessorType((e.target as PaperRadioGroupElement)!.selected!)}"
+      <mwc-formfield label="UNICEF Staff" ?hidden="${!editMode && assessor?.assessor_type !== AssessorTypes.Staff}">
+        <mwc-radio
+          name="myGroup"
+          @change="${() => this.setSelectedAssessorType(AssessorTypes.Staff)}"
+          ?checked="${assessor?.assessor_type === AssessorTypes.Staff}"
+        ></mwc-radio>
+      </mwc-formfield>
+      <mwc-formfield label="Assessing Firm" ?hidden="${!editMode && assessor?.assessor_type !== AssessorTypes.Firm}">
+        <mwc-radio
+          name="myGroup"
+          @change="${() => this.setSelectedAssessorType(AssessorTypes.Firm)}"
+          ?checked="${assessor?.assessor_type === AssessorTypes.Firm}"
+        ></mwc-radio>
+      </mwc-formfield>
+      <mwc-formfield
+        label="External Individual"
+        ?hidden="${!editMode && assessor?.assessor_type !== AssessorTypes.ExternalIndividual}"
       >
-        <paper-radio-button name="staff">UNICEF Staff</paper-radio-button>
-        <paper-radio-button name="firm">Assessing Firm</paper-radio-button>
-        <paper-radio-button name="external">External Individual</paper-radio-button>
-      </paper-radio-group>
+        <mwc-radio
+          name="myGroup"
+          @change="${() => this.setSelectedAssessorType(AssessorTypes.ExternalIndividual)}"
+          ?checked="${assessor?.assessor_type === AssessorTypes.ExternalIndividual}"
+        ></mwc-radio>
+      </mwc-formfield>
     `;
   }
 
@@ -303,13 +316,12 @@ export class AssessorInfo extends connect(store)(PermissionsMixin(LitElement)) {
     return true;
   }
 
-  setSelectedAssessorType(assessorType: string | number) {
+  setSelectedAssessorType(assessorType: AssessorTypes) {
     if (!this.assessor) {
       return;
     }
-    const newAssessorType = assessorType as AssessorTypes;
-    if (this.assessor.assessor_type != newAssessorType) {
-      this.assessor.assessor_type = newAssessorType;
+    if (this.assessor.assessor_type !== assessorType) {
+      this.assessor.assessor_type = assessorType;
       this.assessor.user = null;
       this.requestUpdate();
     }

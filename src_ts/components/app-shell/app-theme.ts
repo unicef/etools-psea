@@ -114,7 +114,6 @@ documentContainer.innerHTML = `
       --paper-checkbox-checked-color: var(--primary-color);
       --paper-checkbox-unchecked-color: var(--secondary-text-color);
       --paper-radio-button-checked-color: var(--primary-color);
-      --paper-radio-button-unchecked-color: var(--secondary-text-color);
 
       --paper-button-flat-keyboard-focus: {
         outline: 0;

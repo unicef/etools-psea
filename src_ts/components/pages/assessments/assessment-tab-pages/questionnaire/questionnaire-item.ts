@@ -3,6 +3,8 @@ import {styleMap} from 'lit-html/directives/style-map.js';
 import {unsafeHTML} from 'lit-html/directives/unsafe-html.js';
 import '@unicef-polymer/etools-content-panel/etools-content-panel';
 import '@polymer/paper-icon-button/paper-icon-button.js';
+import '@material/mwc-radio';
+import '@material/mwc-formfield';
 import './questionnaire-answer';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {SharedStylesLit} from '../../../../styles/shared-styles-lit';
@@ -42,6 +44,9 @@ export class QuestionnaireItemElement extends LitElement {
           background-color: var(--secondary-background-color);
           color: black;
         }
+        mwc-formfield {
+          min-width: 140px;
+        }
       `
     ];
   }
@@ -56,14 +61,10 @@ export class QuestionnaireItemElement extends LitElement {
       >
         <etools-loading loading-text="Saving..." .active="${this.showLoading}"></etools-loading>
 
-        <div slot="panel-btns">
-          <paper-radio-button
-            checked
-            class="ecp-header-radio-button ${this._getRadioBtnClass(this.answer)} readonly"
-            ?hidden="${!this._answerIsSaved(this.answer)}"
-          >
-            ${this._getSelectedRating(this.answer)}
-          </paper-radio-button>
+        <div slot="panel-btns" class="layout-horizontal align-items-center">
+          <mwc-formfield label="${this._getSelectedRating(this.answer)}" ?hidden="${!this._answerIsSaved(this.answer)}">
+            <mwc-radio class="${this._getRadioBtnClass(this.answer)}" disabled checked></mwc-radio>
+          </mwc-formfield>
           <paper-icon-button
             icon="create"
             @tap="${this._allowEdit}"

@@ -2,6 +2,8 @@ import {LitElement, html, property, query, queryAll, customElement, css} from 'l
 import '@polymer/paper-input/paper-textarea';
 import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-radio-group';
+import '@material/mwc-radio';
+import '@material/mwc-formfield';
 import {gridLayoutStylesLit} from '../../../../styles/grid-layout-styles-lit';
 import {labelAndvalueStylesLit} from '../../../../styles/label-and-value-styles-lit';
 import './question-attachments';
@@ -15,8 +17,6 @@ import {
   AnswerEvidence,
   AnswerAttachment
 } from '../../../../../types/assessment';
-import {PaperRadioGroupElement} from '@polymer/paper-radio-group';
-import {PaperRadioButtonElement} from '@polymer/paper-radio-button';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store, RootState} from '../../../../../redux/store';
 import {PaperTextareaElement} from '@polymer/paper-input/paper-textarea';
@@ -62,13 +62,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
           <answer-instructions></answer-instructions>
         </div>
         <div>
-          <paper-radio-group
-            id="ratingElement"
-            .selected="${this.answer.rating}"
-            @change="${(e: CustomEvent) => this._selectedRatingChanged(e.target as PaperRadioButtonElement)}"
-          >
-            ${this._getRatingRadioButtonsTemplate(this.question)}
-          </paper-radio-group>
+          <div>${this._getRatingRadioButtons(this.question, this.answer)}</div>
           <span class="invalid-color" ?hidden="${this.hideRatingRequiredMsg}">Please select Rating</span>
         </div>
       </div>
@@ -135,9 +129,6 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   @property({type: Boolean})
   autoValidate = false;
 
-  @query('#ratingElement')
-  ratingElement!: PaperRadioGroupElement;
-
   @query('#commentsElement')
   commentsElement!: PaperTextareaElement;
 
@@ -163,8 +154,8 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   }
 
   clearControls() {
-    if (this.answer.id === null && this.ratingElement) {
-      this.ratingElement.selected = '';
+    if (this.answer.id === null && this.commentsElement && this.otherEvidenceInput) {
+      this.answer.rating = null;
       this.commentsElement.value = '';
       this.otherEvidenceInput.value = '';
       this.checkedEvidenceBoxes.forEach((el) => (el.checked = false));
@@ -194,12 +185,17 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
     });
   }
 
-  _getRatingRadioButtonsTemplate(question: Question) {
+  _getRatingRadioButtons(question: Question, answer: Answer) {
     return question.ratings.map(
       (r: Rating, index: number) =>
-        html`<paper-radio-button class="${this._getRatingRadioClass(index)}" name="${r.id}">
-          ${r.label}
-        </paper-radio-button>`
+        html`<mwc-formfield label="${r.label}">
+          <mwc-radio
+            name="ratingGroup"
+            class="${this._getRatingRadioClass(index)}"
+            @change="${() => this._selectedRatingChanged(r.id)}"
+            ?checked="${answer.rating === r.id}"
+          ></mwc-radio>
+        </mwc-formfield>`
     );
   }
 
@@ -229,11 +225,9 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
     return checked;
   }
 
-  _selectedRatingChanged(target: PaperRadioButtonElement) {
-    if (target.checked) {
-      this.answer.rating = target.name!;
-    }
-    this.hideRatingRequiredMsg = !!target.name;
+  _selectedRatingChanged(rating: number) {
+    this.answer.rating = rating;
+    this.hideRatingRequiredMsg = typeof rating === 'number';
   }
 
   _checkedEvidenceChanged(evidence: ProofOfEvidence, checked: boolean, _answer: Answer) {
@@ -290,7 +284,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
   }
 
   validateRating() {
-    this.hideRatingRequiredMsg = !!this.ratingElement.selected;
+    this.hideRatingRequiredMsg = Boolean(this.answer?.rating);
     return this.hideRatingRequiredMsg;
   }
 
