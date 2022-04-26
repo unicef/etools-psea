@@ -45,7 +45,7 @@ import {
   defaultPaginator,
   getPaginatorWithBackend
 } from '@unicef-polymer/etools-table/pagination/etools-pagination';
-
+import MatomoMixin from '@unicef-polymer/etools-piwik-analytics/matomo-mixin';
 import {RouteDetails, RouteQueryParams} from '../../../routing/router';
 import {updateAppLocation, replaceAppLocation} from '../../../routing/routes';
 import {buttonsStyles} from '../../styles/button-styles';
@@ -65,7 +65,7 @@ let lastSelectedFilters: FilterKeysAndTheirSelectedValues = {...defaultSelectedF
  * @customElement
  */
 @customElement('assessments-list')
-export class AssessmentsList extends connect(store)(LitElement) {
+export class AssessmentsList extends connect(store)(MatomoMixin(LitElement)) {
   static get styles() {
     return [elevationStyles, buttonsStyles, pageLayoutStyles];
   }
@@ -103,7 +103,13 @@ export class AssessmentsList extends connect(store)(LitElement) {
             <export-data .endpoint="${etoolsEndpoints.assessment.url!}" .params="${this.queryParams}"></export-data>
           </div>
           <div class="action" ?hidden="${!this.canAdd}">
-            <paper-button id="addBtn" class="primary left-icon" raised @tap="${this.goToAddNewPage}">
+            <paper-button
+              id="addBtn"
+              class="primary left-icon"
+              tracker="Add new assessment"
+              raised
+              @tap="${this.goToAddNewPage}"
+            >
               <iron-icon icon="add"></iron-icon><span class="longAddText">Add new assessment</span>
               <span class="shortAddText">Add</span>
             </paper-button>
@@ -406,7 +412,8 @@ export class AssessmentsList extends connect(store)(LitElement) {
       .then(() => (this.showLoading = false));
   }
 
-  goToAddNewPage() {
+  goToAddNewPage(e: CustomEvent) {
+    this.trackAnalytics(e);
     updateAppLocation('/assessments/new/details', true);
   }
 }
