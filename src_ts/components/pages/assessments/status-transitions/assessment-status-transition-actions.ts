@@ -42,7 +42,12 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   cancelBtnHtml() {
     return html`
-      <paper-button class="default right-icon responsive" raised @tap="${() => this.updateAssessmentStatus('cancel')}">
+      <paper-button
+        id="btnCancelAssessment"
+        class="default right-icon responsive"
+        raised
+        @tap="${() => this.updateAssessmentStatus('cancel')}"
+      >
         Cancel
         <iron-icon icon="remove-circle-outline"></iron-icon>
       </paper-button>
@@ -51,7 +56,12 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   assignBtnHtml() {
     return html`
-      <paper-button class="primary right-icon responsive" raised @tap="${() => this.updateAssessmentStatus('assign')}">
+      <paper-button
+        id="btnAssignAssessment"
+        class="primary right-icon responsive"
+        raised
+        @tap="${() => this.updateAssessmentStatus('assign')}"
+      >
         Assign
         <iron-icon icon="assignment-ind"></iron-icon>
       </paper-button>
@@ -60,7 +70,12 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   submitBtnHtml() {
     return html`
-      <paper-button class="primary right-icon responsive" raised @tap="${() => this.updateAssessmentStatus('submit')}">
+      <paper-button
+        id="btnSubmitAssessment"
+        class="primary right-icon responsive"
+        raised
+        @tap="${() => this.updateAssessmentStatus('submit')}"
+      >
         Submit
         <iron-icon icon="chevron-right"></iron-icon>
       </paper-button>
@@ -69,7 +84,12 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
 
   rejectBtnHtml() {
     return html`
-      <paper-button class="error right-icon responsive" raised @tap="${() => this.updateAssessmentStatus('reject')}">
+      <paper-button
+        id="btnRejectAssessment"
+        class="error right-icon responsive"
+        raised
+        @tap="${() => this.updateAssessmentStatus('reject')}"
+      >
         Reject
         <iron-icon icon="assignment-return"></iron-icon>
       </paper-button>
@@ -79,6 +99,7 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
   finalizeBtnHtml() {
     return html`
       <paper-button
+        id="btnFinalizeAssessment"
         class="success right-icon responsive"
         raised
         @tap="${() => this.updateAssessmentStatus('finalize')}"
@@ -288,7 +309,6 @@ export class AssessmentStatusTransitionActions extends connect(store)(LitElement
         content: this.confirmationMSg
       };
       this.statusChangeConfirmationDialog = createDynamicDialog(confirmationDialogConf);
-      this.statusChangeConfirmationDialog.updateStyles({'--etools-dialog-confirm-btn-bg': 'var(--primary-color)'});
     }
   }
 
