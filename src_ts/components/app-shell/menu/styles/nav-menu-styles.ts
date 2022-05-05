@@ -164,6 +164,7 @@ export const navMenuStyles = css`
 
   .nav-menu-item iron-icon {
     margin: 0 16px;
+    min-width: 24px;
     color: var(--dark-icon-color);
   }
 
