@@ -91,6 +91,18 @@ export class AppMenu extends MatomoMixin(LitElement) {
 
         <a
           class="nav-menu-item lighter-item"
+          href="https://app.powerbi.com/groups/me/apps/2c83563f-d6fc-4ade-9c10-bbca57ed1ece/reports/9726e9e7-c72f-4153-9fd2-7b418a1e426c/ReportSection?ctid=77410195-14e1-4fb8-904b-ab1892023667"
+          target="_blank"
+          @tap="${this.trackAnalytics}"
+          tracker="Implementation Intelligence"
+        >
+          <iron-icon id="implementation-icon" icon="main-icon:power-bi"></iron-icon>
+          <paper-tooltip for="implementation-icon" position="right">Implementation Intelligence </paper-tooltip>
+          <div class="name">Implementation Intelligence</div>
+        </a>
+
+        <a
+          class="nav-menu-item lighter-item"
           href="http://etools.zendesk.com"
           target="_blank"
           @tap="${this.trackAnalytics}"

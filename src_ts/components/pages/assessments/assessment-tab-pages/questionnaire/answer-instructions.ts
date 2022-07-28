@@ -41,6 +41,9 @@ export class AnswerInstructions extends LitElement {
         .rating-info span.primary {
           font-weight: bold;
         }
+        paper-tooltip {
+          margin-top: 125px;
+        }
       `
     ];
   }
@@ -65,7 +68,7 @@ export class AnswerInstructions extends LitElement {
       </style>
 
       <paper-icon-button id="rating-icon" icon="info"></paper-icon-button>
-      <paper-tooltip for="rating-icon" animation-entry="noanimation" position="right">
+      <paper-tooltip for="rating-icon" offset="0" animation-entry="noanimation" position="right">
         ${this.getRatingInfoHtml()}
       </paper-tooltip>
     `;
