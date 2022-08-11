@@ -50,6 +50,15 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
           color: var(--error-color);
           display: block;
         }
+        .rating-container {
+          position: relative;
+          display: flex;
+          align-items: center;
+        }
+        .rating-container .paper-label {
+          padding-top: 0;
+          background: url('./images/required.svg') no-repeat 87% 13%/6px;
+        }
       `
     ];
   }
@@ -57,7 +66,7 @@ export class QuestionnaireAnswerElement extends connect(store)(LitElement) {
     return html`
       ${SharedStylesLit}
       <div class="row-padding-v" ?hidden="${!this.editMode}">
-        <div>
+        <div class="rating-container">
           <label class="paper-label" required>Rating</label>
           <answer-instructions></answer-instructions>
         </div>
