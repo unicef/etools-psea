@@ -56,7 +56,7 @@
     "@unicef-polymer/etools-date-time": "^3.0.3",
     "@unicef-polymer/etools-dexie-caching": "^1.0.2",
     "@unicef-polymer/etools-dialog": "^6.0.0",
-    "@unicef-polymer/etools-dropdown": "^3.8.0-rc.3",
+    "@unicef-polymer/etools-dropdown": "^3.8.0-rc.4",
     "@unicef-polymer/etools-loading": "^5.0.0",
     "@unicef-polymer/etools-piwik-analytics": "^3.1.0",
     "@unicef-polymer/etools-profile-dropdown": "^8.0.1",
