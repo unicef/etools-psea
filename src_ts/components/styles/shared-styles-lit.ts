@@ -202,5 +202,10 @@ export const SharedStylesLit = html`
       font-size: 18px;
       font-weight: 500;
     }
+
+    paper-radio-button {
+      --paper-radio-button-unchecked-color: var(--gray-mid);
+      --paper-radio-button-checked-color: var(--primary-color);
+    }
   </style>
 `;
