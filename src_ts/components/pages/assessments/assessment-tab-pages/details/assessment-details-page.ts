@@ -34,6 +34,10 @@ export class AssessmentDetailsPage extends connect(store)(LitElement) {
   stateChanged(state: RootState) {
     if (state.app!.routeDetails && state.app!.routeDetails.params) {
       this.isNew = state.app!.routeDetails.params.assessmentId === 'new';
+      if (this.isNew) {
+        history.pushState(window.history.state, '', 'page-not-found');
+        window.dispatchEvent(new CustomEvent('popstate'));
+      }
     }
   }
 }
