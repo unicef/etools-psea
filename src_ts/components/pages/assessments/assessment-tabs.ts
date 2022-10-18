@@ -175,6 +175,7 @@ export class AssessmentTabs extends connect(store)(LitElement) {
     if (!isJsonStrMatch(state.app!.routeDetails!, this.routeDetails)) {
       this.routeDetails = cloneDeep(state.app!.routeDetails);
       const routeAssessmentId = this.routeDetails!.params!.assessmentId;
+
       if (isNil(this.assessment) || routeAssessmentId !== String(this.assessment.id)) {
         /**
          * on this level, make assessment get request or init new assessment only
