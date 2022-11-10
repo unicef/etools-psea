@@ -79,6 +79,18 @@ export class AssessmentsList extends connect(store)(MatomoMixin(LitElement)) {
         .shortAddText {
           display: none;
         }
+        .header-text {
+          padding-top: 12px;
+          padding-bottom: 12px;
+          padding-left: 12px;
+          padding-right: 42px;
+          background-color: #ffa50082;
+          display: flex;
+        }
+
+        .warn-icon {
+          padding: 20px;
+        }
         @media (max-width: 576px) {
           .action {
             text-align: right;
@@ -95,24 +107,25 @@ export class AssessmentsList extends connect(store)(MatomoMixin(LitElement)) {
           }
         }
       </style>
+      <div style="padding-top: 14px;"></div>
+      <div class="header-text">
+        <div class="warn-icon">
+          <iron-icon icon="warning"></iron-icon>
+        </div>
+        <div>
+          Please note that this PSEA module has been archived as part of the transition to the UN Common Assessment.
+          <br />
+          Pending availability of the new PSEA module in the UN Partner Portal, Country office are requested to directly
+          submit to GSSC the verified (re-) assessment results (signed letter or email communicated with partner)
+          through the MDM form.
+        </div>
+      </div>
       <page-content-header>
         <h1 slot="page-title">Assessments list</h1>
 
         <div slot="title-row-actions" class="content-header-actions">
           <div class="action" ?hidden="${!this.canExport}">
             <export-data .endpoint="${etoolsEndpoints.assessment.url!}" .params="${this.queryParams}"></export-data>
-          </div>
-          <div class="action" ?hidden="${!this.canAdd}">
-            <paper-button
-              id="addBtn"
-              class="primary left-icon"
-              tracker="Add new assessment"
-              raised
-              @tap="${this.goToAddNewPage}"
-            >
-              <iron-icon icon="add"></iron-icon><span class="longAddText">Add new assessment</span>
-              <span class="shortAddText">Add</span>
-            </paper-button>
           </div>
         </div>
       </page-content-header>
