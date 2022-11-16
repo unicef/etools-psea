@@ -116,8 +116,7 @@ export class AssessmentsList extends connect(store)(MatomoMixin(LitElement)) {
           Please note that this PSEA module has been archived as part of the transition to the UN Common Assessment.
           <br />
           Pending availability of the new PSEA module in the UN Partner Portal, Country office are requested to directly
-          submit to GSSC the verified (re-) assessment results (signed letter or email communicated with partner)
-          through the MDM form.
+          submit to GSSC the updated PSEA assessment information (rating and PSEA assessment date) through the MDM form.
         </div>
       </div>
       <page-content-header>
