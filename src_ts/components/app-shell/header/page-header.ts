@@ -192,7 +192,7 @@ export class PageHeader extends connect(store)(LitElement) {
   protected _signOut() {
     // this._clearDexieDbs();
     this.clearLocalStorage();
-    window.location.href = window.location.origin + '/logout';
+    window.location.href = window.location.origin + '/social/unicef-logout/';
   }
 
   // TODO
