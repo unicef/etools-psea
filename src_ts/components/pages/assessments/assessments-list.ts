@@ -115,8 +115,18 @@ export class AssessmentsList extends connect(store)(MatomoMixin(LitElement)) {
         <div>
           Please note that this PSEA module has been archived as part of the transition to the UN Common Assessment.
           <br />
-          Pending availability of the new PSEA module in the UN Partner Portal, Country office are requested to directly
-          submit to GSSC the updated PSEA assessment information (rating and PSEA assessment date) through the MDM form.
+          The PSEA module in the UN Partner Portal is now available. Information on how to conduct and submit the PSEA
+          assessment is available here:
+          <a
+            href="https://unicef.sharepoint.com/:w:/s/DAPM/Ec8UBBAp3flIlqBfQyeAH5YBRMh-Cs4C0ct8UkQjWiTDvQ?e=eDqQem"
+            target="blank"
+            >The PSEA asses​​​​​​​sment in a snapshot</a
+          >
+          <br />
+          For all information regarding the PSEA assessment, please refer to the
+          <a href="https://unicef.sharepoint.com/sites/DAPM/SitePages/PSEA-Tools.aspx" target="blank"
+            >PSEA in partnership Sharepoint</a
+          >
         </div>
       </div>
       <page-content-header>
